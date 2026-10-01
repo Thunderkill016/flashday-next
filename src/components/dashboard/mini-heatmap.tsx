@@ -1,6 +1,7 @@
 'use client';
 
 import { useMemo } from 'react';
+import { LOCALE_TAGS } from '@/lib/i18n/locale';
 import { useI18n } from '@/lib/i18n/use-i18n';
 import { detectIOSNativeHost } from '@/lib/tauri';
 
@@ -46,7 +47,7 @@ export function MiniHeatmap({ data, days = 56 }: Props) {
   const activeDays = data.slice(-days).filter((day) => day.count > 0).length;
   const dates = data.slice(-days);
   const formatDate = (date: string) =>
-    new Date(`${date}T00:00:00`).toLocaleDateString(interfaceLanguage === 'zh' ? 'zh-CN' : 'en-US', {
+    new Date(`${date}T00:00:00`).toLocaleDateString(LOCALE_TAGS[interfaceLanguage], {
       month: 'short',
       day: 'numeric',
     });

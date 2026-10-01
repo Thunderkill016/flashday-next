@@ -1,0 +1,14 @@
+{
+  "listen": {
+    "title": "Nghe",
+    "description": "Nghe nội dung tiếng Anh qua giọng đọc tổng hợp"
+  },
+  "read": {
+    "title": "Đọc",
+    "description": "Đọc to nội dung tiếng Anh và nhận phản hồi phát âm"
+  },
+  "write": {
+    "title": "Viết",
+    "description": "Luyện gõ tiếng Anh với phản hồi tức thì"
+  }
+}

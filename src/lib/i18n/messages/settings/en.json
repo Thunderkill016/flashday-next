@@ -231,6 +231,7 @@
   "translation": {
     "targetLanguage": "Target language",
     "languageOptions": {
+      "vi": "Tiếng Việt (Vietnamese)",
       "en": "English",
       "zhCN": "中文 (Chinese)",
       "ja": "日本語 (Japanese)",

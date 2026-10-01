@@ -9,6 +9,7 @@ import { Tabs, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import type { VoiceOption } from '@/hooks/use-tts';
 import { useTTS } from '@/hooks/use-tts';
 import enVoicePicker from '@/lib/i18n/messages/voice-picker/en.json';
+import viVoicePicker from '@/lib/i18n/messages/voice-picker/vi.json';
 import zhVoicePicker from '@/lib/i18n/messages/voice-picker/zh.json';
 import { detectIOSNativeHost } from '@/lib/tauri';
 import {
@@ -35,6 +36,7 @@ const LANG_FLAGS: Record<string, string> = {
   'en-NG': 'NG',
   'en-TZ': 'TZ',
   'ja-JP': 'JP',
+  'vi-VN': 'VN',
   'zh-CN': 'CN',
   'es-ES': 'ES',
   'fr-FR': 'FR',
@@ -57,6 +59,7 @@ type VoicePickerLocale = Omit<RawVoicePickerLocale, 'browserSummary'> & {
 
 const VOICE_PICKER_LOCALES = {
   en: enVoicePicker,
+  vi: viVoicePicker,
   zh: zhVoicePicker,
 } as const satisfies Record<InterfaceLanguage, RawVoicePickerLocale>;
 

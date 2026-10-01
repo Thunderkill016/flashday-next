@@ -1,0 +1,16 @@
+{
+  "notFound": "Không tìm thấy sổ từ",
+  "backToWordBooks": "Sổ từ",
+  "practice": {
+    "listening": "Luyện nghe",
+    "speaking": "Luyện nói",
+    "reading": "Luyện đọc",
+    "writing": "Luyện viết"
+  },
+  "searchPlaceholder": "Tìm từ...",
+  "loadingWords": "Đang tải từ...",
+  "wordCount": "{{count}} từ",
+  "wordCountFiltered": "{{filtered}}/{{total}} từ",
+  "noWordsMatching": "Không có từ nào khớp",
+  "relatedWordBooks": "Sổ từ liên quan"
+}

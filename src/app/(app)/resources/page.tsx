@@ -24,6 +24,7 @@ import {
   type ResourceSkill,
 } from '@/lib/community-resources';
 import { cn } from '@/lib/utils';
+import { useLanguageStore } from '@/stores/language-store';
 
 const CONTRIBUTING_URL = 'https://github.com/Talljack/echo-type/blob/main/CONTRIBUTING.md';
 const TEMPLATE_URL = 'https://github.com/Talljack/echo-type/blob/main/.github/resource-submission.yaml';
@@ -37,6 +38,7 @@ const formatIcons: Record<ResourceFormat, typeof BookOpen> = {
 };
 
 export default function CommunityResourcesPage() {
+  const language = useLanguageStore((s) => s.interfaceLanguage);
   const [format, setFormat] = useState<ResourceFormat | 'all'>('all');
   const [skill, setSkill] = useState<ResourceSkill | 'all'>('all');
   const [query, setQuery] = useState('');
@@ -44,7 +46,7 @@ export default function CommunityResourcesPage() {
     () =>
       COMMUNITY_RESOURCES.filter((resource) => {
         const search =
-          `${resource.title} ${resource.titleZh} ${resource.description} ${resource.descriptionZh}`.toLowerCase();
+          `${resource.title} ${resource.titleZh} ${resource.titleVi} ${resource.description} ${resource.descriptionZh} ${resource.descriptionVi}`.toLowerCase();
         return (
           (format === 'all' || resource.format === format) &&
           (skill === 'all' || resource.skills.includes(skill)) &&
@@ -175,7 +177,7 @@ export default function CommunityResourcesPage() {
                   </div>
                   <h3 className="mt-5 text-lg font-semibold tracking-[-0.012em] text-slate-900">{resource.title}</h3>
                   <p className="mt-1 text-sm text-slate-500">
-                    {resource.titleZh} · {resource.levels.join(' / ')}
+                    {language === 'vi' ? resource.titleVi : resource.titleZh} · {resource.levels.join(' / ')}
                   </p>
                   <p className="mt-3 text-sm leading-6 text-slate-600">{resource.description}</p>
                   <div className="mt-4 flex flex-wrap gap-1.5">

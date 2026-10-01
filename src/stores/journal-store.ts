@@ -6,6 +6,7 @@ import type { ContentItem } from '@/types/content';
 import type { FavoriteType } from '@/types/favorite';
 import type { DialogueTurn, JournalEntry, UsefulPhrase } from '@/types/journal';
 import { useFavoriteStore } from './favorite-store';
+import { useTTSStore } from './tts-store';
 
 /** Dexie `contents.category` value used for a journal's materialized practice items. */
 export function journalContentCategory(journalId: string): string {
@@ -221,7 +222,7 @@ export const useJournalStore = create<JournalStore>((set, get) => ({
       sourceModule: 'journal',
       sourceContentId: journalId,
       context: journal.title,
-      targetLang: 'zh-CN',
+      targetLang: useTTSStore.getState().targetLang,
     });
     const turns = journal.turns.map((t) => (t.id === turnId ? { ...t, highlighted: true, favoriteId } : t));
     await persistJournal(set, { ...journal, turns });

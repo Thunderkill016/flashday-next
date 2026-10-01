@@ -1,0 +1,81 @@
+{
+  "page": {
+    "title": "Nói",
+    "subtitle": "Luyện tiếng Anh qua hội thoại với AI"
+  },
+  "freeConversation": {
+    "title": "Bắt đầu trò chuyện tự do",
+    "description": "Nói chuyện với AI về bất cứ điều gì — đời thường, sở thích, tin tức, tuỳ bạn. Không giới hạn chủ đề.",
+    "pageTitle": "Trò chuyện tự do",
+    "pageSubtitle": "Nói chuyện về bất cứ điều gì",
+    "suggestedTopics": "Chủ đề gợi ý"
+  },
+  "scenarios": {
+    "sectionTitle": "Hoặc chọn một tình huống",
+    "sectionSubtitle": "để luyện theo hướng dẫn",
+    "notFound": "Không tìm thấy tình huống",
+    "backToScenarios": "Về danh sách tình huống",
+    "conversationGoals": "Mục tiêu hội thoại",
+    "recommended": "Gợi ý",
+    "noScenariosInCategory": "Chưa có tình huống nào trong danh mục này.",
+    "categories": {
+      "all": "Tất cả",
+      "daily": "Đời thường",
+      "work": "Công việc",
+      "travel": "Du lịch",
+      "social": "Xã giao"
+    },
+    "difficulty": {
+      "beginner": "Cơ bản",
+      "intermediate": "Trung bình",
+      "advanced": "Nâng cao"
+    }
+  },
+  "conversation": {
+    "readyToStart": "Sẵn sàng luyện chưa?",
+    "tapMicrophone": "Nhấn micro để bắt đầu nói",
+    "thinking": "Đang suy nghĩ...",
+    "listening": "Đang nghe...",
+    "processing": "Đang xử lý giọng nói...",
+    "translating": "Đang dịch...",
+    "stopVoice": "Dừng giọng đọc",
+    "playVoice": "Phát giọng đọc",
+    "toggleTranslation": "Bật/tắt bản dịch",
+    "typePlaceholder": "Nhập tin nhắn...",
+    "typeResponsePlaceholder": "Hoặc nhập câu trả lời..."
+  },
+  "voiceInput": {
+    "tapToStop": "Nhấn để dừng",
+    "aiResponding": "AI đang trả lời...",
+    "tapToSpeak": "Nhấn để nói"
+  },
+  "stats": {
+    "correct": "Đúng",
+    "close": "Gần đúng",
+    "wrong": "Sai",
+    "missed": "Bỏ sót",
+    "extra": "Thừa",
+    "wordsTotal": "từ",
+    "extraWordsDetected": "từ thừa được phát hiện",
+    "excellentPronunciation": "Phát âm xuất sắc!",
+    "goodJob": "Tốt lắm! Tiếp tục luyện nhé.",
+    "gettingThere": "Sắp được rồi! Tập trung vào các từ được đánh dấu.",
+    "keepTrying": "Cố thêm nhé! Nghe từng từ và thử lại."
+  },
+  "pronunciation": {
+    "feedback": "Phản hồi phát âm",
+    "analyzingPronunciation": "Đang phân tích phát âm...",
+    "phonemeAnalysis": "Phân tích âm vị",
+    "phonemeLegend": {
+      "good": "Tốt",
+      "fair": "Tạm",
+      "needsWork": "Cần luyện"
+    },
+    "tips": "Mẹo phát âm",
+    "showDetails": "Xem",
+    "hideDetails": "Ẩn",
+    "detailedFeedback": "phản hồi chi tiết",
+    "issues": "vấn đề",
+    "youSaid": "Bạn nói:"
+  }
+}

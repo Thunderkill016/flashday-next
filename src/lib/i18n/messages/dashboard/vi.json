@@ -1,0 +1,125 @@
+{
+  "header": {
+    "title": "Chào mừng đến EchoType",
+    "subtitle": "Thành thạo tiếng Anh qua nghe, nói, đọc & viết",
+    "analytics": "Xem thống kê"
+  },
+  "stats": {
+    "streak": "Chuỗi ngày",
+    "content": "Nội dung",
+    "sessions": "Buổi học",
+    "words": "Từ",
+    "articles": "Bài đọc",
+    "accuracy": "Độ chính xác",
+    "avgWpm": "WPM trung bình"
+  },
+  "modules": {
+    "listen": {
+      "label": "Nghe",
+      "description": "Nghe bằng TTS"
+    },
+    "speak": {
+      "label": "Nói",
+      "description": "Đọc to, nhận phản hồi"
+    },
+    "read": {
+      "label": "Đọc",
+      "description": "Đọc hiểu"
+    },
+    "write": {
+      "label": "Viết",
+      "description": "Luyện gõ"
+    }
+  },
+  "autoLanguageNotice": {
+    "title": "Giao diện đang dùng tiếng Việt",
+    "description": "EchoType mặc định dùng {{language}} cho người học Việt Nam. Bạn có thể đổi bất cứ lúc nào trong Cài đặt.",
+    "cta": "Xem cài đặt ngôn ngữ"
+  },
+  "aiSetup": {
+    "title": "Chưa cấu hình mô hình AI",
+    "description": "Hiện chưa có mô hình AI nào khả dụng. Chat, tạo nội dung, dịch, phân loại và đánh giá phát âm sẽ không hoạt động cho đến khi bạn cấu hình API key và mô hình trong Cài đặt.",
+    "cta": "Cấu hình mô hình"
+  },
+  "aiDisconnected": {
+    "title": "Dịch vụ AI hiện tại chưa kết nối",
+    "description": "Nhà cung cấp bạn chọn ({{providerId}}) chưa có API key nên các tính năng AI có thể không hoạt động.",
+    "cta": "Cấu hình"
+  },
+  "onboarding": {
+    "title": "Bắt đầu trong vài giây",
+    "description": "Xem các sổ từ và gói tình huống có sẵn — hoặc nhập nội dung của riêng bạn.",
+    "wordBooks": "Sổ từ",
+    "import": "Nhập nội dung"
+  },
+  "learningGoal": {
+    "title": "Chọn mục tiêu học",
+    "description": "Cho EchoType biết bạn muốn tiến bộ tiếng Anh theo hướng nào, và kế hoạch hôm nay sẽ ưu tiên đúng hướng đó.",
+    "ctaAssessment": "Làm bài đánh giá",
+    "currentTitle": "Mục tiêu đang áp dụng",
+    "weakSpots": "Mở Điểm yếu"
+  },
+  "assessment": {
+    "title": "Đánh giá trình độ tiếng Anh",
+    "description": "Làm bài kiểm tra 15 câu nhanh để nhận gợi ý học tập theo trình độ CEFR của bạn.",
+    "cta": "Làm bài đánh giá",
+    "reminderTitle": "Đã đến lúc đánh giá lại trình độ!",
+    "reminderDescription": "Bạn đã hoàn thành hơn 50 buổi học kể từ lần đánh giá trước ({{level}}). Kiểm tra tiến độ nhé?"
+  },
+  "miniAnalytics": {
+    "activity": "Hoạt động",
+    "lastWeeks": "{{count}} tuần gần đây",
+    "activeDays": "Số ngày học: {{count}}",
+    "reviewForecast": "Dự báo ôn tập",
+    "practiceBreakdown": "Phân bổ luyện tập",
+    "details": "Chi tiết",
+    "review": "Ôn tập",
+    "noActivity": "Chưa có hoạt động",
+    "noSessions": "Chưa có buổi học nào",
+    "noUpcomingReviews": "Không có bài ôn sắp tới",
+    "dueToday": "đến hạn hôm nay",
+    "thisWeek": "tuần này",
+    "sessions": "buổi học"
+  },
+  "sections": {
+    "startLearning": "Bắt đầu học",
+    "recentActivity": "Hoạt động gần đây"
+  },
+  "recentActivity": {
+    "empty": "Chưa có buổi học nào. Bắt đầu luyện tập!",
+    "unknown": "Không rõ"
+  },
+  "reviewCard": {
+    "title": "Ôn tập hôm nay",
+    "description": "Xử lý các mục đến hạn ở đây, tách riêng khỏi kế hoạch học mới bên dưới.",
+    "noReviewsTitle": "Chưa có mục nào đến hạn",
+    "noReviewsDescription": "Tiếp tục kế hoạch hôm nay nhé. Mục đến hạn sẽ tự xuất hiện ở đây.",
+    "itemsDue": "{{count}} mục đến hạn ôn tập",
+    "reviewFirst": "Ôn {{title}} trước, hoặc tiếp tục kế hoạch học mới bên dưới nếu muốn.",
+    "openReview": "Mở ôn tập"
+  },
+  "todayPlan": {
+    "title": "Kế hoạch hôm nay",
+    "loading": "Đang tạo kế hoạch hôm nay...",
+    "empty": "Nhập một sổ từ hoặc nội dung để nhận nhiệm vụ học cá nhân hoá.",
+    "explanationWithLevel": "Dựa trên trình độ {{level}}, điểm yếu và các kỹ năng bạn chưa luyện tuần này. Bài ôn đến hạn hôm nay nằm ở mục Ôn tập phía trên.",
+    "explanationWithoutLevel": "Dựa trên lịch sử luyện tập, điểm yếu và các kỹ năng bạn chưa luyện tuần này. Bài ôn đến hạn hôm nay nằm ở mục Ôn tập phía trên.",
+    "skip": "Bỏ qua",
+    "start": "Bắt đầu",
+    "completed": "{{done}}/{{total}} hoàn thành",
+    "reopen": "Mở lại",
+    "lastPracticed": "Luyện lần cuối {{time}}",
+    "accuracy": "Độ chính xác {{value}}",
+    "wpm": "WPM {{value}}"
+  },
+  "goalDialog": {
+    "trigger": "Đặt mục tiêu",
+    "title": "Mục tiêu học hằng ngày",
+    "description": "Đặt chỉ tiêu mỗi ngày. Kế hoạch sẽ được tạo lại theo mục tiêu này.",
+    "newWordsPerDay": "Số từ mới mỗi ngày",
+    "sessionsPerDay": "Số buổi học mỗi ngày",
+    "balancedLabel": "{{count}} Cân bằng",
+    "balancedDescription": "4 Cân bằng là mặc định để đều cả nghe, nói, đọc, viết.",
+    "save": "Lưu mục tiêu"
+  }
+}

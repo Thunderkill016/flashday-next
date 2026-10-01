@@ -20,6 +20,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { useI18n } from '@/lib/i18n/use-i18n';
 import { detectIOSNativeHost } from '@/lib/tauri';
 import { cn } from '@/lib/utils';
+import { useLanguageStore } from '@/stores/language-store';
 import type { Scenario } from '@/types/scenario';
 
 const iconMap: Record<string, LucideIcon> = {
@@ -57,6 +58,7 @@ interface ScenarioCardProps {
 }
 
 export function ScenarioCard({ scenario, onClick, isRecommended = false }: ScenarioCardProps) {
+  const language = useLanguageStore((s) => s.interfaceLanguage);
   const { messages: t } = useI18n('speak');
   const Icon = iconMap[scenario.icon] || MessageCircle;
   const isIOSNativeHost = detectIOSNativeHost();
@@ -101,7 +103,7 @@ export function ScenarioCard({ scenario, onClick, isRecommended = false }: Scena
               )}
             </div>
             <p className={isIOSNativeHost ? 'text-xs font-medium text-slate-500' : 'text-xs text-slate-500'}>
-              {scenario.titleZh}
+              {language === 'vi' ? (scenario.titleVi ?? scenario.titleZh) : scenario.titleZh}
             </p>
             <p
               className={

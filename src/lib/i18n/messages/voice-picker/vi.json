@@ -1,0 +1,53 @@
+{
+  "loading": "Đang tải giọng...",
+  "noVoicesAvailable": "Không có giọng nào.",
+  "noVoicesFoundTitle": "Không tìm thấy giọng",
+  "noVoicesFoundHint": "Thử từ khoá khác",
+  "fishSetup": "Thêm Fish Audio API key bên dưới để tải thư viện giọng đám mây.",
+  "googleSetup": "Thêm Google Cloud API key bên dưới để tải giọng đám mây chính thức.",
+  "openaiSetup": "Thêm OpenAI API key bên dưới để nghe thử và dùng giọng tương thích OpenAI.",
+  "kokoroSetup": "Thêm Kokoro server URL bên dưới để tải thư viện giọng từ xa.",
+  "tabs": {
+    "english": "Tiếng Anh",
+    "all": "Tất cả",
+    "premium": "Cao cấp",
+    "system": "Hệ thống"
+  },
+  "search": {
+    "fish": "Tìm giọng theo tên, tác giả hoặc thẻ...",
+    "google": "Tìm giọng Google theo tên, giọng vùng hoặc giới tính...",
+    "openai": "Tìm giọng OpenAI theo tên hoặc phong cách...",
+    "kokoro": "Tìm giọng theo tên, ngôn ngữ hoặc giới tính...",
+    "edge": "Tìm giọng Edge theo tên, giọng vùng hoặc giới tính...",
+    "browser": "Tìm giọng theo tên, giọng vùng hoặc nhà cung cấp..."
+  },
+  "browserSummary": "Đang hiện {{filtered}}/{{visible}} giọng trình duyệt trong khung này. Hiện có {{english}} giọng tiếng Anh và {{total}} giọng tổng cộng trong WebView này.",
+  "badges": {
+    "premium": "Cao cấp",
+    "natural": "Tự nhiên",
+    "fun": "Vui",
+    "cloud": "Đám mây",
+    "other": "Khác"
+  },
+  "providerBadges": {
+    "apple": "Apple",
+    "google": "Google",
+    "openai": "OpenAI",
+    "microsoft": "Microsoft",
+    "browser-cloud": "Đám mây",
+    "kokoro": "Kokoro",
+    "other": "Khác"
+  },
+  "authorPrefix": "Bởi",
+  "errors": {
+    "fish": "Lỗi thư viện giọng Fish:",
+    "google": "Lỗi thư viện giọng Google Cloud TTS:",
+    "kokoro": "Lỗi thư viện giọng Kokoro:",
+    "edge": "Không tải được giọng Edge. Đang dùng danh sách dự phòng."
+  },
+  "actions": {
+    "clearSearch": "Xoá tìm kiếm",
+    "preview": "Nghe thử giọng",
+    "stopPreview": "Dừng nghe thử"
+  }
+}

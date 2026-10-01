@@ -1,0 +1,15 @@
+{
+  "translationDisplay": {
+    "translating": "Đang dịch...",
+    "goToSettings": "Mở Cài đặt",
+    "retry": "Thử lại"
+  },
+  "recommendations": {
+    "title": "Gợi ý",
+    "generating": "Đang tạo gợi ý...",
+    "empty": "Chưa có gợi ý nào.",
+    "tryAgain": "Thử lại",
+    "goToSettings": "Mở Cài đặt",
+    "retry": "Thử lại"
+  }
+}

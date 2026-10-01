@@ -32,8 +32,8 @@
     }
   },
   "autoLanguageNotice": {
-    "title": "Interface language matched your browser",
-    "description": "EchoType is currently using {{language}} because that matches your browser. You can change it any time in Settings.",
+    "title": "Interface language is Vietnamese by default",
+    "description": "FlashDay defaults to {{language}} for Vietnamese learners. You can change it any time in Settings.",
     "cta": "Review language settings"
   },
   "aiSetup": {

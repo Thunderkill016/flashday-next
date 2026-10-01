@@ -33,6 +33,7 @@ import { savePracticeSession } from '@/lib/daily-plan-progress';
 import { toLocalDateKey } from '@/lib/date-key';
 import { db } from '@/lib/db';
 import enWordBook from '@/lib/i18n/messages/word-book-practice/en.json';
+import viWordBook from '@/lib/i18n/messages/word-book-practice/vi.json';
 import zhWordBook from '@/lib/i18n/messages/word-book-practice/zh.json';
 import {
   getIOSNativeQAMockTranslation,
@@ -65,7 +66,7 @@ import type { ContentItem } from '@/types/content';
 import type { PracticeModule } from '@/types/translation';
 import type { WordBook } from '@/types/wordbook';
 
-const WB_LOCALES = { en: enWordBook, zh: zhWordBook } as const;
+const WB_LOCALES = { en: enWordBook, vi: viWordBook, zh: zhWordBook } as const;
 
 // ─── Types ───────────────────────────────────────────────────────────────────
 
@@ -497,19 +498,27 @@ function WritePractice({
       />
       {saving && (
         <p role="status" className="text-center text-sm text-slate-600">
-          {lang === 'zh' ? '正在保存练习…' : 'Saving practice…'}
+          {lang === 'zh' ? '正在保存练习…' : lang === 'vi' ? 'Đang lưu bài luyện…' : 'Saving practice…'}
         </p>
       )}
       {saveError && (
         <p role="alert" className="text-center text-sm text-red-600">
           {lang === 'zh'
             ? '保存失败，答案已保留，请重试。'
-            : 'Could not save practice. Your answer is kept; please retry.'}
+            : lang === 'vi'
+              ? 'Không lưu được. Câu trả lời được giữ, hãy thử lại.'
+              : 'Could not save practice. Your answer is kept; please retry.'}
         </p>
       )}
       {result === 'correct' && (
         <p role="status" className="text-center text-green-600 font-medium text-sm">
-          {onCorrect ? t.write.correct : lang === 'zh' ? '答对了，练习已保存。' : 'Correct! Practice saved.'}
+          {onCorrect
+            ? t.write.correct
+            : lang === 'zh'
+              ? '答对了，练习已保存。'
+              : lang === 'vi'
+                ? 'Đúng rồi, bài luyện đã được lưu.'
+                : 'Correct! Practice saved.'}
         </p>
       )}
       {result === 'wrong' && (
@@ -1026,7 +1035,14 @@ const encourageMessagesZh: Record<string, string> = {
   write: '打字水平在提升——明天继续进步！',
 };
 
-const encourageMessagesByLang = { en: encourageMessagesEn, zh: encourageMessagesZh };
+const encourageMessagesVi: Record<string, string> = {
+  listen: 'Tai bạn đang nhạy hơn rồi — ngày mai luyện tiếp nhé!',
+  speak: 'Luyện phát âm tốt lắm — giữ chuỗi ngày mai nhé!',
+  read: 'Buổi đọc tuyệt vời — hẹn gặp ngày mai!',
+  write: 'Kỹ năng gõ của bạn đang lên trình — ngày mai tiếp tục nhé!',
+};
+
+const encourageMessagesByLang = { en: encourageMessagesEn, vi: encourageMessagesVi, zh: encourageMessagesZh };
 
 function WordBookCompleteScreen({
   module,

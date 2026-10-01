@@ -1,0 +1,46 @@
+{
+  "page": {
+    "title": "Ôn tập hôm nay",
+    "description": "Ưu tiên các mục đến hạn trước. Muốn học bài mới thì quay lại Tổng quan và tiếp tục kế hoạch hôm nay.",
+    "loading": "Đang tải bài ôn hôm nay...",
+    "backToDashboard": "Về Tổng quan"
+  },
+  "progress": {
+    "cleared": "Đã xong {{completed}}/{{total}} trong lượt này",
+    "remaining": "Còn {{count}} mục cần ôn",
+    "remainingPlural": "Còn {{count}} mục cần ôn",
+    "refresh": "Làm mới"
+  },
+  "empty": {
+    "doneTitle": "Đã ôn xong bài hôm nay",
+    "doneDescription": "Bạn đã hoàn thành mọi mục đến hạn. Quay lại sau khi có thêm mục mới.",
+    "noDueTitle": "Chưa có mục nào đến hạn",
+    "noDueDescription": "Khi đến giờ ôn, các mục sẽ tự động xuất hiện ở đây."
+  },
+  "current": {
+    "label": "Đang ôn",
+    "openPractice": "Mở trang luyện đầy đủ",
+    "hint": "Bạn có thể ôn ngay bên dưới, hoặc mở trang module nếu cần quy trình đầy đủ."
+  },
+  "upNext": {
+    "title": "Tiếp theo",
+    "lastItem": "Đây là mục cuối cùng đến hạn lúc này."
+  },
+  "inline": {
+    "title": "Ôn ngay tại đây",
+    "description": "Hoàn thành mục này ở đây và hàng đợi sẽ tự chuyển tiếp."
+  },
+  "rating": {
+    "question": "Bạn nhớ tốt thế nào?",
+    "again": "Quên",
+    "hard": "Khó",
+    "good": "Tốt",
+    "easy": "Dễ"
+  },
+  "modules": {
+    "listen": "Nghe",
+    "speak": "Nói",
+    "read": "Đọc",
+    "write": "Viết"
+  }
+}

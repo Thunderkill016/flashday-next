@@ -1,0 +1,54 @@
+{
+  "languageNames": {
+    "vi": "Tiếng Việt",
+    "en": "Tiếng Anh",
+    "zh": "Tiếng Trung"
+  },
+  "nativeLanguageNames": {
+    "vi": "Tiếng Việt",
+    "en": "English",
+    "zh": "中文"
+  },
+  "actions": {
+    "settings": "Cài đặt",
+    "refresh": "Làm mới",
+    "dismiss": "Bỏ qua",
+    "import": "Nhập",
+    "loading": "Đang tải...",
+    "save": "Lưu",
+    "cancel": "Huỷ",
+    "close": "Đóng",
+    "retry": "Thử lại",
+    "uploadJsonBackupFile": "Tải lên tệp sao lưu .json"
+  },
+  "labels": {
+    "learningTarget": "Ngôn ngữ đang học",
+    "english": "Tiếng Anh"
+  },
+  "descriptions": {
+    "learningTarget": "Ngôn ngữ bạn đang học"
+  },
+  "status": {
+    "availableOnThisPage": "Có sẵn ở trang này",
+    "unavailableOnThisPage": "Không có ở trang này",
+    "saved": "Đã lưu",
+    "custom": "Tuỳ chỉnh",
+    "default": "Mặc định",
+    "editing": "Đang sửa",
+    "clear": "Xoá"
+  },
+  "appShell": {
+    "loading": "Đang tải cài đặt ngôn ngữ..."
+  },
+  "timeAgo": {
+    "justNow": "vừa xong",
+    "minutesAgo": "{{count}} phút trước",
+    "hoursAgo": "{{count}} giờ trước",
+    "daysAgo": "{{count}} ngày trước",
+    "monthsAgo": "{{count}} tháng trước"
+  },
+  "streak": {
+    "day": "ngày",
+    "days": "ngày"
+  }
+}

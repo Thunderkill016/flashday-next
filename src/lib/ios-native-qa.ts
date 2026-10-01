@@ -130,7 +130,11 @@ function normalizeNativeQATranslationText(text: string) {
 }
 
 export function getIOSNativeQAMockTranslation(text: string, targetLang: string) {
-  const prefix = targetLang.toLowerCase().startsWith('zh') ? '练习' : 'Practice';
+  const prefix = targetLang.toLowerCase().startsWith('zh')
+    ? '练习'
+    : targetLang.toLowerCase().startsWith('vi')
+      ? 'Luyện tập'
+      : 'Practice';
   return `${prefix}：${normalizeNativeQATranslationText(text)}`;
 }
 

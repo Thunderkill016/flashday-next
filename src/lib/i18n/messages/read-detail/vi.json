@@ -1,0 +1,35 @@
+{
+  "notFound": {
+    "title": "Không tìm thấy nội dung",
+    "description": "Nội dung có thể đã bị xoá hoặc liên kết không hợp lệ.",
+    "goToLibrary": "Đến thư viện"
+  },
+  "header": {
+    "subtitle": "Chế độ đọc to"
+  },
+  "content": {
+    "referenceText": "Văn bản gốc",
+    "stop": "Dừng",
+    "listenAlong": "Nghe theo"
+  },
+  "recording": {
+    "reset": "Làm lại",
+    "processingSpeech": "Đang xử lý giọng nói...",
+    "speechNotSupported": "Trình duyệt này không hỗ trợ nhận dạng giọng nói.",
+    "failedToStart": "Không bắt đầu ghi âm được: {{error}}"
+  },
+  "results": {
+    "title": "Kết quả của bạn",
+    "pronunciationFeedback": "Phản hồi phát âm",
+    "analyzingPronunciation": "Đang phân tích phát âm...",
+    "rawTranscript": "Transcript gốc"
+  },
+  "errors": {
+    "ttsFailed": "Tổng hợp giọng thất bại. Thử lại hoặc đổi nguồn giọng khác."
+  },
+  "a11y": {
+    "processingSpeech": "Đang xử lý giọng nói",
+    "stopRecording": "Dừng ghi âm",
+    "startRecording": "Bắt đầu ghi âm"
+  }
+}

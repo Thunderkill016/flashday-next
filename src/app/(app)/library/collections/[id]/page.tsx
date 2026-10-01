@@ -16,6 +16,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { detectIOSNativeHost, reportNativeQAState } from '@/lib/tauri';
 import { useCollectionStore } from '@/stores/collection-store';
 import { useContentStore } from '@/stores/content-store';
+import { useLanguageStore } from '@/stores/language-store';
 import { useShadowReadingStore } from '@/stores/shadow-reading-store';
 import type { ContentItem } from '@/types/content';
 
@@ -26,6 +27,7 @@ const difficultyColors: Record<string, string> = {
 };
 
 export default function CollectionDetailPage() {
+  const language = useLanguageStore((s) => s.interfaceLanguage);
   const isIOSNativeHost = detectIOSNativeHost();
   const params = useParams<{ id: string }>();
   const router = useRouter();
@@ -87,6 +89,7 @@ export default function CollectionDetailPage() {
     await updateCollection(collection.id, {
       title,
       titleZh: title,
+      titleVi: title,
       description: description?.trim() || collection.description,
       descriptionZh: description?.trim() || collection.descriptionZh,
     });
@@ -197,7 +200,7 @@ export default function CollectionDetailPage() {
             icon={BookOpen}
             tone="indigo"
             title={collection.title}
-            description={`${collection.titleZh}. ${collection.description}`}
+            description={`${language === 'vi' ? (collection.titleVi ?? collection.titleZh) : collection.titleZh}. ${collection.description}`}
             badge={`${collection.itemIds.length} items`}
             action={
               <Link href="/library">
@@ -218,9 +221,15 @@ export default function CollectionDetailPage() {
               <span className="text-4xl">{collection.icon}</span>
               <div className="flex-1 min-w-0">
                 <h1 className="text-2xl font-bold font-[var(--font-poppins)] text-indigo-900">{collection.title}</h1>
-                <p className="text-indigo-500 mt-0.5">{collection.titleZh}</p>
+                <p className="text-indigo-500 mt-0.5">
+                  {language === 'vi' ? (collection.titleVi ?? collection.titleZh) : collection.titleZh}
+                </p>
                 <p className="text-sm text-slate-500 mt-2">{collection.description}</p>
-                <p className="text-sm text-slate-400 mt-0.5">{collection.descriptionZh}</p>
+                <p className="text-sm text-slate-400 mt-0.5">
+                  {language === 'vi'
+                    ? (collection.descriptionVi ?? collection.descriptionZh)
+                    : collection.descriptionZh}
+                </p>
                 <div className="flex items-center gap-2 mt-3 flex-wrap">
                   <Badge className={difficultyColors[collection.difficulty]} variant="secondary">
                     {collection.difficulty}

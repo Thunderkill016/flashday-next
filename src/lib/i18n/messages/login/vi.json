@@ -1,0 +1,21 @@
+{
+  "title": "Đăng nhập EchoType",
+  "subtitle": "Đồng bộ tiến độ học trên mọi thiết bị",
+  "checkEmail": "Kiểm tra email",
+  "otpSentTo": "Chúng tôi đã gửi liên kết đăng nhập tới",
+  "otpHint": "Nhấn vào liên kết trong email, hoặc nhập mã 6 số bên dưới nếu có.",
+  "emailLabel": "Địa chỉ email",
+  "emailPlaceholder": "ban@example.com",
+  "continueWithEmail": "Tiếp tục bằng email",
+  "sendingCode": "Đang gửi...",
+  "verifying": "Đang xác minh...",
+  "resendCode": "Gửi lại",
+  "back": "Quay lại",
+  "orContinueWith": "hoặc tiếp tục bằng email",
+  "continueWithout": "Tiếp tục không cần tài khoản",
+  "authFailed": "Đăng nhập thất bại. Vui lòng thử lại.",
+  "checkSpam": "Nếu không thấy email, hãy kiểm tra thư mục spam.",
+  "errorSendingEmail": "Không gửi được email xác minh. Vui lòng thử lại sau.",
+  "errorRateLimit": "Quá nhiều yêu cầu. Vui lòng đợi một lát rồi thử lại.",
+  "errorInvalidOtp": "Mã không hợp lệ hoặc đã hết hạn. Vui lòng thử lại."
+}

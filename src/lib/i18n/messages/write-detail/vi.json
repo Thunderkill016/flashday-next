@@ -1,0 +1,38 @@
+{
+  "header": {
+    "errorReview": "Ôn lỗi",
+    "subtitle": "Chế độ viết"
+  },
+  "stats": {
+    "wpm": "WPM",
+    "words": "từ"
+  },
+  "toolbar": {
+    "listen": "Nghe",
+    "listenTitle": "Nghe văn bản",
+    "reset": "Làm lại"
+  },
+  "content": {
+    "referenceText": "Văn bản gốc",
+    "referenceHint": "Cấu trúc đoạn gốc được giữ nguyên ở đây trong khi bạn gõ."
+  },
+  "typing": {
+    "inputLabel": "Ô nhập liệu",
+    "startHint": "Nhấn vào đây và bắt đầu gõ...",
+    "paused": "Tạm dừng",
+    "resume": "Tiếp tục",
+    "resumeHint": "hoặc nhấn Enter"
+  },
+  "completion": {
+    "title": "Hoàn thành buổi học!",
+    "encouragement": "Kỹ năng gõ của bạn đang lên trình — quay lại ngày mai để tiếp tục nhé!",
+    "time": "Thời gian",
+    "accuracy": "Độ chính xác",
+    "errors": "Lỗi",
+    "errorWords": "Từ sai",
+    "reviewErrors": "Ôn từ sai",
+    "fullTextAgain": "Gõ lại cả bài",
+    "tryAgain": "Thử lại",
+    "backToDashboard": "Về Tổng quan"
+  }
+}

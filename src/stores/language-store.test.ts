@@ -36,17 +36,16 @@ describe('language-store', () => {
     });
   });
 
-  it('detects zh browser locales', () => {
-    expect(detectInterfaceLanguage('zh-CN')).toBe('zh');
-    expect(detectInterfaceLanguage('zh-TW')).toBe('zh');
+  it('defaults fresh installs to vietnamese regardless of browser locale', () => {
+    expect(detectInterfaceLanguage('zh-CN')).toBe('vi');
+    expect(detectInterfaceLanguage('zh-TW')).toBe('vi');
+    expect(detectInterfaceLanguage('en-US')).toBe('vi');
+    expect(detectInterfaceLanguage('vi-VN')).toBe('vi');
+    expect(detectInterfaceLanguage()).toBe('vi');
+    expect(detectInterfaceLanguage(null)).toBe('vi');
   });
 
-  it('defaults to english when browser locale is missing', () => {
-    expect(detectInterfaceLanguage()).toBe('en');
-    expect(detectInterfaceLanguage(null)).toBe('en');
-  });
-
-  it('initializes from browser language when no explicit preference exists', () => {
+  it('initializes to vietnamese when no explicit preference exists', () => {
     Object.defineProperty(globalThis, 'navigator', {
       configurable: true,
       value: { language: 'zh-CN' },
@@ -55,7 +54,7 @@ describe('language-store', () => {
     useLanguageStore.getState().initialize();
 
     expect(useLanguageStore.getState()).toMatchObject({
-      interfaceLanguage: 'zh',
+      interfaceLanguage: 'vi',
       hasExplicitPreference: false,
       initialized: true,
     });
@@ -107,8 +106,30 @@ describe('language-store', () => {
     useLanguageStore.getState().initialize();
 
     expect(useLanguageStore.getState()).toMatchObject({
-      interfaceLanguage: 'zh',
+      interfaceLanguage: 'vi',
       hasExplicitPreference: false,
+      initialized: true,
+    });
+  });
+
+  it('preserves an explicitly stored chinese preference', () => {
+    storage.set(
+      'echotype_language_settings',
+      JSON.stringify({
+        interfaceLanguage: 'zh',
+        hasExplicitPreference: true,
+      }),
+    );
+    Object.defineProperty(globalThis, 'navigator', {
+      configurable: true,
+      value: { language: 'vi-VN' },
+    });
+
+    useLanguageStore.getState().initialize();
+
+    expect(useLanguageStore.getState()).toMatchObject({
+      interfaceLanguage: 'zh',
+      hasExplicitPreference: true,
       initialized: true,
     });
   });

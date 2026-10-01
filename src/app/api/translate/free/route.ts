@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { DEFAULT_TRANSLATION_TARGET } from '@/lib/i18n/locale';
 
 const TRANSLATION_CONCURRENCY = 4;
 
@@ -19,7 +20,7 @@ class UpstreamTranslateError extends Error {
 export async function POST(req: NextRequest) {
   try {
     const body: { text?: string; sentences?: string[]; targetLang?: string } = await req.json();
-    const { text, sentences, targetLang = 'zh-CN' } = body;
+    const { text, sentences, targetLang = DEFAULT_TRANSLATION_TARGET } = body;
 
     if ((!text && (!sentences || sentences.length === 0)) || !targetLang) {
       return NextResponse.json({ error: 'Missing text/sentences or targetLang' }, { status: 400 });

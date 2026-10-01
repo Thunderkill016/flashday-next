@@ -15,6 +15,7 @@ import { useConversation } from '@/hooks/use-conversation';
 import { useI18n } from '@/lib/i18n/use-i18n';
 import { getScenarioById } from '@/lib/scenarios';
 import { detectIOSNativeHost, reportNativeQAState } from '@/lib/tauri';
+import { useLanguageStore } from '@/stores/language-store';
 import { useTTSStore } from '@/stores/tts-store';
 
 const difficultyColors: Record<string, string> = {
@@ -24,6 +25,7 @@ const difficultyColors: Record<string, string> = {
 };
 
 export default function ConversationPage() {
+  const language = useLanguageStore((s) => s.interfaceLanguage);
   const { messages: t } = useI18n('speak');
   const params = useParams();
   const scenarioId = params.scenarioId as string;
@@ -103,7 +105,9 @@ export default function ConversationPage() {
           </Link>
           <div className="flex-1 min-w-0">
             <h1 className="text-lg font-bold font-[var(--font-poppins)] text-indigo-900 truncate">{scenario.title}</h1>
-            <p className="text-xs text-indigo-400 truncate">{scenario.titleZh}</p>
+            <p className="text-xs text-indigo-400 truncate">
+              {language === 'vi' ? (scenario.titleVi ?? scenario.titleZh) : scenario.titleZh}
+            </p>
           </div>
           <Badge variant="outline" className={`text-[10px] px-1.5 py-0 ${difficultyColors[scenario.difficulty]}`}>
             {scenario.difficulty}

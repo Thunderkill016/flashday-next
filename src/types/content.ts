@@ -124,8 +124,10 @@ export interface CollectionItem {
   id: string;
   title: string;
   titleZh: string;
+  titleVi?: string;
   description: string;
   descriptionZh: string;
+  descriptionVi?: string;
   scenario: string;
   category: string;
   difficulty: Difficulty;

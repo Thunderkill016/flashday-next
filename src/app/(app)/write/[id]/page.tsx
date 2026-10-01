@@ -24,6 +24,7 @@ import { splitContentBlocks } from '@/lib/content-format';
 import { savePracticeSession } from '@/lib/daily-plan-progress';
 import { db } from '@/lib/db';
 import enWriteDetail from '@/lib/i18n/messages/write-detail/en.json';
+import viWriteDetail from '@/lib/i18n/messages/write-detail/vi.json';
 import zhWriteDetail from '@/lib/i18n/messages/write-detail/zh.json';
 import { getIOSNativeQAMode } from '@/lib/ios-native-qa';
 import { alignPracticeTranslations } from '@/lib/practice-translation';
@@ -39,7 +40,7 @@ import { useShortcutStore } from '@/stores/shortcut-store';
 import { useTTSStore } from '@/stores/tts-store';
 import type { ContentItem } from '@/types/content';
 
-const WRITE_DETAIL_LOCALES = { en: enWriteDetail, zh: zhWriteDetail } as const;
+const WRITE_DETAIL_LOCALES = { en: enWriteDetail, vi: viWriteDetail, zh: zhWriteDetail } as const;
 
 const charColorMap = {
   pending: 'text-slate-600',

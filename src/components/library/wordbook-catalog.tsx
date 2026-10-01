@@ -6,6 +6,7 @@ import { useEffect, useMemo, useState } from 'react';
 import { IOS_PAGE_CONTAINER_CLASS, IOS_SECTION_CARD_CLASS } from '@/components/shared/ios-native-ui';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
+import { useLT } from '@/lib/i18n/locale';
 import { useI18n } from '@/lib/i18n/use-i18n';
 import { detectIOSNativeHost, reportNativeQAState } from '@/lib/tauri';
 import { cn } from '@/lib/utils';
@@ -52,7 +53,7 @@ const DIFFICULTY_CLASSNAMES = {
 // ─── WordBook Card ─────────────────────────────────────────────────────────────
 
 function WordBookCard({ book }: { book: WordBook }) {
-  const zh = useLanguageStore((s) => s.interfaceLanguage) === 'zh';
+  const t = useLT();
   const { isImported, importWordBook, removeWordBook } = useWordBookStore();
   const { loadContents } = useContentStore();
   const { messages } = useI18n('wordbooks');
@@ -133,7 +134,7 @@ function WordBookCard({ book }: { book: WordBook }) {
             href={`/learn/${encodeURIComponent(`unit:category:${book.id}`)}`}
             className="mb-2 flex min-h-11 items-center justify-center gap-2 rounded-xl bg-indigo-600 px-4 text-sm font-semibold text-white focus-visible:ring-2 active:scale-95 motion-reduce:transform-none"
           >
-            {zh ? '学习' : 'Study'} <ArrowRight className="h-4 w-4" />
+            {t('Study', '学习', 'Học')} <ArrowRight className="h-4 w-4" />
           </Link>
         )}
         {imported ? (

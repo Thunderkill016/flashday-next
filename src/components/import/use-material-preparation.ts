@@ -20,8 +20,8 @@ import type { ImportJob, ImportSourceBlock } from '@/types/import-job';
 
 /** Headless source processing and account-scoped persistence. No presentation dependencies. */
 export function useMaterialPreparation(onImported?: () => void) {
-  const zh = useLanguageStore((state) => state.interfaceLanguage) === 'zh';
-  const t = (en: string, cn: string) => (zh ? cn : en);
+  const language = useLanguageStore((s) => s.interfaceLanguage);
+  const t = (en: string, cn: string, vi: string) => (language === 'zh' ? cn : language === 'vi' ? vi : en);
   const ownerId = useAuthStore((state) => state.user?.id || 'guest');
   const [database, setDatabase] = useState(db);
   const jobs = useLiveQuery(() => database.importJobs.orderBy('createdAt').reverse().toArray(), [database], []);
@@ -92,7 +92,7 @@ export function useMaterialPreparation(onImported?: () => void) {
       return true;
     } catch (failure) {
       if (!(failure instanceof DOMException && failure.name === 'AbortError'))
-        setError(describeImportError(failure, zh));
+        setError(describeImportError(failure, language));
       return false;
     } finally {
       setBusy(false);
@@ -114,13 +114,14 @@ export function useMaterialPreparation(onImported?: () => void) {
               t(
                 'Not enough device storage. Free space or choose a smaller file.',
                 '本机空间不足，请释放空间或选择较小文件。',
+                'Thiết bị không đủ chỗ. Hãy giải phóng dung lượng hoặc chọn tệp nhỏ hơn.',
               ),
             );
         }
       }
       const scope = captureImportScope();
       if (selected?.status === 'needsReview') await persistSelected(selected);
-      setStage(t('Saving original on this device', '正在保存原文件到本机'));
+      setStage(t('Saving original on this device', '正在保存原文件到本机', 'Đang lưu bản gốc trên thiết bị này'));
       const next = await createImportJob({ file, url: file ? undefined : url, ownerId });
       scope.assertActive();
       setActiveIds([next.id]);
@@ -261,10 +262,10 @@ export function useMaterialPreparation(onImported?: () => void) {
       });
       setStage(
         job.kind === 'media'
-          ? t('Transcribing speech', '正在转写语音')
+          ? t('Transcribing speech', '正在转写语音', 'Đang phiên âm giọng nói')
           : job.kind === 'url'
-            ? t('Fetching source text', '正在获取原文')
-            : t('Extracting text', '正在提取正文'),
+            ? t('Fetching source text', '正在获取原文', 'Đang lấy văn bản gốc')
+            : t('Extracting text', '正在提取正文', 'Đang trích xuất văn bản'),
       );
       try {
         let text = '';
@@ -314,7 +315,11 @@ export function useMaterialPreparation(onImported?: () => void) {
         } else {
           if (!job.originalFile)
             throw new Error(
-              t('Original file missing. Reselect the same file to restore it.', '原文件缺失，请重新选择同一个文件。'),
+              t(
+                'Original file missing. Reselect the same file to restore it.',
+                '原文件缺失，请重新选择同一个文件。',
+                'Thiếu tệp gốc. Chọn lại đúng tệp đó để khôi phục.',
+              ),
             );
           const file = new File([job.originalFile], job.filename!, { type: job.mimeType });
           if (/\.(csv|tsv)$/i.test(job.filename || '')) {
@@ -393,7 +398,7 @@ export function useMaterialPreparation(onImported?: () => void) {
         if (!text?.trim() || !blocks.length)
           throw new Error('No readable text found. Try another source or OCR using the existing tools.');
         scope.assertActive();
-        setStage(t('Preparing editable sections', '正在整理可校对内容'));
+        setStage(t('Preparing editable sections', '正在整理可校对内容', 'Đang chuẩn bị các đoạn có thể sửa'));
         await scope.database.transaction('rw', scope.database.importJobs, async () => {
           const current = await scope.database.importJobs.get(job.id);
           if (current?.runId !== runId || current.status !== 'processing') return;
@@ -425,7 +430,7 @@ export function useMaterialPreparation(onImported?: () => void) {
           const next: ImportJob = {
             ...current,
             status: 'failed',
-            error: describeImportError(failure, zh),
+            error: describeImportError(failure, language),
             updatedAt: Date.now(),
           };
           await scope.database.importJobs.put(next);
@@ -592,7 +597,7 @@ export function useMaterialPreparation(onImported?: () => void) {
       setError('');
       selectForReview({ ...selected, blocks, subtitleOffset: offset });
     } catch (failure) {
-      setError(describeImportError(failure, zh));
+      setError(describeImportError(failure, language));
     }
   };
   const cancel = () =>
@@ -633,7 +638,6 @@ export function useMaterialPreparation(onImported?: () => void) {
       setSelected(next);
     });
   return {
-    zh,
     t,
     jobs,
     activeIds,

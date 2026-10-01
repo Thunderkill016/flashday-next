@@ -1,0 +1,29 @@
+{
+  "page": {
+    "title": "Sổ từ",
+    "subtitle": "Chọn một sách từ vựng hoặc gói tình huống và nhập để bắt đầu luyện",
+    "viewLibrary": "Xem thư viện",
+    "imported": "Đã nhập {{count}}"
+  },
+  "tabs": {
+    "vocabulary": "Sách từ vựng",
+    "scenarios": "Gói tình huống"
+  },
+  "bookCount": "{{count}} sách trong",
+  "bookCountPlural": "{{count}} sách trong",
+  "difficulty": {
+    "beginner": "Cơ bản",
+    "intermediate": "Trung bình",
+    "advanced": "Nâng cao"
+  },
+  "actions": {
+    "remove": "Xoá",
+    "addToLibrary": "Thêm vào thư viện",
+    "adding": "Đang thêm…"
+  },
+  "empty": {
+    "title": "Không có sách trong",
+    "subtitle": "Thử chọn danh mục khác ở trên"
+  },
+  "items": "{{count}} mục"
+}

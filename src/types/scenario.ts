@@ -4,13 +4,16 @@ export interface Scenario {
   id: string;
   title: string;
   titleZh: string;
+  titleVi?: string;
   description: string;
   descriptionZh: string;
+  descriptionVi?: string;
   icon: string;
   category: ScenarioCategory;
   difficulty: 'beginner' | 'intermediate' | 'advanced';
   goals: string[];
   goalsZh: string[];
+  goalsVi?: string[];
   systemPrompt: string;
   openingMessage: string;
   source: 'builtin' | 'custom';

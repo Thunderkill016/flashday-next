@@ -24,6 +24,7 @@ import { useState } from 'react';
 import { UserMenu } from '@/components/auth/user-menu';
 import { Tooltip, TooltipContent, TooltipTrigger } from '@/components/ui/tooltip';
 import { UpdateDialog } from '@/components/updater/update-dialog';
+import { useLT } from '@/lib/i18n/locale';
 import { useI18n } from '@/lib/i18n/use-i18n';
 import { type LearningSection, learningSection, PRIMARY_LEARNING_LINKS } from '@/lib/learning-navigation';
 import { IS_TAURI } from '@/lib/tauri';
@@ -236,17 +237,17 @@ function UpdateIndicator({ collapsed }: { collapsed: boolean }) {
 }
 
 export function Sidebar({ open = false, onOpenChange }: SidebarProps = {}) {
-  const zh = useLanguageStore((s) => s.interfaceLanguage) === 'zh';
+  const t = useLT();
   const pathname = usePathname();
   const [collapsed, setCollapsed] = useState(false);
   const { messages } = useI18n('sidebar');
 
   const navGroups: NavGroup[] = [
     {
-      label: zh ? '学习' : 'Learning',
+      label: t('Learning', '学习', 'Học tập'),
       items: PRIMARY_LEARNING_LINKS.slice(0, 6).map((link) => ({
         ...link,
-        label: zh ? link.zh : link.en,
+        label: t(link.en, link.zh, link.vi),
         icon: {
           today: LayoutDashboard,
           courses: BookOpen,
@@ -260,10 +261,10 @@ export function Sidebar({ open = false, onOpenChange }: SidebarProps = {}) {
       })),
     },
     {
-      label: zh ? '专项训练' : 'Focused practice',
+      label: t('Focused practice', '专项训练', 'Luyện chuyên sâu'),
       items: PRIMARY_LEARNING_LINKS.slice(6).map((link) => ({
         ...link,
-        label: zh ? link.zh : link.en,
+        label: t(link.en, link.zh, link.vi),
         icon: link.section === 'conversation' ? MessageCircle : Volume2,
       })),
     },

@@ -5,11 +5,13 @@ import { ReadAloudContent } from '@/components/read-aloud';
 import { TranslationBar } from '@/components/translation/translation-bar';
 import { useTranslation } from '@/hooks/use-translation';
 import { db } from '@/lib/db';
+import { LOCALE_TAGS } from '@/lib/i18n/locale';
 import { createLearningAttempt } from '@/lib/learning-activity';
 import { persistLearningAttempt } from '@/lib/learning-activity-persistence';
 import { alignPracticeTranslations } from '@/lib/practice-translation';
 import { deriveTextCycle, validateTextCycleAttempt } from '@/lib/text-learning-cycle';
 import { loadWorkshopDraft, saveWorkshopDraft } from '@/lib/workshop-draft';
+import { useLanguageStore } from '@/stores/language-store';
 import { usePracticeTranslationStore } from '@/stores/practice-translation-store';
 import { useTTSStore } from '@/stores/tts-store';
 import type { LearningAttempt, RecallRating } from '@/types/learning-activity';
@@ -23,19 +25,18 @@ const input =
 export function TextCyclePractice({
   lesson,
   stage,
-  zh,
   attempts,
   now,
   sourceWeakSpotId,
 }: {
   lesson: Lesson;
   stage: 'recall' | 'apply';
-  zh: boolean;
   attempts: LearningAttempt[];
   now: number;
   sourceWeakSpotId?: string;
 }) {
-  const t = (en: string, cn: string) => (zh ? cn : en);
+  const language = useLanguageStore((st) => st.interfaceLanguage);
+  const t = (en: string, cn: string, vi: string) => (language === 'zh' ? cn : language === 'vi' ? vi : en);
   const source = lesson.exercises.map((item) => item.text).join('\n\n');
   const cycle = deriveTextCycle(lesson.id, source, attempts, now);
   const reference = attempts.find((item) => item.id === cycle.referenceAttemptId);
@@ -124,15 +125,21 @@ export function TextCyclePractice({
     if (invalid) {
       setMessage(
         invalid === 'expression'
-          ? t('Use an exact source expression in your new example.', '请在新例句中使用一个来自原文的表达。')
+          ? t(
+              'Use an exact source expression in your new example.',
+              '请在新例句中使用一个来自原文的表达。',
+              'Dùng đúng một cách diễn đạt trong bài gốc cho ví dụ mới của bạn.',
+            )
           : invalid === 'context' || invalid === 'new-answer'
             ? t(
                 'Describe a new situation and write your own example, not a copy of the source.',
                 '请描述新情境并自主造句，不要复制原文。',
+                'Mô tả một tình huống mới và tự đặt ví dụ của bạn, không chép bài gốc.',
               )
             : t(
                 'Complete the answer and self-review first. Recall must be due before it can be saved.',
                 '请完成回答与自评，复习需到期后才能保存。',
+                'Hãy hoàn thành câu trả lời và tự đánh giá trước. Phần nhớ lại phải đến hạn mới lưu được.',
               ),
       );
       return;
@@ -144,10 +151,15 @@ export function TextCyclePractice({
       setSaved(true);
       setMessage(
         stage === 'recall'
-          ? t('Recall saved. Your next review is scheduled from this result.', '复习已保存，下一次复习已根据结果安排。')
+          ? t(
+              'Recall saved. Your next review is scheduled from this result.',
+              '复习已保存，下一次复习已根据结果安排。',
+              'Đã lưu. Lần ôn tiếp theo được xếp theo kết quả này.',
+            )
           : t(
               'Application saved. Keep using this expression in real situations.',
               '运用已保存，请继续在真实情境中使用。',
+              'Đã lưu phần vận dụng. Tiếp tục dùng cách diễn đạt này trong tình huống thật.',
             ),
       );
       // Clear only this saved draft, never immutable learning evidence.
@@ -158,7 +170,14 @@ export function TextCyclePractice({
       );
       setDraftError(!!result.error);
     } catch {
-      if (isCurrent()) setMessage(t('Save failed. Your answer is still here; retry.', '保存失败，回答仍在，请重试。'));
+      if (isCurrent())
+        setMessage(
+          t(
+            'Save failed. Your answer is still here; retry.',
+            '保存失败，回答仍在，请重试。',
+            'Lưu thất bại. Câu trả lời vẫn còn đây, thử lại.',
+          ),
+        );
     } finally {
       if (isCurrent()) setBusy(false);
     }
@@ -166,37 +185,40 @@ export function TextCyclePractice({
   return (
     <section
       className="space-y-4 rounded-2xl bg-white p-4 shadow-sm sm:p-6"
-      aria-label={t('Recall and apply', '复习与运用')}
+      aria-label={t('Recall and apply', '复习与运用', 'Nhớ lại và vận dụng')}
     >
       <h3 className="text-lg font-semibold text-indigo-950">
         {stage === 'recall'
-          ? t('Recall before looking', '先回忆，再对照')
-          : t('Use it in your own life', '用在自己的生活中')}
+          ? t('Recall before looking', '先回忆，再对照', 'Nhớ trước khi xem')
+          : t('Use it in your own life', '用在自己的生活中', 'Dùng trong đời sống của bạn')}
       </h3>
       <p className="text-sm leading-6 text-slate-600">
         {stage === 'recall'
           ? t(
               'Without opening the source, explain its main idea and a detail. Then compare and rate honestly. This is self-review, not an automatic score.',
               '先不看原文，回忆主旨与一个细节。提交对照后如实自评，这不是自动评分。',
+              'Không mở bài gốc, hãy nêu ý chính và một chi tiết. Sau đó đối chiếu và chấm thật. Đây là tự đánh giá, không phải điểm tự động.',
             )
           : t(
               'Choose an expression, describe a different situation, and write a new example using it.',
               '选一个原文表达，描述不同的新情境，并用它写一个自己的例句。',
+              'Chọn một cách diễn đạt, mô tả tình huống khác, rồi viết ví dụ mới của bạn.',
             )}
       </p>
       {!available && !saved && (
         <div className="rounded-xl bg-indigo-50 p-4 text-sm text-indigo-950">
           <p className="font-semibold">
             {stage === 'recall' && reference
-              ? t('Recall scheduled', '复习已安排')
-              : t('Finish the earlier stages first', '请先完成前面的阶段')}
+              ? t('Recall scheduled', '复习已安排', 'Đã xếp lịch ôn')
+              : t('Finish the earlier stages first', '请先完成前面的阶段', 'Hãy hoàn thành các giai đoạn trước đã')}
           </p>
           <p>
             {cycle.dueAt && stage === 'recall'
-              ? `${t('Due: ', '到期：')}${new Date(cycle.dueAt).toLocaleString(zh ? 'zh-CN' : 'en-US')}`
+              ? `${t('Due: ', '到期：', 'Đến hạn: ')}${new Date(cycle.dueAt).toLocaleString(LOCALE_TAGS[language])}`
               : t(
                   'Save comprehension, an original response and a correction; recall it later before applying it.',
                   '先保存理解、原创输出和纠错；延迟复习后再进行运用。',
+                  'Lưu phần hiểu bài, câu trả lời tự viết và bản sửa; ôn lại sau trước khi vận dụng.',
                 )}
           </p>
         </div>
@@ -206,6 +228,7 @@ export function TextCyclePractice({
           {t(
             'Draft storage is unavailable. Keep this page open until you save your answer.',
             '草稿存储不可用，请保留页面直至保存回答。',
+            'Không lưu được nháp. Giữ trang mở cho tới khi lưu xong câu trả lời.',
           )}
         </p>
       )}
@@ -219,12 +242,12 @@ export function TextCyclePractice({
             setAssisted(true);
           }}
         >
-          {t('Show a hint · counts as assisted', '查看提示 · 记录为辅助练习')}
+          {t('Show a hint · counts as assisted', '查看提示 · 记录为辅助练习', 'Xem gợi ý · tính là có hỗ trợ')}
         </button>
       )}
       {visible && (
         <div className="rounded-xl bg-slate-50 p-4">
-          <p className="text-sm font-semibold text-indigo-950">{t('Source material', '原文材料')}</p>
+          <p className="text-sm font-semibold text-indigo-950">{t('Source material', '原文材料', 'Tài liệu gốc')}</p>
           <TranslationBar module="read" />
           <div className="max-h-56 overflow-y-auto text-base leading-7 text-slate-800">
             <ReadAloudContent
@@ -232,16 +255,18 @@ export function TextCyclePractice({
               showTranslation={showTranslation}
               sentenceTranslations={alignPracticeTranslations(source, translations.sentenceTranslations)}
             />
-            {showTranslation && translations.isLoading && <p>{t('Translating…', '翻译中…')}</p>}
+            {showTranslation && translations.isLoading && <p>{t('Translating…', '翻译中…', 'Đang dịch…')}</p>}
             {showTranslation && translations.error && (
               <button type="button" className={button} onClick={translations.retry}>
-                {t('Retry translation', '重试翻译')}
+                {t('Retry translation', '重试翻译', 'Dịch lại')}
               </button>
             )}
           </div>
           {compared && reference && (
             <div className="mt-3 text-sm text-slate-700">
-              <h4 className="font-semibold">{t('Your earlier correction', '之前的修改稿')}</h4>
+              <h4 className="font-semibold">
+                {t('Your earlier correction', '之前的修改稿', 'Bản sửa trước đó của bạn')}
+              </h4>
               <p className="whitespace-pre-wrap">{reference.answer}</p>
               <p className="mt-2">{reference.feedback.notes}</p>
             </div>
@@ -251,7 +276,7 @@ export function TextCyclePractice({
       {stage === 'apply' && (
         <>
           <label className="block text-sm font-medium">
-            {t('Expression from the source', '原文中的表达')}
+            {t('Expression from the source', '原文中的表达', 'Cách diễn đạt trong bài gốc')}
             <input
               className={input}
               value={expression}
@@ -260,7 +285,7 @@ export function TextCyclePractice({
             />
           </label>
           <label className="block text-sm font-medium">
-            {t('New situation', '新情境')}
+            {t('New situation', '新情境', 'Tình huống mới')}
             <textarea
               className={input}
               value={context}
@@ -271,7 +296,9 @@ export function TextCyclePractice({
         </>
       )}
       <label className="block text-sm font-medium">
-        {stage === 'recall' ? t('Recall from memory', '凭记忆回答') : t('Your new example', '你的新例句')}
+        {stage === 'recall'
+          ? t('Recall from memory', '凭记忆回答', 'Nhớ từ trí nhớ')
+          : t('Your new example', '你的新例句', 'Ví dụ mới của bạn')}
         <textarea
           className={input}
           value={answer}
@@ -288,12 +315,14 @@ export function TextCyclePractice({
               disabled={busy || saved || !available || !answer.trim()}
               onClick={() => setCompared(true)}
             >
-              {t('Compare my answer', '对照我的回答')}
+              {t('Compare my answer', '对照我的回答', 'Đối chiếu câu trả lời của tôi')}
             </button>
           )}
           {compared && (
             <fieldset disabled={busy || saved} className="space-y-2">
-              <legend className="mb-2 text-sm font-semibold">{t('How did you recall it?', '回忆情况如何？')}</legend>
+              <legend className="mb-2 text-sm font-semibold">
+                {t('How did you recall it?', '回忆情况如何？', 'Bạn nhớ thế nào?')}
+              </legend>
               {(['again', 'hard', 'good', 'easy'] as RecallRating[]).map((value) => (
                 <label key={value} className="flex min-h-11 items-center gap-2 text-sm">
                   <input
@@ -305,10 +334,14 @@ export function TextCyclePractice({
                   />
                   {
                     {
-                      again: t('Again · missed key information', '重来 · 遗漏关键信息'),
-                      hard: t('Hard · recalled with effort', '困难 · 费力回忆出来'),
-                      good: t('Good · recalled independently', '良好 · 独立回忆出来'),
-                      easy: t('Easy · recalled confidently', '轻松 · 顺利回忆出来'),
+                      again: t(
+                        'Again · missed key information',
+                        '重来 · 遗漏关键信息',
+                        'Lại · bỏ sót thông tin quan trọng',
+                      ),
+                      hard: t('Hard · recalled with effort', '困难 · 费力回忆出来', 'Khó · phải cố mới nhớ ra'),
+                      good: t('Good · recalled independently', '良好 · 独立回忆出来', 'Tốt · tự nhớ ra'),
+                      easy: t('Easy · recalled confidently', '轻松 · 顺利回忆出来', 'Dễ · nhớ ngay'),
                     }[value]
                   }
                 </label>
@@ -320,6 +353,7 @@ export function TextCyclePractice({
               {t(
                 'Hint used. This remains assisted practice regardless of your rating; you will retry sooner.',
                 '使用过提示。本次会记录为辅助练习，不受自评分档影响，并安排较早重试。',
+                'Đã dùng gợi ý. Lần này vẫn tính là luyện có hỗ trợ bất kể mức tự chấm; bạn sẽ ôn lại sớm hơn.',
               )}
             </p>
           )}
@@ -332,10 +366,10 @@ export function TextCyclePractice({
         onClick={() => void save()}
       >
         {busy
-          ? t('Saving…', '保存中…')
+          ? t('Saving…', '保存中…', 'Đang lưu…')
           : stage === 'recall'
-            ? t('Save recall', '保存复习')
-            : t('Save application', '保存运用')}
+            ? t('Save recall', '保存复习', 'Lưu lần nhớ lại')
+            : t('Save application', '保存运用', 'Lưu phần vận dụng')}
       </button>
       {message && (
         <p role="status" className="text-sm text-indigo-700">

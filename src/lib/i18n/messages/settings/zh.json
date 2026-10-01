@@ -231,6 +231,7 @@
   "translation": {
     "targetLanguage": "目标语言",
     "languageOptions": {
+      "vi": "越南语 (Vietnamese)",
       "en": "英语（English）",
       "zhCN": "中文（Chinese）",
       "ja": "日本語（Japanese）",

@@ -12,11 +12,12 @@ import {
   DialogTitle,
 } from '@/components/ui/dialog';
 import enUpdater from '@/lib/i18n/messages/updater/en.json';
+import viUpdater from '@/lib/i18n/messages/updater/vi.json';
 import zhUpdater from '@/lib/i18n/messages/updater/zh.json';
 import { useLanguageStore } from '@/stores/language-store';
 import { useUpdaterStore } from '@/stores/updater-store';
 
-const UPDATER_LOCALES = { en: enUpdater, zh: zhUpdater } as const;
+const UPDATER_LOCALES = { en: enUpdater, vi: viUpdater, zh: zhUpdater } as const;
 
 export function UpdateDialog() {
   const t = UPDATER_LOCALES[useLanguageStore((s) => s.interfaceLanguage)];

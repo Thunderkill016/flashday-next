@@ -3,12 +3,13 @@ import { nanoid } from 'nanoid';
 import { useEffect, useRef, useState } from 'react';
 import { useMediaUrl } from '@/hooks/use-media-url';
 import { savePracticeSession } from '@/lib/daily-plan-progress';
+import { useLT } from '@/lib/i18n/locale';
 import { useLanguageStore } from '@/stores/language-store';
 import type { ContentItem } from '@/types/content';
 
 export function LessonMedia({ item }: { item: ContentItem }) {
   const url = useMediaUrl(item.metadata?.audioUrl);
-  const zh = useLanguageStore((s) => s.interfaceLanguage) === 'zh';
+  const t = useLT();
   const ref = useRef<HTMLVideoElement>(null);
   const seen = useRef(new Set<number>());
   const last = useRef<number | null>(null);
@@ -72,7 +73,13 @@ export function LessonMedia({ item }: { item: ContentItem }) {
           { content: item },
         ).catch(() => {
           saved.current = false;
-          setError(zh ? '保存失败，请重新播放后重试。' : 'Could not save. Replay to retry.');
+          setError(
+            t(
+              'Could not save. Replay to retry.',
+              '保存失败，请重新播放后重试。',
+              'Không lưu được. Phát lại rồi thử lại.',
+            ),
+          );
         });
       }
     }
@@ -80,7 +87,7 @@ export function LessonMedia({ item }: { item: ContentItem }) {
   if (video && /^[\w-]{1,20}$/.test(youtubeId))
     return (
       <iframe
-        title={zh ? '课程视频' : 'Lesson video'}
+        title={t('Lesson video', '课程视频', 'Video bài học')}
         className="aspect-video w-full rounded-xl"
         src={`https://www.youtube-nocookie.com/embed/${youtubeId}?start=${Math.floor(start)}`}
         allow="fullscreen; picture-in-picture"
@@ -90,19 +97,22 @@ export function LessonMedia({ item }: { item: ContentItem }) {
   if (!url)
     return (
       <p className="rounded-xl bg-amber-50 p-4 text-sm text-amber-900">
-        {zh
-          ? '原媒体在当前设备不可用，可使用下方文字朗读。'
-          : 'Original media is unavailable on this device. You can use text-to-speech below.'}
+        {t(
+          'Original media is unavailable on this device. You can use text-to-speech below.',
+          '原媒体在当前设备不可用，可使用下方文字朗读。',
+          'Media gốc không có trên thiết bị này. Bạn có thể dùng phát giọng văn bản bên dưới.',
+        )}
       </p>
     );
   return (
     <div className="space-y-3 rounded-2xl bg-slate-50 p-4">
       <p className="text-sm font-semibold text-slate-800">
-        {zh ? '原声精听' : 'Original recording'} · {Math.floor(start)}s{end ? ` – ${Math.ceil(end)}s` : ''}
+        {t('Original recording', '原声精听', 'Bản gốc nghe kỹ')} · {Math.floor(start)}s
+        {end ? ` – ${Math.ceil(end)}s` : ''}
       </p>
       <Media
         ref={ref}
-        aria-label={zh ? '课程原声' : 'Lesson recording'}
+        aria-label={t('Lesson recording', '课程原声', 'Bản ghi bài học')}
         className={video ? 'aspect-video max-h-[45vh] w-full rounded-xl bg-black' : 'w-full'}
         controls
         src={url}
@@ -120,7 +130,13 @@ export function LessonMedia({ item }: { item: ContentItem }) {
         onTimeUpdate={onTime}
         onEnded={onTime}
         onError={() =>
-          setError(zh ? '无法播放该音频，请检查原文件。' : 'Unable to play this audio. Check the original file.')
+          setError(
+            t(
+              'Unable to play this audio. Check the original file.',
+              '无法播放该音频，请检查原文件。',
+              'Không phát được audio này. Kiểm tra tệp gốc.',
+            ),
+          )
         }
       >
         <track kind="captions" />

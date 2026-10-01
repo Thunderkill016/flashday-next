@@ -27,7 +27,7 @@ it('stops after three network failures and offers manual upload in both language
   const error = await result;
   expect(fetcher).toHaveBeenCalledTimes(3);
   expect(describeImportError(error)).toMatch(/automatic retries.*download.*upload/i);
-  expect(describeImportError(error, true)).toMatch(/自动重试.*下载.*上传/);
+  expect(describeImportError(error, 'zh')).toMatch(/自动重试.*下载.*上传/);
 });
 
 it.each(['4', new Date(Date.now() + 4000).toUTCString()])('honors Retry-After %s before retrying', async (retryAfter) => {

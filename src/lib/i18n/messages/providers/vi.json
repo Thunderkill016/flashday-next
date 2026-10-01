@@ -1,0 +1,200 @@
+{
+  "groupLabels": {
+    "Frontier": "Frontier",
+    "Fast Inference": "Suy luận nhanh",
+    "Specialty": "Chuyên dụng",
+    "Chinese": "Trung Quốc",
+    "Local": "Cục bộ"
+  },
+  "providers": {
+    "openai": {
+      "description": "GPT-4o, o3, o4-mini và nhiều hơn",
+      "apiKeyPlaceholder": "sk-...",
+      "models": {
+        "gpt-4o": "Mô hình đa phương thức flagship",
+        "gpt-4o-mini": "Nhanh & rẻ",
+        "o4-mini": "Mô hình suy luận nhanh",
+        "o3": "Suy luận mạnh nhất"
+      }
+    },
+    "anthropic": {
+      "description": "Claude Sonnet, Haiku, Opus",
+      "apiKeyPlaceholder": "sk-ant-...",
+      "models": {
+        "claude-sonnet-4-5-20251001": "Cân bằng tốt nhất",
+        "claude-opus-4-6": "Mạnh nhất",
+        "claude-haiku-4-5-20251001": "Nhanh & gọn"
+      }
+    },
+    "google": {
+      "description": "Gemini 2.5 Flash, Pro và nhiều hơn",
+      "apiKeyPlaceholder": "AIza...",
+      "models": {
+        "gemini-2.5-flash-preview": "Nhanh & rẻ",
+        "gemini-2.0-flash": "Cân bằng",
+        "gemini-2.5-pro-preview": "Suy luận nâng cao"
+      }
+    },
+    "deepseek": {
+      "description": "DeepSeek V3, R1",
+      "apiKeyPlaceholder": "sk-...",
+      "models": {
+        "deepseek-chat": "Đa dụng",
+        "deepseek-reasoner": "Suy luận nâng cao"
+      }
+    },
+    "xai": {
+      "description": "Grok 3 và nhiều hơn",
+      "apiKeyPlaceholder": "xai-...",
+      "models": {
+        "grok-3": "Mạnh nhất",
+        "grok-3-mini": "Fast reasoning",
+        "grok-2-1212": "Thế hệ trước"
+      }
+    },
+    "groq": {
+      "description": "Llama, Gemma qua suy luận LPU",
+      "apiKeyPlaceholder": "gsk_...",
+      "models": {
+        "llama-3.3-70b-versatile": "Nhanh & mạnh",
+        "llama-3.1-8b-instant": "Siêu nhanh",
+        "gemma2-9b-it": "Mô hình mở của Google",
+        "mixtral-8x7b-32768": "Mô hình MoE"
+      }
+    },
+    "cerebras": {
+      "description": "Suy luận wafer-scale siêu nhanh",
+      "apiKeyPlaceholder": "csk-...",
+      "models": {
+        "llama3.1-70b": "Siêu nhanh",
+        "llama3.1-8b": "Nhanh nhất"
+      }
+    },
+    "mistral": {
+      "description": "Mistral Large, Small, Codestral",
+      "apiKeyPlaceholder": "...",
+      "models": {
+        "mistral-large-latest": "Mạnh nhất",
+        "mistral-small-latest": "Nhanh & tiết kiệm",
+        "codestral-latest": "Chuyên code"
+      }
+    },
+    "cohere": {
+      "description": "Command R, các mô hình Embed",
+      "apiKeyPlaceholder": "...",
+      "models": {
+        "command-r-plus": "Mạnh nhất",
+        "command-r": "Cân bằng"
+      }
+    },
+    "perplexity": {
+      "description": "Sonar kèm tìm kiếm thời gian thực",
+      "apiKeyPlaceholder": "pplx-...",
+      "models": {
+        "sonar-pro": "Tìm kiếm + suy luận",
+        "sonar": "Tìm kiếm web nhanh"
+      }
+    },
+    "togetherai": {
+      "description": "Mô hình mở ở quy mô lớn",
+      "apiKeyPlaceholder": "...",
+      "models": {
+        "meta-llama/Llama-3.3-70B-Instruct-Turbo": "Mô hình mở nhanh",
+        "deepseek-ai/DeepSeek-R1": "Suy luận mở",
+        "mistralai/Mixtral-8x7B-Instruct-v0.1": "MoE"
+      }
+    },
+    "deepinfra": {
+      "description": "Suy luận mô hình mở tiết kiệm chi phí",
+      "apiKeyPlaceholder": "...",
+      "models": {}
+    },
+    "fireworks": {
+      "description": "Triển khai mô hình mở nhanh",
+      "apiKeyPlaceholder": "fw-...",
+      "models": {}
+    },
+    "openrouter": {
+      "description": "Truy cập 300+ mô hình qua một API",
+      "apiKeyPlaceholder": "sk-or-...",
+      "models": {}
+    },
+    "zai": {
+      "description": "GLM-4.5/4.6/4.7, Z.AI Coding Plan",
+      "apiKeyPlaceholder": "...",
+      "models": {
+        "glm-4.5": "Balanced model",
+        "glm-4.5-air": "Nhanh & rẻ",
+        "glm-4.6": "Advanced model",
+        "glm-4.7": "Enhanced reasoning",
+        "glm-4.7-flash": "Fast reasoning"
+      }
+    },
+    "minimax": {
+      "description": "Các mô hình MiniMax M2, M2.5",
+      "apiKeyPlaceholder": "...",
+      "models": {
+        "MiniMax-M2": "Mạnh nhất",
+        "MiniMax-Text-01": "Fast"
+      }
+    },
+    "moonshotai": {
+      "description": "Kimi K2, ngữ cảnh dài",
+      "apiKeyPlaceholder": "sk-...",
+      "models": {
+        "kimi-k2-0711-preview": "1T MoE model",
+        "moonshot-v1-128k": "Long context",
+        "moonshot-v1-32k": "Standard"
+      }
+    },
+    "glm": {
+      "description": "GLM-4 qua BigModel Open API",
+      "apiKeyPlaceholder": "...",
+      "models": {
+        "glm-4-plus": "High capability",
+        "glm-4-air": "Nhanh & rẻ"
+      }
+    },
+    "kimi": {
+      "description": "Moonshot (Trung Quốc), tương thích OpenAI",
+      "apiKeyPlaceholder": "sk-...",
+      "models": {
+        "moonshot-v1-8k": "8K context",
+        "moonshot-v1-32k": "32K context",
+        "moonshot-v1-128k": "128K context"
+      }
+    },
+    "qwen": {
+      "description": "Qwen qua chế độ tương thích DashScope",
+      "apiKeyPlaceholder": "sk-...",
+      "models": {
+        "qwen-turbo": "Fast",
+        "qwen-plus": "Cân bằng"
+      }
+    },
+    "doubao": {
+      "description": "Volcengine Ark / Doubao",
+      "apiKeyPlaceholder": "…",
+      "models": {
+        "doubao-pro-32k": "Pro 32K"
+      }
+    },
+    "siliconflow": {
+      "description": "Mô hình mở, có gói miễn phí",
+      "apiKeyPlaceholder": "sk-...",
+      "models": {}
+    },
+    "ollama": {
+      "description": "Mô hình cục bộ — chạy bất cứ thứ gì trên máy",
+      "apiKeyPlaceholder": "ollama",
+      "models": {}
+    },
+    "lmstudio": {
+      "description": "Mô hình cục bộ qua LM Studio server",
+      "apiKeyPlaceholder": "lm-studio",
+      "models": {
+        "local-model": "Currently loaded in LM Studio"
+      }
+    }
+  }
+}

@@ -1,0 +1,37 @@
+{
+  "topics": {
+    "dailyLife": {
+      "label": "Đời sống hằng ngày",
+      "hint": "Nói về thói quen hằng ngày và cuộc sống thường nhật."
+    },
+    "travel": {
+      "label": "Du lịch",
+      "hint": "Nói về những chuyến đi và điểm đến mơ ước."
+    },
+    "food": {
+      "label": "Ẩm thực",
+      "hint": "Nói về đồ ăn, nấu nướng và nhà hàng."
+    },
+    "hobbies": {
+      "label": "Sở thích",
+      "hint": "Nói về sở thích và những điều bạn thích làm."
+    },
+    "moviesMusic": {
+      "label": "Phim & Nhạc",
+      "hint": "Nói về phim ảnh, chương trình TV và âm nhạc."
+    },
+    "workCareer": {
+      "label": "Công việc & Sự nghiệp",
+      "hint": "Nói về công việc, mục tiêu nghề nghiệp và đời sống công sở."
+    },
+    "technology": {
+      "label": "Công nghệ",
+      "hint": "Nói về công nghệ và các xu hướng mới nhất."
+    },
+    "culture": {
+      "label": "Văn hoá",
+      "hint": "Nói về các nền văn hoá và phong tục khác nhau."
+    }
+  },
+  "opening": "Chào bạn! 👋 Mình là bạn luyện nói tiếng Anh. Cứ thoải mái nói bất cứ điều gì — hoặc chọn một chủ đề ở trên để bắt đầu. Hôm nay bạn muốn nói về gì?"
+}

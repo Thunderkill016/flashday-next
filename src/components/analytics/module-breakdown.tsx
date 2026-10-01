@@ -2,7 +2,9 @@
 
 import { Cell, Legend, Pie, PieChart, ResponsiveContainer, Tooltip } from 'recharts';
 import { AnalyticsCardShell } from '@/components/analytics/analytics-card-shell';
+import { pickLocale } from '@/lib/i18n/locale';
 import { useI18n } from '@/lib/i18n/use-i18n';
+import type { InterfaceLanguage } from '@/stores/language-store';
 
 interface Props {
   data: { module: string; sessions: number; time: number }[];
@@ -15,11 +17,15 @@ const MODULE_COLORS: Record<string, string> = {
   write: '#8b5cf6',
 };
 
-function formatTime(ms: number, language: 'en' | 'zh'): string {
+function formatTime(ms: number, language: InterfaceLanguage): string {
   const mins = Math.round(ms / 60_000);
-  if (mins < 60) return language === 'zh' ? `${mins} 分钟` : `${mins}m`;
+  if (mins < 60) return pickLocale(language, { en: `${mins}m`, vi: `${mins} phút`, zh: `${mins} 分钟` });
   const hrs = Math.floor(mins / 60);
-  return language === 'zh' ? `${hrs} 小时 ${mins % 60} 分钟` : `${hrs}h ${mins % 60}m`;
+  return pickLocale(language, {
+    en: `${hrs}h ${mins % 60}m`,
+    vi: `${hrs} giờ ${mins % 60} phút`,
+    zh: `${hrs} 小时 ${mins % 60} 分钟`,
+  });
 }
 
 export function ModuleBreakdown({ data }: Props) {

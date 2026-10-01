@@ -1,0 +1,70 @@
+{
+  "notFound": {
+    "title": "Không tìm thấy nội dung",
+    "description": "Nội dung có thể đã bị xoá hoặc liên kết không hợp lệ.",
+    "goToLibrary": "Đến thư viện"
+  },
+  "header": {
+    "words": "{{count}} từ",
+    "cloudPlaybackNotice": "Đang phát bằng {{source}}. Tô sáng theo câu chỉ là ước lượng nên sẽ kém chính xác hơn tô sáng theo từ của trình duyệt.",
+    "selectedPlaybackNotice": "Đã chọn: {{selected}}. Đang phát bằng: {{actual}}.",
+    "browserFallbackNotice": "Đã chọn: {{selected}}. Đang phát bằng: {{actual}} để ổn định vì Edge TTS tạm thời không khả dụng."
+  },
+  "sources": {
+    "edge": "Edge TTS",
+    "fish": "Fish Audio",
+    "google": "Google Cloud TTS",
+    "openai": "OpenAI TTS",
+    "browser": "Giọng trình duyệt"
+  },
+  "modes": {
+    "title": "Chế độ luyện",
+    "normal": {
+      "label": "Thường",
+      "description": "Đọc theo transcript trong khi audio phát."
+    },
+    "repeat": {
+      "label": "Lặp lại",
+      "description": "Lặp câu hiện tại đến khi thấy dễ."
+    },
+    "hide-text": {
+      "label": "Ẩn chữ",
+      "description": "Nghe trước, chỉ mở transcript khi cần."
+    },
+    "dictation": {
+      "label": "Chính tả",
+      "description": "Gõ lại điều bạn nghe và biến lỗi thành bài luyện có mục tiêu."
+    }
+  },
+  "repeat": {
+    "title": "Lặp câu",
+    "sentenceLabel": "Câu {{current}} / {{total}}",
+    "cta": "Lặp lại câu"
+  },
+  "hidden": {
+    "title": "Transcript đang ẩn",
+    "description": "Cứ nghe trước, chỉ mở chữ khi muốn kiểm tra.",
+    "reveal": "Hiện transcript",
+    "hide": "Ẩn transcript",
+    "transcriptHidden": "Transcript bị ẩn trong chế độ này.",
+    "keepListening": "Dùng phát, trước, sau để tiếp tục làm việc bằng audio."
+  },
+  "dictation": {
+    "title": "Chính tả theo câu",
+    "sentenceLabel": "Câu {{current}} / {{total}}",
+    "replay": "Nghe lại câu",
+    "reveal": "Xem đáp án",
+    "placeholder": "Gõ điều bạn nghe...",
+    "check": "Kiểm tra",
+    "clear": "Xoá",
+    "pass": "Tốt lắm.",
+    "retry": "Chưa đúng lắm.",
+    "accuracy": "Chính xác {{accuracy}}%",
+    "failedHint": "Câu này sẽ được thêm vào điểm yếu để bạn luyện lại sau.",
+    "answer": "Câu đúng",
+    "weakSpotReason": "Độ chính xác chính tả là {{accuracy}}% ở lần gần nhất."
+  },
+  "errors": {
+    "ttsFailed": "Tổng hợp giọng thất bại. Thử lại hoặc đổi nguồn giọng khác."
+  }
+}

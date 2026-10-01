@@ -32,8 +32,8 @@
     }
   },
   "autoLanguageNotice": {
-    "title": "界面语言已匹配你的浏览器",
-    "description": "EchoType 当前使用 {{language}} 界面，因为这与你的浏览器语言一致。你可以随时在设置中修改。",
+    "title": "界面语言默认为越南语",
+    "description": "FlashDay 面向越南学习者，默认使用{{language}}。你可以随时在设置中更改。",
     "cta": "查看语言设置"
   },
   "aiSetup": {

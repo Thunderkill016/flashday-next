@@ -3,6 +3,7 @@
 import { Maximize2, Pause, Play, RotateCcw, SkipBack, SkipForward } from 'lucide-react';
 import { IOS_LIST_CARD_CLASS } from '@/components/shared/ios-native-ui';
 import enPracticeUi from '@/lib/i18n/messages/practice-ui/en.json';
+import viPracticeUi from '@/lib/i18n/messages/practice-ui/vi.json';
 import zhPracticeUi from '@/lib/i18n/messages/practice-ui/zh.json';
 import { nativeHaptic } from '@/lib/tauri';
 import { cn } from '@/lib/utils';
@@ -10,7 +11,7 @@ import { useLanguageStore } from '@/stores/language-store';
 import { useReadAloudStore } from '@/stores/read-aloud-store';
 import { useTTSStore } from '@/stores/tts-store';
 
-const PRACTICE_UI_LOCALES = { en: enPracticeUi, zh: zhPracticeUi } as const;
+const PRACTICE_UI_LOCALES = { en: enPracticeUi, vi: viPracticeUi, zh: zhPracticeUi } as const;
 const SPEED_STEPS = [0.5, 0.75, 1, 1.25, 1.5, 2];
 
 interface IOSReadAloudControlsProps {

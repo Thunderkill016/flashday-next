@@ -1,0 +1,17 @@
+{
+  "title": "Đã lưu",
+  "description": "Lưu từ, cụm từ và câu để ôn tập ngắt quãng.",
+  "startReview": "Bắt đầu ôn tập",
+  "saved": "{{count}} đã lưu",
+  "items": "{{count}} mục",
+  "currentFolder": "Thư mục hiện tại",
+  "browsingAll": "Đang xem tất cả",
+  "dueNow": "{{count}} đến hạn",
+  "dueForReview": "{{count}} cần ôn",
+  "reviewUpToDate": "Đã ôn xong",
+  "searchAria": "Tìm trong mục đã lưu",
+  "searchSaved": "Tìm từ vựng đã lưu",
+  "search": "Tìm...",
+  "emptyTitle": "Chưa lưu gì",
+  "emptyDescription": "Bôi đen văn bản trên trang để dịch và lưu vào đây để ôn tập."
+}

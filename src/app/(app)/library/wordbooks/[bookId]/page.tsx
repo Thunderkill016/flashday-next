@@ -17,6 +17,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
 import { useTTS } from '@/hooks/use-tts';
 import enWBDetail from '@/lib/i18n/messages/wordbook-detail/en.json';
+import viWBDetail from '@/lib/i18n/messages/wordbook-detail/vi.json';
 import zhWBDetail from '@/lib/i18n/messages/wordbook-detail/zh.json';
 import { detectIOSNativeHost, reportNativeQAState } from '@/lib/tauri';
 import { cn } from '@/lib/utils';
@@ -24,7 +25,7 @@ import { ALL_WORDBOOKS, getWordBook, loadWordBookItems } from '@/lib/wordbooks';
 import { useLanguageStore } from '@/stores/language-store';
 import { getWordBookItemCount, type WordBook, type WordItem } from '@/types/wordbook';
 
-const WBD_LOCALES = { en: enWBDetail, zh: zhWBDetail } as const;
+const WBD_LOCALES = { en: enWBDetail, vi: viWBDetail, zh: zhWBDetail } as const;
 
 // ─── Config ──────────────────────────────────────────────────────────────────
 

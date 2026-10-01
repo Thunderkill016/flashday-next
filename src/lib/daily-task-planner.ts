@@ -145,8 +145,10 @@ export function reconcileDailyTasks(
           ...task,
           title: candidate.title,
           titleZh: candidate.titleZh,
+          titleVi: candidate.titleVi,
           reason: candidate.reason,
           reasonZh: candidate.reasonZh,
+          reasonVi: candidate.reasonVi,
           href: candidate.href,
           updatedAt: now,
         };

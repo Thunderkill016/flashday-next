@@ -1,9 +1,11 @@
 {
   "languageNames": {
-    "en": "英文",
+    "vi": "越南语",
+    "en": "英语",
     "zh": "中文"
   },
   "nativeLanguageNames": {
+    "vi": "Tiếng Việt",
     "en": "English",
     "zh": "中文"
   },
