@@ -405,6 +405,26 @@ export default function DashboardPage() {
     <div className={isIOSNativeHost ? IOS_PAGE_CONTAINER_CLASS : 'max-w-6xl mx-auto space-y-8'}>
       {/* Header */}
       <TodayWorkspace />
+      {/* FlashDay evidence-kernel slice: the kernel-driven mission lives
+       * at /mission — 'Next For You' is the planner's explainable pick. */}
+      <Link
+        href="/mission"
+        data-testid="mission-entry"
+        className="block rounded-2xl border border-indigo-100 bg-gradient-to-r from-indigo-50 to-violet-50 p-4 transition hover:border-indigo-200 hover:shadow-sm"
+      >
+        <div className="flex items-center justify-between gap-3">
+          <div className="flex items-center gap-3">
+            <span className="flex h-9 w-9 items-center justify-center rounded-xl bg-indigo-600 text-white">
+              <Target className="h-4.5 w-4.5" />
+            </span>
+            <div>
+              <p className="text-sm font-semibold text-indigo-900">Next For You · Meet someone new</p>
+              <p className="text-xs text-indigo-500">Guided English mission — greeting, names, introductions.</p>
+            </div>
+          </div>
+          <ArrowRight className="h-4 w-4 text-indigo-400" />
+        </div>
+      </Link>
       {isIOSNativeHost ? (
         <IOSPageHeader
           badge="EchoType"
