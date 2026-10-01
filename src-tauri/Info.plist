@@ -5,8 +5,8 @@
     <key>ITSAppUsesNonExemptEncryption</key>
     <false/>
     <key>NSMicrophoneUsageDescription</key>
-    <string>EchoType uses the microphone for speaking and reading practice.</string>
+    <string>FlashDay uses the microphone for speaking and reading practice.</string>
     <key>NSSpeechRecognitionUsageDescription</key>
-    <string>EchoType uses speech recognition to evaluate your English practice.</string>
+    <string>FlashDay uses speech recognition to evaluate your English practice.</string>
   </dict>
 </plist>

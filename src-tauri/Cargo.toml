@@ -1,8 +1,8 @@
 [package]
 name = "echotype"
 version = "1.5.1"
-description = "EchoType - Learn English by Listening, Speaking, Reading & Writing"
-authors = ["EchoType"]
+description = "FlashDay - Learn English by Listening, Speaking, Reading & Writing"
+authors = ["FlashDay"]
 edition = "2021"
 
 [lib]
