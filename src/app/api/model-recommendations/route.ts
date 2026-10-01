@@ -102,9 +102,9 @@ export async function POST(req: NextRequest) {
       contextWindow: item.contextWindow ?? null,
     }));
 
-    const system = `You are selecting the best LLMs for EchoType, an English learning app for Chinese speakers (CEFR A1–C2).
+    const system = `You are selecting the best LLMs for FlashDay, an English learning app for Vietnamese speakers (CEFR A1–C2).
 
-EchoType has 7 AI workloads. Evaluate each candidate model against ALL of them:
+FlashDay has 7 AI workloads. Evaluate each candidate model against ALL of them:
 
 1. CHAT TUTOR — streaming, highest weight
    - English coach with 15+ tool-calling actions (navigate, import YouTube/URL, generate content, search library, show analytics, speak text, etc.)
@@ -155,7 +155,7 @@ Scoring:
 
 Choose at most 3 models that best cover ALL seven workloads. Prefer a strong all-rounder over a specialist.
 Return ONLY valid JSON in this exact format:
-{"recommendations":[{"modelId":"exact-id-from-list","rank":1,"score":96,"reason":"short concrete reason tied to EchoType workloads","label":"Recommended"}]}`;
+{"recommendations":[{"modelId":"exact-id-from-list","rank":1,"score":96,"reason":"short concrete reason tied to FlashDay workloads","label":"Recommended"}]}`;
 
     const compactModels = candidateModels.map((m) =>
       m.description ? `${m.id} | ${m.name} | ${m.description}` : `${m.id} | ${m.name}`,
@@ -167,7 +167,7 @@ Total candidates: ${compactModels.length}
 Models (id | name | description):
 ${compactModels.join('\n')}
 
-Rank the best models for EchoType (English learning app for Chinese speakers). Key requirements: tool/function calling, reliable JSON output, strong zh↔en bilingual. Return at most 3 as JSON. Only use exact modelId values from the list.`;
+Rank the best models for FlashDay (English learning app for Vietnamese speakers). Key requirements: tool/function calling, reliable JSON output, strong vi↔en bilingual. Return at most 3 as JSON. Only use exact modelId values from the list.`;
 
     const { text } = await generateText({
       model,
@@ -188,7 +188,7 @@ Rank the best models for EchoType (English learning app for Chinese speakers). K
         modelId: item.modelId,
         rank: Number.isFinite(item.rank) ? item.rank : index + 1,
         score: Number.isFinite(item.score) ? item.score : 80 - index,
-        reason: item.reason || 'Recommended for EchoType workflows',
+        reason: item.reason || 'Recommended for FlashDay workflows',
         label: 'Recommended' as const,
       }))
       .sort((left, right) => left.rank - right.rank)

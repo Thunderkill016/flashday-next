@@ -8,7 +8,7 @@
   },
   "upToDate": {
     "title": "Bạn đang dùng bản mới nhất",
-    "description": "EchoType {{version}} là phiên bản mới nhất.",
+    "description": "FlashDay {{version}} là phiên bản mới nhất.",
     "close": "Đóng"
   },
   "downloaded": {

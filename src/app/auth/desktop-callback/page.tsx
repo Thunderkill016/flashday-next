@@ -64,7 +64,7 @@ export default function DesktopCallbackPage() {
         {status === 'success' && (
           <>
             <h2 className="text-xl font-semibold text-green-700">Login successful!</h2>
-            <p className="mt-2 text-sm text-slate-500">You can close this tab and return to EchoType.</p>
+            <p className="mt-2 text-sm text-slate-500">You can close this tab and return to FlashDay.</p>
           </>
         )}
 

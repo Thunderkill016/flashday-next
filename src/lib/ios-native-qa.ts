@@ -359,7 +359,7 @@ async function seedImportedBook() {
   const book: BookItem = {
     id: IOS_NATIVE_QA_BOOK_ID,
     title: 'iOS QA Story Pack',
-    author: 'EchoType QA',
+    author: 'FlashDay QA',
     description: 'Deterministic imported book used for iOS native validation.',
     chapterCount: 3,
     totalWords: 27,

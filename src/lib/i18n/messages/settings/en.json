@@ -20,7 +20,7 @@
   },
   "language": {
     "interfaceLanguage": "Interface Language",
-    "helper": "Choose the language used across the EchoType interface. This does not change your learning target."
+    "helper": "Choose the language used across the FlashDay interface. This does not change your learning target."
   },
   "appearance": {
     "theme": "Theme",
@@ -185,16 +185,16 @@
     "showFishApiKey": "Show Fish Audio API key",
     "fishModelLabel": "Fish model",
     "googleCloudVoicesTitle": "Google Cloud voices",
-    "googleCloudVoicesDescription": "Use GOOGLE_API_KEY on the server, or enter an optional browser-specific override below. EchoType sends requests through local proxy routes.",
+    "googleCloudVoicesDescription": "Use GOOGLE_API_KEY on the server, or enter an optional browser-specific override below. FlashDay sends requests through local proxy routes.",
     "pricing": "Pricing",
     "googleApiKeyLabel": "Google Cloud API key override (optional)",
     "googleApiKeyPlaceholder": "Uses server GOOGLE_API_KEY when empty",
     "hideGoogleApiKey": "Hide Google Cloud API key",
     "showGoogleApiKey": "Show Google Cloud API key",
     "googleFreeTierHint": "Enable billing and the Cloud Text-to-Speech API in Google Cloud, then restrict this key to Text-to-Speech if possible.",
-    "googleFreeTierNote": "Google Cloud currently offers a monthly free tier for Standard and WaveNet voices. EchoType defaults to WaveNet voices for better quality.",
+    "googleFreeTierNote": "Google Cloud currently offers a monthly free tier for Standard and WaveNet voices. FlashDay defaults to WaveNet voices for better quality.",
     "openaiVoicesTitle": "OpenAI-compatible voices",
-    "openaiVoicesDescription": "Use OpenAI's speech endpoint or a compatible gateway. EchoType calls /audio/speech through local proxy routes.",
+    "openaiVoicesDescription": "Use OpenAI's speech endpoint or a compatible gateway. FlashDay calls /audio/speech through local proxy routes.",
     "openaiApiKeyLabel": "OpenAI API key",
     "openaiApiKeyPlaceholder": "Enter your OpenAI or gateway API key",
     "hideOpenAIApiKey": "Hide OpenAI API key",
@@ -205,7 +205,7 @@
     "openaiBillingWarning": "OpenAI TTS uses API credits. If you use a compatible gateway, confirm that it supports /audio/speech and check its billing policy.",
     "browserFallbackWarning": "Listen and wordbook screens still rely on browser speech for per-word boundary highlighting. When this source is selected, those views automatically fall back to browser voices.",
     "kokoroRemoteVoicesTitle": "Kokoro remote voices",
-    "kokoroRemoteVoicesDescription": "EchoType calls your hosted Kokoro server through local proxy routes, so the browser never talks to the remote TTS endpoint directly.",
+    "kokoroRemoteVoicesDescription": "FlashDay calls your hosted Kokoro server through local proxy routes, so the browser never talks to the remote TTS endpoint directly.",
     "voicesApi": "Voices API",
     "kokoroServerUrlLabel": "Kokoro server URL",
     "kokoroServerUrlHelp": "Defaults to your current AWS Kokoro deployment and can be replaced with another compatible endpoint.",

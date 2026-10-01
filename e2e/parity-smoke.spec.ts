@@ -36,7 +36,7 @@ test.describe('Parity Smoke', () => {
 
     await waitForSeedAndReload(page, '/dashboard');
     await expect(page).toHaveURL(/\/dashboard$/);
-    await expect(page.getByRole('heading', { level: 1 })).toContainText('Welcome to EchoType');
+    await expect(page.getByRole('heading', { level: 1 })).toContainText('Welcome to FlashDay');
     await expect(page.getByLabel('Open AI chat')).toBeVisible();
 
     await page.goto('/settings');
@@ -45,7 +45,7 @@ test.describe('Parity Smoke', () => {
 
     await waitForSeedAndReload(page, '/library/import');
     await page.getByPlaceholder('Enter a title...').fill(title);
-    await page.getByPlaceholder('Paste your text here...').fill('This is a parity smoke test sentence for EchoType.');
+    await page.getByPlaceholder('Paste your text here...').fill('This is a parity smoke test sentence for FlashDay.');
     await expect(page.getByText('Detected:')).toBeVisible();
     await expect(page.locator('[data-slot=\"badge\"]').filter({ hasText: 'sentence' })).toBeVisible();
     await page.getByRole('button', { name: 'Import Content' }).click();

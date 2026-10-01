@@ -303,7 +303,7 @@ export function Sidebar({ open = false, onOpenChange }: SidebarProps = {}) {
           {!collapsed && (
             <div>
               <span className="text-[15px] font-bold text-slate-900 font-[var(--font-poppins)] leading-none block">
-                EchoType
+                FlashDay
               </span>
               <span className="text-[10px] text-slate-400 leading-none block mt-0.5 tracking-wide">
                 {messages.logo.subtitle}

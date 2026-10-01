@@ -77,7 +77,7 @@ export default function LandingPage() {
               Learn English in one calm, focused daily flow
             </h1>
             <p className="mt-4 max-w-2xl text-base leading-7 text-slate-500">
-              Switch between listen, speak, read, write and review without leaving your practice context. EchoType keeps
+              Switch between listen, speak, read, write and review without leaving your practice context. FlashDay keeps
               every exercise, note and AI hint in one place.
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
@@ -163,7 +163,7 @@ export default function LandingPage() {
             : 'border-t border-indigo-100 py-8 text-center text-sm text-indigo-400'
         }
       >
-        <p>EchoType — Learn English by doing. Built with Next.js, Vercel AI SDK, and Web Speech API.</p>
+        <p>FlashDay — Learn English by doing. Built with Next.js, Vercel AI SDK, and Web Speech API.</p>
       </footer>
 
       <ChatFab />

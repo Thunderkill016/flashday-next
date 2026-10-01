@@ -24,7 +24,7 @@ export function LandingNav() {
         <div className="w-8 h-8 rounded-lg bg-indigo-600 flex items-center justify-center">
           <span className="text-white font-bold text-sm">E</span>
         </div>
-        <span className="text-xl font-bold text-indigo-900 font-[var(--font-poppins)]">EchoType</span>
+        <span className="text-xl font-bold text-indigo-900 font-[var(--font-poppins)]">FlashDay</span>
       </div>
       <div className="flex items-center gap-2 sm:gap-3">
         {isLoading ? (

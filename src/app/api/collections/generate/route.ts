@@ -196,7 +196,7 @@ export async function POST(req: NextRequest) {
       apiPath: req.headers.get('x-api-path')?.trim() || undefined,
     });
 
-    const system = `You are an expert English-learning curriculum writer for EchoType, an app used by Vietnamese speakers.
+    const system = `You are an expert English-learning curriculum writer for FlashDay, an app used by Vietnamese speakers.
 You produce practical scenario-based phrase and sentence sets: natural, realistic, immediately usable in daily life.
 Output must be STRICT JSON only (no markdown fences, no explanations).
 Mixed metadata: titles and descriptions are trilingual (English + Simplified Chinese + Vietnamese). All learning lines ("text") are English only.

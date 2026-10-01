@@ -22,12 +22,12 @@ const clearOnce = (browserLanguage: string) => `
 const SEED_TIMEOUT_MS = 120_000;
 const gotoSeeded = async (page: Page, url: string) => {
   await page.goto(url);
-  await expect(page.locator('main')).toHaveAttribute('data-seeded', 'true', { timeout: SEED_TIMEOUT_MS });
+  await expect(page.locator('main[data-seeded]')).toHaveAttribute('data-seeded', 'true', { timeout: SEED_TIMEOUT_MS });
 };
 
 const reloadSeeded = async (page: Page) => {
   await page.reload();
-  await expect(page.locator('main')).toHaveAttribute('data-seeded', 'true', { timeout: SEED_TIMEOUT_MS });
+  await expect(page.locator('main[data-seeded]')).toHaveAttribute('data-seeded', 'true', { timeout: SEED_TIMEOUT_MS });
 };
 
 test.describe('vietnam-first i18n', () => {
@@ -38,7 +38,7 @@ test.describe('vietnam-first i18n', () => {
     await gotoSeeded(page, '/dashboard');
 
     await expect(page.locator('html')).toHaveAttribute('lang', 'vi');
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Chào mừng đến EchoType');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Chào mừng đến FlashDay');
     await expect(page.getByText('Giao diện đang dùng tiếng Việt')).toBeVisible();
     await expect(page.getByText('Bắt đầu học').first()).toBeVisible();
   });
@@ -48,15 +48,15 @@ test.describe('vietnam-first i18n', () => {
     await gotoSeeded(page, '/dashboard');
 
     await expect(page.locator('html')).toHaveAttribute('lang', 'vi');
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Chào mừng đến EchoType');
-    await expect(page.getByText('欢迎使用 EchoType')).toHaveCount(0);
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Chào mừng đến FlashDay');
+    await expect(page.getByText('欢迎使用 FlashDay')).toHaveCount(0);
   });
 
   test('fresh install under vi-VN browser renders Vietnamese', async ({ page }) => {
     await page.addInitScript(clearOnce('vi-VN'));
     await gotoSeeded(page, '/dashboard');
 
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Chào mừng đến EchoType');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Chào mừng đến FlashDay');
   });
 
   test('explicit saved English preference is preserved', async ({ page }) => {
@@ -73,7 +73,7 @@ test.describe('vietnam-first i18n', () => {
     await gotoSeeded(page, '/dashboard');
 
     await expect(page.locator('html')).toHaveAttribute('lang', 'en');
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Welcome to EchoType');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Welcome to FlashDay');
   });
 
   test('explicit saved Chinese preference is preserved', async ({ page }) => {
@@ -90,7 +90,7 @@ test.describe('vietnam-first i18n', () => {
     await gotoSeeded(page, '/dashboard');
 
     await expect(page.locator('html')).toHaveAttribute('lang', 'zh');
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('欢迎使用 EchoType');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('欢迎使用 FlashDay');
   });
 
   test('corrupt saved language falls back to Vietnamese', async ({ page }) => {
@@ -99,7 +99,7 @@ test.describe('vietnam-first i18n', () => {
     `);
     await gotoSeeded(page, '/dashboard');
 
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Chào mừng đến EchoType');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Chào mừng đến FlashDay');
   });
 
   test('unknown saved language value falls back to Vietnamese', async ({ page }) => {
@@ -111,7 +111,7 @@ test.describe('vietnam-first i18n', () => {
     `);
     await gotoSeeded(page, '/dashboard');
 
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Chào mừng đến EchoType');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Chào mừng đến FlashDay');
   });
 
   test('switching Vietnamese → English updates immediately and persists across reload and navigation', async ({
@@ -132,7 +132,7 @@ test.describe('vietnam-first i18n', () => {
     await expect(page.getByRole('heading', { level: 1 })).toHaveText('Settings');
 
     await gotoSeeded(page, '/dashboard');
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Welcome to EchoType');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Welcome to FlashDay');
     await expect(page.getByText('Giao diện đang dùng tiếng Việt')).toHaveCount(0);
   });
 
@@ -226,7 +226,7 @@ test.describe('vietnam-first i18n', () => {
       { path: '/speak', text: 'Nói' },
       { path: '/review', text: 'Trung tâm ôn tập' },
       { path: '/settings', text: 'Cài đặt' },
-      { path: '/login', text: 'Đăng nhập EchoType' },
+      { path: '/login', text: 'Đăng nhập FlashDay' },
     ];
 
     for (const { path, text } of surfaces) {
@@ -245,14 +245,18 @@ test.describe('vietnam-first i18n', () => {
   });
 
   test('explicit saved translation target is preserved', async ({ page }) => {
+    // vi UI + an explicit non-vi target: the select must show the saved
+    // choice, proving the default is a default and not an overwrite.
     await page.addInitScript(`
+      localStorage.setItem('echotype_language_settings', JSON.stringify({
+        interfaceLanguage: 'vi', hasExplicitPreference: true,
+      }));
       localStorage.setItem('echotype_tts_settings', JSON.stringify({ targetLang: 'en' }));
     `);
     await gotoSeeded(page, '/settings');
 
-    // The target-language select shows the persisted explicit choice, not the vi default.
-    const trigger = page.locator('main').getByText('Ngôn ngữ đích').locator('..').locator('..');
-    await expect(trigger.getByText('English').first()).toBeVisible();
-    await expect(trigger.getByText('Tiếng Việt (Vietnamese)')).toHaveCount(0);
+    const targetSection = page.getByText('Ngôn ngữ đích').locator('..');
+    const trigger = targetSection.getByRole('combobox');
+    await expect(trigger).toHaveText('English');
   });
 });

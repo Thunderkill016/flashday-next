@@ -1,8 +1,8 @@
 <p align="center">
-  <img src="app-icon.svg" alt="EchoType" width="80" height="80" />
+  <img src="app-icon.svg" alt="FlashDay" width="80" height="80" />
 </p>
 
-<h1 align="center">EchoType</h1>
+<h1 align="center">FlashDay</h1>
 
 <p align="center">
   Master English through listening, speaking, reading & writing — all in one app.
@@ -26,9 +26,9 @@
 
 ---
 
-## Why EchoType?
+## Why FlashDay?
 
-Most English learning apps only focus on one skill. EchoType combines **listening, speaking, reading, and writing** into a single workflow — so you can practice the same content across all four skills, the way language is actually learned.
+Most English learning apps only focus on one skill. FlashDay combines **listening, speaking, reading, and writing** into a single workflow — so you can practice the same content across all four skills, the way language is actually learned.
 
 - Import any article, YouTube video, or web page as learning material
 - Practice the same content by listening, reading aloud, and typing it out
@@ -70,13 +70,13 @@ All content is tagged, searchable, and can be practiced in any module. AI can al
 
 ## Getting Started
 
-### 1. Open EchoType
+### 1. Open FlashDay
 
 Visit [echo-type.app](https://echo-type.app) in your browser, or [download the desktop app](https://github.com/Talljack/echo-type/releases).
 
 ### 2. Take the Level Assessment
 
-Go to **Settings > English Level** and take a quick 30-question test. EchoType determines your CEFR level (A1–C2) and adjusts content difficulty automatically.
+Go to **Settings > English Level** and take a quick 30-question test. FlashDay determines your CEFR level (A1–C2) and adjusts content difficulty automatically.
 
 ### 3. Set Up AI (optional but recommended)
 
@@ -115,7 +115,7 @@ Enable **Shadow Reading** in Settings to link content across modules. When you p
 
 ## Community learning resources
 
-EchoType includes original everyday practice prompts and a **Community resources** directory in the app, with links to reputable publishers and learning sites. We link to third-party textbooks and media instead of copying them into the repository.
+FlashDay includes original everyday practice prompts and a **Community resources** directory in the app, with links to reputable publishers and learning sites. We link to third-party textbooks and media instead of copying them into the repository.
 
 Have a resource that helped you learn? Read [CONTRIBUTING.md](./CONTRIBUTING.md) and open a pull request with its canonical URL, a concise original description, skill focus, and licensing information.
 
@@ -123,11 +123,11 @@ Have a resource that helped you learn? Read [CONTRIBUTING.md](./CONTRIBUTING.md)
 
 **Want to improve your pronunciation?** Use the Speak module with 50+ real-world scenarios. Enable SpeechSuper for phoneme-level IPA feedback, or use the AI fallback for instant scoring.
 
-**Reading English news daily?** Paste any article URL — EchoType turns it into a full listening + reading + typing exercise automatically.
+**Reading English news daily?** Paste any article URL — FlashDay turns it into a full listening + reading + typing exercise automatically.
 
 **Building vocabulary?** Browse built-in Word Books (college, professional, travel, daily life) or import your own lists. Review with FSRS spaced repetition and test yourself with AI-generated quizzes.
 
-**Not sure where to start?** Take the English level test — EchoType recommends content matched to your CEFR level.
+**Not sure where to start?** Take the English level test — FlashDay recommends content matched to your CEFR level.
 
 **Learning at your own pace?** Everything runs locally — no account needed, no subscription, no ads. Sign in only if you want cloud sync.
 
@@ -135,9 +135,9 @@ Have a resource that helped you learn? Read [CONTRIBUTING.md](./CONTRIBUTING.md)
 
 | Platform | Download |
 | --- | --- |
-| macOS (Apple Silicon) | `EchoType_<ver>_aarch64.dmg` |
-| Windows | `EchoType_<ver>_x64-setup.exe` |
-| Linux (Debian/Ubuntu) | `EchoType_<ver>_amd64.deb` |
+| macOS (Apple Silicon) | `FlashDay_<ver>_aarch64.dmg` |
+| Windows | `FlashDay_<ver>_x64-setup.exe` |
+| Linux (Debian/Ubuntu) | `FlashDay_<ver>_amd64.deb` |
 
 The desktop app includes **system tray** (Show/Hide, quick navigation, Quit), **keyboard shortcuts**, and **auto-update**.
 

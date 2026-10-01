@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-EchoType is an English learning app combining listening, speaking, reading, and writing practice. Built as both a web app (Next.js) and desktop app (Tauri v2).
+FlashDay is an English learning app combining listening, speaking, reading, and writing practice. Built as both a web app (Next.js) and desktop app (Tauri v2).
 
 ## Commands
 

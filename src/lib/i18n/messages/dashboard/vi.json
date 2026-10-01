@@ -1,6 +1,6 @@
 {
   "header": {
-    "title": "Chào mừng đến EchoType",
+    "title": "Chào mừng đến FlashDay",
     "subtitle": "Thành thạo tiếng Anh qua nghe, nói, đọc & viết",
     "analytics": "Xem thống kê"
   },
@@ -33,7 +33,7 @@
   },
   "autoLanguageNotice": {
     "title": "Giao diện đang dùng tiếng Việt",
-    "description": "EchoType mặc định dùng {{language}} cho người học Việt Nam. Bạn có thể đổi bất cứ lúc nào trong Cài đặt.",
+    "description": "FlashDay mặc định dùng {{language}} cho người học Việt Nam. Bạn có thể đổi bất cứ lúc nào trong Cài đặt.",
     "cta": "Xem cài đặt ngôn ngữ"
   },
   "aiSetup": {
@@ -54,7 +54,7 @@
   },
   "learningGoal": {
     "title": "Chọn mục tiêu học",
-    "description": "Cho EchoType biết bạn muốn tiến bộ tiếng Anh theo hướng nào, và kế hoạch hôm nay sẽ ưu tiên đúng hướng đó.",
+    "description": "Cho FlashDay biết bạn muốn tiến bộ tiếng Anh theo hướng nào, và kế hoạch hôm nay sẽ ưu tiên đúng hướng đó.",
     "ctaAssessment": "Làm bài đánh giá",
     "currentTitle": "Mục tiêu đang áp dụng",
     "weakSpots": "Mở Điểm yếu"

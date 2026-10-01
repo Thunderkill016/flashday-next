@@ -8,7 +8,7 @@
   },
   "upToDate": {
     "title": "已是最新版本",
-    "description": "EchoType {{version}} 已是最新版本。",
+    "description": "FlashDay {{version}} 已是最新版本。",
     "close": "关闭"
   },
   "downloaded": {

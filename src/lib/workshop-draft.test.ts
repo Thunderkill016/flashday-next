@@ -6,7 +6,7 @@ class MemoryStorage {
   getItem(key: string) { return this.entries.get(key) ?? null; }
   setItem(key: string, value: string) { this.entries.set(key, value); }
 }
-const scope = { databaseName: 'EchoType-user-a', lessonId: 'lesson', activity: 'writing', source: 'Original source', stage: 'correct' };
+const scope = { databaseName: 'FlashDay-user-a', lessonId: 'lesson', activity: 'writing', source: 'Original source', stage: 'correct' };
 const draft = { answer: 'My original answer', quote: 'Original', notes: 'Check tense', parent: 'attempt-1', usedTranslation: true, usedSource: true, context: 'At work', improvement: 'Past tense' };
 
 describe('durable workshop drafts', () => {
@@ -18,7 +18,7 @@ describe('durable workshop drafts', () => {
   it('isolates accounts, activities, stages, source revisions and weak spot tasks', () => {
     const durable = new MemoryStorage();
     saveWorkshopDraft(scope, draft, durable);
-    for (const change of [{ databaseName: 'EchoType-user-b' }, { activity: 'comprehension' }, { stage: 'recall' }, { source: 'Changed source' }, { sourceWeakSpotId: 'weak-1' }]) {
+    for (const change of [{ databaseName: 'FlashDay-user-b' }, { activity: 'comprehension' }, { stage: 'recall' }, { source: 'Changed source' }, { sourceWeakSpotId: 'weak-1' }]) {
       const other = { ...scope, ...change };
       expect(loadWorkshopDraft(other, durable).draft).toBeUndefined();
       saveWorkshopDraft(other, { ...draft, answer: 'Other answer' }, durable);

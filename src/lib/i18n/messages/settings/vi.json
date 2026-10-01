@@ -20,7 +20,7 @@
   },
   "language": {
     "interfaceLanguage": "Ngôn ngữ giao diện",
-    "helper": "Chọn ngôn ngữ dùng trong giao diện EchoType. Không đổi ngôn ngữ bạn đang học."
+    "helper": "Chọn ngôn ngữ dùng trong giao diện FlashDay. Không đổi ngôn ngữ bạn đang học."
   },
   "appearance": {
     "theme": "Chủ đề",
@@ -185,16 +185,16 @@
     "showFishApiKey": "Hiện Fish Audio API key",
     "fishModelLabel": "Mô hình Fish",
     "googleCloudVoicesTitle": "Giọng Google Cloud",
-    "googleCloudVoicesDescription": "Dùng GOOGLE_API_KEY trên server, hoặc nhập key riêng cho trình duyệt bên dưới. EchoType gửi request qua proxy route cục bộ.",
+    "googleCloudVoicesDescription": "Dùng GOOGLE_API_KEY trên server, hoặc nhập key riêng cho trình duyệt bên dưới. FlashDay gửi request qua proxy route cục bộ.",
     "pricing": "Giá",
     "googleApiKeyLabel": "Google Cloud API key (tuỳ chọn)",
     "googleApiKeyPlaceholder": "Để trống sẽ dùng GOOGLE_API_KEY của server",
     "hideGoogleApiKey": "Ẩn Google Cloud API key",
     "showGoogleApiKey": "Hiện Google Cloud API key",
     "googleFreeTierHint": "Bật billing và Cloud Text-to-Speech API trong Google Cloud, rồi nên giới hạn key này chỉ cho Text-to-Speech.",
-    "googleFreeTierNote": "Google Cloud hiện có gói miễn phí hằng tháng cho giọng Standard và WaveNet. EchoType mặc định dùng WaveNet cho chất lượng tốt hơn.",
+    "googleFreeTierNote": "Google Cloud hiện có gói miễn phí hằng tháng cho giọng Standard và WaveNet. FlashDay mặc định dùng WaveNet cho chất lượng tốt hơn.",
     "openaiVoicesTitle": "Giọng tương thích OpenAI",
-    "openaiVoicesDescription": "Dùng speech endpoint của OpenAI hoặc gateway tương thích. EchoType gọi /audio/speech qua proxy route cục bộ.",
+    "openaiVoicesDescription": "Dùng speech endpoint của OpenAI hoặc gateway tương thích. FlashDay gọi /audio/speech qua proxy route cục bộ.",
     "openaiApiKeyLabel": "OpenAI API key",
     "openaiApiKeyPlaceholder": "Nhập OpenAI hoặc gateway API key",
     "hideOpenAIApiKey": "Ẩn OpenAI API key",
@@ -205,7 +205,7 @@
     "openaiBillingWarning": "OpenAI TTS tính phí theo API credits. Nếu dùng gateway tương thích, xác nhận nó hỗ trợ /audio/speech và kiểm tra chính sách giá.",
     "browserFallbackWarning": "Màn hình Nghe và sổ từ vẫn dựa vào giọng trình duyệt cho tô sáng từng từ. Khi chọn nguồn này, các màn đó tự động quay về giọng trình duyệt.",
     "kokoroRemoteVoicesTitle": "Giọng Kokoro từ xa",
-    "kokoroRemoteVoicesDescription": "EchoType gọi server Kokoro của bạn qua proxy route cục bộ, nên trình duyệt không bao giờ nói chuyện trực tiếp với TTS endpoint từ xa.",
+    "kokoroRemoteVoicesDescription": "FlashDay gọi server Kokoro của bạn qua proxy route cục bộ, nên trình duyệt không bao giờ nói chuyện trực tiếp với TTS endpoint từ xa.",
     "voicesApi": "Voices API",
     "kokoroServerUrlLabel": "Kokoro server URL",
     "kokoroServerUrlHelp": "Mặc định là deployment Kokoro AWS hiện tại của bạn và có thể đổi sang endpoint tương thích khác.",

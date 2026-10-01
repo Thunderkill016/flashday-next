@@ -44,12 +44,12 @@ test.describe('Import Flows', () => {
       name: 'sample.txt',
       mimeType: 'text/plain',
       buffer: Buffer.from(
-        'EchoType file upload verification.\n\nThis sample validates text extraction and library save behavior.',
+        'FlashDay file upload verification.\n\nThis sample validates text extraction and library save behavior.',
       ),
     });
 
     await page.getByRole('button', { name: 'Extract Text' }).click();
-    await expect(page.getByText('EchoType file upload verification.')).toBeVisible();
+    await expect(page.getByText('FlashDay file upload verification.')).toBeVisible();
     await page.getByLabel('Title').fill(title);
     await page.getByPlaceholder('e.g. blog, tech, imported').fill('e2e-file, local');
     await page.getByRole('button', { name: /Import as Book/ }).click();

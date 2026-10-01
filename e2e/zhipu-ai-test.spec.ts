@@ -10,6 +10,25 @@ async function waitForStore(page: Page) {
 }
 
 // Helper: set localStorage for provider-store to use ZhiPu directly
+async function readProviderConfig(page: Page) {
+  return page.evaluate(async () => {
+    const raw = localStorage.getItem('echotype_provider_config');
+    if (!raw) return {};
+    try {
+      return JSON.parse(raw);
+    } catch {
+      // AES-GCM encrypted (src/lib/storage-crypto.ts): base64(IV+ct), key in echotype_dk
+      const keyB64 = localStorage.getItem('echotype_dk');
+      if (!keyB64) return {};
+      const keyRaw = Uint8Array.from(atob(keyB64), (c) => c.charCodeAt(0));
+      const key = await crypto.subtle.importKey('raw', keyRaw, 'AES-GCM', false, ['decrypt']);
+      const buf = Uint8Array.from(atob(raw), (c) => c.charCodeAt(0));
+      const pt = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: buf.slice(0, 12) }, key, buf.slice(12));
+      return JSON.parse(new TextDecoder().decode(pt));
+    }
+  });
+}
+
 async function injectZhipuConfig(page: Page) {
   await page.goto('/library');
   await page.waitForLoadState('domcontentloaded');
@@ -490,23 +509,18 @@ test.describe('ZhiPu AI Integration Tests', () => {
   test('TC-12: Tools page AI Generate UI', async ({ page }) => {
     await injectZhipuConfig(page);
 
-    await page.goto('/tools');
-    await page.waitForLoadState('networkidle');
-    await page.waitForTimeout(1000);
+    // The legacy /tools page was removed; its AI Generate tab now lives at
+    // /library/collections/generate.
+    await page.goto('/library/collections/generate');
+    await page.waitForSelector('main[data-seeded="true"]', { timeout: 120_000 });
 
-    // Verify tabs exist
-    await expect(page.getByText('Media Import', { exact: false })).toBeVisible();
-    await expect(page.getByText('AI Generate', { exact: false })).toBeVisible();
+    await expect(
+      page.getByRole('heading', { name: 'AI Generate Collection' }),
+    ).toBeVisible();
+    await expect(page.getByLabel('Collection generate keyword')).toBeVisible();
+    await expect(page.getByTestId('collection-generate-submit')).toBeVisible();
 
-    // Switch to AI Generate tab
-    await page.getByText('AI Generate', { exact: false }).click();
-    await page.waitForTimeout(500);
-
-    // Screenshot
-    await page.screenshot({ path: 'test-results/tc12-tools-page.png', fullPage: true });
-    console.log('  Screenshot: test-results/tc12-tools-page.png');
-
-    console.log('✅ TC-12: Tools page test completed');
+    console.log('✅ TC-12: AI Generate page test completed');
   });
 
   // ─── TC-13: Chat Panel UI ─────────────────────────────────────────────────
@@ -569,9 +583,7 @@ test.describe('ZhiPu AI Integration Tests', () => {
     await injectZhipuConfig(page);
 
     // Read the stored config
-    const config = await page.evaluate(() => {
-      return JSON.parse(localStorage.getItem('echotype_provider_config') || '{}');
-    });
+    const config = await readProviderConfig(page);
 
     console.log(`  Active provider: ${config.state?.activeProviderId}`);
     console.log(`  ZhiPu auth type: ${config.state?.providers?.zai?.auth?.type}`);
@@ -585,9 +597,7 @@ test.describe('ZhiPu AI Integration Tests', () => {
     await page.waitForLoadState('networkidle');
     await page.waitForTimeout(1000);
 
-    const configAfter = await page.evaluate(() => {
-      return JSON.parse(localStorage.getItem('echotype_provider_config') || '{}');
-    });
+    const configAfter = await readProviderConfig(page);
 
     expect(configAfter.state?.activeProviderId).toBe('zai');
     console.log('  ✅ Config persists across reloads');
@@ -604,7 +614,7 @@ test.describe('ZhiPu AI Integration Tests', () => {
 
     // Verify Translation section
     await expect(page.getByRole('heading', { name: 'Translation' })).toBeVisible();
-    await expect(page.getByText('Show by default')).toBeVisible();
+    await expect(page.getByText('Reset to Default')).toBeVisible();
     await expect(page.getByText('Target language')).toBeVisible();
 
     // Verify language options
