@@ -9,6 +9,7 @@
  * a live-task lock so the selector never re-runs underneath an open
  * prompt. Selection is the shipped reference-mode planner.
  */
+import { unionSupport } from '@/vnext/evidence';
 import { SELECTION_MODES, selectNextTask } from '@/vnext/next-for-you/selector';
 import { projectLearnerState } from '@/vnext/projection';
 import { type AttemptEvalResult, submitAttempt, submitObservation } from './bridge';
@@ -140,10 +141,13 @@ export function createMissionSession({
   let playCount = 0;
   let promptShownAt: number | null = null;
 
-  /** Mirror the durable log into memory (dedupe-safe by id). */
+  /** Mirror the durable log into memory (dedupe-safe by id). Only this
+   * learner's rows are mirrored — a shared table must never leak another
+   * learner's evidence into this session's selection or resume state. */
   const syncEvents = async () => {
     const stored = await store.list();
     for (const e of stored) {
+      if (e.learnerId !== learnerId) continue;
       const i = events.findIndex((x) => x.id === e.id);
       if (i >= 0) events[i] = e;
       else events.push(e);
@@ -407,6 +411,16 @@ export function createMissionSession({
       if (response == null || response === '') return session.screen();
 
       const attemptId = attemptIdFor(task);
+      // The stamped support snapshot must reflect the attempt's WHOLE
+      // support history — including support_use events landed before a
+      // reload, when the in-memory snapshot was reset. unionSupport is
+      // the same accumulation rule the projection applies.
+      let stamped = { ...supportSnapshot };
+      for (const e of events) {
+        if (e.attempt?.attemptId === attemptId && e.taskId === task.id && e.eventType === 'support_use') {
+          stamped = unionSupport(stamped, e.support) ?? stamped;
+        }
+      }
       const { evalResult } = await submitAttempt(store, registry, {
         id: evtId(ns, attemptId),
         learnerId,
@@ -415,7 +429,7 @@ export function createMissionSession({
         response: isChoice ? { optionId } : { text: response },
         attemptId,
         latencyMs: promptShownAt != null ? Math.max(0, now() - promptShownAt) : undefined,
-        support: { ...supportSnapshot },
+        support: stamped,
         evaluation: { evaluator: 'fdnext-session', version: '1' },
         evaluationCtx: { learnerName: learnerName ?? undefined },
       });

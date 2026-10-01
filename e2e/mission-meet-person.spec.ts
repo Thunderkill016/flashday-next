@@ -198,7 +198,7 @@ test('meet_new_person: Today → diagnostic → supported → independent → de
   // ── Refresh persistence: resume mid-trajectory ──
   const beforeReload = events.length;
   await page.reload();
-  await expect(page.getByTestId('mission-intro')).toBeVisible();
+  await expect(page.getByTestId('mission-intro')).toBeVisible({ timeout: 60_000 });
   await expect(page.getByTestId('mission-resumed')).toBeVisible();
   await page.getByTestId('mission-start').click();
   events = await allEvents(page);
@@ -210,7 +210,7 @@ test('meet_new_person: Today → diagnostic → supported → independent → de
     25 * HOUR,
   );
   await page.reload();
-  await expect(page.getByTestId('mission-intro')).toBeVisible();
+  await expect(page.getByTestId('mission-intro')).toBeVisible({ timeout: 60_000 });
   await page.getByTestId('mission-start').click();
 
   let sawTransfer = false;

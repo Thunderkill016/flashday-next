@@ -39,7 +39,7 @@ const MISSION_ID = 'mission.meet_new_person';
  * verification keeps the shifted clock); `__FDN_TIME_OFFSET__` is a
  * page-eval seam for browser tests. */
 const testOffsetMs = () =>
-  typeof window === 'undefined'
+  typeof window === 'undefined' || process.env.NODE_ENV !== 'development'
     ? 0
     : Number(window.localStorage.getItem('fdn:timeOffsetMs') ?? 0) +
       Number((window as { __FDN_TIME_OFFSET__?: number }).__FDN_TIME_OFFSET__ ?? 0);
@@ -67,11 +67,17 @@ export default function MissionPage() {
   const sessionRef = useRef<ReturnType<typeof createMissionSession> | null>(null);
 
   const sync = useCallback((scr: SessionScreen | Promise<SessionScreen>) => {
-    void Promise.resolve(scr).then((s) => {
-      setScreen(s);
-      setEventCount(sessionRef.current?.log().length ?? 0);
-      setBusy(false);
-    });
+    void Promise.resolve(scr)
+      .then((s) => {
+        setScreen(s);
+        setEventCount(sessionRef.current?.log().length ?? 0);
+      })
+      .catch((err) => {
+        // The evidence layer refuses rather than silently overwrites —
+        // surface it, keep the last honest screen, and unstick the UI.
+        console.error('[mission] action rejected:', err);
+      })
+      .finally(() => setBusy(false));
   }, []);
 
   useEffect(() => {
@@ -87,6 +93,11 @@ export default function MissionPage() {
     setBusy(true);
     sync(session.init());
   }, [user?.id, sync]);
+
+  // Latency evidence: stamp when a prompt actually reaches the screen.
+  useEffect(() => {
+    if (screen?.type === 'task' && screen.phase === 'prompt') sessionRef.current?.markPromptShown();
+  }, [screen]);
 
   const act = (fn: () => SessionScreen | Promise<SessionScreen>) => {
     if (busy) return;

@@ -5,10 +5,17 @@ const reuseExistingServer = process.env.PLAYWRIGHT_REUSE_EXISTING_SERVER !== 'fa
 
 export default defineConfig({
   testDir: './e2e',
+  /* Dev-mode route recompiles under parallel browser load can exceed
+   * the 30s default — the failure mode is a stuck loader, not a crash. */
+  timeout: 120_000,
+  expect: { timeout: 30_000 },
   fullyParallel: true,
   forbidOnly: !!process.env.CI,
   retries: process.env.CI ? 2 : 0,
-  workers: process.env.CI ? 1 : undefined,
+  /* 4 parallel Chromium instances against a dev server that recompiles
+   * on reload starve the seed gate — 2 workers is the stable local
+   * bound; CI stays serial. */
+  workers: process.env.CI ? 1 : 2,
   reporter: 'list',
   use: {
     baseURL,

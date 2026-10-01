@@ -11,6 +11,9 @@ import type { Table } from 'dexie';
 import { eventFingerprint } from '@/vnext/store-memory';
 import type { EventStore, EvidenceEvent } from './types';
 
+const conflict = (id: string) =>
+  new Error(`event conflict '${id}' — same id, different content; refusing to overwrite evidence`);
+
 export function createDexieEventStore(table: Table<EvidenceEvent, string>): EventStore {
   return {
     async append(events) {
@@ -19,16 +22,26 @@ export function createDexieEventStore(table: Table<EvidenceEvent, string>): Even
       for (const event of events) {
         const existing = await table.get(event.id);
         if (existing) {
-          if (eventFingerprint(existing) !== eventFingerprint(event)) {
-            throw new Error(
-              `event conflict '${event.id}' — same id, different content; refusing to overwrite evidence`,
-            );
-          }
+          if (eventFingerprint(existing) !== eventFingerprint(event)) throw conflict(event.id);
           deduped++;
           continue;
         }
-        await table.add(event);
-        appended++;
+        try {
+          await table.add(event);
+          appended++;
+        } catch (err) {
+          /* get→add is not atomic: a concurrent writer may have landed
+           * the same id between the check and the insert. Re-read and
+           * apply the same rule — identical is a dedupe, different is a
+           * refusal, gone is the original error. */
+          const raced = await table.get(event.id);
+          if (raced && eventFingerprint(raced) === eventFingerprint(event)) {
+            deduped++;
+            continue;
+          }
+          if (raced) throw conflict(event.id);
+          throw err;
+        }
       }
       return { appended, deduped };
     },
