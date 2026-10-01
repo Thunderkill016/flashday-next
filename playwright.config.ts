@@ -17,7 +17,16 @@ export default defineConfig({
   projects: [
     {
       name: 'chromium',
-      use: { ...devices['Desktop Chrome'] },
+      use: {
+        ...devices['Desktop Chrome'],
+        // Reuse the full Chrome build already installed for
+        // playwright-mcp; browser downloads are slow on this network.
+        launchOptions: {
+          executablePath:
+            process.env.PLAYWRIGHT_CHROMIUM_EXECUTABLE_PATH ??
+            '/home/thunder/.cache/ms-playwright/chromium-1234/chrome-linux64/chrome',
+        },
+      },
     },
   ],
   webServer: {

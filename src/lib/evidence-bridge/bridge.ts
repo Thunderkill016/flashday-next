@@ -14,6 +14,7 @@
  *   nextAction   → selectNextTask in the shipped reference mode
  */
 import { bindAttempt, bindObservation } from '@/vnext/bind';
+import { emittedEventType } from '@/vnext/contracts';
 import { evaluateAttempt } from '@/vnext/evaluators';
 import { SELECTION_MODES, selectNextTask } from '@/vnext/next-for-you/selector';
 import { projectLearnerState } from '@/vnext/projection';
@@ -68,11 +69,27 @@ const resolveTask = (registry: ContractRegistry, taskId: string) => {
   return { task, capability };
 };
 
+/** What the declared evaluator actually scored — the function-level
+ * detail a feedback surface renders. Null when the task declares no
+ * deterministic contract (then the caller's `outcome` report stands,
+ * stamped with the task's declared authority). */
+export interface AttemptEvalResult {
+  outcome: 'success' | 'partial' | 'fail';
+  functions?: { fn: string; met: boolean; known: boolean }[];
+  missed?: string[];
+  missingFunctions?: string[];
+}
+
+export interface AttemptResult {
+  event: EvidenceEvent;
+  evalResult: AttemptEvalResult | null;
+}
+
 export async function submitAttempt(
   store: EventStore,
   registry: ContractRegistry,
   sub: AttemptSubmission,
-): Promise<EvidenceEvent> {
+): Promise<AttemptResult> {
   checkForgery(sub);
   const { task, capability } = resolveTask(registry, sub.taskId);
 
@@ -81,15 +98,20 @@ export async function submitAttempt(
    * success). Without a contract, the caller's report is honored but
    * stamped with the task's declared authority — self_report/asr/
    * ai_llm evidence can never mint independent credit either. */
-  const outcome = task.evaluation?.contractId
-    ? (evaluateAttempt(task as never, sub.response)?.outcome ?? null)
-    : (sub.outcome ?? null);
+  const evalResult = task.evaluation?.contractId
+    ? ((evaluateAttempt(task as never, sub.response, sub.evaluationCtx as never) ?? null) as AttemptEvalResult | null)
+    : null;
+  const outcome = evalResult ? evalResult.outcome : (sub.outcome ?? null);
 
   const event = bindAttempt(task as never, capability as never, {
     id: genEventId(sub),
     learnerId: sub.learnerId,
     occurredAt: sub.occurredAt,
-    eventType: sub.eventType,
+    // The contract's purpose×response matrix picks the emitted type —
+    // e.g. retrieval+choice → recognition_attempt, diagnostic+text →
+    // recall_attempt. Callers never name it.
+    eventType:
+      sub.eventType ?? emittedEventType(task.purpose as never, task.response?.type === 'choice' ? 'choice' : 'text'),
     attempt: {
       observed: true,
       outcome,
@@ -103,11 +125,13 @@ export async function submitAttempt(
     evaluation: {
       evaluator: sub.evaluation?.evaluator,
       version: sub.evaluation?.version,
-      ...(sub.evaluation?.missingFunctions ? { missingFunctions: sub.evaluation.missingFunctions } : {}),
+      // Demand routing reads evaluator-attributed misses — the binder
+      // still validates they stay ⊆ requiredFunctions.
+      missingFunctions: evalResult?.missingFunctions ?? sub.evaluation?.missingFunctions ?? [],
     },
   }) as EvidenceEvent;
   await store.append([event]);
-  return event;
+  return { event, evalResult };
 }
 
 export async function submitObservation(

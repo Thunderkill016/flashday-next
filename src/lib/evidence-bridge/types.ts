@@ -155,6 +155,10 @@ export interface AttemptSubmission {
   partnerType?: string;
   /** Evaluator identity/version for provenance — never authority. */
   evaluation?: { evaluator?: string; version?: string; missingFunctions?: string[] };
+  /** Evaluation context the kernel matcher may consult — e.g. the
+   * learner's chosen persona name resolves `state_own_name`. Never
+   * semantic: it parameterises scoring, it does not claim it. */
+  evaluationCtx?: { learnerName?: string };
 }
 
 export interface ObservationSubmission {

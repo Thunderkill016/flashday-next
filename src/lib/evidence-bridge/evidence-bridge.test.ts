@@ -107,7 +107,7 @@ describe('contract forgery is impossible', () => {
   });
 
   it('derives capabilityId from the contract, not the caller', async () => {
-    const event = await submitAttempt(storeFor(), registry(), {
+    const { event } = await submitAttempt(storeFor(), registry(), {
       learnerId: LEARNER,
       taskId: 'task.meet.retrieval.ask_name',
       occurredAt: T0,
@@ -123,7 +123,7 @@ describe('contract forgery is impossible', () => {
 describe('outcome authority lives in the contract', () => {
   it('correct=true cannot mint capability: evaluator scores the response, not the UI claim', async () => {
     // The UI claims success; the produced text evidences nothing.
-    const event = await submitAttempt(storeFor(), registry(), {
+    const { event } = await submitAttempt(storeFor(), registry(), {
       learnerId: LEARNER,
       taskId: 'task.meet.retrieval.ask_name',
       occurredAt: T0,
@@ -171,7 +171,7 @@ describe('support honesty', () => {
 
 describe('speaking boundary', () => {
   it('STT success cannot mint independent speaking credit', async () => {
-    const event = await submitAttempt(storeFor(), registry(), {
+    const { event } = await submitAttempt(storeFor(), registry(), {
       learnerId: LEARNER,
       taskId: 'task.test.asr_shadow.ask_name',
       occurredAt: T0,
@@ -253,7 +253,7 @@ describe('persistence and replay', () => {
 
   it('identical redelivery dedupes; same id + different content is a conflict', async () => {
     const store = storeFor();
-    const event = await submitAttempt(store, registry(), {
+    const { event } = await submitAttempt(store, registry(), {
       learnerId: LEARNER,
       taskId: 'task.meet.retrieval.ask_name',
       occurredAt: T0,
