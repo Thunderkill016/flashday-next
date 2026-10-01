@@ -2,7 +2,7 @@
 
 **Status:** canonical living roadmap  
 **Research refresh:** 2026-10-02  
-**Repository:** \`Thunderkill016/flashday-next\`
+**Repository:** `Thunderkill016/flashday-next`
 
 This document is the project-level source of direction for FlashDay Next.
 
@@ -59,14 +59,14 @@ There must not be one progress system for courses and another contradictory syst
 
 Foundation PR #1 is merged:
 
-\`27191be48e43a6a6a0470fe41d95b6183b0e9dc7\`
+`27191be48e43a6a6a0470fe41d95b6183b0e9dc7`
 
 It established the first evidence-kernel vertical slice.
 
 Speech PR #2 remains a draft:
 
-- branch: \`flashday/speech-path\`
-- reviewed HEAD: \`5932e31f4887e88367da21362e6de56b57755030\`
+- branch: `flashday/speech-path`
+- reviewed HEAD: `5932e31f4887e88367da21362e6de56b57755030`
 
 PR #2 is intentionally frozen while architecture/Vietnam-first work is active.
 
@@ -82,7 +82,7 @@ Do not:
 
 FlashDay must never collapse distinct claims into one progress score.
 
-\`\`\`text
+```text
 activity       ≠ learning
 exposure       ≠ successful recall
 success        ≠ independent success
@@ -93,7 +93,7 @@ course position ≠ observed ability
 STT transcript ≠ pronunciation evidence
 AI feedback    ≠ learner ability
 lesson completion ≠ mastery
-\`\`\`
+```
 
 FSRS is a **memory scheduler**.
 
@@ -129,20 +129,20 @@ Important knowledge and constructions should eventually require retrieval from m
 
 A learning loop should not end at:
 
-\`\`\`text
+```text
 see → understand → mark complete
-\`\`\`
+```
 
 It should progress toward:
 
-\`\`\`text
+```text
 encounter
 → comprehend
 → supported retrieval
 → unsupported retrieval
 → delayed retrieval
 → changed-context use
-\`\`\`
+```
 
 ## 4.2 Spacing
 
@@ -160,13 +160,13 @@ Feedback should create another opportunity to perform correctly.
 
 Preferred loop:
 
-\`\`\`text
+```text
 attempt
 → diagnostic feedback
 → focused repair
 → retry
 → later independent use
-\`\`\`
+```
 
 Avoid feedback that simply shows the answer and immediately upgrades learner state.
 
@@ -218,7 +218,7 @@ They must not directly mint independent ability.
 
 Target state ladder:
 
-\`\`\`text
+```text
 NOT_SEEN
 → EXPOSED
 → SUPPORTED
@@ -226,9 +226,9 @@ NOT_SEEN
 → RETAINED
 → TRANSFERRED
 → FLUENT
-\`\`\`
+```
 
-\`FLUENT\` stays reserved until FlashDay has calibrated evidence for the construct.
+`FLUENT` stays reserved until FlashDay has calibrated evidence for the construct.
 
 ## 5.1 Capability graph
 
@@ -302,12 +302,12 @@ An authority is not automatically trusted for every claim.
 
 Example:
 
-\`\`\`text
+```text
 ASR transcript
 → may support "recognizer heard these words"
 → does NOT prove pronunciation quality
 → does NOT prove intelligibility by itself
-\`\`\`
+```
 
 ## 5.4 Projection
 
@@ -330,7 +330,7 @@ They must remain reconstructible or clearly non-authoritative.
 
 Long-term logical architecture:
 
-\`\`\`text
+```text
                ┌───────────────────────┐
                │   Content Registry    │
                │ source/license/meta   │
@@ -362,7 +362,7 @@ Learner ──► Execution Surfaces ──► Evidence Bridge
                                │
                                ▼
                          Next Learning Action
-\`\`\`
+```
 
 Execution surfaces:
 
@@ -405,7 +405,7 @@ Extract mechanics, not screenshots.
 
 For each mechanic record:
 
-\`\`\`text
+```text
 learner problem
 mechanic
 why it may work
@@ -413,7 +413,7 @@ evidence generated
 FlashDay capability affected
 risk
 how to falsify it
-\`\`\`
+```
 
 ## 7.2 Technology benchmark
 
@@ -444,7 +444,7 @@ Compare:
 
 Preferred order:
 
-\`\`\`text
+```text
 high-quality local/open solution
         ↓
 high-quality self-hosted open solution
@@ -452,7 +452,7 @@ high-quality self-hosted open solution
 free-tier external service
         ↓
 paid/proprietary solution
-\`\`\`
+```
 
 But free is not the quality bar.
 
@@ -519,7 +519,7 @@ Research:
 
 Mission shape:
 
-\`\`\`text
+```text
 diagnostic
 → input/noticing
 → comprehension
@@ -529,7 +529,7 @@ diagnostic
 → delayed retrieval
 → transfer
 → assessment
-\`\`\`
+```
 
 Not every capability requires every stage, but skipped stages must be a deliberate contract decision.
 
@@ -594,7 +594,7 @@ A single score must not collapse these constructs.
 
 Desired correction strategy:
 
-\`\`\`text
+```text
 conversation
 → preserve flow
 → capture errors
@@ -602,7 +602,7 @@ conversation
 → focused repair
 → retry
 → later reappearance
-\`\`\`
+```
 
 Technology candidates to benchmark:
 
@@ -666,7 +666,7 @@ Benchmark:
 
 Desired loop:
 
-\`\`\`text
+```text
 prompt
 → learner writes
 → deterministic diagnostics where possible
@@ -674,7 +674,7 @@ prompt
 → learner repairs
 → compare
 → later fresh writing task
-\`\`\`
+```
 
 Separate:
 
@@ -791,13 +791,13 @@ It must not directly mutate mastery.
 
 Architecture:
 
-\`\`\`text
+```text
 LLM output
 → structured proposal/feedback
 → deterministic/schema validation
 → evidence contract
 → only allowed claims enter learner model
-\`\`\`
+```
 
 Model routing must stay provider-agnostic.
 
@@ -868,7 +868,7 @@ Inputs may include:
 
 Pipeline:
 
-\`\`\`text
+```text
 ingest
 → sanitize
 → provenance
@@ -878,7 +878,7 @@ ingest
 → lexical profile
 → difficulty
 → learning affordances
-\`\`\`
+```
 
 Security requirements:
 
@@ -994,29 +994,29 @@ FlashDay is built first for Vietnamese learners of English while keeping archite
 
 UI languages:
 
-- \`vi\`
-- \`en\`
-- \`zh\`
+- `vi`
+- `en`
+- `zh`
 
 Fresh install:
 
-\`\`\`text
+```text
 explicit saved UI preference
         ↓
 Vietnamese
-\`\`\`
+```
 
 Browser locale must not override the product default.
 
 Fresh support/translation target:
 
-\`vi\`
+`vi`
 
-Existing explicit \`en\` / \`zh\` preferences must survive migration.
+Existing explicit `en` / `zh` preferences must survive migration.
 
 UI language, source language, target learning language and translation language are separate fields.
 
-Do not encode them as one \`language\` variable.
+Do not encode them as one `language` variable.
 
 Vietnamese copy quality requirements:
 
@@ -1034,7 +1034,7 @@ EchoType's bundled phrases/scenarios are candidate material, not the future curr
 
 Long-term content architecture:
 
-\`\`\`text
+```text
 Source Registry
       ↓
 license/provenance validation
@@ -1054,7 +1054,7 @@ automatic QA
 human/gold review
       ↓
 production curriculum
-\`\`\`
+```
 
 ## 10.1 Source roles to validate
 
@@ -1131,11 +1131,11 @@ AI belongs near the end of the content pipeline.
 
 Never:
 
-\`\`\`text
+```text
 LLM
 → generate 10,000 sentences
 → production database
-\`\`\`
+```
 
 Generated material requires:
 
@@ -1156,7 +1156,7 @@ Assessment items need stronger isolation and held-out controls.
 
 Canonical content should support fields such as:
 
-\`\`\`text
+```text
 id
 source
 sourceVersion
@@ -1180,7 +1180,7 @@ register
 media provenance
 voice/model provenance
 assessmentEligibility
-\`\`\`
+```
 
 Unknown provenance should fail closed for bundled commercial distribution.
 
@@ -1254,7 +1254,7 @@ Before pronunciation scoring becomes learner authority:
 
 ## 12.4 Frozen PR #2 findings
 
-At reviewed HEAD \`5932e31f4887e88367da21362e6de56b57755030\`:
+At reviewed HEAD `5932e31f4887e88367da21362e6de56b57755030`:
 
 1. native Web Speech stop/final event ordering can lose the final transcript;
 2. server STT provenance records provider but not exact model/version;
@@ -1264,7 +1264,7 @@ These remain parked until Speech work resumes.
 
 OpenPronounce current verdict:
 
-\`EXPERIMENT MORE\`
+`EXPERIMENT MORE`
 
 It is not mastery authority.
 
@@ -1297,10 +1297,10 @@ For every important subsystem assign:
 
 Required documents:
 
-- \`ECHOTYPE_DEEP_AUDIT.md\`
-- \`STATE_AUTHORITY.md\`
-- \`VIETNAMIZATION_AUDIT.md\`
-- \`LICENSE_MATRIX.md\`
+- `ECHOTYPE_DEEP_AUDIT.md`
+- `STATE_AUTHORITY.md`
+- `VIETNAMIZATION_AUDIT.md`
+- `LICENSE_MATRIX.md`
 
 Do not turn the audit into a rewrite.
 
@@ -1312,7 +1312,7 @@ After external review of FDN-ARCH-001, split cleanup into bounded missions.
 
 Likely conflicts:
 
-\`\`\`text
+```text
 legacy daily planner
 vs Next For You
 
@@ -1333,11 +1333,11 @@ vs future acoustic evidence
 
 legacy learningAttempts
 vs FlashDay attempts
-\`\`\`
+```
 
 Preferred migration pattern:
 
-\`\`\`text
+```text
 identify authority
 → freeze conflicting new writes
 → adapter/read compatibility
@@ -1346,7 +1346,7 @@ identify authority
 → verify
 → retire
 → delete only later
-\`\`\`
+```
 
 No destructive migration without reproducible migration evidence and rollback strategy.
 
@@ -1369,7 +1369,7 @@ Capability state stores ability facts.
 
 Relationship:
 
-\`\`\`text
+```text
 Capability need
      +
 Memory due-ness
@@ -1377,7 +1377,7 @@ Memory due-ness
 Planner
      ↓
 appropriate task
-\`\`\`
+```
 
 FSRS output should never write directly to capability mastery.
 
@@ -1520,13 +1520,13 @@ Principles:
 
 Speech/audio should have a documented lifecycle:
 
-\`\`\`text
+```text
 capture
 → optional processing
 → provider/self-host boundary
 → transient/durable decision
 → retention/deletion policy
-\`\`\`
+```
 
 AI-provider privacy should be visible in settings where relevant.
 
@@ -1569,7 +1569,7 @@ AI/speech/TTS models change faster than application architecture.
 
 Maintain a registry for production model usage:
 
-\`\`\`text
+```text
 capability
 provider
 model
@@ -1581,7 +1581,7 @@ latency benchmark
 quality benchmark
 fallback
 last reviewed
-\`\`\`
+```
 
 Never persist generic labels like “AI” when exact provenance is available.
 
@@ -1924,7 +1924,7 @@ It is done when:
 
 Every major feature mission should include:
 
-\`\`\`text
+```text
 FEATURE
 Learner problem
 
@@ -1972,7 +1972,7 @@ SUCCESS
 Learning metric
 Product metric
 Guardrail
-\`\`\`
+```
 
 ---
 
@@ -2018,7 +2018,7 @@ Use the strongest ideas from each class of product while preserving one coherent
 
 Current order:
 
-\`\`\`text
+```text
 PR #1 Foundation
     ✓ merged
       ↓
@@ -2047,7 +2047,7 @@ AI tutor
 Efficacy/quality scale
       ↓
 Public sustainable product
-\`\`\`
+```
 
 Do not skip ahead because a later feature is attractive or easy to code.
 
