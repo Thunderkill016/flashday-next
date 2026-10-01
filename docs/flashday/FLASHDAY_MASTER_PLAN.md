@@ -1,677 +1,1293 @@
-# FlashDay Master Plan
+# FlashDay Next — Master Product, Learning & Engineering Plan
 
-Status: living roadmap for FlashDay Next.
+**Status:** canonical living roadmap  
+**Research refresh:** 2026-10-02  
+**Repository:** \`Thunderkill016/flashday-next\`
 
-This document is the canonical project-level plan. Individual missions may refine implementation details, but they must not silently change the sequencing, authority model, research gates, or deferred-work boundaries defined here.
+This document is the project-level source of direction for FlashDay Next.
 
-## Baseline
+Individual missions may refine implementation details, but they must not silently change:
 
-- Repository: `Thunderkill016/flashday-next`
-- Foundation PR #1: merged as `27191be48e43a6a6a0470fe41d95b6183b0e9dc7`
-- Speech PR #2: draft only, branch `flashday/speech-path`, reviewed at `5932e31f4887e88367da21362e6de56b57755030`
-- PR #2 must remain unmerged while the architecture/Vietnam-first wave is active.
-- Do not cherry-pick Speech/OpenPronounce work into the architecture audit wave.
+- learning authority;
+- product doctrine;
+- research gates;
+- technology-selection rules;
+- privacy/license rules;
+- wave sequencing;
+- merge authority.
 
-## Product doctrine
+If implementation and this document disagree, stop and review the disagreement explicitly.
 
-FlashDay owns learning truth.
+---
 
-```text
-Evidence Log
-    ↓
-Learner Projection
-    ↓
-Planner / Next For You
-    ↓
-Mission / Session
-    ↓
-Execution surfaces
-    ├─ Listen
-    ├─ Speak
-    ├─ Read
-    ├─ Write
-    └─ Imported Content
-```
+# 1. Product thesis
 
-Non-negotiable distinctions:
+FlashDay is not another collection of exercises and it is not an EchoType reskin.
 
-- activity ≠ learning
-- completion ≠ mastery
-- accuracy ≠ proficiency
-- MemoryState ≠ ProficiencyState
-- STT/ASR transcript ≠ pronunciation evidence
-- course position ≠ observed ability
-- practiced family ≠ transfer
-- AI score ≠ certified learner level
-- FSRS = memory scheduling only
+The product goal is:
 
-UI/execution modules may report observed reality. They do not author semantic learning conclusions.
+> Build a Vietnam-first English-learning system that can observe what a learner actually did, distinguish exposure from supported success and independent ability, schedule the right next action, and gradually move learning from guided practice to durable recall and changed-context transfer.
 
-## Universal feature-development rule — benchmark before build
+The system should support two complementary modes:
 
-This rule applies to **every meaningful FlashDay feature**, not only Speech.
+1. **Guided learning**
+   - curriculum/capability goals;
+   - missions;
+   - diagnosis;
+   - structured practice;
+   - retrieval;
+   - transfer;
+   - assessment.
 
-Before designing, replacing, or substantially upgrading a feature, the responsible mission must perform two research passes:
+2. **Learn from real content**
+   - video;
+   - audio;
+   - articles;
+   - books;
+   - transcripts;
+   - learner-imported material;
+   - vocabulary/sentence mining;
+   - comprehension-aware difficulty.
 
-1. **Product benchmark** — study the strongest relevant products and identify the concrete learning/product mechanics that make the feature effective.
-2. **Technology benchmark** — evaluate the strongest relevant technologies, libraries, models, standards, datasets, and infrastructure options before choosing an implementation.
+Both modes must converge on the **same learner model**.
 
-Do not begin from “what can we code quickly.” Begin from:
+There must not be one progress system for courses and another contradictory system for immersion.
 
-```text
-best observed product mechanic
-        +
-best evidence-compatible learning design
-        +
-best-fit technology
-        ↓
-FlashDay implementation
-```
+---
 
-### Product-benchmark requirements
+# 2. Current repository baseline
 
-For each feature:
+Foundation PR #1 is merged:
 
-- identify the best-in-class and strongest competing products;
-- study the actual interaction loop, not marketing copy;
-- identify what they do better than FlashDay;
-- identify what should NOT be copied;
-- separate retention/engagement tricks from real learning value;
-- map useful mechanics into FlashDay's evidence/capability model;
-- record unresolved assumptions before implementation.
+\`27191be48e43a6a6a0470fe41d95b6183b0e9dc7\`
 
-Research should prioritize primary sources, live product behavior, official documentation, reproducible demos, and credible independent evidence where available.
+It established the first evidence-kernel vertical slice.
 
-### Technology-benchmark requirements
+Speech PR #2 remains a draft:
 
-For each feature, compare realistic implementation candidates on:
+- branch: \`flashday/speech-path\`
+- reviewed HEAD: \`5932e31f4887e88367da21362e6de56b57755030\`
+
+PR #2 is intentionally frozen while architecture/Vietnam-first work is active.
+
+Do not:
+
+- merge PR #2;
+- cherry-pick it into architecture work;
+- continue OpenPronounce integration before the Speech research wave.
+
+---
+
+# 3. Non-negotiable learning doctrine
+
+FlashDay must never collapse distinct claims into one progress score.
+
+\`\`\`text
+activity       ≠ learning
+exposure       ≠ successful recall
+success        ≠ independent success
+independence   ≠ retention
+retention      ≠ transfer
+memory         ≠ proficiency
+course position ≠ observed ability
+STT transcript ≠ pronunciation evidence
+AI feedback    ≠ learner ability
+lesson completion ≠ mastery
+\`\`\`
+
+FSRS is a **memory scheduler**.
+
+It is not:
+
+- a proficiency estimator;
+- a speaking score;
+- a capability graph;
+- a CEFR classifier.
+
+The UI does not author learning truth.
+
+Execution surfaces may report observed reality:
+
+- task shown;
+- support used;
+- learner response;
+- latency;
+- audio/transcript provenance;
+- feedback delivered.
+
+The FlashDay kernel/evaluator decides what semantic evidence that observation supports.
+
+---
+
+# 4. Learning-science foundation
+
+The product must be designed around mechanisms with credible support, while avoiding claims stronger than the evidence.
+
+## 4.1 Retrieval before passive repetition
+
+Important knowledge and constructions should eventually require retrieval from memory.
+
+A learning loop should not end at:
+
+\`\`\`text
+see → understand → mark complete
+\`\`\`
+
+It should progress toward:
+
+\`\`\`text
+encounter
+→ comprehend
+→ supported retrieval
+→ unsupported retrieval
+→ delayed retrieval
+→ changed-context use
+\`\`\`
+
+## 4.2 Spacing
+
+Long-term memory needs re-verification after meaningful delay.
+
+FlashDay should schedule memory resurfacing using FSRS or a validated memory scheduler, but the resulting due date is only a memory decision.
+
+A due card does not mean a capability has been lost.
+
+A high FSRS stability value does not mean a learner can perform a communicative capability.
+
+## 4.3 Feedback followed by repair
+
+Feedback should create another opportunity to perform correctly.
+
+Preferred loop:
+
+\`\`\`text
+attempt
+→ diagnostic feedback
+→ focused repair
+→ retry
+→ later independent use
+\`\`\`
+
+Avoid feedback that simply shows the answer and immediately upgrades learner state.
+
+## 4.4 Transfer
+
+The product should deliberately test whether a learner can use an ability in a meaningfully changed context.
+
+Examples:
+
+- different partner;
+- different wording;
+- different setting;
+- different surface vocabulary;
+- different media;
+- different prompt family.
+
+A rehearsed prompt must not be re-labelled as transfer.
+
+## 4.5 Progressive support
+
+Support is a legitimate learning tool, but support-bearing success must remain distinguishable from unaided success.
+
+Examples of answer-bearing support:
+
+- model answer;
+- translation;
+- transcript reveal;
+- strong hint.
+
+Support usage belongs permanently to that attempt's evidence history.
+
+## 4.6 Metacognition without self-report inflation
+
+FlashDay can ask:
+
+- confidence;
+- perceived difficulty;
+- preference;
+- fatigue;
+- goals.
+
+Those signals can guide scheduling and UX.
+
+They must not directly mint independent ability.
+
+---
+
+# 5. Capability and evidence model
+
+Target state ladder:
+
+\`\`\`text
+NOT_SEEN
+→ EXPOSED
+→ SUPPORTED
+→ INDEPENDENT
+→ RETAINED
+→ TRANSFERRED
+→ FLUENT
+\`\`\`
+
+\`FLUENT\` stays reserved until FlashDay has calibrated evidence for the construct.
+
+## 5.1 Capability graph
+
+Capabilities represent things a learner can meaningfully understand or do.
+
+Examples:
+
+- understand a basic greeting;
+- greet someone;
+- understand a name question;
+- state own name;
+- ask another person's name;
+- repair a misunderstanding;
+- understand a clock time.
+
+Hard graph edges are allowed only for **true performance dependencies**.
+
+Use this test:
+
+> If capability A were absent, could capability B still be meaningfully performed and evaluated?
+
+If yes, A should probably not be a hard prerequisite for B.
+
+Pedagogical order belongs in:
+
+- mission sequencing;
+- recommended-after relationships;
+- planner policy;
+- curriculum composition.
+
+Do not disguise lesson order as dependency.
+
+## 5.2 Evidence events
+
+Learner evidence must be append-only and replayable.
+
+Important fields include:
+
+- learner;
+- registered task/revision;
+- capability binding;
+- event type;
+- time;
+- response;
+- outcome;
+- support history;
+- context;
+- evaluator authority;
+- capture provenance;
+- attempt id;
+- mission/run provenance.
+
+Identical redelivery should dedupe.
+
+Same event identity with different payload must fail closed.
+
+## 5.3 Evaluation authority
+
+Different signals have different authority.
+
+Examples:
+
+- deterministic evaluator;
+- calibrated human judgment;
+- ASR;
+- acoustic evaluator;
+- AI/LLM feedback;
+- self-report.
+
+An authority is not automatically trusted for every claim.
+
+Example:
+
+\`\`\`text
+ASR transcript
+→ may support "recognizer heard these words"
+→ does NOT prove pronunciation quality
+→ does NOT prove intelligibility by itself
+\`\`\`
+
+## 5.4 Projection
+
+Learner state is derived by replay.
+
+Do not maintain another mutable “mastery score” that competes with replay-derived evidence.
+
+Derived views may exist for:
+
+- UI;
+- analytics;
+- caching;
+- planner performance.
+
+They must remain reconstructible or clearly non-authoritative.
+
+---
+
+# 6. Target system architecture
+
+Long-term logical architecture:
+
+\`\`\`text
+               ┌───────────────────────┐
+               │   Content Registry    │
+               │ source/license/meta   │
+               └───────────┬───────────┘
+                           │
+                           ▼
+               ┌───────────────────────┐
+               │   Capability Graph    │
+               └───────────┬───────────┘
+                           │
+                           ▼
+               ┌───────────────────────┐
+               │ Mission / Task Specs  │
+               └───────────┬───────────┘
+                           │
+                           ▼
+Learner ──► Execution Surfaces ──► Evidence Bridge
+                                       │
+                                       ▼
+                              Append-only Evidence
+                                       │
+                        ┌──────────────┼──────────────┐
+                        ▼              ▼              ▼
+                 Learner Projection  Memory Model   Analytics
+                        │              │
+                        └──────┬───────┘
+                               ▼
+                        Planner / Next For You
+                               │
+                               ▼
+                         Next Learning Action
+\`\`\`
+
+Execution surfaces:
+
+- Today / Next For You;
+- Mission;
+- Listen;
+- Speak;
+- Read;
+- Write;
+- Review;
+- Imported Content;
+- AI Tutor.
+
+They are consumers/producers of evidence, not competing learner models.
+
+---
+
+# 7. Universal feature rule — research before build
+
+Every meaningful feature or major feature replacement must begin with two explicit research passes.
+
+## 7.1 Product benchmark
+
+Identify strong products solving the same learner problem.
+
+Research:
+
+- actual interaction loop;
+- progression;
+- correction timing;
+- feedback density;
+- learner control;
+- failure behavior;
+- accessibility;
+- monetization constraints;
+- engagement mechanics;
+- what users must repeatedly do.
+
+Extract mechanics, not screenshots.
+
+For each mechanic record:
+
+\`\`\`text
+learner problem
+mechanic
+why it may work
+evidence generated
+FlashDay capability affected
+risk
+how to falsify it
+\`\`\`
+
+## 7.2 Technology benchmark
+
+Evaluate realistic technologies before committing architecture.
+
+Compare:
 
 - quality/accuracy;
+- false-positive/false-negative behavior;
 - latency;
 - reliability;
-- browser/mobile/desktop feasibility;
-- offline capability;
-- CPU/RAM/GPU cost;
-- operational complexity;
+- memory/CPU/GPU;
+- browser support;
+- Android/iOS feasibility;
+- offline use;
 - privacy;
 - security;
 - commercial-use license;
 - model/data provenance;
 - maintenance health;
-- vendor lock-in;
+- integration complexity;
 - testability;
-- interoperability with FlashDay architecture.
+- vendor lock-in;
+- migration path;
+- total operating cost.
 
-### Free/open-first policy
+## 7.3 Free/open-first policy
 
-FlashDay should **prefer free, open-source, open-standard, self-hostable or local-first technology** when it reaches the required quality bar.
+Preferred order:
 
-Priority order:
-
-```text
-high-quality free/open/local solution
+\`\`\`text
+high-quality local/open solution
         ↓
-high-quality free/open self-hosted service
+high-quality self-hosted open solution
         ↓
-free-tier external service when operationally justified
+free-tier external service
         ↓
-paid/proprietary service only when it materially outperforms
-the free/open alternatives on a product-critical dimension
-```
+paid/proprietary solution
+\`\`\`
 
-“Free” is not enough.
+But free is not the quality bar.
 
-Do NOT select a technology merely because it costs nothing.
+A free/open option wins only when it is good enough for the learner-facing requirement.
 
-A free/open candidate must still meet the feature's quality threshold. If a paid/proprietary solution is materially better, document:
+If a paid/proprietary technology wins, document:
 
-- what it wins on;
-- how large the gap is;
-- why the gap matters to learners;
+- measured advantage;
+- learner impact;
 - expected cost;
+- privacy trade-off;
 - lock-in risk;
-- fallback/migration path.
+- fallback;
+- replacement path.
 
-Whenever possible, architect provider/model seams so a better free/open implementation can replace a paid dependency later without rewriting the learning model.
+Provider seams should make future replacement possible without changing learning semantics.
 
-### No blind feature copying
+---
 
-Top products are research inputs, not specifications.
+# 8. Feature research blueprint
 
-Do not copy:
+This is the default benchmark set. Missions may add newer/better competitors.
 
-- UI merely because it is popular;
-- gamification that does not improve learning;
-- scoring semantics incompatible with FlashDay evidence;
-- proprietary claims that cannot be independently justified;
-- dark patterns;
-- unnecessary complexity.
+## 8.1 Today / Next For You
 
-Every borrowed mechanic must answer:
+Goal:
 
-```text
-What learner problem does this solve?
-What evidence does it generate?
-What capability does it affect?
-How can we falsify that it works?
-What is the cheapest high-quality implementation?
-```
+One clear next useful action, with an understandable reason.
 
-## Feature research map
+Research:
 
-This map is a starting point, not a closed list. Every new feature added later inherits the same benchmark-before-build rule.
+- Duolingo personalized practice/path;
+- Anki review queue behavior;
+- adaptive learning systems;
+- recommendation/ranking systems.
 
-### Listen
+FlashDay should optimize for learning need, not maximum session length.
 
-Research product mechanics from strong listening/immersion tools such as:
+Planner inputs may include:
 
-- Language Reactor
-- Migaku
-- LingQ
-- asbplayer
-- high-quality dictation/shadowing products
+- capability gaps;
+- recent failures;
+- missing-function demand;
+- memory due-ness;
+- required delayed retrieval;
+- transfer requirement;
+- learner goal;
+- time available;
+- fatigue/load;
+- content interests.
 
-Study:
+Planner output must remain explainable.
 
-- segment replay;
+Avoid opaque ML ranking until it demonstrably beats a deterministic inspectable policy.
+
+## 8.2 Mission / guided path
+
+Research:
+
+- Duolingo progression;
+- Speak's Learn → Practice → Apply structure;
+- structured CEFR-aligned products;
+- scenario-based tutors.
+
+Mission shape:
+
+\`\`\`text
+diagnostic
+→ input/noticing
+→ comprehension
+→ supported production
+→ independent production
+→ remediation if required
+→ delayed retrieval
+→ transfer
+→ assessment
+\`\`\`
+
+Not every capability requires every stage, but skipped stages must be a deliberate contract decision.
+
+## 8.3 Listen
+
+Benchmark:
+
+- Language Reactor;
+- Speechling;
+- LingQ;
+- Migaku;
+- asbplayer;
+- strong dictation/shadowing workflows.
+
+Mechanics worth evaluating:
+
+- precise sentence replay;
 - auto-pause;
-- subtitle timing;
-- transcript reveal;
+- variable speed;
+- transcript hidden/reveal;
+- bilingual support;
 - dictation;
-- comprehension before imitation;
-- known/unknown word support;
-- sentence mining;
-- speed control;
-- context preservation.
+- repeat counting;
+- comprehension checks;
+- shadowing only after comprehension;
+- subtitle navigation;
+- saved sentence with context.
 
-Technology research should include high-quality free/open options for:
+Potential free/open technology areas:
 
-- media playback;
-- subtitle parsing/alignment;
-- timestamp handling;
+- Web Audio API;
+- standard subtitle parsers;
 - local audio processing;
-- VAD where relevant;
-- TTS;
-- offline media support.
+- ffmpeg where server/native use is justified;
+- VAD;
+- alignment;
+- local TTS/ASR where useful.
 
-### Speak / Pronunciation
+Do not equate replay count with learning.
 
-Research:
+## 8.4 Speak / Pronunciation
 
-- ELSA Speak
-- Speak
-- Loora
-- BoldVoice
-- Speechling
-- Praktika
-- other strong speaking/pronunciation systems discovered later
+Benchmark:
 
-Study:
+- ELSA Speak;
+- Speak;
+- Loora;
+- BoldVoice;
+- Speechling;
+- Praktika;
+- Duolingo conversation/video-call work.
 
-- conversation-first speaking;
-- pronunciation diagnostics;
-- sound/syllable/stress/intonation feedback;
-- correction prioritization;
-- repair drills;
-- native model → learner attempt → replay → retry;
-- role-play;
-- delayed transfer.
+Study separately:
 
-Technology candidates include:
+1. communicative speaking;
+2. pronunciation;
+3. fluency;
+4. grammar/lexical accuracy;
+5. repair strategies.
 
-- whisper.cpp
-- faster-whisper
-- sherpa-onnx
-- Silero VAD
-- CMUdict
-- Montreal Forced Aligner
-- Wav2Vec2/phoneme models
-- OpenPronounce
-- future higher-quality free/open candidates
+A single score must not collapse these constructs.
 
-No ASR transcript may masquerade as pronunciation mastery.
+Desired correction strategy:
 
-### Read / Immersion
+\`\`\`text
+conversation
+→ preserve flow
+→ capture errors
+→ choose 1–3 high-value corrections
+→ focused repair
+→ retry
+→ later reappearance
+\`\`\`
 
-Research:
+Technology candidates to benchmark:
 
-- LingQ
-- Lute
-- Learning With Texts
-- Readlang-style workflows
-- Migaku
-- Language Reactor where relevant
+- whisper.cpp;
+- faster-whisper;
+- sherpa-onnx;
+- Silero VAD;
+- CMUdict;
+- forced alignment;
+- phoneme recognition models;
+- OpenPronounce;
+- better future open models.
 
-Study:
+Speech provenance should preserve:
 
-- known/learning/new word states;
-- click-to-gloss;
-- phrase-aware lookup;
+- capture mode;
+- authority class;
+- provider;
+- exact model/version;
+- final/interim;
+- genuine confidence if available;
+- processing path.
+
+## 8.5 Read / Immersion
+
+Benchmark:
+
+- LingQ;
+- Migaku;
+- Language Reactor;
+- Readlang;
+- Lute;
+- Learning With Texts.
+
+Core mechanics:
+
+- instant word/phrase lookup;
+- context preserved;
+- known/learning/new state;
 - lexical coverage;
-- readable-at-level estimation;
-- context-preserving vocabulary;
+- content difficulty estimate;
 - sentence capture;
-- extensive reading progression;
-- low-friction dictionary UX.
+- minimal interruption;
+- resume position;
+- audio/text synchronization when available.
 
-Technology/data research should consider:
+Important distinction:
 
-- tokenizer/segmentation libraries;
-- dictionary/lexical resources;
-- Open English WordNet;
-- frequency lists;
-- local search/indexing;
-- open corpora with clean commercial licenses.
+Word knownness is useful for **input difficulty**.
 
-### Write
+It must not become a complete proficiency model.
 
-Research the strongest writing-learning and correction systems, not generic grammar checkers only.
+## 8.6 Write
 
-Study:
+Benchmark:
 
-- error categorization;
-- explanation quality;
-- repair-before-rewrite;
-- minimal correction;
-- learner self-correction;
-- delayed re-use of corrected structures;
-- free production vs guided production.
-
-Technology research may include:
-
+- language-learning writing tools;
+- strong correction UX;
 - LanguageTool;
-- grammar parsers;
-- deterministic rule engines;
-- high-quality local/open LLM candidates;
-- structured error taxonomies.
+- relevant AI writing tutors.
 
-AI rewrite output must not automatically become evidence of learner ability.
+Desired loop:
 
-### Vocabulary / Lexical learning
+\`\`\`text
+prompt
+→ learner writes
+→ deterministic diagnostics where possible
+→ semantic/style feedback
+→ learner repairs
+→ compare
+→ later fresh writing task
+\`\`\`
+
+Separate:
+
+- spelling;
+- grammar;
+- syntax;
+- lexical choice;
+- coherence;
+- task fulfilment.
+
+An AI rewrite is feedback, not evidence that the learner can produce the rewrite.
+
+Technology candidates:
+
+- LanguageTool or comparable deterministic diagnostics;
+- open grammar/style tooling;
+- provider-abstracted LLM feedback;
+- local/open models when quality is sufficient.
+
+## 8.7 Vocabulary / Chunks
+
+Benchmark:
+
+- Anki;
+- Migaku;
+- LingQ;
+- modern SRS products.
+
+Prefer useful lexical units:
+
+- words;
+- collocations;
+- chunks;
+- constructions;
+- sentence patterns.
+
+Track:
+
+- context encountered;
+- sense;
+- production/reception distinction;
+- source;
+- frequency;
+- support;
+- review history.
+
+Avoid thousands of contextless cards as the default product experience.
+
+## 8.8 Review / SRS
+
+Benchmark:
+
+- Anki FSRS;
+- current FSRS ecosystem;
+- validated spacing/retrieval research.
+
+FSRS decides **when memory should be tested**.
+
+FlashDay decides **what kind of performance proves a capability**.
+
+Review queue can include:
+
+- lexical memory;
+- chunks;
+- listening retrieval;
+- production prompts;
+- repaired errors.
+
+Do not force all learning evidence into flashcards.
+
+## 8.9 Assessment / Placement
+
+Use CEFR as a reference framework where appropriate, not as a magical score.
 
 Research:
 
-- Anki
-- LingQ
-- Migaku
-- mature SRS tools
-- frequency-based vocabulary systems
-
-Study:
-
-- retrieval design;
-- context-rich cards;
-- recognition vs production;
-- leeches;
-- suspend/bury;
-- difficulty;
-- known-word tracking;
-- item creation friction;
-- spacing without confusing memory with proficiency.
-
-Technology/data research should include:
-
-- FSRS;
-- NGSL / spoken frequency resources;
-- open lexical datasets;
-- morphology/lemmatization;
-- dictionary data;
-- high-quality sentence sources.
-
-### Review / SRS
-
-Research:
-
-- Anki
-- FSRS ecosystem
-- SuperMemo concepts where legally/documentarily useful
-- high-quality modern review systems
-
-Study:
-
-- scheduling;
-- lapse handling;
-- relearning;
-- interleaving;
-- desirable difficulty;
-- context rotation;
-- review burden;
-- memory forecasting.
-
-FSRS remains a memory scheduler, not proficiency authority.
-
-### Planner / Next For You
-
-Research adaptive-learning products and recommendation systems.
-
-Study:
-
-- next-action selection;
-- remediation routing;
-- prerequisite handling;
-- uncertainty;
-- support-demand routing;
-- spacing;
-- exploration vs exploitation;
-- learner fatigue;
-- explainability.
-
-The planner must operate over FlashDay evidence/projection and must not create mastery by scheduling something.
-
-Prefer deterministic, inspectable policy before opaque ML if both achieve comparable learner value.
-
-### Assessment / Placement
-
-Research strong language assessment and placement products/frameworks.
-
-Study:
-
+- official CEFR descriptors;
 - adaptive testing;
-- receptive vs productive separation;
-- held-out item design;
-- confidence;
-- floor/ceiling effects;
-- retesting;
-- contamination prevention;
-- score interpretation.
+- receptive/productive assessment;
+- placement systems.
 
-Do not equate a short MCQ with full CEFR proficiency.
+Assessment requirements:
 
-Prefer open/public standards and validated item methodologies where legally usable.
+- fresh prompts;
+- no leaked model answer;
+- stable attempt identity;
+- held-out items;
+- modality separation;
+- meaningful task coverage;
+- explicit uncertainty.
 
-### Translation / Learner support
+A short multiple-choice test must not claim full CEFR speaking/writing proficiency.
+
+## 8.10 AI Tutor / Conversation
+
+Benchmark:
+
+- Speak Tutor;
+- Loora;
+- Praktika;
+- Duolingo conversation/video-call experiences;
+- future top AI language tutors.
+
+AI tutor responsibilities may include:
+
+- role-play;
+- conversation continuation;
+- scenario adaptation;
+- error collection;
+- explanation;
+- generating controlled variants.
+
+It must not directly mutate mastery.
+
+Architecture:
+
+\`\`\`text
+LLM output
+→ structured proposal/feedback
+→ deterministic/schema validation
+→ evidence contract
+→ only allowed claims enter learner model
+\`\`\`
+
+Model routing must stay provider-agnostic.
+
+Benchmark open/local models against commercial frontier models periodically.
+
+## 8.11 Translation and Vietnamese learner support
+
+Translation is scaffolding.
+
+It is not mastery.
 
 Research:
 
-- top translation UX inside language-learning products;
-- bilingual dictionary workflows;
-- contextual translation tools;
-- learner-facing explanation systems.
+- contextual dictionary UX;
+- bilingual explanations;
+- DeepL/Google-style interaction patterns;
+- AI contextual explanation;
+- open translation models.
 
-Study:
+Vietnamese explanations should prioritize:
 
-- when translation helps vs harms;
-- sentence vs word translation;
-- ambiguity;
-- progressive reveal;
-- Vietnamese learner explanations;
-- translation support as scaffolding rather than mastery evidence.
+- concise meaning;
+- usage difference;
+- common Vietnamese learner confusion;
+- examples;
+- optional deeper detail.
 
-Technology benchmark should prioritize:
+Default support language for new users: Vietnamese.
 
-- high-quality open translation models when viable;
-- local/self-host inference where quality permits;
-- provider abstraction when proprietary models materially outperform;
-- dictionaries/lexical resources for deterministic support.
+## 8.12 TTS
 
-### TTS / Listening voice
+Benchmark:
 
-Benchmark naturalness, intelligibility, latency, pronunciation control, streaming, Vietnamese-support needs, English accent quality and commercial licensing.
+- naturalness;
+- English intelligibility;
+- accent quality;
+- latency;
+- streaming;
+- browser/mobile footprint;
+- commercial license;
+- offline capability.
 
-Prefer high-quality free/open TTS when competitive.
+Candidate open technologies include Kokoro and future open models.
 
-Candidates may include Kokoro and future stronger open models, but every model must be benchmarked rather than adopted by reputation.
+Do not hard-code one TTS vendor into evidence or content data.
 
-### Import / Learn from anything
+Store voice/model provenance where generated audio becomes a durable asset.
 
-Research:
+## 8.13 Import / Learn from Anything
 
-- Language Reactor
-- Migaku
-- LingQ imports
-- Readwise Reader-style ingestion mechanics where relevant
-- high-quality subtitle/transcript tools
+Benchmark:
 
-Study:
+- Language Reactor;
+- Migaku;
+- LingQ;
+- strong reader/import products.
 
-- URL/video/PDF import;
-- transcript extraction;
-- segmentation;
-- sentence mining;
-- metadata;
-- source provenance;
-- readability;
-- copyright boundaries;
-- imported-content difficulty.
+Inputs may include:
 
-Technology research must include:
+- URL;
+- YouTube;
+- subtitle file;
+- transcript;
+- text;
+- PDF;
+- EPUB where supported;
+- audio/video owned or lawfully provided by learner.
 
-- robust parsers;
-- subtitle formats;
-- content extraction;
-- sanitization;
-- SSRF/XSS defenses;
-- local-first processing where practical.
+Pipeline:
 
-### Search / Library / Knowledge organization
+\`\`\`text
+ingest
+→ sanitize
+→ provenance
+→ segment
+→ language detect
+→ transcript/text normalize
+→ lexical profile
+→ difficulty
+→ learning affordances
+\`\`\`
 
-Research products that handle large personal learning libraries well.
+Security requirements:
 
-Study:
+- SSRF defense;
+- file-size limits;
+- MIME validation;
+- sandboxed parsing where needed;
+- HTML sanitization;
+- no secret leakage;
+- copyright-aware storage.
 
-- retrieval;
-- tagging;
-- semantic search;
-- recent/resume;
-- source lineage;
-- duplicate handling;
-- offline access;
-- learner-state overlays.
+## 8.14 Search / Library
 
-Prefer simple local indexes/search before expensive vector infrastructure unless benchmarks show a clear gain.
+Core user jobs:
 
-### Auth / Sync / Backup
+- resume what I was learning;
+- find imported content;
+- find saved words/sentences;
+- see recent/important material;
+- discover suitable content.
 
-Research best-in-class UX and reliability, not just implementation convenience.
+Start with simple indexes and metadata.
 
-Study:
+Do not introduce vector infrastructure merely because embeddings are fashionable.
 
-- instant sign-in transition;
-- offline-first;
-- multi-device merge;
+Add semantic search only when benchmarked against actual learner tasks.
+
+## 8.15 Auth / Sync / Backup
+
+Goal:
+
+Auth should disappear from the learner's attention.
+
+Requirements:
+
+- fast sign-in transition;
+- offline use where possible;
+- safe multi-device sync;
 - conflict handling;
+- learner isolation;
 - export;
+- backup;
 - restore;
+- deletion;
 - account switching;
-- data deletion;
-- session recovery.
+- recovery after interrupted writes.
 
-Technology decisions must optimize:
+Prefer user-owned/exportable data structures and avoid unnecessary vendor lock-in.
 
-- reliability;
-- privacy;
-- user ownership;
-- migration/exportability;
-- low operational cost;
-- minimal vendor lock-in.
+## 8.16 UI/UX
 
-### UI/UX / Design system
+Benchmark learning products for learning effectiveness, not appearance alone.
 
-Research top learning products for **learning effectiveness**, not visual fashion.
+Evaluate:
 
-Study:
-
-- information hierarchy;
 - cognitive load;
 - feedback timing;
-- correction presentation;
-- focus;
-- touch targets;
+- interruption cost;
+- touch ergonomics;
+- keyboard navigation;
 - accessibility;
-- dark/light environments;
-- mobile ergonomics;
+- mobile layout;
+- focus;
 - progress communication;
-- interruption cost.
+- error recovery.
 
-Do not copy engagement theater that weakens learning.
+Avoid feature density inherited from EchoType if it obscures the next learner action.
 
-### Notifications / Habit / Retention
+## 8.17 Habit / Motivation
 
-Research Duolingo and other strong habit products, but separate:
+Study Duolingo's habit mechanics but separate motivation from learning evidence.
 
-- useful study reminders;
-- streak accountability;
-- reactivation;
-- goal setting;
+Potentially useful:
 
-from:
+- clear daily goal;
+- streak;
+- reminder;
+- comeback flow;
+- visible progress;
+- celebrations.
 
-- manipulative urgency;
-- meaningless XP;
-- league pressure;
-- engagement that displaces actual learning.
+Do not allow:
 
-Retention features must serve continued learning, not just DAU.
+- XP to substitute for learning;
+- streak to substitute for retention;
+- league pressure to determine curriculum;
+- manipulative notifications;
+- artificial urgency.
 
-### Analytics / Learning telemetry
+## 8.18 Accessibility
 
-Research strong product analytics and learning-science measurement approaches.
+Every major interaction should have alternatives.
 
-Measure:
+Requirements include:
 
-- learning loop completion;
-- support dependency;
-- independent performance;
-- delayed retention;
-- transfer;
-- error recurrence;
-- time-to-repair;
-- session burden.
-
-Do not optimize only:
-
-- clicks;
-- time spent;
-- streak length;
-- raw lesson completion.
-
-Prefer open/self-hosted analytics where practical and privacy-preserving.
-
-### AI tutor / Conversational intelligence
-
-Research top AI language tutors and agentic learning products.
-
-Study:
-
-- conversation control;
-- correction timing;
-- memory;
-- persona;
-- level adaptation;
-- scenario generation;
-- pedagogical planning;
-- hallucination containment;
-- learner safety;
-- structured feedback.
-
-Technology benchmark must compare:
-
-- open/local models;
-- hosted open-weight models;
-- commercial frontier models;
-- latency;
-- cost;
-- Vietnamese instruction quality;
-- English pedagogy quality;
-- structured-output reliability;
-- privacy.
-
-Use the cheapest/free option that meets quality. Keep provider/model abstraction so the learning architecture is not owned by a model vendor.
-
-### Offline / PWA / Native
-
-Research high-quality offline learning applications.
-
-Study:
-
-- offline lesson access;
-- sync queue;
-- resumability;
-- media caching;
-- model download lifecycle;
-- storage limits;
-- conflict resolution.
-
-Prefer browser-native/PWA/free runtime capabilities before introducing heavier native infrastructure unless the product requirement justifies it.
-
-### Accessibility
-
-Benchmark strong accessible education products and platform standards.
-
-Research:
-
-- keyboard support;
-- screen readers;
-- captions;
+- keyboard;
+- screen-reader semantics;
+- focus management;
+- captions/transcripts;
 - reduced motion;
 - contrast;
-- focus management;
-- speech alternatives;
-- hearing/vision accommodations.
+- text scaling;
+- typed alternative to speaking;
+- visual alternative to audio-only instruction where pedagogically appropriate.
 
-Use open web/platform standards first.
+Accessibility support must not silently change evidence semantics.
 
-## Feature mission research artifact
+---
 
-Any mission that materially adds or replaces a feature should include a short research artifact before implementation, recording:
+# 9. Vietnam-first product policy
 
-```text
-Feature
-Learner problem
-Top products studied
-Mechanics worth adopting
-Mechanics rejected
-Technology candidates
-Free/open candidates
-Paid/proprietary candidates if necessary
-Benchmark criteria
-Chosen approach
-Why it won
-Known limitations
-Replacement/fallback path
-```
+FlashDay is built first for Vietnamese learners of English while keeping architecture multilingual-capable.
 
-For small fixes, this may be a concise section in the mission report. For major capabilities, create a dedicated research document.
+UI languages:
 
-## Wave 1 — FDN-ARCH-001: EchoType Deep Audit + Vietnam-First Foundation
+- \`vi\`
+- \`en\`
+- \`zh\`
 
-This is the current priority and blocks further feature expansion.
+Fresh install:
 
-### Audit goals
+\`\`\`text
+explicit saved UI preference
+        ↓
+Vietnamese
+\`\`\`
 
-Map the inherited EchoType architecture from code, including:
+Browser locale must not override the product default.
 
-- learner state
-- progress
-- course state
-- daily plan
-- weak spots
-- FSRS
-- legacy learning attempts / records
-- assessment / CEFR state
-- pronunciation progress
-- Speak history
-- mission state
-- sync
-- translation
-- provider infrastructure
-- import pipeline
-- Dexie / Supabase / localStorage state
-- API routes
-- native/Tauri/iOS compatibility layers
+Fresh support/translation target:
 
-For every learning-related state, record:
+\`vi\`
 
-- writer
-- readers
-- storage location
-- semantic claim
-- current authority
-- conflict risk
-- future authority
-- disposition
+Existing explicit \`en\` / \`zh\` preferences must survive migration.
 
-Allowed dispositions:
+UI language, source language, target learning language and translation language are separate fields.
+
+Do not encode them as one \`language\` variable.
+
+Vietnamese copy quality requirements:
+
+- natural;
+- concise;
+- not literal machine translation;
+- appropriate for Vietnamese learners;
+- consistent terminology.
+
+---
+
+# 10. Content strategy — FlashDay owns the curriculum
+
+EchoType's bundled phrases/scenarios are candidate material, not the future curriculum.
+
+Long-term content architecture:
+
+\`\`\`text
+Source Registry
+      ↓
+license/provenance validation
+      ↓
+Gold source material
+      ↓
+Capability extraction
+      ↓
+Mission construction
+      ↓
+lexical + grammar + context constraints
+      ↓
+controlled variant generation
+      ↓
+automatic QA
+      ↓
+human/gold review
+      ↓
+production curriculum
+\`\`\`
+
+## 10.1 Source roles to validate
+
+### VOA Learning English
+
+Strong candidate for human-authored course/input seeds.
+
+VOA's current usage page states Learning English texts, MP3s, photos and videos are public domain and may be reused for educational and commercial purposes with credit, while third-party agency assets such as AP/Reuters/AFP must be excluded.
+
+Potential seed:
+
+- Let's Learn English Level 1 — 52 lessons;
+- Let's Learn English Level 2 — 30 lessons.
+
+Never assume every asset on a page is VOA-owned; provenance remains asset-level.
+
+### NGSL / NGSL-Spoken
+
+Use as lexical-frequency/reference layer, not a curriculum.
+
+Share-alike/attribution boundaries must be documented before redistribution.
+
+### Tatoeba
+
+Use as a candidate human sentence pool.
+
+Text and audio have different licensing.
+
+Every imported sentence needs attribution/provenance handling.
+
+Filter for:
+
+- naturalness;
+- correctness;
+- target function;
+- lexical load;
+- duplicates;
+- cultural suitability.
+
+### Open English WordNet
+
+Use for lexical semantics:
+
+- senses;
+- synonyms;
+- relations;
+- semantic structure.
+
+Do not expose raw dictionary prose as beginner teaching copy without learner-facing adaptation.
+
+### CMUdict
+
+Use as an English pronunciation lexicon/reference.
+
+It is not a pronunciation scoring system.
+
+### Gutenberg / LibriVox
+
+Potential extensive-reading/listening sources.
+
+Copyright status is jurisdiction-dependent.
+
+Do not treat “found on Gutenberg” as universal worldwide public-domain proof.
+
+### User-imported material
+
+Useful for personalization, but copyright ownership and product-hosting rights differ from public curriculum rights.
+
+Keep imported-source provenance.
+
+## 10.2 AI-generated content
+
+AI belongs near the end of the content pipeline.
+
+Never:
+
+\`\`\`text
+LLM
+→ generate 10,000 sentences
+→ production database
+\`\`\`
+
+Generated material requires:
+
+- schema validation;
+- capability binding;
+- lexical profiling;
+- duplicate checking;
+- naturalness review;
+- safety review where relevant;
+- provenance;
+- review status.
+
+Assessment items need stronger isolation and held-out controls.
+
+---
+
+# 11. Content object requirements
+
+Canonical content should support fields such as:
+
+\`\`\`text
+id
+source
+sourceVersion
+sourceUrl/reference
+license
+attribution
+derived
+humanReviewed
+reviewStatus
+
+language
+levelEstimate
+capabilities
+communicativeFunctions
+grammar/constructions
+targetVocabulary
+supportVocabulary
+context
+register
+
+media provenance
+voice/model provenance
+assessmentEligibility
+\`\`\`
+
+Unknown provenance should fail closed for bundled commercial distribution.
+
+---
+
+# 12. Speech / pronunciation master plan
+
+Speech development is paused until architecture review completes.
+
+When resumed, Phase 0 is research, not implementation.
+
+## 12.1 Product benchmark
+
+Study at minimum:
+
+- ELSA Speak;
+- Speak;
+- Loora;
+- BoldVoice;
+- Speechling;
+- Praktika;
+- Duolingo speaking/conversation features.
+
+Key product lesson:
+
+Do not destroy conversation flow by correcting everything immediately.
+
+Collect errors, prioritize a small number of high-value corrections, then create a repair opportunity.
+
+## 12.2 Technology benchmark
+
+Candidate classes:
+
+### ASR
+
+- whisper.cpp;
+- faster-whisper;
+- sherpa-onnx;
+- browser Web Speech only as one transport option, not learning authority.
+
+### Voice activity
+
+- Silero VAD;
+- future benchmarked VAD alternatives.
+
+### Pronunciation targets
+
+- CMUdict;
+- phonemizers;
+- curated pronunciation variants.
+
+### Alignment / acoustic diagnostics
+
+- forced alignment;
+- phoneme recognition models;
+- OpenPronounce;
+- future calibrated open acoustic models.
+
+## 12.3 Required Vietnamese-accent evaluation
+
+Before pronunciation scoring becomes learner authority:
+
+- consented/lawfully usable Vietnamese-accented English samples;
+- human reference labels;
+- target contrast set;
+- word/phoneme precision;
+- recall;
+- false alarm analysis;
+- accent fairness analysis;
+- latency/runtime benchmarks.
+
+## 12.4 Frozen PR #2 findings
+
+At reviewed HEAD \`5932e31f4887e88367da21362e6de56b57755030\`:
+
+1. native Web Speech stop/final event ordering can lose the final transcript;
+2. server STT provenance records provider but not exact model/version;
+3. physical-microphone smoke remains required.
+
+These remain parked until Speech work resumes.
+
+OpenPronounce current verdict:
+
+\`EXPERIMENT MORE\`
+
+It is not mastery authority.
+
+---
+
+# 13. Architecture audit — current blocking wave
+
+## FDN-ARCH-001
+
+This is the current implementation priority.
+
+Goals:
+
+- map inherited EchoType architecture;
+- identify all competing state models;
+- audit state authority;
+- audit security/privacy;
+- audit dependencies;
+- audit licenses/assets/content;
+- implement Vietnam-first foundation only;
+- produce cleanup recommendations.
+
+For every important subsystem assign:
 
 - KEEP
 - ADAPT
@@ -679,321 +1295,862 @@ Allowed dispositions:
 - RETIRE
 - DELETE CANDIDATE
 
-### De-vibe audit
+Required documents:
 
-Specifically look for:
+- \`ECHOTYPE_DEEP_AUDIT.md\`
+- \`STATE_AUTHORITY.md\`
+- \`VIETNAMIZATION_AUDIT.md\`
+- \`LICENSE_MATRIX.md\`
 
-- duplicated planners/state stores/helpers
-- overlapping learning truth
-- one-off abstractions
-- stale docs/specs
-- dead branches
-- duplicate provider/config logic
-- implementation-coupled tests
-- obsolete migrations
-- feature accretion without clear ownership
-- hidden learning-state mutation
+Do not turn the audit into a rewrite.
 
-Do not broadly refactor or delete during the audit.
+---
 
-### Security/privacy/dependency/license audit
+# 14. Architecture consolidation wave
 
-Audit:
+After external review of FDN-ARCH-001, split cleanup into bounded missions.
 
-- credentials and provider keys
-- auth/session state
-- learner isolation
-- cloud sync
-- backup/restore
-- imported content
-- SSRF/XSS/sanitization
-- expensive unauthenticated API routes
-- audio/microphone data handling
-- production dependencies
-- bundled assets/content/models
-- commercial/license boundaries
+Likely conflicts:
 
-Required docs:
+\`\`\`text
+legacy daily planner
+vs Next For You
 
-- `docs/flashday/ECHOTYPE_DEEP_AUDIT.md`
-- `docs/flashday/STATE_AUTHORITY.md`
-- `docs/flashday/VIETNAMIZATION_AUDIT.md`
-- `docs/flashday/LICENSE_MATRIX.md`
+legacy weak spots
+vs evidence projection
 
-### Vietnam-first foundation
+course completion
+vs capability state
 
-FlashDay is Vietnam-first while remaining multilingual-capable.
+legacy correctness/accuracy
+vs evidence events
 
-Required UI languages:
+CEFR assessment
+vs placement/capability model
 
-- `vi`
-- `en`
-- `zh`
+pronunciationProgress
+vs future acoustic evidence
 
-Fresh-install policy:
+legacy learningAttempts
+vs FlashDay attempts
+\`\`\`
 
-1. respect an explicit saved user preference
-2. otherwise default to Vietnamese
+Preferred migration pattern:
 
-Browser locale must not silently change a new FlashDay user to English or Chinese.
+\`\`\`text
+identify authority
+→ freeze conflicting new writes
+→ adapter/read compatibility
+→ migrate consumers
+→ backfill/replay where necessary
+→ verify
+→ retire
+→ delete only later
+\`\`\`
 
-Vietnamese must also be the default learner-support / translation target for new users.
+No destructive migration without reproducible migration evidence and rollback strategy.
 
-UI language and learning language remain separate concepts. FlashDay teaches English.
+---
 
-Audit and remove inherited Chinese-first assumptions such as scattered `zh` / `zh-CN` defaults while preserving Chinese as a selectable language.
+# 15. Memory and SRS layer
 
-Existing explicit English/Chinese preferences must survive migration.
+Memory objects may include:
 
-### Wave 1 boundaries
+- vocabulary sense;
+- chunk;
+- sentence pattern;
+- repair target;
+- listening segment;
+- other retrievable item.
 
-Do NOT:
+Memory state should store scheduling facts.
 
-- continue Speech/OpenPronounce
-- merge PR #2
-- start curriculum replacement
-- build the content factory
-- add mission #2
-- perform broad legacy cleanup
-- mass-upgrade dependencies
-- redesign the product
+Capability state stores ability facts.
 
-Audit first; only bounded Vietnam-first foundation fixes and tightly-contained severe blockers belong here.
+Relationship:
 
-## Wave 2 — Architecture consolidation / legacy cleanup
+\`\`\`text
+Capability need
+     +
+Memory due-ness
+     ↓
+Planner
+     ↓
+appropriate task
+\`\`\`
 
-Starts only after external review of FDN-ARCH-001.
+FSRS output should never write directly to capability mastery.
 
-Use the audit evidence to split cleanup into bounded missions.
+---
 
-Likely areas to evaluate:
+# 16. Planner / adaptive learning roadmap
 
-- legacy daily planner vs FlashDay Next For You
-- weak-spots state vs evidence-derived projections
-- course completion vs capability state
-- legacy records/accuracy vs EvidenceEvent
-- CEFR assessment vs placement/capability model
-- pronunciationProgress vs future acoustic evidence
-- legacy learningAttempts vs FlashDay attempts
+The planner should mature in stages.
 
-Target direction:
+## Stage A — deterministic reference policy
 
-- FlashDay kernel/evidence owns capability truth
-- planner owns next learning action
-- FSRS owns memory scheduling only
-- execution surfaces submit evidence
-- legacy state becomes history/presentation where retained
+Must remain:
 
-No destructive migration without replay/backfill/migration evidence and regression tests.
+- inspectable;
+- reproducible;
+- reason-emitting;
+- easy to falsify.
 
-## Wave 3 — Speech / Pronunciation Research and Product Benchmark
+## Stage B — calibrated heuristics
 
-Speech work resumes only after the architecture foundation is accepted.
+Add:
 
-Do not start by choosing a library.
+- failure demand routing;
+- fatigue/session constraints;
+- memory due-ness;
+- learner goals;
+- content preference;
+- modality balance.
 
-Phase 0 is mandatory product + technology research.
+## Stage C — experimentation
 
-### Product benchmarks
+Only after enough data exists:
 
-Study the strongest speaking/pronunciation products and extract concrete mechanics, especially:
+- ranking experiments;
+- contextual bandits or ML ranking if justified;
+- offline evaluation;
+- shadow mode;
+- randomized experiments.
 
-- ELSA Speak — sound/syllable/stress/intonation diagnostics and structured pronunciation practice
-- Speak — high-volume conversation-first speaking practice
-- Loora — correction without destroying conversational flow; prioritize a small number of high-value corrections
-- BoldVoice — accent-oriented coaching and structured sound/stress practice
-- Speechling — native model → learner recording → self-listen → retry → spaced/human feedback loop
-- Praktika — adaptive role-play and conversational repair
+No ML planner gets direct ability-write permissions.
 
-The goal is not to copy UI. Extract learning mechanics that can be represented honestly in FlashDay evidence contracts.
+---
 
-### Free/open technology candidates
+# 17. Analytics architecture
 
-Benchmark before integration:
+Learning evidence and product analytics are not the same table.
 
-- `whisper.cpp` — local/mobile/browser ASR candidate
-- `faster-whisper` — server ASR candidate
-- `sherpa-onnx` — offline/streaming/mobile candidate
-- Silero VAD — voice activity detection
-- CMUdict — pronunciation reference lexicon
-- Montreal Forced Aligner — forced alignment research
-- Wav2Vec2 phoneme recognition candidates
-- OpenPronounce — pronunciation diagnostic candidate
+## Learning evidence
 
-Prefer free/self-hosted technology when it meets the quality bar, but do not choose OSS merely because it is free.
+Used to make claims about ability.
 
-Required comparison dimensions:
+Requires strict contracts.
 
-- transcription accuracy
-- pronunciation false-positive / false-negative rate
-- Vietnamese-accent robustness
-- latency
-- CPU/RAM/GPU cost
-- mobile/browser feasibility
-- privacy
-- licensing
-- model provenance
-- operating complexity
-- offline/self-host potential
+## Product telemetry
 
-### Target speech architecture
+Used for:
 
-```text
-Microphone
-    ↓
-VAD
-    ↓
-ASR transcript
-    ├─ semantic evaluator
-    └─ capture provenance
+- crashes;
+- performance;
+- funnels;
+- interaction;
+- UI experiments;
+- feature adoption.
 
-Audio waveform
-    ↓
-alignment / acoustic / phoneme diagnostics
-    ↓
-pronunciation feedback
-    ↓
-highest-value correction
-    ↓
-repair drill
-    ↓
-retry
-    ↓
-later transfer
-```
+May be noisy.
 
-ASR transcript must never mint independent pronunciation/intelligibility/proficiency credit.
+Never turn analytics events such as “clicked lesson” or “watched 10 minutes” into mastery.
 
-Capture provenance should preserve at least:
+## Core learning metrics
 
-- mode
-- authority class
-- provider
-- model/version where available
-- final/interim status
-- confidence when genuinely supplied
+Prefer:
 
-### Current Speech PR #2 review state
+- time to first independent success;
+- support dependency;
+- independent-success rate;
+- delayed retrieval rate;
+- retained success;
+- transfer success;
+- error recurrence;
+- successful repair;
+- capability coverage;
+- overdue memory burden.
 
-PR #2 is intentionally paused.
+## Product metrics
 
-Known review blockers at `5932e31f4887e88367da21362e6de56b57755030`:
+Track separately:
 
-1. Native Web Speech stop/final ordering can lose the final transcript.
-2. Server STT capture provenance records provider but not model/version.
-3. Physical-microphone smoke remains required in addition to virtual-mic transport testing.
+- activation;
+- return rate;
+- session frequency;
+- completion;
+- import usage;
+- latency;
+- error rate.
 
-Do not fix these until the Speech wave is resumed after architecture review.
+North-star discussions must always include a learning-outcome metric, not engagement alone.
 
-### OpenPronounce status
+---
 
-Current position:
+# 18. Experimentation protocol
 
-`EXPERIMENT MORE`
+For meaningful product changes:
 
-It may be useful for diagnostic/feedback routing, but it is not yet trusted as pronunciation mastery authority.
+1. state hypothesis;
+2. identify learner outcome;
+3. define guardrails;
+4. capture baseline;
+5. run small prototype/usability test first;
+6. use controlled experiment where scale permits;
+7. check unintended learning-semantic changes;
+8. document result;
+9. remove failed experiments.
 
-Before promotion:
+Do not optimize only for:
 
-- benchmark Vietnamese-accent English
-- use consented/lawfully usable audio
-- obtain human reference labels
-- measure per-phoneme/word precision and recall
-- quantify false alarms
-- benchmark latency/ops cost
+- clicks;
+- XP;
+- time in app;
+- notification opens;
+- streak.
 
-No OpenPronounce output may directly mutate learner mastery.
+A feature that increases engagement while lowering independent/retained performance is not automatically a win.
+
+---
+
+# 19. Privacy, security and learner trust
+
+Principles:
+
+- local-first where practical;
+- minimum necessary audio/text sharing;
+- explicit provider provenance;
+- no secret leakage into browser logs;
+- per-learner isolation;
+- exportable learner data;
+- understandable deletion;
+- secure logout/account switch;
+- fail closed on identity conflicts;
+- no silent upload of recordings.
+
+Speech/audio should have a documented lifecycle:
+
+\`\`\`text
+capture
+→ optional processing
+→ provider/self-host boundary
+→ transient/durable decision
+→ retention/deletion policy
+\`\`\`
+
+AI-provider privacy should be visible in settings where relevant.
+
+---
+
+# 20. License and provenance governance
+
+Maintain a living license matrix.
+
+Categories:
+
+- COMMERCIAL-SAFE
+- ATTRIBUTION-REQUIRED
+- COPYLEFT-BOUNDARY
+- RESEARCH-ONLY
+- UNKNOWN — BLOCK REUSE
+
+Do not infer asset license from repository license.
+
+Track separately:
+
+- source code;
+- model code;
+- model weights;
+- datasets;
+- audio;
+- fonts;
+- images;
+- wordlists;
+- dictionary data;
+- lesson content.
+
+AGPL/GPL material may be studied as architecture/pedagogy reference unless a deliberate license decision authorizes integration.
+
+---
+
+# 21. Model and provider registry
+
+AI/speech/TTS models change faster than application architecture.
+
+Maintain a registry for production model usage:
+
+\`\`\`text
+capability
+provider
+model
+model version
+license/terms
+data/privacy notes
+cost
+latency benchmark
+quality benchmark
+fallback
+last reviewed
+\`\`\`
+
+Never persist generic labels like “AI” when exact provenance is available.
+
+Durable generated assets should record the model/version that created them.
+
+---
+
+# 22. Quality engineering standard
+
+Major paths require layered verification.
+
+## Unit / property
+
+Test invariants and counterexamples.
+
+## Integration
+
+Test boundaries:
+
+- bridge;
+- storage;
+- replay;
+- planner;
+- providers;
+- import.
+
+## Browser E2E
+
+Test real user flows using actual application layers below the permitted hardware/network seam.
+
+## Hardware smoke
+
+Required when behavior depends on:
+
+- microphone;
+- camera;
+- device storage;
+- notifications;
+- mobile/native integration.
+
+## Adversarial testing
+
+Try:
+
+- duplicate delivery;
+- conflicting ids;
+- stale tabs;
+- reload mid-attempt;
+- offline/reconnect;
+- account switch;
+- corrupt storage;
+- forged semantic fields;
+- provider fallback;
+- time jumps;
+- rapid repeated input.
+
+A green test suite is evidence only for the assertions it contains.
+
+---
+
+# 23. Performance and reliability
+
+Before setting arbitrary performance targets, establish measured baselines on representative devices.
+
+At minimum benchmark:
+
+- mid-range Android;
+- desktop Chrome;
+- slower network;
+- offline/reconnect;
+- large library;
+- large evidence history.
+
+Track:
+
+- initial load;
+- interaction latency;
+- IndexedDB operations;
+- projection replay time;
+- planner time;
+- import processing;
+- ASR/TTS latency;
+- memory use.
+
+Optimize after measurement.
+
+Do not introduce caching that becomes a second source of truth.
+
+---
+
+# 24. Product release stages
+
+## Stage 0 — personal proving ground
+
+Goal:
+
+Make FlashDay genuinely useful for its first learner before optimizing broad-market acquisition.
+
+Requirements:
+
+- honest evidence;
+- reliable daily loop;
+- Vietnamese-first UX;
+- usable core mission;
+- stable storage/sync;
+- no silent semantic corruption.
+
+## Stage 1 — closed alpha
+
+Small group of Vietnamese English learners.
+
+Collect:
+
+- usability problems;
+- misunderstanding of feedback;
+- support dependency;
+- task difficulty;
+- device compatibility;
+- auth/sync failures.
+
+## Stage 2 — efficacy-oriented beta
+
+Expand curriculum/modes only when instrumentation can measure:
+
+- independent performance;
+- delayed retention;
+- transfer.
+
+## Stage 3 — public beta
+
+Requirements before scale:
+
+- privacy policy;
+- data deletion/export;
+- support channel;
+- incident handling;
+- content/license provenance;
+- production observability;
+- abuse/rate-limit protection.
+
+## Stage 4 — sustainable product
+
+Monetization may fund expensive AI/audio compute, but core learning architecture should not depend on dark patterns.
+
+Free/open/local technology should be used aggressively where quality permits to lower marginal cost.
+
+---
+
+# 25. Detailed roadmap
+
+## Wave 1 — Architecture + Vietnam-first
+
+**Now.**
+
+FDN-ARCH-001.
+
+Deliver:
+
+- inherited architecture map;
+- authority map;
+- security/privacy findings;
+- dependency/license findings;
+- Vietnamese default UI;
+- Vietnamese default support/translation;
+- en/zh preserved;
+- exact-head verification.
+
+No Speech.
+
+No curriculum expansion.
+
+## Wave 2 — Architecture consolidation
+
+Take audit findings one subsystem at a time.
+
+Goals:
+
+- one learner truth;
+- one planner authority;
+- remove/demote duplicate state;
+- migration safety;
+- stable shell.
+
+## Wave 3 — Speech / Pronunciation research lab
+
+First:
+
+- product benchmark;
+- Vietnamese-accent benchmark design;
+- open/free technology benchmark.
+
+Then:
+
+- repair/rebuild speech capture;
+- ASR provenance;
+- acoustic diagnostics;
+- correction loop.
+
+OpenPronounce remains experimental until it earns authority.
 
 ## Wave 4 — Curriculum / Content Factory
 
-Explicitly postponed until the architecture and speech foundations are stable enough.
+Build:
 
-Do not treat EchoType's built-in phrase collections as the future curriculum.
+- source registry;
+- license/provenance layer;
+- lexical resources;
+- gold-course extraction;
+- capability mapping;
+- content QA;
+- small A1 mission pack.
 
-Long-term target:
+Do not begin with hundreds of generated lessons.
 
-```text
-trusted curriculum seed
-        ↓
-capability graph
-        ↓
-mission contracts
-        ↓
-canonical examples
-        ↓
-controlled generated variants
-        ↓
-retrieval / transfer / assessment
-        ↓
-Vietnamese learner support
-```
+## Wave 5 — Core multimodal learning loop
 
-Candidate source roles to research and legally validate:
+Bring Listen, Read, Write and Speak onto the same evidence model.
 
-- VOA Learning English / other suitable public-domain U.S. government material — human-authored curriculum/input seed
-- NGSL / NGSL-Spoken — lexical backbone
-- Tatoeba — candidate human example sentences
-- Open English WordNet — lexical semantics
-- CMUdict — pronunciation targets
-- Project Gutenberg / LibriVox / selected authentic material — immersion
-- user-imported material — personalized input
+Deliver:
 
-Every production content asset should carry provenance and license metadata.
+- modality-specific tasks;
+- shared mission semantics;
+- memory integration;
+- support provenance;
+- repair loop;
+- cross-modal transfer.
 
-AI generation belongs near the end of the pipeline, under constraints and QA. Do not bulk-generate filler content and call it curriculum.
+## Wave 6 — Immersion / Learn From Anything
 
-Required future QA dimensions include:
+Build:
 
-- license/provenance
-- grammatical correctness
-- naturalness
-- lexical load
-- capability alignment
-- transfer validity
-- held-out assessment contamination
-- Vietnamese learner suitability
+- robust import;
+- reader/player;
+- lexical overlays;
+- content difficulty;
+- sentence/chunk capture;
+- mission generation from imported content where evidence-safe.
 
-## Engineering protocol for all future missions
+## Wave 7 — Adaptive Planner v2
 
-- factory-first
-- clean base
-- exact starting SHA
-- benchmark relevant top products before major feature implementation
-- benchmark relevant technologies before choosing implementation
-- prefer free/open/local/self-hosted when quality is competitive
-- document why a paid/proprietary dependency wins if one is selected
-- reproduce before fix
-- regression test before implementation where applicable
-- adversarial/counterexample testing
-- no semantic claim without evidence
-- exact-head verification after the final commit
-- distinguish local verification from CI
-- draft PR first
-- never merge without explicit user instruction
+Use accumulated evidence to improve:
 
-## Sequencing summary
+- remediation;
+- memory interleaving;
+- modality balance;
+- goal alignment;
+- session composition.
 
-```text
-NOW
-│
-├─ Wave 1: FDN-ARCH-001
-│   ├─ deep inherited-repo audit
-│   └─ Vietnam-first foundation
-│
-├─ external review
-│
-├─ Wave 2: architecture consolidation / legacy cleanup
-│
-├─ Wave 3: speech + pronunciation research
-│   ├─ benchmark top products
-│   ├─ benchmark free/open technology
-│   ├─ fix/rework Speech path
-│   └─ only then consider OpenPronounce integration
-│
-└─ Wave 4: curriculum/content factory
-    └─ trusted sources + FlashDay-owned curriculum
-```
+Experiment behind shadow mode/feature flags.
 
-Do not skip waves because a later feature appears easy to implement.
+## Wave 8 — AI Tutor
 
-The objective is a coherent learning system built from the best validated product mechanics and the highest-quality practical technology, not maximum feature count.
+Only after evidence boundaries are stable.
+
+AI tutor can:
+
+- converse;
+- role-play;
+- explain;
+- generate variants;
+- identify candidate errors.
+
+It cannot self-certify learner mastery.
+
+## Wave 9 — Efficacy, accessibility and quality scale
+
+Run:
+
+- learner studies;
+- Vietnamese copy/UX QA;
+- accessibility audit;
+- low-end device optimization;
+- longitudinal retention analysis.
+
+## Wave 10 — Public product / sustainable economics
+
+Harden:
+
+- billing if needed;
+- quota/cost control;
+- observability;
+- support;
+- content operations;
+- model routing;
+- privacy/legal;
+- growth loops that preserve learning quality.
+
+---
+
+# 26. Feature priority rule
+
+A feature rises in priority when it improves one of:
+
+1. correctness of learner truth;
+2. quality of next-action selection;
+3. learner ability to practice a real capability;
+4. delayed retention;
+5. transfer;
+6. reliability/accessibility;
+7. cost sustainability.
+
+A feature should fall in priority when it mainly increases:
+
+- visual novelty;
+- feature count;
+- vanity metrics;
+- duplicated state;
+- maintenance burden.
+
+---
+
+# 27. Definition of Done for a major feature
+
+A major feature is not done because the UI works.
+
+It is done when:
+
+- learner problem is explicit;
+- product benchmark exists;
+- technology benchmark exists;
+- free/open options were considered;
+- architecture ownership is clear;
+- evidence semantics are explicit;
+- state writes are identified;
+- provenance is stored;
+- security/privacy reviewed;
+- license reviewed;
+- unit/integration/E2E exist;
+- adversarial cases tested;
+- accessibility considered;
+- performance measured;
+- fallback/error path works;
+- analytics do not masquerade as learning evidence;
+- docs updated;
+- exact-head verification completed.
+
+---
+
+# 28. Research artifact template
+
+Every major feature mission should include:
+
+\`\`\`text
+FEATURE
+Learner problem
+
+LEARNING BASIS
+Relevant learning mechanism
+Evidence strength / uncertainty
+
+PRODUCT BENCHMARK
+Products studied
+Best mechanics
+Mechanics rejected
+Known limitations
+
+TECHNOLOGY BENCHMARK
+Candidates
+Free/open candidates
+Paid candidates
+Quality
+Latency
+Runtime cost
+Privacy
+License
+Maintenance
+Platform support
+
+DECISION
+Chosen approach
+Why
+Fallback
+Replacement seam
+
+EVIDENCE CONTRACT
+Observed data
+Allowed claims
+Forbidden claims
+
+QA
+Unit
+Integration
+E2E
+Adversarial
+Hardware/real-world
+
+SUCCESS
+Learning metric
+Product metric
+Guardrail
+\`\`\`
+
+---
+
+# 29. Engineering protocol
+
+All implementation missions:
+
+- factory-first;
+- clean base;
+- exact starting SHA;
+- read current master plan;
+- research before major feature build;
+- reproduce before bug fix;
+- regression test before fix where practical;
+- counterexample/adversarial testing;
+- minimal authority;
+- no silent semantic changes;
+- exact-head verification after final commit;
+- distinguish local tests from CI;
+- draft PR first;
+- never merge without explicit user instruction.
+
+---
+
+# 30. Anti-goals
+
+FlashDay is NOT trying to become:
+
+- a clone of Duolingo;
+- a clone of LingQ;
+- a clone of Anki;
+- an LLM chat wrapper;
+- a giant bundle of EchoType features;
+- a pronunciation score toy;
+- an XP/streak optimization machine;
+- a course generated wholesale by AI.
+
+Use the strongest ideas from each class of product while preserving one coherent learner model.
+
+---
+
+# 31. Immediate execution state
+
+Current order:
+
+\`\`\`text
+PR #1 Foundation
+    ✓ merged
+      ↓
+Master plan
+    ✓ living document
+      ↓
+FDN-ARCH-001
+    NOW
+      ↓
+External review
+      ↓
+Architecture consolidation
+      ↓
+Speech/pronunciation research lab
+      ↓
+Content factory
+      ↓
+Core multimodal loop
+      ↓
+Immersion/import
+      ↓
+Planner v2
+      ↓
+AI tutor
+      ↓
+Efficacy/quality scale
+      ↓
+Public sustainable product
+\`\`\`
+
+Do not skip ahead because a later feature is attractive or easy to code.
+
+---
+
+# 32. Current research basis
+
+This section records important primary/credible sources informing the plan. It is not a frozen bibliography; refresh it when a feature mission starts.
+
+## Learning / standards
+
+- Nature Reviews Psychology — *The science of effective learning with spacing and retrieval practice*:
+  https://www.nature.com/articles/s44159-022-00089-1
+- Council of Europe — CEFR descriptors / Companion Volume:
+  https://www.coe.int/en/web/common-european-framework-reference-languages/cefr-descriptors
+- Anki Manual — FSRS:
+  https://docs.ankiweb.net/deck-options
+
+## Guided learning / speaking products
+
+- Duolingo Method:
+  https://blog.duolingo.com/duolingo-teaching-method/
+- Duolingo speaking approach:
+  https://blog.duolingo.com/covering-all-the-bases-duolingos-approach-to-speaking-skills/
+- Duolingo Video Call research:
+  https://blog.duolingo.com/video-call-research-report/
+- Speak:
+  https://www.speak.com/
+- ELSA pronunciation feedback:
+  https://elsaspeak.com/en/faqs/how-does-elsas-pronunciation-feedback-work
+- Loora corrections:
+  https://www.loora.com/support/features/feedback-and-corrections
+- Speechling quickstart:
+  https://speechling.com/help/quickstart
+
+## Immersion / reading
+
+- LingQ:
+  https://www.lingq.com/
+- Language Reactor:
+  https://www.languagereactor.com/
+- Migaku:
+  https://migaku.com/faq/features
+- Readlang:
+  https://readlang.com/
+
+## Open/free speech technology
+
+- whisper.cpp:
+  https://github.com/ggml-org/whisper.cpp
+- faster-whisper:
+  https://github.com/SYSTRAN/faster-whisper
+- sherpa-onnx:
+  https://github.com/k2-fsa/sherpa-onnx
+- CMUdict:
+  https://github.com/cmusphinx/cmudict
+- OpenPronounce:
+  https://github.com/Halleck45/OpenPronounce
+
+## Writing / TTS
+
+- LanguageTool:
+  https://github.com/languagetool-org/languagetool
+- Kokoro:
+  https://github.com/hexgrad/kokoro
+
+## Content / lexical sources
+
+- VOA Learning English reuse terms:
+  https://learningenglish.voanews.com/p/6861.html
+- VOA Let's Learn English Level 1:
+  https://learningenglish.voanews.com/p/5644.html
+- VOA Let's Learn English Level 2:
+  https://learningenglish.voanews.com/p/6765.html
+- NGSL/NGSL-Spoken:
+  https://www.newgeneralservicelist.org/ngsls
+- Tatoeba reuse:
+  https://en.www.en.wiki.tatoeba.org/articles/show/using-the-tatoeba-corpus
+- Open English WordNet:
+  https://en-word.net/
+- Project Gutenberg license:
+  https://www.gutenberg.org/policy/license
+- LibriVox public domain:
+  https://librivox.org/pages/public-domain/
+
+---
+
+# 33. Governing principle
+
+FlashDay should not win by having the most features.
+
+It should win by making each learning action honest, useful and connected to a durable model of what the learner can actually do.
+
+Research the best products.
+
+Benchmark the best technology.
+
+Prefer high-quality free/open/local solutions.
+
+Pay when quality genuinely justifies it.
+
+Keep one learning truth.
+
+Measure retention and transfer.
+
+Then scale.
