@@ -87,6 +87,12 @@ const INDEPENDENT_AUTHORITIES = new Set(['deterministic', 'human']);
 const isIndependent = (e, cap, support, task) =>
   isSuccess(e) &&
   e.attempt?.observed === true &&
+  /* fd-next delta — capture provenance: an ASR transcript is evidence
+   * of what the recognizer heard, not of independent speech production
+   * (intelligibility needs a calibrated acoustic authority). Gating
+   * here also blocks RETAINED/TRANSFERRED, which nest inside this
+   * predicate — asr-captured success can mint SUPPORTED at most. */
+  e.attempt?.capture?.authority !== 'asr' &&
   !answerBearing(support) &&
   !conditionsViolated(support, effectiveAllowedSupport(cap, task)) &&
   INDEPENDENT_AUTHORITIES.has(e.evaluation?.authority) &&

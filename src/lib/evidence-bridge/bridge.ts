@@ -85,12 +85,37 @@ export interface AttemptResult {
   evalResult: AttemptEvalResult | null;
 }
 
+/* Capture provenance is caller-reported observed reality (only the UI
+ * knows which channel produced the response), but it still has a closed
+ * shape: unknown capture authorities are rejected, and an ASR transcript
+ * can only be committed when it is FINAL — interim results are display
+ * state, never evidence. */
+const CAPTURE_MODES = new Set(['speech', 'text']);
+const CAPTURE_AUTHORITIES = new Set(['asr', 'direct']);
+
+function checkCapture(capture: AttemptSubmission['capture']): void {
+  if (capture == null) return;
+  if (!CAPTURE_MODES.has(capture.mode)) {
+    throw new Error(`capture.mode must be 'speech' or 'text' — got '${capture.mode}'`);
+  }
+  if (!CAPTURE_AUTHORITIES.has(capture.authority)) {
+    throw new Error(`capture.authority must be 'asr' or 'direct' — got '${capture.authority}'`);
+  }
+  if (capture.authority === 'asr' && capture.final !== true) {
+    throw new Error('asr capture requires final: true — an interim transcript is never evidence');
+  }
+  if (capture.confidence != null && (typeof capture.confidence !== 'number' || Number.isNaN(capture.confidence))) {
+    throw new Error('capture.confidence must be a number or null');
+  }
+}
+
 export async function submitAttempt(
   store: EventStore,
   registry: ContractRegistry,
   sub: AttemptSubmission,
 ): Promise<AttemptResult> {
   checkForgery(sub);
+  checkCapture(sub.capture);
   const { task, capability } = resolveTask(registry, sub.taskId);
 
   /* Outcome ownership: a declared evaluation contract re-scores the
@@ -118,6 +143,7 @@ export async function submitAttempt(
       response: sub.response,
       latencyMs: sub.latencyMs,
       attemptId: sub.attemptId,
+      capture: sub.capture ?? null,
     },
     support: sub.support,
     feedback: sub.feedback,

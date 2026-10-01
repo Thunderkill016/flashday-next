@@ -38,6 +38,27 @@ export interface KernelMission {
   [key: string]: unknown;
 }
 
+/**
+ * How the submitted response was physically captured — observed
+ * provenance, never semantic credit. `authority: 'asr'` means a
+ * recognizer produced the transcript from audio (it proves what the
+ * recognizer heard, not intelligible speech); `'direct'` means the
+ * learner entered the response without a recognition intermediary.
+ * The projection refuses independent credit for asr-captured attempts.
+ */
+export interface CaptureProvenance {
+  mode: 'speech' | 'text';
+  authority: 'asr' | 'direct';
+  /** Recognizer identity — 'web-speech', a server provider id
+   *  ('groq', 'openai', …), or null when the provider is unknown. */
+  provider?: string | null;
+  /** True only for a final transcript — interim results never commit. */
+  final?: boolean;
+  /** Provider-reported confidence, or null when not reported. Never a
+   *  pronunciation score. */
+  confidence?: number | null;
+}
+
 /** The immutable evidence record — append-only, kernel-defined. */
 export interface EvidenceEvent {
   id: string;
@@ -60,6 +81,7 @@ export interface EvidenceEvent {
     response?: unknown;
     latencyMs?: number;
     attemptId?: string;
+    capture?: CaptureProvenance | null;
   } | null;
   support?: Record<string, unknown> | null;
   feedback?: unknown;
@@ -150,6 +172,10 @@ export interface AttemptSubmission {
    * share it; required on assessment-purpose tasks. */
   attemptId?: string;
   latencyMs?: number;
+  /** Capture provenance — which channel produced the response. The
+   *  mission UI stamps this from the capture path it actually drove;
+   *  absent means the legacy/unspecified channel. */
+  capture?: CaptureProvenance | null;
   support?: Record<string, unknown>;
   feedback?: unknown;
   partnerType?: string;

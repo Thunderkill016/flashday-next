@@ -108,12 +108,21 @@ async function stepOnce(page: Page): Promise<boolean> {
   if (act.optionId != null) {
     await page.getByTestId(`mission-option-${act.optionId}`).click();
   } else {
+    await ensureTypedInput(page);
     await page.getByTestId('mission-response-input').fill(act.text ?? '');
     await page.getByTestId('mission-commit').click();
   }
   // Feedback must render before the loop continues — evidence lands first.
   await expect(page.getByTestId('mission-feedback')).toBeVisible({ timeout: 15_000 });
   return true;
+}
+
+/** On spoken_turn prompts the typed control sits behind a toggle —
+ * voice is the product path, typing stays as the a11y/dev fallback. */
+async function ensureTypedInput(page: Page) {
+  if (await page.getByTestId('mission-typed-toggle').isVisible()) {
+    await page.getByTestId('mission-typed-toggle').click();
+  }
 }
 
 test.beforeEach(async ({ page }) => {

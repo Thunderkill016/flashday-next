@@ -151,6 +151,15 @@ coverage debts, `carrierCapabilities`, `supportCapabilities`,
    future kernel sync is a byte-diff, never a merge conflict.
    Sanity: 18/18 modules import cleanly in Node; `allowJs` resolves
    the `.js` imports for TypeScript consumers.
+
+   **Documented deltas** (kernel extensions on top of the vendored
+   baseline — each one is a deliberate, tested divergence):
+   - `projection.js` `isIndependent`: `attempt.capture.authority ===
+     'asr'` cannot mint independent credit (FDN-SPEECH-001). An ASR
+     transcript proves what the recognizer heard, not independent
+     speech — and because RETAINED/TRANSFERRED nest inside this
+     predicate, the single gate caps the whole milestone chain at
+     SUPPORTED for voice-captured evidence.
 2. DONE — bridge shipped at `src/lib/evidence-bridge/`:
    - `registry.ts` — `createRegistry` runs the kernel authoring gate
      (`checkCurriculum`) so an unshippable contract set cannot mint

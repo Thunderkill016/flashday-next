@@ -14,6 +14,7 @@ import { SELECTION_MODES, selectNextTask } from '@/vnext/next-for-you/selector';
 import { projectLearnerState } from '@/vnext/projection';
 import { type AttemptEvalResult, submitAttempt, submitObservation } from './bridge';
 import type {
+  CaptureProvenance,
   ContractRegistry,
   EventStore,
   EvidenceEvent,
@@ -90,7 +91,7 @@ export type SessionScreen =
       modality: string;
       attemptId: string;
       prompt: PromptSpec;
-      responseType: 'choice' | 'text';
+      responseType: 'choice' | 'text' | 'spoken_turn';
       options: { id: string; text: string; correct?: boolean }[] | null;
       requiredFunctions: string[];
       supportOffered: string[];
@@ -213,7 +214,7 @@ export function createMissionSession({
       modality: task.modality,
       attemptId: phase === 'feedback' && committed ? committed.attemptId : attemptIdFor(task),
       prompt: promptSpec(task),
-      responseType: isChoice ? 'choice' : 'text',
+      responseType: isChoice ? 'choice' : task.response?.type === 'spoken_turn' ? 'spoken_turn' : 'text',
       options: isChoice
         ? ((task.response as { options?: { id: string; text: string; correct?: boolean }[] })?.options ?? [])
         : null,
@@ -398,9 +399,11 @@ export function createMissionSession({
     async commit({
       text = null,
       optionId = null,
+      capture = null,
     }: {
       text?: string | null;
       optionId?: string | null;
+      capture?: CaptureProvenance | null;
     } = {}): Promise<SessionScreen> {
       const active = phase === 'feedback' && committed ? { task: committed.task } : liveTask;
       if (!active || phase !== 'prompt') return session.screen();
@@ -429,6 +432,7 @@ export function createMissionSession({
         response: isChoice ? { optionId } : { text: response },
         attemptId,
         latencyMs: promptShownAt != null ? Math.max(0, now() - promptShownAt) : undefined,
+        capture,
         support: stamped,
         evaluation: { evaluator: 'fdnext-session', version: '1' },
         evaluationCtx: { learnerName: learnerName ?? undefined },

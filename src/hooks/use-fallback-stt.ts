@@ -7,8 +7,10 @@ import { useProviderStore } from '@/stores/provider-store';
 
 interface UseFallbackSTTOptions {
   lang?: string;
-  /** Called with the final transcript after recording stops. */
-  onTranscript?: (text: string) => void;
+  /** Called with the final transcript after recording stops. `meta`
+   *  carries capture provenance — which provider actually transcribed
+   *  the audio (the server may have fallen back along the chain). */
+  onTranscript?: (text: string, meta?: { provider?: string | null }) => void;
   /** Called periodically with interim transcript while still recording. */
   onInterimTranscript?: (text: string) => void;
   onError?: (error: string) => void;
@@ -64,7 +66,11 @@ export function useFallbackSTT(options: UseFallbackSTTOptions = {}): UseFallback
   onErrorRef.current = onError;
 
   const sendForTranscription = useCallback(
-    async (audioBlob: Blob, timeoutMs: number, controller: AbortController): Promise<string | null> => {
+    async (
+      audioBlob: Blob,
+      timeoutMs: number,
+      controller: AbortController,
+    ): Promise<{ text: string; provider?: string | null } | null> => {
       const { activeProviderId, providers } = useProviderStore.getState();
       const timeoutId = window.setTimeout(() => controller.abort(), timeoutMs);
       const formData = new FormData();
@@ -79,12 +85,12 @@ export function useFallbackSTT(options: UseFallbackSTTOptions = {}): UseFallback
           body: formData,
           signal: controller.signal,
         });
-        const data = (await res.json()) as { text?: string; error?: string };
+        const data = (await res.json()) as { text?: string; providerId?: string; error?: string };
 
         if (!res.ok) {
           throw new Error(data.error || 'Speech recognition failed.');
         }
-        return data.text || '';
+        return { text: data.text || '', provider: data.providerId ?? null };
       } catch (error) {
         if (error instanceof DOMException && error.name === 'AbortError') {
           throw new Error('Speech recognition timed out. Please try again or check your provider settings.');
@@ -124,14 +130,14 @@ export function useFallbackSTT(options: UseFallbackSTTOptions = {}): UseFallback
     interimAbortControllerRef.current = controller;
     interimInFlightRef.current = true;
     sendForTranscription(blob, Math.min(requestTimeoutMs, 8000), controller)
-      .then((text) => {
+      .then((result) => {
         if (
-          text != null &&
+          result != null &&
           !controller.signal.aborted &&
           isCurrentSpeechSession(requestSession, sessionRef.current) &&
           mediaRecorderRef.current?.state === 'recording'
         ) {
-          onInterimTranscriptRef.current?.(text);
+          onInterimTranscriptRef.current?.(result.text);
         }
       })
       .catch(() => {
@@ -176,9 +182,9 @@ export function useFallbackSTT(options: UseFallbackSTTOptions = {}): UseFallback
     finalAbortControllerRef.current = controller;
 
     try {
-      const text = await sendForTranscription(blob, Math.max(requestTimeoutMs, 30000), controller);
+      const result = await sendForTranscription(blob, Math.max(requestTimeoutMs, 30000), controller);
       if (!disposedRef.current && isCurrentSpeechSession(requestSession, sessionRef.current)) {
-        onTranscriptRef.current?.(text ?? '');
+        onTranscriptRef.current?.(result?.text ?? '', { provider: result?.provider ?? null });
       }
     } catch (error) {
       if (!disposedRef.current && isCurrentSpeechSession(requestSession, sessionRef.current)) {

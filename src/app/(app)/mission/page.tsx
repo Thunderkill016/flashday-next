@@ -13,6 +13,7 @@
  */
 import { ChevronRight, Volume2 } from 'lucide-react';
 import { useCallback, useEffect, useRef, useState } from 'react';
+import { MissionSpeechCapture } from '@/components/mission/mission-speech-capture';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -29,6 +30,7 @@ import {
 import { fixtureRegistry } from '@/lib/evidence-bridge/registry';
 import { createMissionSession, type SessionScreen } from '@/lib/evidence-bridge/session';
 import { createDexieEventStore } from '@/lib/evidence-bridge/store';
+import type { CaptureProvenance } from '@/lib/evidence-bridge/types';
 import { useAuthStore } from '@/stores/auth-store';
 
 const MISSION_ID = 'mission.meet_new_person';
@@ -63,6 +65,11 @@ export default function MissionPage() {
     typeof window === 'undefined' ? '' : (window.localStorage.getItem(nameKey) ?? ''),
   );
   const [text, setText] = useState('');
+  /* Spoken-capture pending review: a FINAL transcript waits here until
+   * the learner commits — interim text lives in the capture component
+   * and can never reach this state. */
+  const [pendingSpeech, setPendingSpeech] = useState<{ transcript: string; capture: CaptureProvenance } | null>(null);
+  const [typedFallback, setTypedFallback] = useState(false);
   const [eventCount, setEventCount] = useState(0);
   const sessionRef = useRef<ReturnType<typeof createMissionSession> | null>(null);
 
@@ -98,6 +105,15 @@ export default function MissionPage() {
   useEffect(() => {
     if (screen?.type === 'task' && screen.phase === 'prompt') sessionRef.current?.markPromptShown();
   }, [screen]);
+
+  /* Speech review state belongs to one prompt — a task change or a
+   * feedback phase clears it so a stale transcript can never ride into
+   * the next attempt. */
+  const taskKey = screen?.type === 'task' ? `${screen.taskId}:${screen.attemptId}:${screen.phase}` : null;
+  useEffect(() => {
+    setPendingSpeech(null);
+    setTypedFallback(false);
+  }, [taskKey]);
 
   const act = (fn: () => SessionScreen | Promise<SessionScreen>) => {
     if (busy) return;
@@ -336,6 +352,60 @@ export default function MissionPage() {
                     </Button>
                   ))}
                 </div>
+              ) : screen.responseType === 'spoken_turn' && !typedFallback && !pendingSpeech ? (
+                /* Real speech path: capture → learner review → commit.
+                 * The transcript the learner saw is the transcript that
+                 * commits; capture provenance rides along as evidence. */
+                <div className="space-y-2">
+                  <MissionSpeechCapture
+                    disabled={busy}
+                    onTranscript={(transcript, capture) => setPendingSpeech({ transcript, capture })}
+                  />
+                  <button
+                    type="button"
+                    data-testid="mission-typed-toggle"
+                    className="text-xs text-slate-400 underline hover:text-slate-600 cursor-pointer"
+                    onClick={() => setTypedFallback(true)}
+                  >
+                    Nhập bằng bàn phím thay thế
+                  </button>
+                </div>
+              ) : screen.responseType === 'spoken_turn' && pendingSpeech ? (
+                <div className="space-y-2" data-testid="mission-speech-review">
+                  <p className="text-xs text-slate-400">
+                    Hệ thống nghe được
+                    {pendingSpeech.capture.provider ? ` (qua ${pendingSpeech.capture.provider})` : ''}:
+                  </p>
+                  <p className="rounded-lg bg-indigo-50 px-4 py-3 text-indigo-900" data-testid="mission-transcript">
+                    {pendingSpeech.transcript}
+                  </p>
+                  <div className="flex gap-2">
+                    <Button
+                      data-testid="mission-commit"
+                      disabled={busy}
+                      onClick={() =>
+                        act(async () => {
+                          const scr = await sessionRef.current!.commit({
+                            text: pendingSpeech.transcript,
+                            capture: pendingSpeech.capture,
+                          });
+                          setPendingSpeech(null);
+                          return scr;
+                        })
+                      }
+                    >
+                      Gửi
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      data-testid="mission-re-record"
+                      onClick={() => setPendingSpeech(null)}
+                    >
+                      Nói lại
+                    </Button>
+                  </div>
+                </div>
               ) : (
                 <div className="space-y-2">
                   <div className="flex gap-2">
@@ -346,7 +416,10 @@ export default function MissionPage() {
                       onKeyDown={(e) => {
                         if (e.key === 'Enter' && text.trim()) {
                           act(async () => {
-                            const scr = await sessionRef.current!.commit({ text });
+                            const scr = await sessionRef.current!.commit({
+                              text,
+                              capture: { mode: 'text', authority: 'direct', final: true },
+                            });
                             setText('');
                             return scr;
                           });
@@ -360,7 +433,10 @@ export default function MissionPage() {
                       disabled={busy || text.trim() === ''}
                       onClick={() =>
                         act(async () => {
-                          const scr = await sessionRef.current!.commit({ text });
+                          const scr = await sessionRef.current!.commit({
+                            text,
+                            capture: { mode: 'text', authority: 'direct', final: true },
+                          });
                           setText('');
                           return scr;
                         })
@@ -369,6 +445,16 @@ export default function MissionPage() {
                       Gửi
                     </Button>
                   </div>
+                  {screen.responseType === 'spoken_turn' && (
+                    <button
+                      type="button"
+                      data-testid="mission-mic-toggle"
+                      className="text-xs text-slate-400 underline hover:text-slate-600 cursor-pointer"
+                      onClick={() => setTypedFallback(false)}
+                    >
+                      Dùng micro thay thế
+                    </button>
+                  )}
                 </div>
               )}
               {screen.supportOffered.length > 0 && (

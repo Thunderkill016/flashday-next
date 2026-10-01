@@ -15,6 +15,9 @@ interface UseVoiceRecognitionReturn {
   isListening: boolean;
   transcript: string;
   interimTranscript: string;
+  /** Confidence of the most recent FINAL result's top alternative
+   *  (0..1), or null when the recognizer does not report one. */
+  confidence: number | null;
   isSupported: boolean;
   startListening: () => void;
   stopListening: () => void;
@@ -28,6 +31,7 @@ export function useVoiceRecognition(options: UseVoiceRecognitionOptions = {}): U
   const [isListening, setIsListening] = useState(false);
   const [transcript, setTranscript] = useState('');
   const [interimTranscript, setInterimTranscript] = useState('');
+  const [confidence, setConfidence] = useState<number | null>(null);
   const [isSupported] = useState(() => {
     if (typeof window === 'undefined') return false;
     return !!(window.SpeechRecognition || window.webkitSpeechRecognition);
@@ -59,14 +63,20 @@ export function useVoiceRecognition(options: UseVoiceRecognitionOptions = {}): U
     rec.onresult = (event: SpeechRecognitionEvent) => {
       let finalText = '';
       let interimText = '';
+      let finalConfidence: number | null = null;
       for (let i = 0; i < event.results.length; i++) {
         const result = event.results[i];
         if (result.isFinal) {
           finalText += result[0].transcript;
+          // Some engines omit `confidence`; keep null rather than
+          // inventing a value — provenance must stay honest.
+          const c = result[0].confidence;
+          if (typeof c === 'number' && !Number.isNaN(c)) finalConfidence = c;
         } else {
           interimText += result[0].transcript;
         }
       }
+      if (finalConfidence != null) setConfidence(finalConfidence);
       transcriptRef.current = finalText;
       interimTranscriptRef.current = interimText;
       setTranscript(finalText);
@@ -97,6 +107,7 @@ export function useVoiceRecognition(options: UseVoiceRecognitionOptions = {}): U
     interimTranscriptRef.current = '';
     setTranscript('');
     setInterimTranscript('');
+    setConfidence(null);
     try {
       recognitionRef.current.start();
       setIsListening(true);
@@ -116,6 +127,7 @@ export function useVoiceRecognition(options: UseVoiceRecognitionOptions = {}): U
     interimTranscriptRef.current = '';
     setTranscript('');
     setInterimTranscript('');
+    setConfidence(null);
   }, []);
 
   const getTranscript = useCallback(
@@ -130,6 +142,7 @@ export function useVoiceRecognition(options: UseVoiceRecognitionOptions = {}): U
     isListening,
     transcript,
     interimTranscript,
+    confidence,
     isSupported,
     startListening,
     stopListening,
