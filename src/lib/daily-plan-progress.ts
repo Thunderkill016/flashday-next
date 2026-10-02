@@ -30,7 +30,11 @@ function matchesTask(
   dayKey: string,
 ) {
   const sameDayRecords = records.filter((record) => isPracticedOnDay(record.lastPracticed, dayKey));
-  const sameDaySessions = sessions.filter((session) => isPracticedOnDay(session.endTime ?? session.startTime, dayKey));
+  /* A persisted miss is history, not completion evidence: only completed
+   * sessions count toward plan tasks (VS01 failed-recall telemetry). */
+  const sameDaySessions = sessions.filter(
+    (session) => session.completed && isPracticedOnDay(session.endTime ?? session.startTime, dayKey),
+  );
 
   if (task.bookId) {
     // For book-based tasks, count unique items practiced today
@@ -142,6 +146,28 @@ export async function savePracticeSession(
           contentId: session.contentId,
           sessionId: session.id,
           practicedAt,
+        },
+      }),
+    );
+  }
+}
+
+/**
+ * Append a failed/abandoned practice attempt as history only. Unlike
+ * savePracticeSession this never touches records, FSRS, or nextReview —
+ * a telemetry miss must not silently reschedule memory. Callers are
+ * responsible for passing a session with completed:false.
+ */
+export async function recordFailedPracticeSession(session: TypingSession): Promise<void> {
+  await db.sessions.add(session);
+  if (typeof window !== 'undefined') {
+    window.dispatchEvent(
+      new CustomEvent(SESSION_ACTIVITY_EVENT, {
+        detail: {
+          module: session.module,
+          contentId: session.contentId,
+          sessionId: session.id,
+          practicedAt: session.endTime ?? session.startTime,
         },
       }),
     );

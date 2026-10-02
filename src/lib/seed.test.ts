@@ -2,6 +2,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 
 const storage = new Map<string, string>();
 const bulkAddMock = vi.fn();
+const contentsGetMock = vi.fn();
+const contentsBulkPutMock = vi.fn();
 const countMock = vi.fn();
 const sourceToArrayMock = vi.fn();
 const categoryCountMock = vi.fn();
@@ -24,6 +26,8 @@ vi.mock('@/lib/db', () => ({
     contents: {
       count: countMock,
       bulkAdd: bulkAddMock,
+      get: contentsGetMock,
+      bulkPut: contentsBulkPutMock,
       where: (field: string) => ({
         equals: (value: string) => {
           if (field === 'source') {
@@ -57,6 +61,9 @@ describe('seedDatabase starter packs', () => {
   beforeEach(() => {
     storage.clear();
     bulkAddMock.mockReset();
+    contentsGetMock.mockReset();
+    contentsBulkPutMock.mockReset();
+    contentsGetMock.mockResolvedValue(undefined);
     countMock.mockReset();
     sourceToArrayMock.mockReset();
     categoryCountMock.mockReset();
@@ -119,5 +126,17 @@ describe('seedDatabase starter packs', () => {
       (items as Array<{ title?: string }>).map((item) => item.title),
     );
     expect(seededTitles).toContain('Airport: reporting lost luggage');
+  });
+
+  it('R1: seedDatabase never seeds VS01 targets outside development', async () => {
+    // vitest runs with NODE_ENV=test — the dev-only VS01 gate must not fire.
+    await seedDatabase();
+
+    expect(contentsGetMock).not.toHaveBeenCalled();
+    expect(contentsBulkPutMock).not.toHaveBeenCalled();
+    const seededIds = bulkAddMock.mock.calls.flatMap(([items]) =>
+      (items as Array<{ id?: string }>).map((item) => item.id),
+    );
+    expect(seededIds.filter((id) => id?.startsWith('vs01.'))).toEqual([]);
   });
 });

@@ -199,6 +199,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       }
 
       await seedDatabase();
+      /* FD-VS01 dev-only inspection hook — registers window.__vs01Report.
+       * Dynamic import keeps the module out of production bundles. */
+      if (process.env.NODE_ENV === 'development') await import('@/lib/vs01-debug');
       // Migration is additive and retryable; a failure must not block the old app.
       await reconcileLearningUnits().catch((error) => console.warn('Course preparation deferred', error));
       await hydrateIOSNativeQA();
