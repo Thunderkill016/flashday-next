@@ -593,7 +593,15 @@ Free/open/local is preferred when quality is competitive.
 - BoldVoice;
 - Speechling;
 - Praktika;
-- relevant Duolingo speaking/conversation features.
+- relevant Duolingo speaking/conversation features;
+- VSpeak as a Vietnam-market multi-tool practice surface;
+- eJOY as a content -> Active Listening / Shadow / Write / Role Play reference;
+- EnglishCentral as a Watch -> Learn -> Speak -> discussion reference;
+- Yabla as a structured daily circuit + Scribe/Speak reference;
+- Gliglish as a conversation-preserving correction reference.
+
+**Required research input:**
+- `docs/flashday/COMPETITIVE_LEARNING_RESEARCH_2026-10.md`
 
 **Deliverables:**
 - product comparison matrix;
@@ -766,7 +774,9 @@ Free/open/local is preferred when quality is competitive.
 - correction-prioritization rule;
 - conversation-preserving feedback flow;
 - repair drill;
-- self-listen/retry path where useful;
+- self-listen/model-compare/rerecord path where useful;
+- support-action ordering for transcript/model/replay/reveal when those surfaces exist;
+- explicit distinction between feedback delivery and recovery evidence;
 - UX tests/prototype.
 
 **Dependencies:** W3-01, W3-06, W3-07 findings.
@@ -775,6 +785,8 @@ Free/open/local is preferred when quality is competitive.
 - learner is not shown every detected issue indiscriminately;
 - 1–3 high-value corrections can be prioritized;
 - correction produces an opportunity to repair;
+- self-listen/rerecord history is preserved where implemented;
+- answer/model reveal timing is not confused with unaided attempt evidence;
 - feedback source/provenance is visible internally;
 - feedback-only signals do not mint mastery.
 
