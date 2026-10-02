@@ -1,12 +1,18 @@
 import type Dexie from 'dexie';
 import type { Table } from 'dexie';
 import type { LearningAttempt } from '@/types/learning-activity';
-import type { MediaBlobEntry } from './db';
+import { currentLearnerId, type MediaBlobEntry } from './db';
+import { mapLegacyAttempt, runSemanticCommit } from './evidence-bridge/adapter';
+import type { EvidenceEvent } from './evidence-bridge/types';
 import { recordingIdentity } from './learning-activity';
 import { validateTextCycleAttempt } from './text-learning-cycle';
 
 export async function persistLearningAttempt(
-  database: Dexie & { learningAttempts: Table<LearningAttempt>; mediaBlobs: Table<MediaBlobEntry> },
+  database: Dexie & {
+    learningAttempts: Table<LearningAttempt>;
+    mediaBlobs: Table<MediaBlobEntry>;
+    evidenceEvents?: Table<EvidenceEvent, string>;
+  },
   attempt: LearningAttempt,
   blob: Blob | undefined,
   isCurrent: () => boolean,
@@ -17,7 +23,24 @@ export async function persistLearningAttempt(
   guard();
   if (blob?.size) attempt.recordingId = await recordingIdentity(blob);
   guard();
-  await database.transaction('rw', database.learningAttempts, database.mediaBlobs, async () => {
+  // W2-02 semantic-commit seam: a cycle stage is the semantic intent when
+  // present, else the activity. Unmapped → legacy transaction untouched.
+  const mapped = mapLegacyAttempt({
+    id: attempt.id,
+    kind: attempt.cycle ? 'text-cycle' : 'learning-attempt',
+    mode: attempt.cycle?.stage ?? attempt.activity,
+    occurredAt: attempt.createdAt,
+    response: attempt.answer,
+    // Declared support facts — an honest future mapper must carry all of
+    // them into the submission; the adapter refuses closed if any drop.
+    support: {
+      ...(attempt.usedTranslation ? { translation: true } : {}),
+      ...(attempt.cycle?.assisted ? { assisted: true } : {}),
+      ...(attempt.cycle?.sourceRevealed ? { sourceRevealed: true } : {}),
+    },
+    feedback: attempt.feedback,
+  });
+  const writeHistory = async (): Promise<boolean> => {
     guard();
     if (attempt.cycle) {
       const attempts = await database.learningAttempts.toArray();
@@ -36,6 +59,22 @@ export async function persistLearningAttempt(
       });
     guard();
     await database.learningAttempts.add(attempt);
-    guard();
-  });
+    return true;
+  };
+  // W2-02R2: mapped commits go through the seam — one transaction owned by
+  // runSemanticCommit couples the history write to the event append; the
+  // post-append guard can still roll both back.
+  if (mapped) {
+    await runSemanticCommit({
+      database,
+      tables: [database.learningAttempts, database.mediaBlobs],
+      historyTable: database.learningAttempts,
+      mapped,
+      learnerId: currentLearnerId(),
+      writeHistory,
+      verify: guard,
+    });
+  } else {
+    await database.transaction('rw', [database.learningAttempts, database.mediaBlobs], writeHistory);
+  }
 }
