@@ -98,6 +98,20 @@ function emptyCapView() {
       servedEpisodes: 0,
       cancelledEpisodes: 0,
       lastDemandAt: null,
+      /* W2-PC1 support_dependency: dependency is demand-lifecycle-bound,
+       * never "support happened". A function that generated a support
+       * demand and still lacks independent covering recovery is a
+       * dependent function; `dependent` is the state alias. States:
+       *   UNMODELED — no mission roles: the demand lifecycle cannot be
+       *               computed, so the honest answer is "not modeled",
+       *               never a fake CLEAR;
+       *   CLEAR     — modeled, and no demanded function is unresolved;
+       *   DEPENDENT — ≥1 demanded function still unresolved. */
+      dependency: {
+        state: 'UNMODELED',
+        demandedFunctions: [],
+        dependentFunctions: []
+      },
       dependent: false
     },
     failures: {
@@ -169,13 +183,29 @@ export function buildLearnerModel({ learnerId, events, capabilities, tasks, poli
   // never disagree with the router about what is still outstanding.
   // Roles are optional: without mission context there is no routed
   // demand history, and function gaps still surface evidence-level.
-  const lifecycle = roles?.supports?.size
+  /* Modeled iff the mission's SUPPORT MAPPING is provided — even an
+   * empty `supports` set is an available mapping (this mission declares
+   * no substrate, so no demand can ever exist → CLEAR, not UNMODELED).
+   * Roles absent or mapping field missing → UNMODELED. */
+  const demandModeled = roles?.supports instanceof Set;
+  const lifecycle = demandModeled
     ? deriveSupportLifecycle(learnerId, events, { capabilities, tasks, roles, policy: pol })
     : { pending: [], resolved: [] };
+  /* Functions that generated a support demand on each target — pending
+   * AND resolved (consumed/cancelled) episodes both count: a consumed
+   * probe does not clear the dependency, only independent covering
+   * recovery does. */
+  const demandedByCap = new Map();
+  const noteDemand = (d) => {
+    const v = view.get(d.targetCapabilityId);
+    if (!v) return;
+    demandedByCap.set(d.targetCapabilityId, (demandedByCap.get(d.targetCapabilityId) ?? new Set()).add(d.missingFunction));
+  };
   for (const d of lifecycle.pending) {
     const v = view.get(d.targetCapabilityId);
     if (!v) continue;
     v.support.pendingFunctions.push(d.missingFunction);
+    noteDemand(d);
     // An outstanding demand is itself a reliance signal.
     if (v.support.lastDemandAt == null || d.issuedAt > v.support.lastDemandAt) {
       v.support.lastDemandAt = d.issuedAt;
@@ -184,6 +214,7 @@ export function buildLearnerModel({ learnerId, events, capabilities, tasks, poli
   for (const d of lifecycle.resolved) {
     const v = view.get(d.targetCapabilityId);
     if (!v) continue;
+    noteDemand(d);
     if (d.status === 'consumed') {
       v.support.servedEpisodes += 1;
       if (v.support.lastSupportAt == null || d.resolvedAt > v.support.lastSupportAt) {
@@ -388,17 +419,20 @@ export function buildLearnerModel({ learnerId, events, capabilities, tasks, poli
     v.failures.resolvedFunctions = resolvedFns.sort();
     v.failures.recurringFunctions = recurring.sort();
 
-    /* Support dependency: support was used or demanded AND the learner
-     * has no clean unaided success later than the last reliance. A
-     * pending demand's issuedAt counts as reliance — an open substrate
-     * gap is evidence the capability currently needs support. */
-    const lastRelianceAt = Math.max(
-      v.support.lastSupportAt ?? 0,
-      v.support.lastDemandAt ?? 0
-    ) || null;
-    const relied = v.support.everUsed || v.support.servedEpisodes > 0 || v.support.pendingFunctions.length > 0;
-    v.support.dependent = relied &&
-      (v.evidence.lastIndependentAt == null || (lastRelianceAt ?? 0) > v.evidence.lastIndependentAt);
+    /* W2-PC1 support_dependency: a demanded function that still lacks
+     * independent covering recovery is a dependent function. Support
+     * USAGE alone (a one-off hint, even five) is a historical fact —
+     * `everUsed` — never a dependency. Consumed demands stay demanded:
+     * only an independent covering success retires the function's gap
+     * and clears it here. */
+    const demandedFunctions = [...(demandedByCap.get(c.id) ?? [])].sort();
+    const dependentFunctions = demandedFunctions.filter((f) => unresolved.includes(f));
+    v.support.dependency = {
+      state: !demandModeled ? 'UNMODELED' : dependentFunctions.length ? 'DEPENDENT' : 'CLEAR',
+      demandedFunctions,
+      dependentFunctions
+    };
+    v.support.dependent = v.support.dependency.state === 'DEPENDENT';
 
     /* Recency is exposed as FACT (sinceLastIndependentMs), never as an
      * inference: `retention.minLagMs` is the minimum spacing needed to

@@ -1,11 +1,11 @@
 import { describe, expect, it } from 'vitest';
 import { bindAttempt, bindObservation } from '@/vnext/bind';
 import { CAPABILITIES } from '@/vnext/capabilities';
-import { MISSION_BUY_ITEM, TASKS_BUY_ITEM, TASKS_MEET_AT_TIME } from '@/vnext/fixtures';
+import { MISSION_BUY_ITEM, MISSION_MEET_AT_TIME, TASKS_BUY_ITEM, TASKS_MEET_AT_TIME } from '@/vnext/fixtures';
 import { buildLearnerModel } from '@/vnext/learner-model';
 import { generateCandidates } from '@/vnext/next-for-you/candidate-generator';
 import { KINDS } from '@/vnext/next-for-you/constants';
-import { planNext } from '@/vnext/planner';
+import { deriveSupportLifecycle, planNext } from '@/vnext/planner';
 import { projectLearnerState } from '@/vnext/projection';
 
 /*
@@ -38,6 +38,15 @@ const DAY = 24 * 60 * MIN;
 
 const PRICE = 'reception.listen.understand_spoken_price';
 const PRICE_FN = 'understand_spoken_price';
+const NUMBER_FN = 'identify_spoken_number';
+const CLOCK = 'reception.listen.understand_clock_time';
+
+const ROLES_TIME = {
+  targets: new Set(MISSION_MEET_AT_TIME.targetCapabilities),
+  supports: new Set(MISSION_MEET_AT_TIME.supportCapabilities),
+  prereqs: new Set(MISSION_MEET_AT_TIME.prerequisiteCapabilities ?? []),
+};
+
 const capOf = (id: string): Any => {
   const c = (CAPABILITIES as Any[]).find((x) => x.id === id);
   if (!c) throw new Error(`capability '${id}' missing`);
@@ -91,7 +100,20 @@ const model = (events: Any[], extra: Record<string, unknown> = {}) =>
     ...extra,
   });
 
+const timeModel = (events: Any[], extra: Record<string, unknown> = {}) =>
+  (buildLearnerModel as Any)({
+    learnerId: L,
+    events,
+    capabilities: CAPABILITIES,
+    tasks: TASKS_MEET_AT_TIME,
+    roles: ROLES_TIME,
+    now: T0 + 2 * DAY,
+    ...extra,
+  });
+
 const priceView = (events: Any[]) => model(events).capabilities[PRICE];
+const timeView = (events: Any[]) => timeModel(events).capabilities[CLOCK];
+
 const projectionSlot = (events: Any[], tasks: Any[] = TASKS_BUY_ITEM, capId = PRICE) =>
   (projectLearnerState as Any)(L, events, CAPABILITIES, tasks).byCapability.get(capId);
 
@@ -235,5 +257,146 @@ describe('PC1-A verified_consecutive_failure — named strict artifact', () => {
     // "unobserved outcomes count" semantics is gone for good.
     expect(slot.consecutiveFailures).toBe(slot.verifiedConsecutiveFailures);
     expect(slot.consecutiveFailures).toBe(0);
+  });
+});
+
+/* ── PC1-B: support_dependency ───────────────────────────────────── */
+
+describe('PC1-B support_dependency — demand-lifecycle-bound state', () => {
+  const demandingMiss = (id: string, at: number) =>
+    time('task.time.retrieval.hear', { id, at, outcome: 'fail', missing: [NUMBER_FN] });
+  const aidedClockSuccess = (id: string, at: number) =>
+    time('task.time.retrieval.hear', { id, at, outcome: 'success', support: { hint: true } });
+  const probe = (id: string, at: number, outcome: 'success' | 'fail' = 'success') =>
+    time('task.time.support.number_probe', { id, at, outcome });
+  const independentCovering = (id: string, at: number) =>
+    time('task.time.retrieval.hear', { id, at, outcome: 'success' });
+
+  it('one-off support is usage, not dependency: aided success with zero demand evidence is CLEAR', () => {
+    const view = timeView([aidedClockSuccess('a1', T0)]);
+    expect(view.support.everUsed).toBe(true);
+    expect(view.support.dependency.state).toBe('CLEAR');
+    expect(view.support.dependency.demandedFunctions).toEqual([]);
+    expect(view.support.dependency.dependentFunctions).toEqual([]);
+    expect(view.support.dependent).toBe(false);
+  });
+
+  it('repeated support with no attributed demand never mints dependency', () => {
+    const events = [
+      aidedClockSuccess('a1', T0),
+      aidedClockSuccess('a2', T0 + MIN),
+      aidedClockSuccess('a3', T0 + 2 * MIN),
+      aidedClockSuccess('a4', T0 + 3 * MIN),
+      aidedClockSuccess('a5', T0 + 4 * MIN),
+    ];
+    const view = timeView(events);
+    expect(view.support.everUsed).toBe(true);
+    expect(view.support.dependency.state).toBe('CLEAR');
+    expect(view.support.dependent).toBe(false);
+  });
+
+  it('a pending support demand on an unresolved function is DEPENDENT', () => {
+    const view = timeView([aidedClockSuccess('a1', T0), demandingMiss('m1', T0 + MIN)]);
+    expect(view.support.dependency.state).toBe('DEPENDENT');
+    expect(view.support.dependency.demandedFunctions).toEqual([NUMBER_FN]);
+    expect(view.support.dependency.dependentFunctions).toEqual([NUMBER_FN]);
+    expect(view.support.dependent).toBe(true);
+  });
+
+  it('consumed probe does NOT clear dependency — the function still lacks independent covering recovery', () => {
+    const events = [aidedClockSuccess('a1', T0), demandingMiss('m1', T0 + MIN), probe('p1', T0 + 2 * MIN)];
+    const lifecycle = (deriveSupportLifecycle as Any)(L, events, {
+      capabilities: CAPABILITIES,
+      tasks: TASKS_MEET_AT_TIME,
+      roles: ROLES_TIME,
+    });
+    expect(lifecycle.pending).toEqual([]);
+    expect(lifecycle.resolved[0].status).toBe('consumed');
+    const view = timeView(events);
+    expect(view.support.dependency.state).toBe('DEPENDENT');
+    expect(view.support.dependency.dependentFunctions).toEqual([NUMBER_FN]);
+  });
+
+  it('a supported (non-independent) target success does not clear dependency', () => {
+    const events = [
+      aidedClockSuccess('a1', T0),
+      demandingMiss('m1', T0 + MIN),
+      probe('p1', T0 + 2 * MIN),
+      aidedClockSuccess('a2', T0 + 3 * MIN),
+    ];
+    expect(timeView(events).support.dependency.state).toBe('DEPENDENT');
+  });
+
+  it('independent covering recovery on the demanded function clears dependency', () => {
+    const events = [
+      aidedClockSuccess('a1', T0),
+      demandingMiss('m1', T0 + MIN),
+      probe('p1', T0 + 2 * MIN),
+      independentCovering('w1', T0 + 3 * MIN),
+    ];
+    const view = timeView(events);
+    expect(view.failures.unresolvedFunctions).toEqual([]);
+    expect(view.support.dependency.state).toBe('CLEAR');
+    expect(view.support.dependent).toBe(false);
+  });
+
+  it('independent success on an unrelated function does not clear the demanded one', () => {
+    // Demand number-fn, then independently succeed on a task that never
+    // exercises it → dependency persists.
+    const unrelated = time('task.time.delayed.hear', { id: 'w.other', at: T0 + 3 * MIN, outcome: 'success' });
+    const events = [aidedClockSuccess('a1', T0), demandingMiss('m1', T0 + MIN), unrelated];
+    const view = timeView(events);
+    expect(view.support.dependency.state).toBe('DEPENDENT');
+    expect(view.support.dependency.dependentFunctions).toEqual([NUMBER_FN]);
+  });
+
+  it('an unobserved attributed miss issues no demand — no dependency', () => {
+    const unobs = time('task.time.retrieval.hear', {
+      id: 'm.unobs',
+      at: T0 + MIN,
+      outcome: 'fail',
+      observed: false,
+      missing: [NUMBER_FN],
+    });
+    const view = timeView([aidedClockSuccess('a1', T0), unobs]);
+    expect(view.support.dependency.state).toBe('CLEAR');
+    expect(view.support.dependent).toBe(false);
+  });
+
+  it('without mission roles the state is UNMODELED — honest non-answer, never fake CLEAR', () => {
+    // buildLearnerModel with no roles: demand lifecycle is uncomputable,
+    // so the artifact reports UNMODELED rather than pretending none.
+    const noRoles = model([price('task.price.retrieval.hear', {
+      id: 'a1', at: T0, outcome: 'success', support: { hint: true },
+    })]).capabilities[PRICE];
+    expect(noRoles.support.dependency.state).toBe('UNMODELED');
+    expect(noRoles.support.dependent).toBe(false);
+  });
+
+  it('the INDEPENDENT_ATTEMPT candidate only claims dependency-fade when the artifact says DEPENDENT', () => {
+    const gen = (events: Any[]) =>
+      (generateCandidates as Any)({
+        learnerId: L,
+        events,
+        capabilities: CAPABILITIES,
+        tasks: TASKS_MEET_AT_TIME,
+        roles: ROLES_TIME,
+        now: T0 + 10 * MIN,
+        mission: MISSION_MEET_AT_TIME,
+      });
+    const independentAttempt = (events: Any[]) =>
+      gen(events).candidates.find((c: Any) => c.capabilityId === CLOCK && c.kind === KINDS.INDEPENDENT_ATTEMPT);
+
+    // One-off support: candidate exists (supported, not independent) but
+    // carries NO dependency-fade preference.
+    const oneOff = independentAttempt([aidedClockSuccess('a1', T0)]);
+    expect(oneOff).toBeTruthy();
+    expect((oneOff.preferences ?? []).map((p: Any) => p.name)).not.toContain('support_dependency_fade');
+
+    // Real dependency: demand issued, function still unresolved → the
+    // fade preference appears.
+    const dependent = independentAttempt([aidedClockSuccess('a1', T0), demandingMiss('m1', T0 + MIN)]);
+    expect(dependent).toBeTruthy();
+    expect((dependent.preferences ?? []).map((p: Any) => p.name)).toContain('support_dependency_fade');
   });
 });

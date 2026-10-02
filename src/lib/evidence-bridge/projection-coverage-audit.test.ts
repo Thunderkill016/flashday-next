@@ -272,23 +272,39 @@ describe('G04 recurring_error — PRESENT via episode RELAPSED; recurringFunctio
   });
 });
 
-/* ── support_dependency — MISSING / support_demand_lifecycle — PRESENT ── */
+/* ── support_dependency — PRESENT (resolved by W2-PC1) / support_demand_lifecycle — PRESENT ── */
 
-describe('G04 support_dependency — MISSING (reproduction)', () => {
-  it('a single aided success marks the capability support-dependent (support used once = dependency)', () => {
+describe('G04 support_dependency — PRESENT (PC1 resolution)', () => {
+  it('a single aided success is usage, not dependency — zero demand evidence means no dependent state', () => {
     const once = [price('task.price.retrieval.hear', { id: 'a1', at: T0, outcome: 'success', support: { hint: true } })];
     const view = priceView(once);
-    expect(view.support.dependent).toBe(true);
+    /* PC1: the G04 trap is closed — `dependent` aliases the strict
+     * dependency state, which requires a demanded function still
+     * lacking independent covering recovery. Without mission roles the
+     * demand lifecycle is unmodeled, so the honest state is UNMODELED. */
+    expect(view.support.dependency.state).toBe('UNMODELED');
+    expect(view.support.dependency.demandedFunctions).toEqual([]);
+    expect(view.support.dependency.dependentFunctions).toEqual([]);
+    expect(view.support.dependent).toBe(false);
     expect(view.support.servedEpisodes).toBe(0);
     expect(view.support.pendingFunctions).toEqual([]);
   });
 
-  it('one unaided success afterwards clears it — the flag is a recency predicate, not a dependency measure', () => {
+  it('with roles but no attributed demand, supported work is CLEAR — not DEPENDENT', () => {
+    const roles = {
+      targets: new Set(MISSION_MEET_AT_TIME.targetCapabilities),
+      supports: new Set(MISSION_MEET_AT_TIME.supportCapabilities),
+      prereqs: new Set(MISSION_MEET_AT_TIME.prerequisiteCapabilities ?? []),
+    };
     const events = [
-      price('task.price.retrieval.hear', { id: 'a1', at: T0, outcome: 'success', support: { hint: true } }),
-      price('task.price.retrieval.hear', { id: 'u1', at: T0 + MIN, outcome: 'success' }),
+      time('task.time.retrieval.hear', { id: 'a1', at: T0, outcome: 'success', support: { hint: true } }),
+      time('task.time.retrieval.hear', { id: 'a2', at: T0 + MIN, outcome: 'success', support: { hint: true } }),
     ];
-    expect(priceView(events).support.dependent).toBe(false);
+    const view = (buildLearnerModel as Any)({
+      learnerId: L, events, capabilities: CAPABILITIES, tasks: TASKS_MEET_AT_TIME, roles, now: T0 + 2 * DAY,
+    }).capabilities['reception.listen.understand_clock_time'];
+    expect(view.support.dependency.state).toBe('CLEAR');
+    expect(view.support.dependent).toBe(false);
   });
 });
 

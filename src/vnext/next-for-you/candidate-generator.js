@@ -50,7 +50,7 @@ const EMPTY_MILESTONES = { supported: false, independent: false, retained: false
 const EMPTY_FACTS = {
   state: 'NOT_SEEN', milestones: EMPTY_MILESTONES, consecutiveFailures: 0, verifiedConsecutiveFailures: 0,
   lastAttemptOutcome: null, lastIndependentSuccessAt: null,
-  unresolvedFunctions: [], recurringFunctions: [], supportDependent: false,
+  unresolvedFunctions: [], recurringFunctions: [], supportDependent: false, supportDependency: 'UNMODELED',
   pendingFunctions: [], evidenceSufficient: false, reasonCodes: [],
   independentSuccessCount: 0, assessmentDemonstrated: false,
   assessmentStatus: null, transferDemonstrated: false,
@@ -73,7 +73,10 @@ function capFacts(capId, model, projection, capability) {
     lastIndependentSuccessAt: p.lastIndependentSuccessAt,
     unresolvedFunctions: v.failures.unresolvedFunctions,   // KERNEL/EVIDENCE
     recurringFunctions: v.failures.recurringFunctions,
-    supportDependent: v.support.dependent,            // KERNEL
+    /* W2-PC1: dependency is the demand-lifecycle state — a one-off aid
+     * never qualifies (support happened ≠ dependency). */
+    supportDependency: v.support.dependency.state,        // KERNEL
+    supportDependent: v.support.dependency.state === 'DEPENDENT', // KERNEL
     pendingFunctions: v.support.pendingFunctions,
     evidenceSufficient: v.uncertainty.evidenceSufficient,  // MODEL fact
     reasonCodes: v.uncertainty.reasons.map((r) => r.code),
