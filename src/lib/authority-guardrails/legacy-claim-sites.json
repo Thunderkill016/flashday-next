@@ -1365,6 +1365,7 @@
       "anchor": "see reason",
       "occurrences": [
         "* Update a learning record's FSRS card with a manual rating override.",
+        "* savePracticeSession this never touches records, FSRS, or nextReview —",
         "// Use FSRS for scheduling",
         "await db.records.update(recordId, { fsrsCard: cardData, nextReview });",
         "const rating = accuracyToRating(effectiveAccuracy);",
@@ -1387,7 +1388,8 @@
         "await database.sessions.add(session);",
         "await database.transaction('rw', [database.contents, database.sessions, database.records], async () => {",
         "const practicedAt = session.endTime ?? session.startTime;",
-        "const sameDaySessions = sessions.filter((session) => isPracticedOnDay(session.endTime ?? session.startTime, dayKey));",
+        "const sameDaySessions = sessions.filter(",
+        "(session) => session.completed && isPracticedOnDay(session.endTime ?? session.startTime, dayKey),",
         "db.sessions.toArray(),",
         "import type { ContentItem, LearningRecord, TypingSession } from '@/types/content';",
         "session.module === 'listen' && session.correctChars === 0 && session.wrongChars === 0 ? 100 : session.accuracy;",
@@ -1396,8 +1398,22 @@
         "sessions: TypingSession[];"
       ],
       "classification": "LEGIT_HISTORY",
-      "reason": "writer: session row persistence",
+      "reason": "writer: session row persistence + same-day read aggregation; VS01: completion gate now requires session.completed === true so failed-recall rows cannot satisfy a plan task",
       "migrationNode": "W2-AT1"
+    },
+    {
+      "id": "lib-daily-plan-progress.sessions-vs01",
+      "file": "src/lib/daily-plan-progress.ts",
+      "source": "sessions",
+      "anchor": "recordFailedPracticeSession",
+      "occurrences": [
+        "export async function recordFailedPracticeSession(session: TypingSession): Promise<void> {",
+        "await db.sessions.add(session);",
+        "practicedAt: session.endTime ?? session.startTime,"
+      ],
+      "classification": "LEGIT_HISTORY",
+      "reason": "FD-VS01 history-only writer: failed exact-typing recalls appended as completed:false session rows — inspectable misses that never touch records/FSRS/nextReview",
+      "migrationNode": null
     },
     {
       "id": "lib-daily-plan-progress.dailyPlan",
@@ -2792,6 +2808,90 @@
       "classification": "LEGIT_HISTORY",
       "reason": "W2-02.5 doc comments naming FSRS as the memory-domain owner \u2014 no runtime read, no scheduling decision",
       "migrationNode": "W2-AT1"
+    },
+    {
+      "id": "components-shared-word-book-practice.fsrs",
+      "file": "src/components/shared/word-book-practice.tsx",
+      "source": "fsrs",
+      "anchor": "miss-history-comment",
+      "occurrences": ["/* Persist the miss as history only \u2014 no FSRS grade, no record"],
+      "classification": "LEGIT_HISTORY",
+      "reason": "doc comment on the FD-VS01 miss path: failed exact-typing recalls persist via recordFailedPracticeSession \u2014 explicitly no FSRS grade or record mutation",
+      "migrationNode": null
+    },
+    {
+      "id": "lib-vs01-debug.sessions",
+      "file": "src/lib/vs01-debug.ts",
+      "source": "sessions",
+      "anchor": "see reason",
+      "occurrences": ["db.sessions.toArray(),"],
+      "classification": "LEGIT_ANALYTICS",
+      "reason": "dev-only VS01 inspection: session rows are read-model input for window.__vs01 debug derivation \u2014 no writes, no claims",
+      "migrationNode": null
+    },
+    {
+      "id": "lib-vs01-debug.learningAttempts",
+      "file": "src/lib/vs01-debug.ts",
+      "source": "learningAttempts",
+      "anchor": "see reason",
+      "occurrences": ["db.learningAttempts.toArray(),"],
+      "classification": "LEGIT_ANALYTICS",
+      "reason": "dev-only VS01 inspection: attempt rows are read-model input for window.__vs01 debug derivation \u2014 no writes, no claims",
+      "migrationNode": null
+    },
+    {
+      "id": "lib-vs01-telemetry.fsrs",
+      "file": "src/lib/vs01-telemetry.ts",
+      "source": "fsrs",
+      "anchor": "delayed-recall-comment",
+      "occurrences": ["* + TEXT_CYCLE_INITIAL_DELAY. FSRS nextReview is not evidence that"],
+      "classification": "LEGIT_ANALYTICS",
+      "reason": "doc comment pinning the boundary: FSRS nextReview is scheduling state, never delayed-recall evidence for VS01 telemetry",
+      "migrationNode": null
+    },
+    {
+      "id": "lib-vs01-telemetry.sessions",
+      "file": "src/lib/vs01-telemetry.ts",
+      "source": "sessions",
+      "anchor": "see reason",
+      "occurrences": [
+        "import type { ContentItem, TypingSession } from '@/types/content';",
+        "sessions: TypingSession[];",
+        "const sessionTime = (s: TypingSession) => s.endTime ?? s.startTime;",
+        ".filter((s) => s.contentId === target.id && s.module === 'write')",
+        "const firstSuccess = targetSessions.find((s) => s.completed);"
+      ],
+      "classification": "LEGIT_ANALYTICS",
+      "reason": "FD-VS01 derived read model: write-module TypingSession rows (including history-only misses) \u2192 per-target immediate-recall outcome",
+      "migrationNode": null
+    },
+    {
+      "id": "lib-vs01-telemetry.learningAttempts",
+      "file": "src/lib/vs01-telemetry.ts",
+      "source": "learningAttempts",
+      "anchor": "see reason",
+      "occurrences": [
+        "* contents/learningAttempts/sessions into one inspectable record per",
+        "import { deriveTextCycle } from '@/lib/text-learning-cycle';",
+        "import type { LearningAttempt } from '@/types/learning-activity';",
+        "attempts: LearningAttempt[];",
+        "function validComprehension(attempt: LearningAttempt): boolean {",
+        "!!attempt.answer.trim() &&",
+        "function isUnpromptedProduction(attempt: LearningAttempt, sourceText: string): boolean {",
+        "!attempt.cycle &&",
+        "!!attempt.answer.trim() &&",
+        "!normalize(sourceText).includes(normalize(attempt.answer))",
+        "function deriveCycleRecall(sourceId: string, attempts: LearningAttempt[], now: number): Vs01CycleRecall {",
+        "const groups = new Map<string, LearningAttempt[]>();",
+        "const group = groups.get(attempt.lessonId);",
+        "else groups.set(attempt.lessonId, [attempt]);",
+        "const cycle = deriveTextCycle(group[0].lessonId, group[0].sourceText, group, now);",
+        "? input.attempts.filter((a) => a.sourceContentIds.includes(sourceId))",
+        ": input.attempts.filter((a) => a.sourceText.includes(target.sourceSentence));"
+      ],
+      "classification": "LEGIT_ANALYTICS",
+      "reason": "FD-VS01 derived read model: LearningAttempt rows replayed through deriveTextCycle \u2192 per-target understanding/production/delayed-recall/transfer outcome; mints nothing",
+      "migrationNode": null
     }
   ]
 }
