@@ -457,6 +457,180 @@ describe('falsification', () => {
   });
 });
 
+describe('speech capture provenance (FDN-SPEECH-001)', () => {
+  const asr = (provider: string, confidence: number | null = null) => ({
+    mode: 'speech' as const,
+    authority: 'asr' as const,
+    provider,
+    final: true,
+    confidence,
+  });
+  const direct = { mode: 'text' as const, authority: 'direct' as const, final: true };
+
+  it('spoken_turn tasks surface the speech channel in the screen contract', async () => {
+    const s = sessionFor();
+    await s.init();
+    s.start({ learnerName: 'Mai' });
+    const scr = taskScreen(s.screen());
+    expect(scr.responseType).toBe('spoken_turn');
+  });
+
+  it('an ASR transcript still goes through the deterministic evaluator — success and misses both land', async () => {
+    const s = sessionFor();
+    await s.init();
+    s.start({ learnerName: 'Mai' });
+    const scr = taskScreen(s.screen());
+
+    const fb = await s.commit({ text: 'My name is Mai', capture: asr('web-speech', 0.91) });
+    const scored = taskScreen(fb);
+    expect(scored.evaluation?.outcome).toBe('success');
+
+    // A transcript missing the required function fails honestly — ASR
+    // changes the channel, never the scoring. (Free-text scoring cannot
+    // attribute the miss to a substrate — `missed` is the observable.)
+    s.next();
+    const fb2 = await s.commit({ text: 'banana', capture: asr('web-speech') });
+    const scored2 = taskScreen(fb2);
+    expect(scored2.evaluation?.outcome).toBe('fail');
+    expect(scored2.evaluation?.missed).toContain('ask_name');
+    const failed = s.log().find((e) => e.attempt?.outcome === 'fail');
+    expect(failed?.attempt?.capture?.authority).toBe('asr');
+  });
+
+  it('ASR-captured success mints SUPPORTED at most — never INDEPENDENT/RETAINED/TRANSFERRED', async () => {
+    const s = sessionFor();
+    await s.init();
+    s.start({ learnerName: 'Mai' });
+
+    // Drive the canonical path entirely over the ASR channel.
+    const queues = new Map<string, { support?: string[]; text?: string; optionId?: string }[]>();
+    for (let step = 0; step < 80; step++) {
+      const screen = s.screen();
+      if (screen.type === 'summary') break;
+      if (screen.type === 'input') {
+        await s.view();
+        continue;
+      }
+      if (screen.type !== 'task') break;
+      if (screen.phase === 'feedback') {
+        s.next();
+        continue;
+      }
+      const q =
+        queues.get(screen.taskId) ??
+        queues.set(screen.taskId, [...(SCRIPT[screen.taskId] ?? [])]).get(screen.taskId)!;
+      const act = q.shift() ?? { text: answerFor(screen) };
+      for (const kind of act.support ?? []) await s.support(kind);
+      const capture =
+        screen.responseType === 'choice' ? undefined : asr(screen.taskId.includes('delayed') ? 'groq' : 'web-speech');
+      await s.commit({ text: act.text, optionId: act.optionId, capture });
+      s.next();
+    }
+    clock += 25 * HOUR;
+    // Keep answering over ASR after the retention lag too.
+    for (let step = 0; step < 80; step++) {
+      const screen = s.screen();
+      if (screen.type === 'summary') break;
+      if (screen.type === 'input') {
+        await s.view();
+        continue;
+      }
+      if (screen.type !== 'task') break;
+      if (screen.phase === 'feedback') {
+        s.next();
+        continue;
+      }
+      const q = queues.get(screen.taskId);
+      const act = q?.shift() ?? { text: answerFor(screen) };
+      await s.commit({ text: act.text, capture: asr('web-speech') });
+      s.next();
+    }
+
+    const proj = s.projection();
+    for (const [capId, slot] of proj.byCapability) {
+      expect(slot.milestones.independent ?? false, capId).toBe(false);
+      expect(slot.milestones.retained ?? false, capId).toBe(false);
+      expect(slot.milestones.transferred ?? false, capId).toBe(false);
+    }
+    // …while asr successes on non-transfer tasks still mint SUPPORTED —
+    // the channel is recorded, the credit is capped, not erased.
+    const nameSlot = proj.byCapability.get('production.speak.say_own_name');
+    expect(nameSlot?.milestones.supported ?? false).toBe(true);
+    expect(nameSlot?.state).toBe('SUPPORTED');
+  });
+
+  it('the typed control path keeps minting independent credit — the ASR gate is channel-scoped', async () => {
+    const s = sessionFor();
+    await s.init();
+    s.start({ learnerName: 'Mai' });
+    const scr = taskScreen(s.screen());
+    await s.commit({ text: 'My name is Mai', capture: direct });
+    const proj = s.projection();
+    expect(proj.byCapability.get(scr.capabilityId)?.milestones.independent).toBe(true);
+  });
+
+  it('an interim (non-final) ASR transcript can never commit', async () => {
+    const s = sessionFor();
+    await s.init();
+    s.start({ learnerName: 'Mai' });
+    const n0 = s.log().length;
+    await expect(
+      s.commit({ text: 'My name is Mai', capture: { ...asr('web-speech'), final: false } }),
+    ).rejects.toThrow(/final/);
+    expect(s.log().length).toBe(n0);
+  });
+
+  it('unknown capture authorities and malformed provenance are refused', async () => {
+    const s = sessionFor();
+    await s.init();
+    s.start({ learnerName: 'Mai' });
+    await expect(
+      s.commit({
+        text: 'My name is Mai',
+        capture: { mode: 'speech', authority: 'human' as never, final: true },
+      }),
+    ).rejects.toThrow(/authority/);
+    await expect(
+      s.commit({
+        text: 'My name is Mai',
+        capture: { mode: 'pigeon' as never, authority: 'asr', final: true },
+      }),
+    ).rejects.toThrow(/mode/);
+  });
+
+  it('capture provenance — including provider — survives persistence and reload', async () => {
+    const s1 = sessionFor();
+    await s1.init();
+    s1.start({ learnerName: 'Mai' });
+    await s1.commit({ text: 'My name is Mai', capture: asr('groq', 0.83) });
+
+    // Fresh session over the same table — replay must carry capture.
+    const s2 = sessionFor();
+    await s2.init();
+    const ev = s2.log().find((e) => e.attempt?.outcome != null);
+    expect(ev?.attempt?.capture).toEqual({
+      mode: 'speech',
+      authority: 'asr',
+      provider: 'groq',
+      final: true,
+      confidence: 0.83,
+    });
+  });
+
+  it('a refresh during recording mints nothing — only committed finals land', async () => {
+    const s = sessionFor();
+    await s.init();
+    s.start({ learnerName: 'Mai' });
+    const before = s.log().length;
+    // "Recording" means the learner hasn't committed — a reload here is
+    // a fresh session whose log is identical.
+    const s2 = sessionFor();
+    await s2.init();
+    s2.start({ learnerName: 'Mai' });
+    expect(s2.log().length).toBe(before);
+  });
+});
+
 describe('full mission drive', () => {
   it('walks the declared learning loop to summary with honest milestones', async () => {
     const s = sessionFor();

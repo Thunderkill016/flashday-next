@@ -111,11 +111,20 @@ async function stepOnce(page: Page): Promise<boolean> {
   if (act.optionId != null) {
     await page.getByTestId(`mission-option-${act.optionId}`).click();
   } else {
+    await ensureTypedInput(page);
     await page.getByTestId('mission-response-input').fill(act.text ?? '');
     await page.getByTestId('mission-commit').click();
   }
   await expect(page.getByTestId('mission-feedback')).toBeVisible({ timeout: SCREEN_TIMEOUT });
   return true;
+}
+
+/** On spoken_turn prompts the typed control sits behind a toggle —
+ * voice is the product path, typing stays as the a11y/dev fallback. */
+async function ensureTypedInput(page: Page) {
+  if (await page.getByTestId('mission-typed-toggle').isVisible()) {
+    await page.getByTestId('mission-typed-toggle').click();
+  }
 }
 
 test.beforeEach(async ({ page }) => {
@@ -159,6 +168,7 @@ test('refreshes at prompt, feedback, and summary stages keep evidence intact', a
 
   // Commit the first diagnostic → feedback screen → refresh stage 2.
   const taskId = (await page.getByTestId('mission-task-id').innerText()).split(' · ')[0].trim();
+  await ensureTypedInput(page);
   await page.getByTestId('mission-response-input').fill(SCRIPT[taskId].text ?? '');
   await page.getByTestId('mission-commit').click();
   await expect(page.getByTestId('mission-feedback')).toBeVisible();
@@ -210,6 +220,7 @@ test('back/forward navigation preserves the trajectory without duplicating evide
 
   // Commit one real attempt, then navigate away and back.
   const taskId = (await page.getByTestId('mission-task-id').innerText()).split(' · ')[0].trim();
+  await ensureTypedInput(page);
   await page.getByTestId('mission-response-input').fill(SCRIPT[taskId].text ?? '');
   await page.getByTestId('mission-commit').click();
   await expect(page.getByTestId('mission-feedback')).toBeVisible();
@@ -234,6 +245,7 @@ test('double-submit mints one attempt; corrupted rows earn nothing', async ({ pa
   // Fire two rapid commits — the busy guard + deterministic id mean at
   // most one attempt event exists for a1.
   const taskId = (await page.getByTestId('mission-task-id').innerText()).split(' · ')[0].trim();
+  await ensureTypedInput(page);
   await page.getByTestId('mission-response-input').fill(SCRIPT[taskId].text ?? '');
   // Both clicks fire inside one synchronous evaluate so the second lands
   // before React flushes the phase change that unmounts the button —
