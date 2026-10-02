@@ -468,10 +468,23 @@ describe('G04 next_action_selection — PRESENT / selection_decision_provenance 
     expect(audit.taskId).toBe(a.taskId);
   });
 
-  it('the production REFERENCE path — the only mode the bridge and session serve — carries no decision record', () => {
+  it('the production REFERENCE path — the only mode the bridge and session serve — carries a digest-bound decision record', () => {
     const ref = (selectNextTask as Any)(input(SELECTION_MODES.REFERENCE));
     expect(ref.status).toBe('ready');
-    expect(ref.decision).toBeUndefined();
-    expect(ref.inputDigest).toBeUndefined();
+    /* PC1 resolution: REFERENCE now returns the same provenance shape
+     * as the engine modes — the served payload is unchanged, the
+     * decision id binds the canonical input digest. */
+    expect(ref.inputDigest).toMatch(/^sha256:[0-9a-f]{64}$/);
+    expect(ref.decision.decisionId).toContain(ref.inputDigest.slice('sha256:'.length, 'sha256:'.length + 16));
+    expect(ref.decision.selectionPolicyVersion).toBe('production.nextMissionTask');
+    expect(ref.decision.chosen.taskId).toBe(ref.taskId);
+    expect(ref.decision.production.status).toBe('ready');
+    // Same frozen input → identical digest → identical decision id.
+    const again = (selectNextTask as Any)(input(SELECTION_MODES.REFERENCE));
+    expect(again.inputDigest).toBe(ref.inputDigest);
+    expect(again.decision.decisionId).toBe(ref.decision.decisionId);
+    // The digest agrees with the engine modes' canonical input.
+    const b0 = (selectNextTask as Any)(input(SELECTION_MODES.B0));
+    expect(ref.inputDigest).toBe(b0.inputDigest);
   });
 });

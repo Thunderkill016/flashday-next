@@ -338,6 +338,24 @@ describe('planner auditability', () => {
     });
     expect(decision.reason.length).toBeGreaterThan(0);
   });
+
+  it('W2-PC1: nextAction returns the digest-bound REFERENCE provenance record', async () => {
+    const store = storeFor();
+    const reg = fixtureRegistry();
+    const decision = await nextAction(reg, {
+      learnerId: LEARNER,
+      missionId: 'mission.meet_new_person',
+      events: await store.list(),
+      now: T0,
+    });
+    expect(decision.status).toBe('ready');
+    expect(decision.inputDigest).toMatch(/^sha256:[0-9a-f]{64}$/);
+    expect(decision.decision?.selectionPolicyVersion).toBe('production.nextMissionTask');
+    expect(decision.decision?.chosen?.taskId).toBe(decision.taskId);
+    expect(decision.decision?.decisionId).toContain(
+      (decision.inputDigest ?? '').slice('sha256:'.length, 'sha256:'.length + 16),
+    );
+  });
 });
 
 describe('observations', () => {

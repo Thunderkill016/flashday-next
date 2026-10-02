@@ -5,6 +5,8 @@ import { MISSION_BUY_ITEM, MISSION_MEET_AT_TIME, TASKS_BUY_ITEM, TASKS_MEET_AT_T
 import { buildLearnerModel } from '@/vnext/learner-model';
 import { generateCandidates } from '@/vnext/next-for-you/candidate-generator';
 import { KINDS } from '@/vnext/next-for-you/constants';
+import { decisionAuditRecord, referenceDecision, SELECTION_MODES, selectNextTask } from '@/vnext/next-for-you/selector';
+import { nextMissionTask } from '@/vnext/mission-runner';
 import { deriveSupportLifecycle, planNext } from '@/vnext/planner';
 import { projectLearnerState } from '@/vnext/projection';
 
@@ -398,5 +400,154 @@ describe('PC1-B support_dependency — demand-lifecycle-bound state', () => {
     const dependent = independentAttempt([aidedClockSuccess('a1', T0), demandingMiss('m1', T0 + MIN)]);
     expect(dependent).toBeTruthy();
     expect((dependent.preferences ?? []).map((p: Any) => p.name)).toContain('support_dependency_fade');
+  });
+});
+
+/* ── PC1-C: selection_decision_provenance ────────────────────────── */
+
+describe('PC1-C selection_decision_provenance — digest-bound REFERENCE decisions', () => {
+  const input = (mode: string, extra: Record<string, unknown> = {}) => ({
+    mode,
+    learnerId: L,
+    mission: MISSION_BUY_ITEM,
+    tasks: TASKS_BUY_ITEM,
+    capabilities: CAPABILITIES,
+    events: [taught],
+    now: T0 + 2 * MIN,
+    ...extra,
+  });
+
+  it('REFERENCE returns a digest-bound decision record — the production path is auditable', () => {
+    const ref = (selectNextTask as Any)(input(SELECTION_MODES.REFERENCE));
+    expect(ref.status).toBe('ready');
+    expect(ref.inputDigest).toMatch(/^sha256:[0-9a-f]{64}$/);
+    expect(ref.decision).toBeTruthy();
+    expect(ref.decision.decisionId).toContain(ref.inputDigest.slice('sha256:'.length, 'sha256:'.length + 16));
+    expect(ref.decision.selectionPolicyVersion).toBe('production.nextMissionTask');
+    expect(ref.decision.chosen.taskId).toBe(ref.taskId);
+    expect(ref.decision.chosen.taskRevision).toBe(ref.taskRevision);
+    expect(ref.decision.production.status).toBe('ready');
+  });
+
+  it('wrapping REFERENCE in provenance never changes the served task/policy — selection equivalence', () => {
+    const bare = (nextMissionTask as Any)({
+      learnerId: L,
+      mission: MISSION_BUY_ITEM,
+      tasks: TASKS_BUY_ITEM,
+      capabilities: CAPABILITIES,
+      events: [taught],
+      riskPriors: [],
+      now: T0 + 2 * MIN,
+    });
+    const wrapped = (selectNextTask as Any)(input(SELECTION_MODES.REFERENCE));
+    const { decision, inputDigest, engineInput, ...stripped } = wrapped;
+    expect(stripped).toEqual(bare);
+  });
+
+  it('the digest binds the full canonical input: identical frozen input → identical digest and decision id', () => {
+    const a = (selectNextTask as Any)(input(SELECTION_MODES.REFERENCE));
+    const b = (selectNextTask as Any)(input(SELECTION_MODES.REFERENCE));
+    expect(a.inputDigest).toBe(b.inputDigest);
+    expect(a.decision.decisionId).toBe(b.decision.decisionId);
+  });
+
+  it('reordered or identically-redelivered events cannot move the digest; changed content must', () => {
+    const f1 = observedFail('x1', T0 + MIN);
+    const f2 = observedFail('x2', T0 + 2 * MIN);
+    const base = (mods: Record<string, unknown> = {}) => (selectNextTask as Any)(input(SELECTION_MODES.REFERENCE, mods));
+    const a = base({ events: [taught, f1, f2] });
+    // Same set, different arrival order → identical digest.
+    const b = base({ events: [f2, taught, f1] });
+    expect(b.inputDigest).toBe(a.inputDigest);
+    // Exact idempotent re-delivery → identical digest.
+    const c = base({ events: [taught, f1, f2, f1] });
+    expect(c.inputDigest).toBe(a.inputDigest);
+    // Foreign-learner event is scoped out → identical digest.
+    const foreign = { ...f2, learnerId: OTHER };
+    const d = base({ events: [taught, f1, f2, foreign] });
+    expect(d.inputDigest).toBe(a.inputDigest);
+    // Same count, changed content → different digest.
+    const mutated = { ...f2, attempt: { ...f2.attempt, outcome: 'success' } };
+    const e = base({ events: [taught, f1, mutated] });
+    expect(e.inputDigest).not.toBe(a.inputDigest);
+    // Same last event, changed earlier event → different digest.
+    const mutatedEarlier = { ...f1, attempt: { ...f1.attempt, outcome: 'partial' } };
+    const f = base({ events: [taught, mutatedEarlier, f2] });
+    expect(f.inputDigest).not.toBe(a.inputDigest);
+    // Conflicting duplicate id → digest moves (the conflict is recorded).
+    const conflict = { ...f1, attempt: { ...f1.attempt, outcome: 'success' } };
+    const g = base({ events: [taught, f1, f2, conflict] });
+    expect(g.inputDigest).not.toBe(a.inputDigest);
+  });
+
+  it('task revision surface and policy changes move the digest', () => {
+    const a = (selectNextTask as Any)(input(SELECTION_MODES.REFERENCE));
+    const bumped = (TASKS_BUY_ITEM as Any[]).map((t) =>
+      t.id === 'task.price.retrieval.hear' ? { ...t, revision: t.revision + 1 } : t);
+    const b = (selectNextTask as Any)(input(SELECTION_MODES.REFERENCE, { tasks: bumped }));
+    expect(b.inputDigest).not.toBe(a.inputDigest);
+    const c = (selectNextTask as Any)(input(SELECTION_MODES.REFERENCE, { policy: { version: 'pol.test' } }));
+    expect(c.inputDigest).not.toBe(a.inputDigest);
+  });
+
+  it('terminal outcomes are honestly provenance-bearing — blocked carries no fabricated task claim', () => {
+    // A mission whose declared task is absent from the registry →
+    // nextMissionTask fails closed to 'blocked'.
+    const ghostMission = { ...MISSION_BUY_ITEM, taskIds: ['task.does.not.exist'] };
+    const sel = (selectNextTask as Any)(input(SELECTION_MODES.REFERENCE, { mission: ghostMission }));
+    expect(sel.status).toBe('blocked');
+    expect(sel.inputDigest).toMatch(/^sha256:[0-9a-f]{64}$/);
+    expect(sel.decision.chosen.taskId).toBeNull();
+    expect(sel.decision.chosen.kind).toBe('blocked');
+    expect(sel.decision.blocked).toBe(true);
+    expect(sel.decision.production.status).toBe('blocked');
+    expect(typeof sel.decision.production.reason).toBe('string');
+  });
+
+  it('an unrecognized mode fails closed to REFERENCE — and still carries provenance', () => {
+    const sel = (selectNextTask as Any)(input('nonsense_mode'));
+    expect(sel.status).toBe('ready');
+    expect(sel.inputDigest).toMatch(/^sha256:[0-9a-f]{64}$/);
+    expect(sel.decision.selectionPolicyVersion).toBe('production.nextMissionTask');
+    // Fail-closed means BYTE-equivalent to a real REFERENCE run.
+    const ref = (selectNextTask as Any)(input(SELECTION_MODES.REFERENCE));
+    expect(sel.taskId).toBe(ref.taskId);
+    expect(sel.inputDigest).toBe(ref.inputDigest);
+    expect(sel.decision.decisionId).toBe(ref.decision.decisionId);
+  });
+
+  it('decisionAuditRecord binds the REFERENCE decision to its input digest', () => {
+    const sel = (selectNextTask as Any)(input(SELECTION_MODES.REFERENCE));
+    const audit = (decisionAuditRecord as Any)(sel.decision, {
+      learnerId: L,
+      missionId: MISSION_BUY_ITEM.id,
+      missionRevision: MISSION_BUY_ITEM.revision,
+      sessionId: 's1',
+      timestamp: T0 + 3 * MIN,
+      digest: sel.inputDigest,
+    });
+    expect(audit.decisionId).toBe(sel.decision.decisionId);
+    expect(audit.decisionInputDigest).toBe(sel.inputDigest);
+    expect(audit.taskId).toBe(sel.taskId);
+    expect(audit.selectionPolicyVersion).toBe('production.nextMissionTask');
+  });
+
+  it('a weak or caller-authored digest is rejected fail-closed — no unbound decision id', () => {
+    for (const bad of [undefined, null, '', 'abc', 'not-hex', 'z'.repeat(64), 12345]) {
+      expect(() =>
+        (referenceDecision as Any)(
+          { status: 'ready', taskId: 't', taskRevision: 1 },
+          { missionId: 'm', missionRevision: 1, inputDigestHex: bad },
+        ),
+      ).toThrow(/canonical input digest/);
+    }
+  });
+
+  it('B0/B1 digest machinery is untouched — same input → same digest across engine and reference paths', () => {
+    const b0 = (selectNextTask as Any)(input(SELECTION_MODES.B0));
+    const ref = (selectNextTask as Any)(input(SELECTION_MODES.REFERENCE));
+    // Both digest the same canonical input — provenance agrees
+    // across modes even when the chosen policy differs.
+    expect(ref.inputDigest).toBe(b0.inputDigest);
   });
 });
