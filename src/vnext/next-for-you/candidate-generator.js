@@ -48,7 +48,7 @@ const keyOf = (t) => `${t.id}@${t.revision ?? 1}`;
  * (assessment tasks reference caps that may have no events yet). */
 const EMPTY_MILESTONES = { supported: false, independent: false, retained: false, transferred: false, fluent: false };
 const EMPTY_FACTS = {
-  state: 'NOT_SEEN', milestones: EMPTY_MILESTONES, consecutiveFailures: 0,
+  state: 'NOT_SEEN', milestones: EMPTY_MILESTONES, consecutiveFailures: 0, verifiedConsecutiveFailures: 0,
   lastAttemptOutcome: null, lastIndependentSuccessAt: null,
   unresolvedFunctions: [], recurringFunctions: [], supportDependent: false,
   pendingFunctions: [], evidenceSufficient: false, reasonCodes: [],
@@ -65,7 +65,10 @@ function capFacts(capId, model, projection, capability) {
     capabilityId: capId,
     state: p.state,                                   // KERNEL
     milestones: p.milestones,
-    consecutiveFailures: p.consecutiveFailures,       // KERNEL
+    /* W2-PC1: both names carry the VERIFIED streak — the loose counter
+     * that counted unobserved/stale outcomes is gone. */
+    verifiedConsecutiveFailures: p.verifiedConsecutiveFailures, // KERNEL
+    consecutiveFailures: p.verifiedConsecutiveFailures,         // KERNEL (alias)
     lastAttemptOutcome: p.lastAttemptOutcome,
     lastIndependentSuccessAt: p.lastIndependentSuccessAt,
     unresolvedFunctions: v.failures.unresolvedFunctions,   // KERNEL/EVIDENCE
@@ -137,10 +140,11 @@ export function generateCandidates({ learnerId, events, capabilities, tasks, rol
     const id = c.id;
     if (isSupportCap(id)) continue; // supports are demand-routed ONLY
     const f = capFacts(id, model, projection, c);
-    /* HIGH-6 r3: hard repair semantics use VERIFIED observed failures
-     * only — projection counters (consecutiveFailures, lastAttemptOutcome)
-     * can be moved by unobserved/context-only outcomes and must never
-     * gate a repair bound, an alternate-task escape, or a refresh. */
+    /* HIGH-6 r3 + W2-PC1: hard repair semantics read the SHARED
+     * verified-attempt stream — verified task@revision, observed===true,
+     * performance attempt types only. `lastAttemptOutcome` remains the
+     * loose context signal (it records unverified outcomes too) and must
+     * never gate a repair bound, an alternate-task escape, or a refresh. */
     f.observedFails = observedFailStreak.get(id) ?? 0;
     f.lastObservedOutcome = lastObservedAttemptByCap.get(id)?.outcome ?? null;
     const p = projection.byCapability.get(id);
@@ -163,9 +167,11 @@ export function generateCandidates({ learnerId, events, capabilities, tasks, rol
       continue; // an open encounter dominates this capability's intents
     }
 
-    /* --- DUE_RETRIEVAL [EVIDENCE: spacing] --- */
+    /* --- DUE_RETRIEVAL [EVIDENCE: spacing] ---
+     * Mirrors planNext rule 2: only a VERIFIED observed failure suppresses
+     * the due check — a self-report cannot veto scheduled re-measurement. */
     if (f.milestones.independent && f.lastIndependentSuccessAt != null &&
-        f.lastAttemptOutcome !== 'fail' && f.lastAttemptOutcome !== 'partial') {
+        f.lastObservedOutcome !== 'fail' && f.lastObservedOutcome !== 'partial') {
       const dueAt = f.lastIndependentSuccessAt + lag;
       if (now != null && now >= dueAt) {
         push({

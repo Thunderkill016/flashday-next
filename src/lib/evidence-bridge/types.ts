@@ -97,6 +97,14 @@ export interface CapabilitySlot {
   };
   lastEventAt: number | null;
   lastAttemptOutcome: string | null;
+  /** W2-PC1 verified_consecutive_failure: consecutive VERIFIED, observed
+   *  fail/partial outcomes on registered exact task revisions. The
+   *  authoritative failure streak — self-reported and stale-revision
+   *  outcomes can neither advance nor break it. */
+  verifiedConsecutiveFailures: number;
+  lastVerifiedObservedOutcome: string | null;
+  /** Legacy alias of verifiedConsecutiveFailures — the pre-PC1 loose
+   *  counter (unobserved/unverifiable outcomes) was removed. */
   consecutiveFailures: number;
   firstIndependentAt: number | null;
   lastIndependentSuccessAt: number | null;

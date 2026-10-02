@@ -102,9 +102,14 @@ function emptyCapView() {
     },
     failures: {
       /* Lifetime verified miss count — honestly named: there is no
-       * recency window on this counter, callers read `consecutiveFailures`
-       * or `lastFailureAt` for recency. */
+       * recency window on this counter, callers read the consecutive
+       * streak or `lastFailureAt` for recency. */
       failureCount: 0,
+      /* W2-PC1 verified_consecutive_failure: consecutive VERIFIED,
+       * observed fail/partial outcomes on registered exact revisions.
+       * `consecutiveFailures` aliases it — the pre-PC1 loose counter
+       * (unobserved/stale outcomes counted) was removed. */
+      verifiedConsecutiveFailures: 0,
       consecutiveFailures: 0,
       lastFailureAt: null,
       unresolvedFunctions: [],
@@ -356,7 +361,8 @@ export function buildLearnerModel({ learnerId, events, capabilities, tasks, poli
     const p = projection.byCapability.get(c.id);
     v.achievement.state = p.state;
     v.achievement.milestones = p.milestones;
-    v.failures.consecutiveFailures = p.consecutiveFailures;
+    v.failures.verifiedConsecutiveFailures = p.verifiedConsecutiveFailures;
+    v.failures.consecutiveFailures = p.verifiedConsecutiveFailures;
     v.retention.demonstrated = p.milestones.retained;
     v.transfer.demonstrated = p.milestones.transferred;
     v.transfer.promptFamilies = [...p.transferPromptFamilies];
@@ -418,7 +424,7 @@ export function buildLearnerModel({ learnerId, events, capabilities, tasks, poli
         if (v.assessment.latestStatus == null) reasons.push(reason('no_assessment_evidence'));
         else if (!v.assessment.demonstrated) reasons.push(reason('assessment_not_demonstrated'));
       }
-      if (v.failures.consecutiveFailures > 0) reasons.push(reason('currently_failing', { consecutive: v.failures.consecutiveFailures }));
+      if (v.failures.verifiedConsecutiveFailures > 0) reasons.push(reason('currently_failing', { consecutive: v.failures.verifiedConsecutiveFailures }));
       if (v.failures.unresolvedFunctions.length) reasons.push(reason('unresolved_function_gap', { functions: [...v.failures.unresolvedFunctions] }));
       if (v.support.dependent) reasons.push(reason('support_dependent'));
     }
@@ -434,9 +440,10 @@ export function buildLearnerModel({ learnerId, events, capabilities, tasks, poli
     } else {
       profile.demonstrated.push(c.id);
       /* Fragile = currently failing — a live contradiction between
-       * earlier ability and latest evidence. Silence/age alone is not
-       * fragility (see the recency note above). */
-      if (v.failures.consecutiveFailures > 0) profile.fragile.push(c.id);
+       * earlier ability and latest VERIFIED evidence. Silence/age alone
+       * is not fragility (see the recency note above), and neither is a
+       * self-reported or unverifiable outcome. */
+      if (v.failures.verifiedConsecutiveFailures > 0) profile.fragile.push(c.id);
       if (v.retention.demonstrated) profile.retained.push(c.id);
       if (v.transfer.demonstrated) {
         profile.transferProven.push(c.id);

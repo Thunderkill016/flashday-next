@@ -23,9 +23,11 @@ import { projectLearnerState } from '@/vnext/projection';
  * evidence inside this repo (the vendored kernel's upstream suites live in
  * FlashDay @85ce4101 and are not part of this repo's gate).
  *
- * PRESENT rows prove the construct's semantics. MISSING rows reproduce
- * the exact gap routed to W2-PC1 — those assertions pin current behavior
- * and are expected to change when PC1 lands.
+ * PRESENT rows prove the construct's semantics. The three rows G04 found
+ * MISSING (verified_consecutive_failure, support_dependency,
+ * selection_decision_provenance) were resolved by W2-PC1 — the blocks
+ * below assert the post-PC1 resolution semantics on this base, not the
+ * pre-PC1 gap behavior.
  */
 
 // biome-ignore lint/suspicious/noExplicitAny: vendored JS kernel has no TS types
@@ -146,9 +148,9 @@ describe('G04 capability_state + milestones — PRESENT', () => {
   });
 });
 
-/* ── verified_consecutive_failure — MISSING ───────────────────────── */
+/* ── verified_consecutive_failure — PRESENT (resolved by W2-PC1) ──── */
 
-describe('G04 verified_consecutive_failure — MISSING (reproduction)', () => {
+describe('G04 verified_consecutive_failure — PRESENT (PC1 resolution)', () => {
   const unobservedFail = price('task.price.retrieval.hear', {
     id: 'e.unobserved.fail',
     at: T0 + MIN,
@@ -156,31 +158,34 @@ describe('G04 verified_consecutive_failure — MISSING (reproduction)', () => {
     observed: false,
   });
 
-  it('an UNOBSERVED fail moves every consumer-facing consecutiveFailures field', () => {
+  it('an UNOBSERVED fail is invisible to the verified streak on every surface', () => {
     const events = [taught, unobservedFail];
     const slot = projectionSlot(events);
     const view = priceView(events);
-    // Raw engine counter: counts unobserved outcomes.
-    expect(slot.consecutiveFailures).toBe(1);
-    // The learner model copies that raw counter verbatim …
-    expect(view.failures.consecutiveFailures).toBe(1);
-    // … and derives consumer labels from it.
-    expect(model(events).profile.fragile).toContain(PRICE);
-    expect(view.uncertainty.reasons.map((r: Any) => r.code)).toContain('currently_failing');
-    // The verified-observed streak the next-for-you stack trusts says 0 —
-    // but it lives only in a planner-internal task-resolver map.
+    /* PC1: the named artifact — and the legacy alias can never drift
+     * from it because the loose counter was removed. */
+    expect(slot.verifiedConsecutiveFailures).toBe(0);
+    expect(slot.consecutiveFailures).toBe(0);
+    expect(view.failures.verifiedConsecutiveFailures).toBe(0);
+    expect(view.failures.consecutiveFailures).toBe(0);
+    // No consumer label can be minted from an unverified outcome.
+    expect(model(events).profile.fragile).not.toContain(PRICE);
+    expect(view.uncertainty.reasons.map((r: Any) => r.code)).not.toContain('currently_failing');
+    // The next-for-you stream IS the same derivation — no divergence.
     expect(observedStreak(events)).toBe(0);
+    expect(observedStreak(events)).toBe(slot.verifiedConsecutiveFailures);
   });
 
-  it('a stale-revision fail still increments the raw projection counter', () => {
+  it('a stale-revision fail is unverifiable context — the verified streak never sees it', () => {
     const stale = { ...unobservedFail, id: 'e.stale.fail', taskRevision: 99, attempt: { ...unobservedFail.attempt, observed: true } };
     const slot = projectionSlot([taught, stale]);
-    expect(slot.consecutiveFailures).toBe(1);
+    expect(slot.verifiedConsecutiveFailures).toBe(0);
+    expect(slot.consecutiveFailures).toBe(0);
     expect(priceView([taught, stale]).evidence.unverifiableEventCount).toBe(1);
     expect(observedStreak([taught, stale])).toBe(0);
   });
 
-  it('production REFERENCE routing flips to remediation on a self-reported fail', () => {
+  it('production REFERENCE routing ignores a self-reported fail; a verified fail still remediates', () => {
     const scoped = (CAPABILITIES as Any[]).filter((c) => c.id === PRICE);
     const aided = price('task.price.retrieval.hear', {
       id: 'e.aided',
@@ -195,11 +200,21 @@ describe('G04 verified_consecutive_failure — MISSING (reproduction)', () => {
       now: T0 + 2 * MIN,
     });
     expect(before.kind).toBe('independent_attempt');
-    expect(after.kind).toBe('retry');
+    // PC1 resolution: the G04 flip is closed — a self-report cannot
+    // force remediation; a VERIFIED observed fail still can.
+    expect(after.kind).toBe('independent_attempt');
+    const real = (planNext as Any)(L, [aided, price('task.price.retrieval.hear', {
+      id: 'e.real.fail', at: T0 + MIN, outcome: 'fail',
+    })], {
+      capabilities: scoped,
+      tasks: TASKS_BUY_ITEM,
+      now: T0 + 2 * MIN,
+    });
+    expect(real.kind).toBe('retry');
   });
 });
 
-/* ── function_gap_ledger — PRESENT / recurring_error — MISSING ────── */
+/* ── function_gap_ledger — PRESENT / recurring_error — PRESENT ────── */
 
 describe('G04 function_gap_ledger — PRESENT', () => {
   it('only an observed miss under an attributing contract opens a gap; independent recovery closes it', () => {

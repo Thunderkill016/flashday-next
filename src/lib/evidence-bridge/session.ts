@@ -82,6 +82,9 @@ export interface ProgressLine {
   capabilityId: string;
   state: string;
   milestones: Record<string, boolean>;
+  /** W2-PC1: the verified failure streak — unobserved/stale outcomes
+   *  never reach this surface. */
+  verifiedConsecutiveFailures: number;
   consecutiveFailures: number;
 }
 
@@ -327,7 +330,8 @@ export function createMissionSession({
         capabilityId: capId,
         state: entry?.state ?? 'NOT_SEEN',
         milestones: entry?.milestones ?? {},
-        consecutiveFailures: entry?.consecutiveFailures ?? 0,
+        verifiedConsecutiveFailures: entry?.verifiedConsecutiveFailures ?? 0,
+        consecutiveFailures: entry?.verifiedConsecutiveFailures ?? 0,
       };
     });
   };
