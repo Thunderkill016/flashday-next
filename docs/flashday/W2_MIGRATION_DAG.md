@@ -11,10 +11,11 @@ W2-G01 guardrails ─┬─ W2-G02 semantic commit contract ─┬─ W2-AT1 dua
                    │                                   └─ W2-SY1 event sync mirror ─┐
                    ├─ W2-G03 placement boundary ────────┼─ W2-AS1 relabel            │
                    └─ W2-G04 coverage audit ── W2-PC1 extension gate               │
-                     (audited @2b0bb79 → PROJECTION_GAPS_FOUND: PC1 is             │
-                      REQUIRED — missing verified_consecutive_failure,             │
-                      support_dependency, selection_decision_provenance;           │
-                      see W2_03_G04_PROJECTION_COVERAGE.md)                        │
+                     (audited @2b0bb79 → PROJECTION_GAPS_FOUND → PC1              │
+                      IMPLEMENTED @0b8d17d: verified_consecutive_failure,          │
+                      support_dependency, selection_decision_provenance —        │
+                      remainingMissingConstructs=[];                              │
+                      see W2_03_PC1_KERNEL_PROJECTION_EXTENSION.md)               │
                               │          │                    │                      │
                         W2-WS1 mapping ──┤              W2-PL1 planner ─┐            │
                               │          │                    │          │            │
@@ -49,7 +50,10 @@ G04/PC1, SY1 off G02. The JSON graph is authoritative.
    disappears. **G04 audited @ `2b0bb79`: `PROJECTION_GAPS_FOUND` —
    `missingConstructs=[verified_consecutive_failure, support_dependency,
    selection_decision_provenance]` (see `W2_03_G04_PROJECTION_COVERAGE.md`),
-   so PC1 is REQUIRED, not skipped-satisfied.**
+   so PC1 is REQUIRED, not skipped-satisfied. **PC1 implemented @ `0b8d17d`:
+   all three constructs landed as named, replay-derived kernel artifacts with
+   `remainingMissingConstructs=[]` (see
+   `W2_03_PC1_KERNEL_PROJECTION_EXTENSION.md`).**
 4. **Weakness semantics before read migration** (WS1→WS2): generic `weak`
    becomes four distinct constructs (consecutive failure / recurring error /
    support dependency / remediation demand); the kernel already ships

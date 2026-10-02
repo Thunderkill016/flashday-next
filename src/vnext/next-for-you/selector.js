@@ -146,20 +146,21 @@ export function b0ToSelection(decision, tasks) {
 }
 
 /* Wrap a served REFERENCE selection in the decision-record shape so the
- * consume/audit path is uniform across modes (SHADOW_B0 only — in pure
- * REFERENCE mode no decision record exists at all). The record's kind
- * mirrors policyRef's purpose mapping; the production payload stays
- * verbatim. */
-export function referenceDecision(selection, { missionId = null, missionRevision = null, decisionContext = null } = {}) {
+ * consume/audit path is uniform across modes. W2-PC1: the record is
+ * digest-bound — the id carries the canonical decision-input digest, so
+ * identical provenance yields identical identity and a decision id that
+ * does not bind its input cannot exist (fail-closed, never 'unbound').
+ * The record's kind mirrors policyRef's purpose mapping; the production
+ * payload stays verbatim. */
+export function referenceDecision(selection, { missionId = null, missionRevision = null, inputDigestHex = null } = {}) {
+  if (typeof inputDigestHex !== 'string' || !/^[0-9a-f]{64}$/.test(inputDigestHex)) {
+    throw new Error('referenceDecision requires the canonical input digest — an unbound decision id is not provenance');
+  }
+
   const ready = selection.status === 'ready';
   const kind = ready ? (PURPOSE_TO_KIND[selection.purpose] ?? KINDS.MISSION_CONTINUATION) : selection.status;
-  /* Episode+ordinal keeps the id unique across repeated selections of
-   * the same task — a legitimately re-served reference task is a NEW
-   * decision, never a dedupe hit. */
-  const ordinal = decisionContext?.actionsChosen?.length ?? 0;
-  const episode = decisionContext?.decisionEpisodeId ?? 'ep';
   return {
-    decisionId: `ref:${episode}#${ordinal}:${selection.status}:${selection.taskId ?? 'none'}@${selection.taskRevision ?? 0}`,
+    decisionId: `ref:${inputDigestHex.slice(0, 16)}:${selection.status}:${selection.taskId ?? 'none'}@${selection.taskRevision ?? 0}`,
     selectionPolicyVersion: 'production.nextMissionTask',
     learnerModelVersion: null,
     missionId,
@@ -172,6 +173,18 @@ export function referenceDecision(selection, { missionId = null, missionRevision
     candidates: [], candidateCount: 0,
     integrityViolations: [],
     blocked: selection.status === 'blocked'
+  };
+}
+
+/* The provenance inputs a served reference decision binds — mission
+ * identity plus the canonical input digest computed for this select.
+ * One construction site so REFERENCE and both shadow paths can never
+ * disagree about which input the record claims. */
+function referenceProvenance(state) {
+  return {
+    missionId: state.mission?.id ?? null,
+    missionRevision: state.mission?.revision ?? null,
+    inputDigestHex: state.inputDigestHex
   };
 }
 
@@ -311,9 +324,11 @@ export function validateB0(decision, input) {
  *   blocked → { status:'blocked', ..., reason, reasonCode?, decision? }
  *   idle    → { status:'idle', ..., reason, decision? }
  *
- * `decision` is attached on B0/SHADOW_B0 paths so the session can lock
- * the live task to the exact decision that produced it (§7) and audit
- * it on consume (§11). REFERENCE never carries one. */
+ * `decision` + `inputDigest` are attached on EVERY mode (W2-PC1): the
+ * session locks the live task to the exact decision that produced it
+ * (§7) and audits it on consume (§11). REFERENCE is the production
+ * path — its served payload is `nextMissionTask` verbatim, wrapped in
+ * the same digest-bound provenance the engine modes carry. */
 export function selectNextTask(input) {
   /* An unrecognized mode must never silently run the experimental
    * policy — fail closed to the reference runner. */
@@ -324,10 +339,6 @@ export function selectNextTask(input) {
     riskPriors: input.riskPriors ?? [], now: input.now, policy: input.policy
   };
 
-  if (mode === SELECTION_MODES.REFERENCE) {
-    return nextMissionTask(referenceArgs);
-  }
-
   const state = engineState(input);
   /* 008D perf — one canonicalization per select. The full input digest
    * is computed once here; policyB reads state.inputDigestHex instead
@@ -337,6 +348,22 @@ export function selectNextTask(input) {
    * recompute inside decisionLog.append stays intentionally uncached —
    * that boundary is the fail-closed verifier, not a cache candidate. */
   state.inputDigestHex = sha256(decisionInputSnapshot(state));
+
+  if (mode === SELECTION_MODES.REFERENCE) {
+    /* W2-PC1 selection_decision_provenance: production selections are
+     * digest-bound decision artifacts — same canonical input snapshot
+     * as the engine modes, provenance additive only. The served fields
+     * (status/taskId/taskRevision/capabilityId/purpose/reason) come
+     * from nextMissionTask VERBATIM — wrapping must never change what
+     * is served. */
+    const reference = nextMissionTask(referenceArgs);
+    return {
+      ...reference,
+      engineInput: state,
+      inputDigest: `sha256:${state.inputDigestHex}`,
+      decision: referenceDecision(reference, referenceProvenance(state))
+    };
+  }
 
   if (mode === SELECTION_MODES.SHADOW_B0) {
     const reference = nextMissionTask(referenceArgs);
@@ -353,7 +380,7 @@ export function selectNextTask(input) {
     return {
       ...reference, shadow, engineInput: state,
       inputDigest: `sha256:${state.inputDigestHex}`,
-      decision: { ...referenceDecision(reference, state), shadow }
+      decision: { ...referenceDecision(reference, referenceProvenance(state)), shadow }
     };
   }
 
@@ -380,7 +407,7 @@ export function selectNextTask(input) {
     return {
       ...reference, shadow, engineInput: state,
       inputDigest: `sha256:${state.inputDigestHex}`,
-      decision: { ...referenceDecision(reference, state), shadow }
+      decision: { ...referenceDecision(reference, referenceProvenance(state)), shadow }
     };
   }
 

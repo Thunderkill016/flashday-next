@@ -158,7 +158,23 @@
       "acceptance": [
         "either constructs present with contract + kernel tests, or recorded resolution skipped-satisfied with missingConstructs=[]"
       ],
-      "stopConditions": ["G04 coverage result missing or unrecorded -> gate cannot resolve; block dependents"]
+      "stopConditions": ["G04 coverage result missing or unrecorded -> gate cannot resolve; block dependents"],
+      "result": {
+        "status": "implemented",
+        "baseSha": "0b8d17defe1cd2f4f6d7d45a33a4b3cfa456800e",
+        "sourceMissingConstructs": [
+          "verified_consecutive_failure",
+          "support_dependency",
+          "selection_decision_provenance"
+        ],
+        "implementedConstructs": [
+          "verified_consecutive_failure",
+          "support_dependency",
+          "selection_decision_provenance"
+        ],
+        "remainingMissingConstructs": [],
+        "artifact": "docs/flashday/W2_03_PC1_KERNEL_PROJECTION_EXTENSION.md"
+      }
     },
     {
       "id": "W2-WS1",

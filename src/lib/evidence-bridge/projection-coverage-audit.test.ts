@@ -23,9 +23,11 @@ import { projectLearnerState } from '@/vnext/projection';
  * evidence inside this repo (the vendored kernel's upstream suites live in
  * FlashDay @85ce4101 and are not part of this repo's gate).
  *
- * PRESENT rows prove the construct's semantics. MISSING rows reproduce
- * the exact gap routed to W2-PC1 — those assertions pin current behavior
- * and are expected to change when PC1 lands.
+ * PRESENT rows prove the construct's semantics. The three rows G04 found
+ * MISSING (verified_consecutive_failure, support_dependency,
+ * selection_decision_provenance) were resolved by W2-PC1 — the blocks
+ * below assert the post-PC1 resolution semantics on this base, not the
+ * pre-PC1 gap behavior.
  */
 
 // biome-ignore lint/suspicious/noExplicitAny: vendored JS kernel has no TS types
@@ -146,9 +148,9 @@ describe('G04 capability_state + milestones — PRESENT', () => {
   });
 });
 
-/* ── verified_consecutive_failure — MISSING ───────────────────────── */
+/* ── verified_consecutive_failure — PRESENT (resolved by W2-PC1) ──── */
 
-describe('G04 verified_consecutive_failure — MISSING (reproduction)', () => {
+describe('G04 verified_consecutive_failure — PRESENT (PC1 resolution)', () => {
   const unobservedFail = price('task.price.retrieval.hear', {
     id: 'e.unobserved.fail',
     at: T0 + MIN,
@@ -156,31 +158,34 @@ describe('G04 verified_consecutive_failure — MISSING (reproduction)', () => {
     observed: false,
   });
 
-  it('an UNOBSERVED fail moves every consumer-facing consecutiveFailures field', () => {
+  it('an UNOBSERVED fail is invisible to the verified streak on every surface', () => {
     const events = [taught, unobservedFail];
     const slot = projectionSlot(events);
     const view = priceView(events);
-    // Raw engine counter: counts unobserved outcomes.
-    expect(slot.consecutiveFailures).toBe(1);
-    // The learner model copies that raw counter verbatim …
-    expect(view.failures.consecutiveFailures).toBe(1);
-    // … and derives consumer labels from it.
-    expect(model(events).profile.fragile).toContain(PRICE);
-    expect(view.uncertainty.reasons.map((r: Any) => r.code)).toContain('currently_failing');
-    // The verified-observed streak the next-for-you stack trusts says 0 —
-    // but it lives only in a planner-internal task-resolver map.
+    /* PC1: the named artifact — and the legacy alias can never drift
+     * from it because the loose counter was removed. */
+    expect(slot.verifiedConsecutiveFailures).toBe(0);
+    expect(slot.consecutiveFailures).toBe(0);
+    expect(view.failures.verifiedConsecutiveFailures).toBe(0);
+    expect(view.failures.consecutiveFailures).toBe(0);
+    // No consumer label can be minted from an unverified outcome.
+    expect(model(events).profile.fragile).not.toContain(PRICE);
+    expect(view.uncertainty.reasons.map((r: Any) => r.code)).not.toContain('currently_failing');
+    // The next-for-you stream IS the same derivation — no divergence.
     expect(observedStreak(events)).toBe(0);
+    expect(observedStreak(events)).toBe(slot.verifiedConsecutiveFailures);
   });
 
-  it('a stale-revision fail still increments the raw projection counter', () => {
+  it('a stale-revision fail is unverifiable context — the verified streak never sees it', () => {
     const stale = { ...unobservedFail, id: 'e.stale.fail', taskRevision: 99, attempt: { ...unobservedFail.attempt, observed: true } };
     const slot = projectionSlot([taught, stale]);
-    expect(slot.consecutiveFailures).toBe(1);
+    expect(slot.verifiedConsecutiveFailures).toBe(0);
+    expect(slot.consecutiveFailures).toBe(0);
     expect(priceView([taught, stale]).evidence.unverifiableEventCount).toBe(1);
     expect(observedStreak([taught, stale])).toBe(0);
   });
 
-  it('production REFERENCE routing flips to remediation on a self-reported fail', () => {
+  it('production REFERENCE routing ignores a self-reported fail; a verified fail still remediates', () => {
     const scoped = (CAPABILITIES as Any[]).filter((c) => c.id === PRICE);
     const aided = price('task.price.retrieval.hear', {
       id: 'e.aided',
@@ -195,11 +200,21 @@ describe('G04 verified_consecutive_failure — MISSING (reproduction)', () => {
       now: T0 + 2 * MIN,
     });
     expect(before.kind).toBe('independent_attempt');
-    expect(after.kind).toBe('retry');
+    // PC1 resolution: the G04 flip is closed — a self-report cannot
+    // force remediation; a VERIFIED observed fail still can.
+    expect(after.kind).toBe('independent_attempt');
+    const real = (planNext as Any)(L, [aided, price('task.price.retrieval.hear', {
+      id: 'e.real.fail', at: T0 + MIN, outcome: 'fail',
+    })], {
+      capabilities: scoped,
+      tasks: TASKS_BUY_ITEM,
+      now: T0 + 2 * MIN,
+    });
+    expect(real.kind).toBe('retry');
   });
 });
 
-/* ── function_gap_ledger — PRESENT / recurring_error — MISSING ────── */
+/* ── function_gap_ledger — PRESENT / recurring_error — PRESENT ────── */
 
 describe('G04 function_gap_ledger — PRESENT', () => {
   it('only an observed miss under an attributing contract opens a gap; independent recovery closes it', () => {
@@ -257,23 +272,39 @@ describe('G04 recurring_error — PRESENT via episode RELAPSED; recurringFunctio
   });
 });
 
-/* ── support_dependency — MISSING / support_demand_lifecycle — PRESENT ── */
+/* ── support_dependency — PRESENT (resolved by W2-PC1) / support_demand_lifecycle — PRESENT ── */
 
-describe('G04 support_dependency — MISSING (reproduction)', () => {
-  it('a single aided success marks the capability support-dependent (support used once = dependency)', () => {
+describe('G04 support_dependency — PRESENT (PC1 resolution)', () => {
+  it('a single aided success is usage, not dependency — zero demand evidence means no dependent state', () => {
     const once = [price('task.price.retrieval.hear', { id: 'a1', at: T0, outcome: 'success', support: { hint: true } })];
     const view = priceView(once);
-    expect(view.support.dependent).toBe(true);
+    /* PC1: the G04 trap is closed — `dependent` aliases the strict
+     * dependency state, which requires a demanded function still
+     * lacking independent covering recovery. Without mission roles the
+     * demand lifecycle is unmodeled, so the honest state is UNMODELED. */
+    expect(view.support.dependency.state).toBe('UNMODELED');
+    expect(view.support.dependency.demandedFunctions).toEqual([]);
+    expect(view.support.dependency.dependentFunctions).toEqual([]);
+    expect(view.support.dependent).toBe(false);
     expect(view.support.servedEpisodes).toBe(0);
     expect(view.support.pendingFunctions).toEqual([]);
   });
 
-  it('one unaided success afterwards clears it — the flag is a recency predicate, not a dependency measure', () => {
+  it('with roles but no attributed demand, supported work is CLEAR — not DEPENDENT', () => {
+    const roles = {
+      targets: new Set(MISSION_MEET_AT_TIME.targetCapabilities),
+      supports: new Set(MISSION_MEET_AT_TIME.supportCapabilities),
+      prereqs: new Set(MISSION_MEET_AT_TIME.prerequisiteCapabilities ?? []),
+    };
     const events = [
-      price('task.price.retrieval.hear', { id: 'a1', at: T0, outcome: 'success', support: { hint: true } }),
-      price('task.price.retrieval.hear', { id: 'u1', at: T0 + MIN, outcome: 'success' }),
+      time('task.time.retrieval.hear', { id: 'a1', at: T0, outcome: 'success', support: { hint: true } }),
+      time('task.time.retrieval.hear', { id: 'a2', at: T0 + MIN, outcome: 'success', support: { hint: true } }),
     ];
-    expect(priceView(events).support.dependent).toBe(false);
+    const view = (buildLearnerModel as Any)({
+      learnerId: L, events, capabilities: CAPABILITIES, tasks: TASKS_MEET_AT_TIME, roles, now: T0 + 2 * DAY,
+    }).capabilities['reception.listen.understand_clock_time'];
+    expect(view.support.dependency.state).toBe('CLEAR');
+    expect(view.support.dependent).toBe(false);
   });
 });
 
@@ -437,10 +468,23 @@ describe('G04 next_action_selection — PRESENT / selection_decision_provenance 
     expect(audit.taskId).toBe(a.taskId);
   });
 
-  it('the production REFERENCE path — the only mode the bridge and session serve — carries no decision record', () => {
+  it('the production REFERENCE path — the only mode the bridge and session serve — carries a digest-bound decision record', () => {
     const ref = (selectNextTask as Any)(input(SELECTION_MODES.REFERENCE));
     expect(ref.status).toBe('ready');
-    expect(ref.decision).toBeUndefined();
-    expect(ref.inputDigest).toBeUndefined();
+    /* PC1 resolution: REFERENCE now returns the same provenance shape
+     * as the engine modes — the served payload is unchanged, the
+     * decision id binds the canonical input digest. */
+    expect(ref.inputDigest).toMatch(/^sha256:[0-9a-f]{64}$/);
+    expect(ref.decision.decisionId).toContain(ref.inputDigest.slice('sha256:'.length, 'sha256:'.length + 16));
+    expect(ref.decision.selectionPolicyVersion).toBe('production.nextMissionTask');
+    expect(ref.decision.chosen.taskId).toBe(ref.taskId);
+    expect(ref.decision.production.status).toBe('ready');
+    // Same frozen input → identical digest → identical decision id.
+    const again = (selectNextTask as Any)(input(SELECTION_MODES.REFERENCE));
+    expect(again.inputDigest).toBe(ref.inputDigest);
+    expect(again.decision.decisionId).toBe(ref.decision.decisionId);
+    // The digest agrees with the engine modes' canonical input.
+    const b0 = (selectNextTask as Any)(input(SELECTION_MODES.B0));
+    expect(ref.inputDigest).toBe(b0.inputDigest);
   });
 });

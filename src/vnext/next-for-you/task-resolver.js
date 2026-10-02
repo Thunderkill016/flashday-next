@@ -15,6 +15,7 @@
  * routing is byte-identical.
  */
 import { verifyEventTask, validateTask } from '../contracts.js';
+import { deriveVerifiedAttemptFacts } from '../verified-attempts.js';
 
 export const REPEATABLE = new Set([
   'retrieval', 'production', 'interaction', 'remediation',
@@ -64,8 +65,6 @@ export function deriveTaskConsumption({ learnerId, events, capabilities, taskByR
   const verifiedAttemptKey = new Set();
   const verifiedEventKey = new Set();
   const lastAttemptByCap = new Map();
-  const lastObservedAttemptByCap = new Map();
-  const observedFailStreak = new Map();
   const seen = new Set();
   for (const e of [...events].sort((a, b) => a.occurredAt - b.occurredAt || (a.id < b.id ? -1 : 1))) {
     if (e.learnerId !== learnerId || seen.has(e.id)) continue;
@@ -77,14 +76,19 @@ export function deriveTaskConsumption({ learnerId, events, capabilities, taskByR
     if (e.attempt?.outcome != null) {
       verifiedAttemptKey.add(keyOf(t));
       lastAttemptByCap.set(t.capabilityId, { outcome: e.attempt.outcome, task: t, event: e });
-      /* STRICT (MEDIUM-11): only an explicit observed===true counts as
-       * direct verified performance evidence — a legacy/malformed raw
-       * event missing the flag is context, never verified evidence. */
-      if (e.attempt.observed === true) {
-        lastObservedAttemptByCap.set(t.capabilityId, { outcome: e.attempt.outcome, task: t, event: e });
-        observedFailStreak.set(t.capabilityId, e.attempt.outcome === 'success' ? 0 : (observedFailStreak.get(t.capabilityId) ?? 0) + 1);
-      }
     }
+  }
+  /* STRICT (MEDIUM-11 + W2-PC1): the observed-failure stream is the
+   * SHARED verified-attempt derivation — verified task@revision,
+   * explicit observed===true, and performance attempt types only, so a
+   * support_attempt probe or a forged outcome on a context event can
+   * never masquerade as a failure. The projection and the learner model
+   * expose the same streak as `verifiedConsecutiveFailures`. */
+  const lastObservedAttemptByCap = new Map();
+  const observedFailStreak = new Map();
+  for (const [capId, f] of deriveVerifiedAttemptFacts({ learnerId, events, capabilities, taskByRev })) {
+    lastObservedAttemptByCap.set(capId, f.lastVerifiedObservedAttempt);
+    observedFailStreak.set(capId, f.verifiedConsecutiveFailures);
   }
   return { verifiedEventKey, verifiedAttemptKey, lastAttemptByCap, lastObservedAttemptByCap, observedFailStreak };
 }

@@ -220,7 +220,7 @@ export function deriveMissionRepairPlan({
         requiredFunctions: [fn], excludeTaskIds: probeIds
       });
       const lastTask = resolver.lastAttemptByCap?.get(ep.capabilityId)?.task ?? null;
-      const observedFails = live.facts?.observedFails ?? live.facts?.consecutiveFailures ?? 0;
+      const observedFails = live.facts?.observedFails ?? live.facts?.verifiedConsecutiveFailures ?? live.facts?.consecutiveFailures ?? 0;
       for (const t of stream) {
         if (!repairEligible(t, burned)) continue;
         const hypothetical = {
