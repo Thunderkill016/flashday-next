@@ -8,8 +8,10 @@
  *  - understanding is a tri-state; "independent" requires a valid
  *    comprehension attempt with no recorded translation support. Lookup
  *    support is never inferred — unknown stays unknown.
- *  - the FIRST typed submission is the retrieval outcome; later retries
- *    populate immediateRecoveredAt, never rewrite the first result.
+ *  - the FIRST typed submission is the retrieval outcome; retries up
+ *    to first success populate immediateRecoveredAt/immediateAttemptCount.
+ *    Practice between firstSuccess and the 24h anchor is inert history —
+ *    it mutates neither the immediate nor the delayed fields.
  *  - delayed recall is timestamp-anchored: first successful retrieval
  *    + TEXT_CYCLE_INITIAL_DELAY. FSRS nextReview is not evidence that
  *    24h elapsed, and pre-anchor practice is not delayed evidence.
@@ -139,8 +141,16 @@ function deriveTargetRecord(target: Vs01Target, input: Vs01TelemetryInput, sourc
   const immediateRecoveredAt =
     first && !first.completed ? (firstSuccess?.endTime ?? firstSuccess?.startTime) : undefined;
 
+  /* The immediate window closes AT first success — sessions between
+   * firstSuccess and delayedEligibleAt are practice history, neither
+   * immediate nor delayed evidence, and must not mutate any immediate
+   * or delayed field. If the learner never succeeded there is no
+   * boundary yet, so every attempt is still in the immediate window. */
   const anchor = firstSuccess ? sessionTime(firstSuccess) : undefined;
   const delayedEligibleAt = anchor !== undefined ? anchor + TEXT_CYCLE_INITIAL_DELAY : undefined;
+  const immediateSessions = firstSuccess
+    ? targetSessions.slice(0, targetSessions.indexOf(firstSuccess) + 1)
+    : targetSessions;
   const delayedFirst =
     delayedEligibleAt !== undefined ? targetSessions.find((s) => sessionTime(s) >= delayedEligibleAt) : undefined;
   const delayedRecall: Vs01DelayedRecall =
@@ -186,7 +196,7 @@ function deriveTargetRecord(target: Vs01Target, input: Vs01TelemetryInput, sourc
     immediateRecall,
     immediateAttemptAt: first ? sessionTime(first) : undefined,
     immediateRecoveredAt,
-    immediateAttemptCount: targetSessions.length,
+    immediateAttemptCount: immediateSessions.length,
     production,
     delayedEligibleAt,
     delayedAttemptAt: delayedFirst ? sessionTime(delayedFirst) : undefined,

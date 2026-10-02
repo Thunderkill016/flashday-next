@@ -146,6 +146,38 @@ describe('vs01-telemetry', () => {
     expect(r.delayedEligibleAt).toBe(T0 + DAY);
     expect(r.delayedAttemptAt).toBe(T0 + DAY + HOUR);
     expect(r.delayedRecall).toBe('pass');
+    // R1: mid-window practice is inert — immediate window closed at firstSuccess
+    expect(r.immediateRecall).toBe('pass');
+    expect(r.immediateAttemptCount).toBe(1);
+  });
+
+  it('R1 pin: fail, fail, success, +2h practice — immediateAttemptCount = 3', () => {
+    const sessions = [
+      session(T1.id, T0, false),
+      session(T1.id, T0 + 60_000, false),
+      session(T1.id, T0 + 120_000, true), // first success — window closes here
+      session(T1.id, T0 + 2 * HOUR, true), // mid-window practice: inert
+    ];
+    const [r] = deriveVs01Records(base({ attempts: [comprehension()], sessions }));
+    expect(r.immediateRecall).toBe('fail');
+    expect(r.immediateAttemptCount).toBe(3);
+    expect(r.immediateRecoveredAt).toBe(T0 + 120_000);
+  });
+
+  it('R1 pin: Day1 fail→success, Day2 delayed fail→success — the dogfood shape', () => {
+    const sessions = [
+      session(T1.id, T0, false), // Day1 miss
+      session(T1.id, T0 + 60_000, true), // Day1 recovered → anchor
+      session(T1.id, T0 + DAY + HOUR, false), // Day2 first delayed = fail
+      session(T1.id, T0 + DAY + 2 * HOUR, true), // Day2 retry
+    ];
+    const [r] = deriveVs01Records(base({ attempts: [comprehension()], sessions, now: T0 + DAY + 3 * HOUR }));
+    expect(r.immediateRecall).toBe('fail');
+    expect(r.immediateAttemptCount).toBe(2);
+    expect(r.immediateRecoveredAt).toBe(T0 + 60_000);
+    expect(r.delayedEligibleAt).toBe(T0 + 60_000 + DAY);
+    expect(r.delayedRecall).toBe('fail'); // first delayed attempt owns the outcome
+    expect(r.delayedAttemptAt).toBe(T0 + DAY + HOUR);
   });
 
   it('pre-24h-only practice leaves delayed recall not-attempted once due', () => {
@@ -170,6 +202,7 @@ describe('vs01-telemetry', () => {
     const [r] = deriveVs01Records(base({ attempts: [comprehension()], sessions, now: T0 + DAY + 10_000 }));
     expect(r.delayedRecall).toBe('fail');
     expect(r.delayedAttemptAt).toBe(T0 + DAY + 1000);
+    expect(r.immediateAttemptCount).toBe(1); // delayed retries never inflate the immediate count
     expect(r.failureReason).toBe('DELAYED_RECALL_FAILED');
   });
 
