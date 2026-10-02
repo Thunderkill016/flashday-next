@@ -635,7 +635,12 @@ Free/open/local is preferred when quality is competitive.
 - forced alignment tooling;
 - Wav2Vec2/phoneme models;
 - OpenPronounce;
+- SpeechOcean762 as a scorer benchmark dataset only, with its Mandarin-L1 limitation explicit;
+- Common Voice English as an ASR robustness dataset, not pronunciation authority;
 - any clearly superior current open candidate discovered during research.
+
+**Required source-library input:**
+- `docs/flashday/ENGLISH_SOURCE_LIBRARY_V2_RESEARCH.md`
 
 **Deliverables:**
 - benchmark matrix;
@@ -663,9 +668,11 @@ Free/open/local is preferred when quality is competitive.
 **Deliverables:**
 - consent/legal-data protocol;
 - Vietnamese-English test set design;
-- target phoneme/contrast list;
+- target phoneme/contrast list informed by Vietnam-specific research in English Source Library V2;
+- evidence-scoped Vietnamese error/risk ontology entries (population scope + source + confidence);
 - human annotation rubric;
 - precision/recall/false-alarm metrics;
+- explicit comparison against non-Vietnamese benchmark datasets so Mandarin/non-native performance is never presented as Vietnamese calibration;
 - minimum evidence required before authority promotion.
 
 **Dependencies:** W3-00.
