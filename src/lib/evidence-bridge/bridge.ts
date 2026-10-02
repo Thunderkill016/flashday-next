@@ -69,8 +69,22 @@ const checkForgery = (sub: object) => {
   }
 };
 
-const genEventId = (sub: { id?: string; attemptId?: string }) =>
-  sub.id ?? (sub.attemptId ? `evt.${sub.attemptId}` : `evt.${crypto.randomUUID()}`);
+/* Canonical identity for claim-bearing attempt events: when an
+ * attemptId exists the event id is ALWAYS `evt.<attemptId>` — a caller
+ * may supply it verbatim (idempotent redelivery) or omit it, but a
+ * mismatching id refuses loudly instead of silently redirecting the
+ * event. Observations are unaffected: they legitimately mint several
+ * ids per attempt (support_use, feedback). */
+const attemptEventId = (sub: { id?: string; attemptId?: string }) => {
+  if (sub.attemptId) {
+    const canonical = `evt.${sub.attemptId}`;
+    if (sub.id != null && sub.id !== canonical) {
+      throw new Error(`attempt event id is canonical — expected '${canonical}', got '${sub.id}'`);
+    }
+    return canonical;
+  }
+  return sub.id ?? `evt.${crypto.randomUUID()}`;
+};
 
 const resolveTask = (registry: ContractRegistry, taskId: string) => {
   const task = registry.taskById(taskId);
@@ -129,7 +143,7 @@ export async function submitAttempt(
   const outcome = evalResult ? evalResult.outcome : (sub.outcome ?? null);
 
   const event = bindAttempt(task as never, capability as never, {
-    id: genEventId(sub),
+    id: attemptEventId(sub),
     learnerId: sub.learnerId,
     occurredAt: sub.occurredAt,
     // The contract's purpose×response matrix picks the emitted type —
@@ -167,7 +181,7 @@ export async function submitObservation(
   checkForgery(sub);
   const { task, capability } = resolveTask(registry, sub.taskId);
   const event = bindObservation(task as never, capability as never, {
-    id: genEventId(sub),
+    id: sub.id ?? `evt.${crypto.randomUUID()}`,
     learnerId: sub.learnerId,
     occurredAt: sub.occurredAt,
     eventType: sub.eventType,

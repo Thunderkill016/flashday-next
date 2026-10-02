@@ -1,57 +1,94 @@
 import { expect, type Page, test } from '@playwright/test';
 
 /*
- * mission.meet_new_person — falsification pass on the vertical slice.
+ * mission.meet_at_a_time — falsification pass on the listening pilot
+ * (W2-02.6).
  *
- * Attacks the honest-evidence invariants in a real browser: refreshes at
- * prompt/feedback/summary stages, back/forward navigation, double-submit
- * idempotency, and corrupted/forged rows injected straight into
- * IndexedDB. Evidence assertions read the real Dexie table, not the DOM.
+ * The web runtime executes exactly one claim-bearing surface:
+ * listening + audio_line stimulus + choice response, gated on
+ * transport-confirmed stimulus delivery (utterance onend). Everything
+ * else — every spoken_turn task — must render the fail-closed
+ * surface_unavailable card and mint nothing.
+ *
+ * speechSynthesis is stubbed via addInitScript: the honest variant
+ * fires `onend` asynchronously (a real delivery confirmation through
+ * the same seam the production utterance uses); the silent variant
+ * never fires, so the commit gate must stay closed.
+ *
+ * Evidence assertions read the real Dexie table, not the DOM.
  */
 
-const HOUR = 3_600_000;
 const DB_NAME = 'echotype:anonymous';
 /* Dev-server reloads recompile routes — cold compile can exceed 15s on
- * this box, so post-reload screen waits use the generous bound the main
- * spec already relies on. */
+ * this box, so post-reload screen waits use a generous bound. */
 const SCREEN_TIMEOUT = 60_000;
+const PILOT_URL = '/mission?m=mission.meet_at_a_time';
+const HEAR_TASK = 'task.time.diagnostic.hear';
+const SAY_TASK = 'task.time.diagnostic.say';
+const HEAR_CAPABILITY = 'reception.listen.understand_clock_time';
 
-interface Act {
-  support?: string[];
-  text?: string;
-  optionId?: string;
+/** Stub speechSynthesis whose speak() reports delivery via onend. */
+async function stubSpeechDelivered(page: Page) {
+  await page.addInitScript(() => {
+    class FakeUtterance {
+      text = '';
+      lang = '';
+      onend: (() => void) | null = null;
+      onerror: (() => void) | null = null;
+      constructor(text?: string) {
+        this.text = text ?? '';
+      }
+    }
+    Object.defineProperty(window, 'SpeechSynthesisUtterance', { value: FakeUtterance });
+    Object.defineProperty(window, 'speechSynthesis', {
+      value: {
+        pending: false,
+        speaking: false,
+        paused: false,
+        cancel() {},
+        pause() {},
+        resume() {},
+        getVoices: () => [],
+        speak(u: FakeUtterance) {
+          setTimeout(() => u.onend?.(), 10);
+        },
+        addEventListener() {},
+        removeEventListener() {},
+      },
+    });
+  });
 }
 
-const SCRIPT: Record<string, Act> = {
-  'task.meet.diagnostic.own_name': { text: 'My name is Mai' },
-  'task.meet.diagnostic.ask_name': { text: '…' },
-  'task.meet.retrieval.phrases': { text: 'My name is Mai' },
-  'task.meet.retrieval.ask_name': { support: ['hint'], text: 'What is your name?' },
-  'task.meet.retrieval.questions': { optionId: 'ask_name' },
-  'task.meet.interaction.guided': { support: ['modelAnswer'], text: 'What your name?' },
-  'task.meet.remediation.ask_name': { text: 'What is your name?' },
-  'task.meet.interaction.unaided': { text: 'What is your name?' },
-  'task.meet.interaction.polite': { text: 'Nice to meet you' },
-  'task.meet.delayed.check': { text: 'What is your name?' },
-  'task.meet.delayed.name': { text: 'My name is Mai' },
-  'task.meet.transfer.street': { text: 'What is your name?' },
-  'task.meet.transfer.name': { text: 'My name is Mai' },
-  'task.meet.assessment.name_signup': { text: 'My name is Mai' },
-  'task.meet.assessment.checkpoint': { text: 'Hi, I am Mai. What is your name?' },
-};
-
-async function currentScreen(page: Page): Promise<'intro' | 'task' | 'input' | 'summary'> {
-  await expect(
-    page
-      .getByTestId('mission-task')
-      .or(page.getByTestId('mission-input'))
-      .or(page.getByTestId('mission-summary'))
-      .or(page.getByTestId('mission-intro')),
-  ).toBeVisible({ timeout: SCREEN_TIMEOUT });
-  if (await page.getByTestId('mission-summary').isVisible()) return 'summary';
-  if (await page.getByTestId('mission-input').isVisible()) return 'input';
-  if (await page.getByTestId('mission-intro').isVisible()) return 'intro';
-  return 'task';
+/** Stub speechSynthesis whose speak() never reports delivery. */
+async function stubSpeechSilent(page: Page) {
+  await page.addInitScript(() => {
+    class FakeUtterance {
+      text = '';
+      lang = '';
+      onend: (() => void) | null = null;
+      onerror: (() => void) | null = null;
+      constructor(text?: string) {
+        this.text = text ?? '';
+      }
+    }
+    Object.defineProperty(window, 'SpeechSynthesisUtterance', { value: FakeUtterance });
+    Object.defineProperty(window, 'speechSynthesis', {
+      value: {
+        pending: false,
+        speaking: false,
+        paused: false,
+        cancel() {},
+        pause() {},
+        resume() {},
+        getVoices: () => [],
+        speak(_u: FakeUtterance) {
+          /* transport never confirms — delivery must stay unproven */
+        },
+        addEventListener() {},
+        removeEventListener() {},
+      },
+    });
+  });
 }
 
 async function allEvents(page: Page) {
@@ -76,46 +113,13 @@ async function allEvents(page: Page) {
   );
 }
 
-/** Resume through the intro screen if it is shown. */
-async function resumeIfIntro(page: Page) {
-  if ((await currentScreen(page)) === 'intro') {
-    await page.getByTestId('mission-start').click();
-  }
-}
-
-/** Drive one on-screen step; returns false at the summary. */
-async function stepOnce(page: Page): Promise<boolean> {
-  const kind = await currentScreen(page);
-  if (kind === 'summary') return false;
-  if (kind === 'intro') {
-    await page.getByTestId('mission-start').click();
-    return true;
-  }
-  // Every step must surface the planner's reason — no hard-coded path.
-  await expect(page.getByTestId('mission-reason')).toBeVisible();
-  await expect(page.getByTestId('mission-reason')).not.toBeEmpty();
-  if (kind === 'input') {
-    await page.getByTestId('mission-view').click();
-    return true;
-  }
-  const taskId = (await page.getByTestId('mission-task-id').innerText()).split(' · ')[0].trim();
-  if (await page.getByTestId('mission-feedback').isVisible()) {
-    await page.getByTestId('mission-next').click();
-    return true;
-  }
-  const act = SCRIPT[taskId];
-  if (!act) throw new Error(`no scripted act for '${taskId}'`);
-  for (const kind2 of act.support ?? []) {
-    await page.getByTestId(`mission-support-${kind2}`).click();
-  }
-  if (act.optionId != null) {
-    await page.getByTestId(`mission-option-${act.optionId}`).click();
-  } else {
-    await page.getByTestId('mission-response-input').fill(act.text ?? '');
-    await page.getByTestId('mission-commit').click();
-  }
-  await expect(page.getByTestId('mission-feedback')).toBeVisible({ timeout: SCREEN_TIMEOUT });
-  return true;
+/** Intro → start → first task screen. */
+async function startPilot(page: Page) {
+  await page.goto(PILOT_URL);
+  await expect(page.getByTestId('mission-intro')).toBeVisible({ timeout: SCREEN_TIMEOUT });
+  await page.getByTestId('mission-start').click();
+  await expect(page.getByTestId('mission-task')).toBeVisible({ timeout: SCREEN_TIMEOUT });
+  await expect(page.getByTestId('mission-task-id')).toContainText(HEAR_TASK);
 }
 
 test.beforeEach(async ({ page }) => {
@@ -143,115 +147,174 @@ test.beforeEach(async ({ page }) => {
   await page.evaluate(() => localStorage.clear());
 });
 
-test('refreshes at prompt, feedback, and summary stages keep evidence intact', async ({ page }) => {
-  test.setTimeout(180_000);
-  await page.goto('/mission');
-  await page.getByTestId('mission-name-input').fill('Mai');
-  await page.getByTestId('mission-start').click();
+test('choices stay disabled until the transport confirms stimulus delivery', async ({ page }) => {
+  await stubSpeechDelivered(page);
+  await startPilot(page);
 
-  // Refresh stage 1: mid-prompt — nothing may be minted.
-  await expect(page.getByTestId('mission-task')).toBeVisible();
-  let events = await allEvents(page);
-  expect(events.length).toBe(0);
-  await page.reload();
-  await resumeIfIntro(page);
+  // Before delivery: every option is inert, the gate is visible.
+  await expect(page.getByTestId('mission-awaiting-delivery')).toBeVisible();
+  for (const id of ['three', 'four', 'eight']) {
+    await expect(page.getByTestId(`mission-option-${id}`)).toBeDisabled();
+  }
   expect((await allEvents(page)).length).toBe(0);
 
-  // Commit the first diagnostic → feedback screen → refresh stage 2.
-  const taskId = (await page.getByTestId('mission-task-id').innerText()).split(' · ')[0].trim();
-  await page.getByTestId('mission-response-input').fill(SCRIPT[taskId].text ?? '');
-  await page.getByTestId('mission-commit').click();
-  await expect(page.getByTestId('mission-feedback')).toBeVisible();
-  events = await allEvents(page);
-  const afterFeedback = events.length;
-  await page.reload();
-  await resumeIfIntro(page);
-  // The committed attempt survives; the consumed task is not re-served.
-  events = await allEvents(page);
-  expect(events.length).toBe(afterFeedback);
-  const screen2 = await currentScreen(page);
-  expect(screen2 === 'task' || screen2 === 'input').toBe(true);
-  if (screen2 === 'task') {
-    const t2 = (await page.getByTestId('mission-task-id').innerText()).split(' · ')[0].trim();
-    expect(t2).not.toBe(taskId);
-  }
-
-  // Drive the rest of the mission through both phases.
-  for (let i = 0; i < 14; i++) {
-    if (!(await stepOnce(page))) break;
-    const label = await page.getByTestId('mission-task-id').innerText().catch(() => '');
-    if (label.includes('retrieval.questions') || label.includes('delayed.')) break;
-  }
-  await page.evaluate((offset) => localStorage.setItem('fdn:timeOffsetMs', String(offset)), 25 * HOUR);
-  await page.reload();
-  for (let i = 0; i < 40; i++) {
-    if (!(await stepOnce(page))) break;
-  }
-  await expect(page.getByTestId('mission-summary')).toBeVisible({ timeout: SCREEN_TIMEOUT });
-
-  // Refresh stage 3: on the summary — replayed evidence must reproduce
-  // the identical screen; nothing is minted by revisiting.
-  events = await allEvents(page);
-  const finalCount = events.length;
-  await page.reload();
-  await resumeIfIntro(page);
-  await expect(page.getByTestId('mission-summary')).toBeVisible({ timeout: SCREEN_TIMEOUT });
-  await expect(page.getByTestId('mission-progress-interaction.ask_name')).toContainText('Vận dụng');
-  expect((await allEvents(page)).length).toBe(finalCount);
+  // Delivery confirmed by onend — options unlock.
+  await page.getByTestId('mission-play').click();
+  await expect(page.getByTestId('mission-option-three')).toBeEnabled();
+  await expect(page.getByTestId('mission-awaiting-delivery')).toHaveCount(0);
 });
 
-test('back/forward navigation preserves the trajectory without duplicating evidence', async ({
+test('unconfirmed delivery can never commit — the task simply cannot be answered', async ({ page }) => {
+  await stubSpeechSilent(page);
+  await startPilot(page);
+
+  await page.getByTestId('mission-play').click();
+  // No onend → no delivery → options never enable.
+  await expect(page.getByTestId('mission-awaiting-delivery')).toBeVisible();
+  await expect(page.getByTestId('mission-option-three')).toBeDisabled();
+  await page.waitForTimeout(500);
+  expect((await allEvents(page)).length).toBe(0);
+});
+
+test('a delivered listening choice mints exactly one canonical attempt event', async ({ page }) => {
+  await stubSpeechDelivered(page);
+  await startPilot(page);
+
+  await page.getByTestId('mission-play').click();
+  await expect(page.getByTestId('mission-option-three')).toBeEnabled();
+  await page.getByTestId('mission-option-three').click();
+
+  await expect(page.getByTestId('mission-feedback')).toBeVisible({ timeout: SCREEN_TIMEOUT });
+  await expect(page.getByTestId('mission-outcome')).toContainText('Đúng');
+
+  const events = await allEvents(page);
+  const attempts = events.filter((e) => (e.attempt as { outcome?: string } | undefined)?.outcome != null);
+  expect(attempts).toHaveLength(1);
+  const [attempt] = attempts;
+  // Canonical claim-bearing identity: evt.<attemptId>.
+  expect(attempt.id).toBe(`evt.${(attempt.attempt as { attemptId: string }).attemptId}`);
+  expect((attempt.attempt as { attemptId: string }).attemptId).toBe(`${HEAR_TASK}@1:a1`);
+  expect(attempt.taskId).toBe(HEAR_TASK);
+  expect(attempt.capabilityId).toBe(HEAR_CAPABILITY);
+  expect(attempt.modality).toBe('listening');
+  expect((attempt.attempt as { outcome: string }).outcome).toBe('success');
+  expect(
+    (attempt.evaluation as { contractId?: string } | undefined)?.contractId,
+  ).toBe('eval.choice.correct.v1');
+  // Latency anchors to transport-confirmed delivery, not render time.
+  expect(typeof (attempt.attempt as { latencyMs?: number }).latencyMs).toBe('number');
+  // A feedback observation follows the landed attempt, on its own id.
+  const fb = events.find((e) => e.eventType === 'feedback');
+  expect(fb).toBeTruthy();
+  expect((fb?.attempt as { attemptId?: string })?.attemptId).toBe(
+    (attempt.attempt as { attemptId: string }).attemptId,
+  );
+  expect(fb?.id).not.toBe(attempt.id);
+});
+
+test('a wrong choice lands an honest fail — not a retried success', async ({ page }) => {
+  await stubSpeechDelivered(page);
+  await startPilot(page);
+
+  await page.getByTestId('mission-play').click();
+  await expect(page.getByTestId('mission-option-four')).toBeEnabled();
+  await page.getByTestId('mission-option-four').click();
+
+  await expect(page.getByTestId('mission-feedback')).toBeVisible({ timeout: SCREEN_TIMEOUT });
+  await expect(page.getByTestId('mission-outcome')).toContainText('Chưa đúng');
+
+  const events = await allEvents(page);
+  const attempts = events.filter((e) => (e.attempt as { outcome?: string } | undefined)?.outcome != null);
+  expect(attempts).toHaveLength(1);
+  expect((attempts[0].attempt as { outcome: string }).outcome).toBe('fail');
+});
+
+test('replays after first delivery mint repeat support — first play is the stimulus', async ({
   page,
 }) => {
-  test.setTimeout(120_000);
-  await page.goto('/mission');
-  await page.getByTestId('mission-name-input').fill('Mai');
-  await page.getByTestId('mission-start').click();
+  await stubSpeechDelivered(page);
+  await startPilot(page);
 
-  // Commit one real attempt, then navigate away and back.
-  const taskId = (await page.getByTestId('mission-task-id').innerText()).split(' · ')[0].trim();
-  await page.getByTestId('mission-response-input').fill(SCRIPT[taskId].text ?? '');
-  await page.getByTestId('mission-commit').click();
-  await expect(page.getByTestId('mission-feedback')).toBeVisible();
-  const before = (await allEvents(page)).length;
+  await page.getByTestId('mission-play').click();
+  await expect(page.getByTestId('mission-option-three')).toBeEnabled();
+  // First confirmation was the stimulus itself — no support yet.
+  expect((await allEvents(page)).filter((e) => e.eventType === 'support_use')).toHaveLength(0);
 
-  await page.getByTestId('mission-next').click();
-  await page.goBack(); // → wherever the user came from (dashboard or prior)
-  await page.goForward(); // → /mission remounts
-  await expect(page.getByTestId('mission-intro')).toBeVisible();
-  await expect(page.getByTestId('mission-resumed')).toBeVisible();
-  await page.getByTestId('mission-start').click();
-  const after = await allEvents(page);
-  expect(after.length).toBe(before);
+  await page.getByTestId('mission-play').click();
+  await page.getByTestId('mission-play').click();
+  // Two further deliveries → two repeat support_use observations, one
+  // replay each; the stamped attempt must union them truthfully.
+  await expect
+    .poll(async () => (await allEvents(page)).filter((e) => e.eventType === 'support_use').length)
+    .toBe(2);
+  await page.getByTestId('mission-option-three').click();
+  await expect(page.getByTestId('mission-feedback')).toBeVisible({ timeout: SCREEN_TIMEOUT });
+
+  const events = await allEvents(page);
+  const repeats = events.filter(
+    (e) => e.eventType === 'support_use' && (e.support as { repeat?: boolean } | undefined)?.repeat,
+  );
+  expect(repeats).toHaveLength(2);
+  for (const r of repeats) {
+    expect((r.support as { repeatCount?: number }).repeatCount).toBe(1);
+  }
+  const attempt = events.find((e) => (e.attempt as { outcome?: string } | undefined)?.outcome != null);
+  expect((attempt?.support as { repeat?: boolean }).repeat).toBe(true);
+  expect((attempt?.support as { repeatCount?: number }).repeatCount).toBe(2);
 });
 
-test('double-submit mints one attempt; corrupted rows earn nothing', async ({ page }) => {
-  test.setTimeout(120_000);
-  await page.goto('/mission');
-  await page.getByTestId('mission-name-input').fill('Mai');
-  await page.getByTestId('mission-start').click();
+test('reload discards unconfirmed delivery — commit still gated afterwards', async ({ page }) => {
+  await stubSpeechDelivered(page);
+  await startPilot(page);
 
-  // Fire two rapid commits — the busy guard + deterministic id mean at
-  // most one attempt event exists for a1.
-  const taskId = (await page.getByTestId('mission-task-id').innerText()).split(' · ')[0].trim();
-  await page.getByTestId('mission-response-input').fill(SCRIPT[taskId].text ?? '');
-  // Both clicks fire inside one synchronous evaluate so the second lands
-  // before React flushes the phase change that unmounts the button —
-  // two awaited dispatchEvent calls race that unmount and hang on the
-  // detached-element wait instead of exercising the double-submit path.
-  const commitBtn = page.getByTestId('mission-commit');
-  await commitBtn.evaluate((el) => {
-    el.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-    el.dispatchEvent(new MouseEvent('click', { bubbles: true }));
-  });
+  await page.getByTestId('mission-play').click();
+  await expect(page.getByTestId('mission-option-three')).toBeEnabled();
+
+  await page.reload();
+  await expect(page.getByTestId('mission-intro')).toBeVisible({ timeout: SCREEN_TIMEOUT });
+  await page.getByTestId('mission-start').click();
+  await expect(page.getByTestId('mission-task')).toBeVisible({ timeout: SCREEN_TIMEOUT });
+  await expect(page.getByTestId('mission-task-id')).toContainText(HEAR_TASK);
+  // Delivery is volatile state, not durable evidence — the gate resets.
+  await expect(page.getByTestId('mission-option-three')).toBeDisabled();
+  await expect(page.getByTestId('mission-awaiting-delivery')).toBeVisible();
+  expect((await allEvents(page)).length).toBe(0);
+});
+
+test('after a commit the next served task is the spoken diagnostic — and it fails closed', async ({
+  page,
+}) => {
+  await stubSpeechDelivered(page);
+  await startPilot(page);
+
+  await page.getByTestId('mission-play').click();
+  await page.getByTestId('mission-option-three').click();
   await expect(page.getByTestId('mission-feedback')).toBeVisible({ timeout: SCREEN_TIMEOUT });
-  let events = await allEvents(page);
+  await page.getByTestId('mission-next').click();
+
+  // Phase-0 serves the next declared baseline: the spoken diagnostic —
+  // which the web surface refuses to execute.
+  await expect(page.getByTestId('mission-surface-unavailable')).toBeVisible({ timeout: SCREEN_TIMEOUT });
+  await expect(page.getByTestId('mission-task-id')).toContainText(SAY_TASK);
+  await expect(page.getByTestId('mission-response-input')).toHaveCount(0);
+  await expect(page.getByTestId('mission-options')).toHaveCount(0);
+
+  const events = await allEvents(page);
+  expect(events.filter((e) => e.taskId === SAY_TASK)).toHaveLength(0);
   expect(
     events.filter((e) => (e.attempt as { outcome?: string } | undefined)?.outcome != null),
   ).toHaveLength(1);
+});
 
-  // Inject corrupted + forged rows straight into IndexedDB — the
-  // session must recover and grant no credit.
+test('corrupted and forged rows earn nothing and never crash the session', async ({ page }) => {
+  await stubSpeechDelivered(page);
+  await startPilot(page);
+
+  await page.getByTestId('mission-play').click();
+  await page.getByTestId('mission-option-three').click();
+  await expect(page.getByTestId('mission-feedback')).toBeVisible({ timeout: SCREEN_TIMEOUT });
+  const committed = (await allEvents(page)).length;
+
   await page.evaluate(
     ({ dbName, now }) =>
       new Promise<void>((resolve, reject) => {
@@ -267,12 +330,12 @@ test('double-submit mints one attempt; corrupted rows earn nothing', async ({ pa
             learnerId: 'local.anonymous',
             occurredAt: now,
             eventType: 'checkpoint',
-            taskId: 'task.meet.assessment.checkpoint',
+            taskId: 'task.time.assessment.hear',
             taskRevision: 1,
-            capabilityId: 'interaction.ask_name',
-            modality: 'speaking',
+            capabilityId: 'reception.listen.understand_clock_time',
+            modality: 'listening',
             attempt: { attemptId: 'forged', outcome: 'success', observed: true },
-            evaluation: { authority: 'deterministic', contractId: 'eval.meet.checkpoint' },
+            evaluation: { authority: 'deterministic', contractId: 'eval.choice.correct.v1' },
           });
           tx.oncomplete = () => resolve();
           tx.onerror = () => reject(tx.error);
@@ -280,10 +343,33 @@ test('double-submit mints one attempt; corrupted rows earn nothing', async ({ pa
       }),
     { dbName: DB_NAME, now: Date.now() },
   );
+
   await page.reload();
-  await resumeIfIntro(page);
-  // Session recovered: feedback for the landed attempt re-derives fine
-  // and the mission continues serving.
-  const kind = await currentScreen(page);
-  expect(kind === 'task' || kind === 'input').toBe(true);
+  await expect(page.getByTestId('mission-intro')).toBeVisible({ timeout: SCREEN_TIMEOUT });
+  await page.getByTestId('mission-start').click();
+  /* Session recovers. The forged row still sits in the table — it's
+   * durable junk — but it minted no CREDIT: the only session-minted
+   * attempt (canonical evt. id) is the one real commit, and nothing
+   * new was produced by replaying the corrupted log. */
+  await expect(page.getByTestId('mission-surface-unavailable')).toBeVisible({ timeout: SCREEN_TIMEOUT });
+  const events = await allEvents(page);
+  const minted = events.filter(
+    (e) =>
+      typeof e.id === 'string' &&
+      (e.id as string).startsWith('evt.') &&
+      (e.attempt as { outcome?: string } | undefined)?.outcome != null,
+  );
+  expect(minted).toHaveLength(1);
+  expect(events.length).toBe(committed + 2);
+});
+
+test('an unknown ?m= falls back to the pilot mission — never an unregistered run', async ({
+  page,
+}) => {
+  await stubSpeechDelivered(page);
+  await page.goto('/mission?m=mission.does_not_exist');
+  await expect(page.getByTestId('mission-intro')).toBeVisible({ timeout: SCREEN_TIMEOUT });
+  await expect(page.getByTestId('mission-intro')).toContainText('mission.meet_at_a_time');
+  await page.getByTestId('mission-start').click();
+  await expect(page.getByTestId('mission-task-id')).toContainText(HEAR_TASK);
 });

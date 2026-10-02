@@ -28,6 +28,22 @@ import type {
 const SUPPORTABLE_PURPOSES = new Set(['retrieval', 'production', 'interaction', 'remediation']);
 const EXPOSURE_PURPOSES = new Set(['input', 'notice']);
 
+/* W2-02.6 — a TaskContract's modality is an EXECUTION REQUIREMENT, not
+ * descriptive metadata. The web surface supports exactly two honest
+ * shapes; everything else is refused, never approximated. In particular
+ * `spoken_turn` is NOT reinterpreted as a text box — typed text cannot
+ * mint spoken_production/spoken_interaction evidence. */
+export type SurfaceKind = 'exposure' | 'listening_choice_audio' | 'unsupported';
+export const surfaceKindForTask = (task: KernelTask): SurfaceKind => {
+  const responseType = task.response?.type;
+  const stimulusType = (task.stimulus as { type?: string } | undefined)?.type;
+  if (responseType === 'none' && EXPOSURE_PURPOSES.has(task.purpose)) return 'exposure';
+  if (task.modality === 'listening' && stimulusType === 'audio_line' && responseType === 'choice') {
+    return 'listening_choice_audio';
+  }
+  return 'unsupported';
+};
+
 /* Deterministic event ids — a re-delivered append dedupes on identical
  * content instead of double-writing, and ids stay stable across
  * reloads. `_xx` encodes any non-alphanumeric char so task keys can
@@ -70,7 +86,16 @@ export interface ProgressLine {
 }
 
 export type SessionScreen =
-  | { type: 'intro'; missionId: string; resumed: boolean; needsName: boolean }
+  | {
+      type: 'intro';
+      missionId: string;
+      resumed: boolean;
+      needsName: boolean;
+      /** Contract-derived copy — the page renders the mission's own
+       * declared scenario/goal, never page-authored fiction. */
+      scenario: string;
+      learnerGoal: string;
+    }
   | {
       type: 'input';
       taskId: string;
@@ -97,6 +122,22 @@ export type SessionScreen =
       supportUsed: SupportSnapshot;
       evaluation: AttemptEvalResult | null;
       revealModelAfterAttempt: boolean;
+      /** For LISTENING_CHOICE_AUDIO_V1: true only after the transport
+       * confirmed the stimulus played (utterance onend). Choices stay
+       * disabled until then — a lucky guess is not listening evidence. */
+      delivered: boolean;
+      decisionReason: string | null;
+    }
+  | {
+      /** The contract's declared surface is not executable on the web —
+       * e.g. spoken_turn. No input, no self-report, no evidence. */
+      type: 'surface_unavailable';
+      taskId: string;
+      taskRevision: number;
+      capabilityId: string;
+      purpose: string;
+      modality: string;
+      responseType: string | null;
       decisionReason: string | null;
     }
   | {
@@ -139,7 +180,13 @@ export function createMissionSession({
   let supportSnapshot: SupportSnapshot = freshSupport();
   let supportCounts = new Map<string, number>();
   let playCount = 0;
-  let promptShownAt: number | null = null;
+  /* Stimulus delivery is transport-confirmed, not a button press: the
+   * page calls play() only after the browser reports the audio finished.
+   * First confirmation = delivered (never support); each further one is
+   * a repeat support_use. `deliveredAt` anchors response latency — the
+   * clock starts when the stimulus finished, not when React rendered. */
+  let delivered = false;
+  let deliveredAt: number | null = null;
 
   /** Mirror the durable log into memory (dedupe-safe by id). Only this
    * learner's rows are mirrored — a shared table must never leak another
@@ -202,7 +249,9 @@ export function createMissionSession({
     }) as NextTaskDecision;
 
   const taskScreen = (task: KernelTask, evalResult: AttemptEvalResult | null): SessionScreen => {
-    const isChoice = task.response?.type === 'choice';
+    /* Only LISTENING_CHOICE_AUDIO_V1 reaches a task screen — the surface
+     * classifier refuses every other claim-bearing shape, so the
+     * response channel is always 'choice'. No text fallback exists. */
     return {
       type: 'task',
       phase,
@@ -213,18 +262,38 @@ export function createMissionSession({
       modality: task.modality,
       attemptId: phase === 'feedback' && committed ? committed.attemptId : attemptIdFor(task),
       prompt: promptSpec(task),
-      responseType: isChoice ? 'choice' : 'text',
-      options: isChoice
-        ? ((task.response as { options?: { id: string; text: string; correct?: boolean }[] })?.options ?? [])
-        : null,
+      responseType: 'choice',
+      options:
+        (task.response as { options?: { id: string; text: string; correct?: boolean }[] } | undefined)?.options ?? [],
       requiredFunctions: task.response?.requiredFunctions ?? [],
       supportOffered: phase === 'prompt' ? supportOffered(task) : [],
       supportUsed: { ...supportSnapshot },
       evaluation: phase === 'feedback' ? evalResult : null,
       revealModelAfterAttempt:
         (task.supportPolicy as { revealModelAfterAttempt?: boolean } | undefined)?.revealModelAfterAttempt === true,
+      delivered,
       decisionReason: liveTask?.decision?.reason ?? null,
     };
+  };
+
+  const unavailableScreen = (task: KernelTask): SessionScreen => ({
+    type: 'surface_unavailable',
+    taskId: task.id,
+    taskRevision: task.revision ?? 1,
+    capabilityId: task.capabilityId,
+    purpose: task.purpose,
+    modality: task.modality,
+    responseType: task.response?.type ?? null,
+    decisionReason: liveTask?.decision?.reason ?? null,
+  });
+
+  /** The one switch that enforces the modality contract: every selected
+   * task renders its honest surface or refuses to render a channel. */
+  const screenFor = (task: KernelTask): SessionScreen => {
+    const kind = surfaceKindForTask(task);
+    if (kind === 'exposure') return inputScreen(task);
+    if (kind === 'listening_choice_audio') return taskScreen(task, null);
+    return unavailableScreen(task);
   };
 
   const inputScreen = (task: KernelTask): SessionScreen => ({
@@ -276,6 +345,8 @@ export function createMissionSession({
           missionId: mission.id,
           resumed: events.length > 0,
           needsName: session.needsName(),
+          scenario: (mission as { scenario?: string }).scenario ?? '',
+          learnerGoal: (mission as { learnerGoal?: string }).learnerGoal ?? '',
         };
       }
       if (phase === 'feedback' && committed) {
@@ -284,9 +355,7 @@ export function createMissionSession({
       // Live-task lock: render the standing decision until consumed —
       // the selector never re-runs underneath an open prompt.
       if (liveTask && phase === 'prompt') {
-        return EXPOSURE_PURPOSES.has(liveTask.task.purpose)
-          ? inputScreen(liveTask.task)
-          : taskScreen(liveTask.task, null);
+        return screenFor(liveTask.task);
       }
       const sel = select();
       if (sel.status === 'ready' && sel.taskId) {
@@ -300,9 +369,10 @@ export function createMissionSession({
             supportSnapshot = freshSupport();
             supportCounts = new Map();
             playCount = 0;
-            promptShownAt = null;
+            delivered = false;
+            deliveredAt = null;
           }
-          return EXPOSURE_PURPOSES.has(task.purpose) ? inputScreen(task) : taskScreen(task, null);
+          return screenFor(task);
         }
       }
       return {
@@ -331,7 +401,7 @@ export function createMissionSession({
       const active = phase === 'feedback' && committed ? { task: committed.task } : liveTask;
       if (!active || phase !== 'prompt') return session.screen();
       const task = active.task;
-      if (!EXPOSURE_PURPOSES.has(task.purpose)) return session.screen();
+      if (surfaceKindForTask(task) !== 'exposure') return session.screen();
       await submitObservation(store, registry, {
         id: evtId(ns, task.id, `r${task.revision ?? 1}`, 'exp'),
         learnerId,
@@ -351,6 +421,7 @@ export function createMissionSession({
     async support(kind: string): Promise<SessionScreen> {
       if (!liveTask || phase !== 'prompt') return session.screen();
       const task = liveTask.task;
+      if (surfaceKindForTask(task) === 'unsupported') return session.screen();
       if (!supportOffered(task).includes(kind)) return session.screen();
       const attemptId = attemptIdFor(task);
       const n = (supportCounts.get(kind) ?? 0) + 1;
@@ -369,14 +440,23 @@ export function createMissionSession({
       return session.screen();
     },
 
-    /** Stimulus replay: the first play is the stimulus itself; each
-     * further press is a repeat — support, recorded as such. */
+    /** Transport-confirmed stimulus delivery: the page calls this only
+     * after the browser reports playback completed (utterance onend).
+     * The first confirmation is the stimulus itself — required, never
+     * support; each further one is a repeat, recorded as support. */
     async play(): Promise<SessionScreen> {
       if (!liveTask || phase !== 'prompt') return session.screen();
+      if (surfaceKindForTask(liveTask.task) === 'unsupported') return session.screen();
       playCount += 1;
-      if (playCount > 1) {
+      if (playCount === 1) {
+        delivered = true;
+        deliveredAt = now();
+      } else {
         const task = liveTask.task;
         const attemptId = attemptIdFor(task);
+        // Each repeat event contributes ONE replay to the union — the
+        // kernel sums repeatCount across events, so the ordinal lives in
+        // the event id and the stamped total stays truthful.
         await submitObservation(store, registry, {
           id: evtId(ns, attemptId, 'sup', 'repeat', playCount - 1),
           learnerId,
@@ -384,51 +464,56 @@ export function createMissionSession({
           taskId: task.id,
           eventType: 'support_use',
           attempt: { attemptId },
-          support: { ...freshSupport(), repeat: true, repeatCount: playCount - 1 },
+          support: { ...freshSupport(), repeat: true, repeatCount: 1 },
         });
         await syncEvents();
-        supportSnapshot = { ...supportSnapshot, repeat: true, repeatCount: playCount - 1 };
+        supportSnapshot = {
+          ...supportSnapshot,
+          repeat: true,
+          repeatCount: (supportSnapshot.repeatCount ?? 0) + 1,
+        };
       }
       return session.screen();
     },
 
-    /** Commit the response: the declared evaluator scores it, the
-     * binder derives semantics, evidence lands, THEN feedback can
-     * render. A second commit on the same screen is a no-op. */
-    async commit({
-      text = null,
-      optionId = null,
-    }: {
-      text?: string | null;
-      optionId?: string | null;
-    } = {}): Promise<SessionScreen> {
+    /** Commit the response: dispatch is by the DECLARED response surface,
+     * never by what the caller happened to send. Only the listening
+     * choice surface is executable — it additionally requires the
+     * transport-confirmed stimulus (a lucky guess is not listening
+     * evidence). Everything else refuses silently: no substitute
+     * channel, no event. A second commit on the same screen is a no-op. */
+    async commit({ optionId = null }: { optionId?: string | null } = {}): Promise<SessionScreen> {
       const active = phase === 'feedback' && committed ? { task: committed.task } : liveTask;
       if (!active || phase !== 'prompt') return session.screen();
       const task = active.task;
-      if (EXPOSURE_PURPOSES.has(task.purpose)) return session.screen();
-      const isChoice = task.response?.type === 'choice';
-      const response = isChoice ? optionId : (text ?? '').trim();
-      if (response == null || response === '') return session.screen();
+      if (surfaceKindForTask(task) !== 'listening_choice_audio') return session.screen();
+      if (!delivered) return session.screen();
+      if (optionId == null) return session.screen();
+      const response = { optionId };
 
       const attemptId = attemptIdFor(task);
-      // The stamped support snapshot must reflect the attempt's WHOLE
-      // support history — including support_use events landed before a
-      // reload, when the in-memory snapshot was reset. unionSupport is
-      // the same accumulation rule the projection applies.
-      let stamped = { ...supportSnapshot };
+      // The stamped support snapshot is the union of this attempt's
+      // DURABLE support_use events — in-memory flags are merely a
+      // projection of them, so seeding from supportSnapshot would
+      // double-count (e.g. repeatCount). unionSupport is the same
+      // accumulation rule the projection applies.
+      let stamped = freshSupport();
       for (const e of events) {
         if (e.attempt?.attemptId === attemptId && e.taskId === task.id && e.eventType === 'support_use') {
           stamped = unionSupport(stamped, e.support) ?? stamped;
         }
       }
       const { evalResult } = await submitAttempt(store, registry, {
-        id: evtId(ns, attemptId),
+        // No caller id: the bridge pins the canonical evt.<attemptId> —
+        // a custom id would be refused, not silently honored.
         learnerId,
         occurredAt: now(),
         taskId: task.id,
-        response: isChoice ? { optionId } : { text: response },
+        response,
         attemptId,
-        latencyMs: promptShownAt != null ? Math.max(0, now() - promptShownAt) : undefined,
+        // Latency = commit − transport-confirmed delivery. Render time
+        // and speech duration are deliberately excluded (§11).
+        latencyMs: deliveredAt != null ? Math.max(0, now() - deliveredAt) : undefined,
         support: stamped,
         evaluation: { evaluator: 'fdnext-session', version: '1' },
         evaluationCtx: { learnerName: learnerName ?? undefined },
@@ -456,12 +541,9 @@ export function createMissionSession({
       supportSnapshot = freshSupport();
       supportCounts = new Map();
       playCount = 0;
-      promptShownAt = null;
+      delivered = false;
+      deliveredAt = null;
       return session.screen();
-    },
-
-    markPromptShown() {
-      if (promptShownAt == null) promptShownAt = now();
     },
 
     /** Replay-derived learner state — read-only. */

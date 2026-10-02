@@ -1,30 +1,168 @@
 import 'fake-indexeddb/auto';
 import { beforeEach, describe, expect, it } from 'vitest';
+import { canonicalFamilyId, makeMission, makeTask } from '@/vnext/contracts';
 import { db } from '../db';
-import { createDexieEventStore, createMissionSession, fixtureRegistry } from './index';
+import { createDexieEventStore, createMissionSession } from './index';
+import { createRegistry, fixtureRegistry } from './registry';
 import type { SessionScreen } from './session';
+import type { ContractRegistry } from './types';
 
 /*
  * Mission-session pins: the UI driver must preserve the kernel's
  * evidence semantics — deterministic attempt ids across reloads,
- * support_use before commit contaminating the attempt, feedback only
- * after evidence lands, exposure never minting attempts, delayed
- * retrieval requiring the policy lag, and fresh-context transfer.
+ * transport-confirmed stimulus before commit, support_use before commit
+ * contaminating the attempt, feedback only after evidence lands,
+ * exposure never minting attempts, delayed retrieval requiring the
+ * policy lag.
+ *
+ * W2-02.6: the web surface executes only exposure + listening/audio_line/
+ * choice tasks — every fixture mission now stalls on its first spoken
+ * task (surface_unavailable), so driver-trajectory pins run on a
+ * TEST-ONLY mission whose every task is web-servable. The contracts are
+ * real kernel shape, registered through the same authoring gate.
  */
 
 const LEARNER = 'learner.session';
-const MISSION = 'mission.meet_new_person';
+const TEST_CAP = 'capability.test.listen_choice.v1';
+const TEST_MISSION = 'mission.test.listen_choice.v1';
+const TEST_MISSION_SPOKEN = 'mission.test.listen_choice_blocked.v1';
 const T0 = Date.parse('2026-03-02T09:00:00Z');
 const HOUR = 3_600_000;
 
 let clock = T0;
-const sessionFor = () => sessionForLearner(LEARNER);
 
-const sessionForLearner = (learnerId: string) =>
+const SIGNATURE = {
+  cueTopology: 'audio_word_to_choice',
+  setting: 'lab',
+  register: 'neutral',
+  channel: 'audio',
+  lexicalDomain: 'test',
+  responseTopology: 'mc_choice',
+};
+
+const listenTask = (id: string, purpose: string, missionId = TEST_MISSION) =>
+  makeTask({
+    id,
+    missionId,
+    capabilityId: TEST_CAP,
+    modality: 'listening',
+    purpose,
+    promptFamily: canonicalFamilyId(TEST_CAP, SIGNATURE, 1),
+    contextSignature: SIGNATURE,
+    stimulus: { type: 'audio_line', languageComponents: [`stimulus for ${id}`] },
+    response: {
+      type: 'choice',
+      requiredFunctions: ['test_listen'],
+      options: [
+        { id: 'yes', text: 'yes', correct: true },
+        { id: 'no', text: 'no' },
+      ],
+    },
+    evaluation: { authority: 'deterministic', contractId: 'eval.choice.correct.v1' },
+    freshness: { required: false, familyClass: 'practiced' },
+    supportPolicy: { allowed: ['hint', 'modelAnswer', 'transcript', 'repeat'] },
+  }) as never;
+
+const exposureTask = makeTask({
+  id: 'task.test.input.listen',
+  missionId: TEST_MISSION,
+  capabilityId: TEST_CAP,
+  modality: 'listening',
+  purpose: 'input',
+  promptFamily: canonicalFamilyId(TEST_CAP, SIGNATURE, 1),
+  contextSignature: SIGNATURE,
+  stimulus: { type: 'dialogue', languageComponents: ['Hi', 'Hello'] },
+  response: { type: 'none', requiredFunctions: [] },
+  freshness: { required: false, familyClass: 'practiced' },
+  supportPolicy: { allowed: ['transcript', 'repeat'] },
+}) as never;
+
+const spokenTask = makeTask({
+  id: 'task.test.say.unsupported',
+  missionId: TEST_MISSION_SPOKEN,
+  capabilityId: TEST_CAP,
+  modality: 'spoken_production',
+  purpose: 'retrieval',
+  promptFamily: canonicalFamilyId(TEST_CAP, { ...SIGNATURE, channel: 'speech' }, 1),
+  contextSignature: { ...SIGNATURE, channel: 'speech' },
+  stimulus: { type: 'cued_prompt', languageComponents: ['Say it'] },
+  response: { type: 'spoken_turn', requiredFunctions: ['test_say'] },
+  evaluation: { authority: 'deterministic', contractId: 'eval.choice.correct.v1' },
+  freshness: { required: false, familyClass: 'practiced' },
+  supportPolicy: { allowed: [] },
+}) as never;
+
+const TEST_CAP_CONTRACT = {
+  id: TEST_CAP,
+  version: 1,
+  performance: 'TEST-ONLY: understand a spoken cue and pick its meaning.',
+  modality: 'listening',
+  prerequisites: [],
+  conditions: { partnerCooperative: false, topicFamiliar: true, supportAllowed: ['repeat'] },
+  language: { chunks: [], constructions: [], vocabulary: [] },
+  evidence: { independentRequired: true, delayedRequired: false, transferRequired: false },
+  vietnameseRiskProbes: [],
+  criteria: {
+    meaningDelivered: false,
+    intelligibleEnoughForPartner: false,
+    requiredFunctions: [],
+  },
+} as never;
+
+const testMission = (id: string, taskIds: string[]) =>
+  makeMission({
+    id,
+    revision: 1,
+    scenario: 'TEST-ONLY: hear a cue, pick its meaning.',
+    learnerGoal: 'Understand spoken cues.',
+    targetCapabilities: [TEST_CAP],
+    language: {
+      assumedKnown: { chunks: [], vocabulary: [], constructions: [] },
+      introduced: { chunks: [], vocabulary: [], constructions: [] },
+    },
+    taskIds,
+  }) as never;
+
+/* Two TEST-ONLY missions, both registered through the same authoring
+ * gate the fixtures pass:
+ *
+ *   MISSION A — every claim-bearing task is a web-servable listening/
+ *               audio_line/choice surface, so the honest planner
+ *               trajectory (baseline → expose → elicit → delayed check)
+ *               is fully drivable. The capability is a target, so the
+ *               gate requires diagnostic + practiced + delayed — all
+ *               present; no transferPlan/assessmentPlan is declared.
+ *   MISSION B — identical shell, but its only eliciting task is
+ *               spoken_turn: the planner's expose fallback must serve it
+ *               and the surface must fail CLOSED, minting nothing. */
+const TEST_TASKS = [
+  listenTask('task.test.diagnostic.hear', 'diagnostic'),
+  exposureTask,
+  listenTask('task.test.retrieval.hear', 'retrieval'),
+  listenTask('task.test.delayed.hear', 'delayed_retrieval'),
+  listenTask('task.test.diagnostic2.hear', 'diagnostic', TEST_MISSION_SPOKEN),
+  spokenTask,
+  listenTask('task.test.delayed2.hear', 'delayed_retrieval', TEST_MISSION_SPOKEN),
+];
+
+const MISSION_A_TASKS = TEST_TASKS.slice(0, 4).map((t) => (t as { id: string }).id);
+const MISSION_B_TASKS = TEST_TASKS.slice(4).map((t) => (t as { id: string }).id);
+
+const testRegistry = (): ContractRegistry =>
+  createRegistry({
+    capabilities: [TEST_CAP_CONTRACT],
+    missions: [testMission(TEST_MISSION, MISSION_A_TASKS), testMission(TEST_MISSION_SPOKEN, MISSION_B_TASKS)],
+    tasks: TEST_TASKS,
+  });
+
+const sessionFor = (missionId = TEST_MISSION, registry = testRegistry()) =>
+  sessionForLearner(LEARNER, missionId, registry);
+
+const sessionForLearner = (learnerId: string, missionId = TEST_MISSION, registry = testRegistry()) =>
   createMissionSession({
     learnerId,
-    missionId: MISSION,
-    registry: fixtureRegistry(),
+    missionId,
+    registry,
     store: createDexieEventStore(db.evidenceEvents),
     now: () => clock,
   });
@@ -34,53 +172,23 @@ const taskScreen = (s: SessionScreen) => {
   return s;
 };
 
-/** Test answers keyed by the contract's required functions — the
- * learner is scripted, the evidence is real. */
-const answerFor = (screen: { requiredFunctions: string[] }): string => {
-  const fns = screen.requiredFunctions;
-  if (fns.includes('greet') && fns.length > 1) return 'Hi, I am Mai. What is your name?';
-  if (fns.includes('greet')) return 'Hi';
-  if (fns.includes('respond_to_introduction')) return 'Nice to meet you';
-  if (fns.includes('state_own_name')) return 'My name is Mai';
-  if (fns.includes('ask_name')) return 'What is your name?';
-  return 'What is your name?';
-};
-
 const inputScreen = (s: SessionScreen) => {
   if (s.type !== 'input') throw new Error(`expected input screen, got '${s.type}'`);
   return s;
 };
 
-/* Canonical scripted learner (mirrors FlashDay's vnext-slice): passes
- * the own-name baseline, honestly fails ask_name at diagnostic, needs a
- * hint to retrieve it, a model for guided interaction, a clean retry to
- * reach INDEPENDENT, then +25h → RETAINED → changed-context TRANSFERRED
- * → fresh assessment checkpoints. */
-const SCRIPT: Record<string, { support?: string[]; text?: string; optionId?: string }[]> = {
-  'task.meet.diagnostic.own_name': [{ text: 'My name is Mai' }],
-  'task.meet.diagnostic.ask_name': [{ text: '…' }],
-  'task.meet.retrieval.questions': [{ optionId: 'ask_name' }],
-  'task.meet.retrieval.phrases': [{ text: 'My name is Mai' }],
-  'task.meet.retrieval.ask_name': [{ support: ['hint'], text: 'What is your name?' }],
-  'task.meet.interaction.guided': [{ support: ['modelAnswer'], text: 'What your name?' }],
-  'task.meet.remediation.ask_name': [{ text: 'What is your name?' }],
-  'task.meet.interaction.unaided': [{ text: 'What is your name?' }],
-  'task.meet.interaction.polite': [{ text: 'Nice to meet you' }],
-  'task.meet.delayed.check': [{ text: 'What is your name?' }],
-  'task.meet.delayed.name': [{ text: 'My name is Mai' }],
-  'task.meet.transfer.street': [{ text: 'What is your name?' }],
-  'task.meet.transfer.name': [{ text: 'My name is Mai' }],
-  'task.meet.assessment.name_signup': [{ text: 'My name is Mai' }],
-  'task.meet.assessment.checkpoint': [{ text: 'Hi, I am Mai. What is your name?' }],
+/** Honest interaction: hear the stimulus (transport-confirmed), then
+ * pick the correct option. */
+const answerCorrect = async (s: ReturnType<typeof sessionFor>) => {
+  await s.play();
+  await s.commit({ optionId: 'yes' });
 };
 
-/** Drive the scripted learner until the selector exhausts; returns the
- * served task ids and every rendered decision reason. */
-const scriptedDrive = async (s: ReturnType<typeof sessionFor>) => {
+/** Drive until the planner exhausts; returns served task ids. */
+const drive = async (s: ReturnType<typeof sessionFor>) => {
   const served: string[] = [];
   const reasons: (string | null)[] = [];
-  const queues = new Map<string, { support?: string[]; text?: string; optionId?: string }[]>();
-  for (let step = 0; step < 60; step++) {
+  for (let i = 0; i < 40; i++) {
     const screen = s.screen();
     if (screen.type === 'summary') return { served, reasons };
     if (screen.type === 'input') {
@@ -89,6 +197,11 @@ const scriptedDrive = async (s: ReturnType<typeof sessionFor>) => {
       await s.view();
       continue;
     }
+    if (screen.type === 'surface_unavailable') {
+      served.push(`unavailable:${screen.taskId}`);
+      reasons.push(screen.decisionReason);
+      break; // fail-closed is terminal for this task on this surface
+    }
     if (screen.type === 'task') {
       if (screen.phase === 'feedback') {
         s.next();
@@ -96,36 +209,13 @@ const scriptedDrive = async (s: ReturnType<typeof sessionFor>) => {
       }
       served.push(screen.taskId);
       reasons.push(screen.decisionReason);
-      const q =
-        queues.get(screen.taskId) ??
-        queues.set(screen.taskId, [...(SCRIPT[screen.taskId] ?? [])]).get(screen.taskId)!;
-      const act = q.shift() ?? { text: answerFor(screen) };
-      for (const kind of act.support ?? []) await s.support(kind);
-      await s.commit({ text: act.text, optionId: act.optionId });
+      await answerCorrect(s);
       s.next();
       continue;
     }
-    return { served, reasons };
+    break;
   }
   return { served, reasons };
-};
-
-/** Reach the first supportable (non-choice) task of the canonical path:
- * both diagnostics + exposure views + the choice-check if served first. */
-const advanceToSupportableTask = async (s: ReturnType<typeof sessionFor>) => {
-  await s.commit({ text: 'My name is Mai' });
-  s.next();
-  await s.commit({ text: '…' });
-  s.next();
-  for (let i = 0; i < 3; i++) await s.view();
-  let screen = s.screen();
-  if (screen.type === 'task' && screen.responseType === 'choice') {
-    const correct = screen.options?.find((o) => o.correct);
-    await s.commit({ optionId: correct?.id });
-    s.next();
-    screen = s.screen();
-  }
-  return taskScreen(screen);
 };
 
 beforeEach(async () => {
@@ -134,44 +224,43 @@ beforeEach(async () => {
 });
 
 describe('mission session driver', () => {
-  it('starts at intro, then serves the first diagnostic task with a reason', async () => {
+  it('starts at intro, then serves the baseline diagnostic with a reason', async () => {
     const s = sessionFor();
     const intro = await s.init();
     expect(intro.type).toBe('intro');
-    if (intro.type === 'intro') expect(intro.needsName).toBe(true);
 
-    const screen = taskScreen(s.start({ learnerName: 'Mai' }));
+    const screen = taskScreen(s.start());
     expect(screen.purpose).toBe('diagnostic');
     expect(screen.phase).toBe('prompt');
     expect(screen.attemptId).toMatch(/:a1$/);
+    expect(screen.delivered).toBe(false);
     expect(screen.decisionReason).toBeTruthy();
   });
 
   it('a committed attempt lands evidence before feedback renders', async () => {
     const s = sessionFor();
     await s.init();
-    s.start({ learnerName: 'Mai' });
+    s.start();
     const prompt = taskScreen(s.screen());
-    const feedback = taskScreen(await s.commit({ text: 'My name is Mai' }));
+    await s.play();
+    const feedback = taskScreen(await s.commit({ optionId: 'yes' }));
     expect(feedback.phase).toBe('feedback');
     expect(feedback.evaluation?.outcome).toBe('success');
-    expect(feedback.taskId).toBe(prompt.taskId);
 
     const log = s.log();
     const attempt = log.find((e) => e.attempt?.attemptId === prompt.attemptId);
     expect(attempt?.attempt?.outcome).toBe('success');
+    expect(attempt?.id).toBe(`evt.${prompt.attemptId}`);
     const fb = log.find((e) => e.eventType === 'feedback');
     expect(fb?.attempt?.attemptId).toBe(prompt.attemptId);
   });
 
-  it('input tasks mint exposure, never an attempt outcome', async () => {
+  it('a failed baseline routes to input; input mints exposure, never an outcome', async () => {
     const s = sessionFor();
     await s.init();
-    s.start({ learnerName: 'Mai' });
-    // Pass both diagnostics so the planner reaches the input stage.
-    await s.commit({ text: 'My name is Mai' });
-    s.next();
-    await s.commit({ text: 'What is your name?' });
+    s.start();
+    await s.play();
+    await s.commit({ optionId: 'no' }); // baseline miss → planner exposes
     s.next();
 
     const input = inputScreen(s.screen());
@@ -187,45 +276,52 @@ describe('mission session driver', () => {
   it('pre-commit support stamps the attempt: supported ≠ independent', async () => {
     const s = sessionFor();
     await s.init();
-    s.start({ learnerName: 'Mai' });
-    const task = await advanceToSupportableTask(s);
-    expect(task.supportOffered).toContain('modelAnswer');
+    s.start();
+    await s.play();
+    await s.commit({ optionId: 'no' }); // baseline miss → expose → input
+    s.next();
+    await s.view();
 
-    await s.support('modelAnswer');
-    const promptAgain = taskScreen(s.screen());
-    expect(promptAgain.supportUsed.modelAnswer).toBe(true);
-
-    const answer = answerFor(task);
-    await s.commit({ text: answer });
+    const task = taskScreen(s.screen());
+    expect(task.taskId).toBe('task.test.retrieval.hear');
+    await s.play();
+    await s.support('hint');
+    await s.commit({ optionId: 'yes' });
 
     const slot = s.projection().byCapability.get(task.capabilityId);
     expect(slot?.milestones.supported).toBe(true);
     expect(slot?.milestones.independent ?? false).toBe(false);
-    expect(s.log().some((e) => e.eventType === 'support_use')).toBe(true);
+    expect(s.log().some((e) => e.eventType === 'support_use' && e.support?.hint)).toBe(true);
   });
 
-  it('attempt ids are deterministic across reload: a2 follows a1', async () => {
-    const first = sessionFor();
-    await first.init();
-    first.start({ learnerName: 'Mai' });
-    const prompt = taskScreen(first.screen());
-    await first.commit({ text: 'garbage answer' });
-    first.next();
+  it('a supported attempt re-serves the same task for an unaided retry: a2 follows a1', async () => {
+    const s = sessionFor();
+    await s.init();
+    s.start();
+    await s.play();
+    await s.commit({ optionId: 'no' }); // baseline miss → expose → input
+    s.next();
+    await s.view();
 
-    // New session object, same store — recomputes :a2 for the same task.
-    const second = sessionFor();
-    await second.init();
-    second.start({ learnerName: 'Mai' });
-    const live = second.screen();
-    if (live.type === 'task' && live.taskId === prompt.taskId) {
-      expect(live.attemptId).toMatch(/:a2$/);
-    } else {
-      // Planner may legitimately move on after a diagnostic fail — the
-      // pin only requires the COUNT be derived from the log.
-      expect(
-        second.log().filter((e) => e.attempt?.outcome != null && e.attempt?.attemptId?.endsWith(':a1')),
-      ).toHaveLength(1);
-    }
+    const a1 = taskScreen(s.screen());
+    expect(a1.taskId).toBe('task.test.retrieval.hear');
+    expect(a1.attemptId).toMatch(/:a1$/);
+    await s.play();
+    await s.support('hint');
+    await s.commit({ optionId: 'yes' }); // supported success → not independent
+    s.next();
+
+    /* The planner wants an unaided attempt; the only eliciting surface
+     * is the same consumed (repeatable) task — re-served under a NEW
+     * deterministic attempt ordinal. */
+    const a2 = taskScreen(s.screen());
+    expect(a2.taskId).toBe(a1.taskId);
+    expect(a2.attemptId).toMatch(/:a2$/);
+    await s.play();
+    await s.commit({ optionId: 'yes' });
+
+    const slot = s.projection().byCapability.get(a1.capabilityId);
+    expect(slot?.milestones.independent).toBe(true);
   });
 });
 
@@ -233,16 +329,14 @@ describe('falsification', () => {
   it('reloading mid-prompt mints no evidence and re-serves the same attempt id', async () => {
     const s1 = sessionFor();
     await s1.init();
-    s1.start({ learnerName: 'Mai' });
+    s1.start();
     const prompt = taskScreen(s1.screen());
     const n0 = s1.log().length;
 
-    // Reload before any commit — a fresh session re-derives the same
-    // attempt identity and must not have minted anything.
     const s2 = sessionFor();
     const intro = await s2.init();
     if (intro.type === 'intro') expect(intro.resumed).toBe(false);
-    s2.start({ learnerName: 'Mai' });
+    s2.start();
     const again = taskScreen(s2.screen());
     expect(again.taskId).toBe(prompt.taskId);
     expect(again.attemptId).toBe(prompt.attemptId);
@@ -252,28 +346,32 @@ describe('falsification', () => {
   it('support used before a reload still contaminates the post-reload attempt', async () => {
     const s1 = sessionFor();
     await s1.init();
-    s1.start({ learnerName: 'Mai' });
-    const task = await advanceToSupportableTask(s1);
+    s1.start();
+    await s1.play();
+    await s1.commit({ optionId: 'no' }); // baseline miss
+    s1.next();
+    await s1.view();
+    const task = taskScreen(s1.screen());
     const attemptId = task.attemptId;
+    await s1.play();
     await s1.support('hint');
     expect(s1.log().some((e) => e.eventType === 'support_use')).toBe(true);
 
-    // Reload — the in-memory support snapshot is gone; the attempt that
-    // now commits must STILL be stamped hint:true (unioned from the
-    // durable support_use evidence), or the stamp lies.
+    // Reload — the in-memory snapshot is gone; the committed attempt
+    // must STILL stamp hint:true unioned from durable support_use rows.
     const s2 = sessionFor();
     await s2.init();
-    s2.start({ learnerName: 'Mai' });
+    s2.start();
     const resumed = taskScreen(s2.screen());
     expect(resumed.taskId).toBe(task.taskId);
     expect(resumed.attemptId).toBe(attemptId);
 
-    await s2.commit({ text: answerFor(resumed) });
+    await s2.play();
+    await s2.commit({ optionId: 'yes' });
     const attemptEvent = s2
       .log()
       .find((e) => e.attempt?.attemptId === attemptId && e.attempt?.outcome != null);
     expect(attemptEvent?.support?.hint).toBe(true);
-
     const slot = s2.projection().byCapability.get(task.capabilityId);
     expect(slot?.milestones.supported).toBe(true);
     expect(slot?.milestones.independent ?? false).toBe(false);
@@ -282,15 +380,16 @@ describe('falsification', () => {
   it('a second learner inherits nothing — no resume leak, fresh attempt ids, empty state', async () => {
     const a = sessionForLearner('learner.alpha');
     await a.init();
-    a.start({ learnerName: 'Mai' });
-    await a.commit({ text: 'My name is Mai' });
+    a.start();
+    await a.play();
+    await a.commit({ optionId: 'yes' });
 
     const b = sessionForLearner('learner.beta');
     const intro = await b.init();
     if (intro.type !== 'intro') throw new Error(`expected intro, got '${intro.type}'`);
     expect(intro.resumed).toBe(false);
 
-    const screen = taskScreen(b.start({ learnerName: 'Bảo' }));
+    const screen = taskScreen(b.start());
     expect(screen.attemptId).toMatch(/:a1$/);
     for (const slot of b.projection().byCapability.values()) {
       expect(slot.state).toBe('NOT_SEEN');
@@ -299,10 +398,6 @@ describe('falsification', () => {
   });
 
   it('corrupted rows never crash the session nor mint credit', async () => {
-    // A shapeless row and a forged success with wrong semantics — both
-    // injected directly, bypassing the bridge.
-    // Cast past the EvidenceEvent type — the whole point is that these
-    // rows could NOT have been produced by the bridge.
     await db.evidenceEvents.add({
       id: 'corrupt~1',
       learnerId: LEARNER,
@@ -313,20 +408,18 @@ describe('falsification', () => {
       learnerId: LEARNER,
       occurredAt: clock,
       eventType: 'checkpoint',
-      taskId: 'task.meet.remediation.ask_name',
+      taskId: 'task.test.retrieval.hear',
       taskRevision: 1,
-      capabilityId: 'interaction.ask_name',
-      modality: 'speaking',
-      attempt: { attemptId: 'task.meet.remediation.ask_name@1:forged', outcome: 'success', observed: true },
-      evaluation: { authority: 'deterministic', contractId: 'eval.intro.ask_name' },
+      capabilityId: TEST_CAP,
+      modality: 'listening',
+      attempt: { attemptId: 'task.test.retrieval.hear@1:forged', outcome: 'success', observed: true },
+      evaluation: { authority: 'deterministic', contractId: 'eval.choice.correct.v1' },
     } as never);
 
     const s = sessionFor();
     const intro = await s.init();
     expect(intro.type).toBe('intro');
-    // A forged event failing verifyEventTask can mark SUPPORTED at most —
-    // never INDEPENDENT or beyond.
-    const slot = s.projection().byCapability.get('interaction.ask_name');
+    const slot = s.projection().byCapability.get(TEST_CAP);
     expect(slot?.milestones.independent ?? false).toBe(false);
     expect(['INDEPENDENT', 'RETAINED', 'TRANSFERRED', 'FLUENT']).not.toContain(slot?.state ?? 'NOT_SEEN');
   });
@@ -334,25 +427,22 @@ describe('falsification', () => {
   it('wrong-screen controls are honest no-ops', async () => {
     const s = sessionFor();
     await s.init();
-    s.start({ learnerName: 'Mai' });
+    s.start();
 
-    // On a diagnostic task screen: view() is not an exposure purpose and
-    // support is not offered — neither may mint evidence.
     const diag = taskScreen(s.screen());
     expect(diag.purpose).toBe('diagnostic');
     const n0 = s.log().length;
-    await s.view();
-    await s.support('hint');
+    await s.view(); // diagnostic is not an exposure purpose
+    await s.support('hint'); // diagnostics offer no support
     expect(s.log().length).toBe(n0);
 
     // On an input screen: commit() must not mint an attempt.
-    await s.commit({ text: 'My name is Mai' });
-    s.next();
-    await s.commit({ text: '…' });
+    await s.play();
+    await s.commit({ optionId: 'no' }); // baseline miss → expose → input
     s.next();
     const input = inputScreen(s.screen());
     const n1 = s.log().length;
-    await s.commit({ text: 'What is your name?' });
+    await s.commit({ optionId: 'yes' });
     expect(s.log().length).toBe(n1);
     expect(input.purpose).toBe('input');
   });
@@ -360,147 +450,116 @@ describe('falsification', () => {
   it('concurrent identical commits dedupe; conflicting content refuses silent overwrite', async () => {
     const s = sessionFor();
     await s.init();
-    s.start({ learnerName: 'Mai' });
+    s.start();
+    await s.play();
 
-    // Same response twice in flight — one logical commit, one event set.
-    await Promise.all([s.commit({ text: 'My name is Mai' }), s.commit({ text: 'My name is Mai' })]);
+    await Promise.all([s.commit({ optionId: 'no' }), s.commit({ optionId: 'no' })]);
     const attempts = s.log().filter((e) => e.attempt?.outcome != null);
     expect(attempts).toHaveLength(1);
 
-    // A commit still queued from the prompt phase with DIFFERENT content
-    // must not overwrite the landed evidence — the store throws and the
-    // session stays honest on the landed feedback.
     s.next();
+    await s.view(); // input
     const task2 = taskScreen(s.screen());
-    const p1 = s.commit({ text: '…' });
-    const p2 = s.commit({ text: 'totally different answer' });
+    await s.play();
+    const p1 = s.commit({ optionId: 'yes' });
+    const p2 = s.commit({ optionId: 'no' });
     const settled = await Promise.allSettled([p1, p2]);
     const rejected = settled.filter((r) => r.status === 'rejected');
-    const attempts2 = s.log().filter(
-      (e) => e.taskId === task2.taskId && e.attempt?.outcome != null,
-    );
-    // Exactly one attempt may land; a conflict throws rather than
-    // silently replacing the first writer's evidence.
+    const attempts2 = s.log().filter((e) => e.taskId === task2.taskId && e.attempt?.outcome != null);
     expect(attempts2).toHaveLength(1);
-    expect(attempts2[0].attempt?.outcome).toBe('fail');
     expect(rejected.length).toBeLessThanOrEqual(1);
   });
 
   it('reloading during feedback never re-serves or duplicates the committed attempt', async () => {
     const s1 = sessionFor();
     await s1.init();
-    s1.start({ learnerName: 'Mai' });
+    s1.start();
     const task = taskScreen(s1.screen());
-    await s1.commit({ text: answerFor(task) }); // now in feedback phase
+    await s1.play();
+    await s1.commit({ optionId: 'yes' }); // baseline success → INDEPENDENT
 
     const s2 = sessionFor();
     await s2.init();
-    s2.start({ learnerName: 'Mai' });
+    s2.start();
     const scr = s2.screen();
     if (scr.type === 'task' && scr.phase === 'prompt') {
       expect(scr.taskId).not.toBe(task.taskId);
     }
-    const attempts = s2.log().filter((e) => e.attempt?.attemptId === task.attemptId && e.attempt?.outcome != null);
+    const attempts = s2
+      .log()
+      .filter((e) => e.attempt?.attemptId === task.attemptId && e.attempt?.outcome != null);
     expect(attempts).toHaveLength(1);
   });
 
-  it('no checkpoint or TRANSFERRED exists before delayed+transfer evidence lands', async () => {
+  it('an unaided delayed check past the retention lag earns RETAINED', async () => {
     const s = sessionFor();
     await s.init();
-    s.start({ learnerName: 'Mai' });
-
-    // Phase 1 only — everything before the retention lag.
-    await scriptedDrive(s);
-    const log1 = s.log();
-    expect(log1.filter((e) => e.eventType === 'checkpoint')).toHaveLength(0);
-    expect(log1.filter((e) => e.eventType === 'delayed_retrieval')).toHaveLength(0);
-    expect(log1.filter((e) => e.eventType === 'transfer_attempt')).toHaveLength(0);
-    for (const slot of s.projection().byCapability.values()) {
-      expect(slot.milestones.retained ?? false).toBe(false);
-      expect(slot.milestones.transferred ?? false).toBe(false);
-    }
+    s.start();
+    // Baseline success → INDEPENDENT; the planner then has nothing due.
+    await s.play();
+    await s.commit({ optionId: 'yes' });
+    s.next();
+    expect(s.screen().type).toBe('summary');
 
     clock += 25 * HOUR;
-    await scriptedDrive(s);
-    expect(s.log().filter((e) => e.eventType === 'checkpoint').length).toBeGreaterThanOrEqual(1);
-  });
-
-  it('the summary is replay-derived: a fresh session reproduces identical states', async () => {
-    const s1 = sessionFor();
-    await s1.init();
-    s1.start({ learnerName: 'Mai' });
-    await scriptedDrive(s1);
-    clock += 25 * HOUR;
-    await scriptedDrive(s1);
-    const sum1 = s1.screen();
-    if (sum1.type !== 'summary') throw new Error('expected summary');
-
-    // Brand-new session object — zero in-memory state; the summary must
-    // come entirely from the replayed log.
     const s2 = sessionFor();
     await s2.init();
-    s2.start({ learnerName: 'Mai' });
-    const sum2 = s2.screen();
-    if (sum2.type !== 'summary') throw new Error('expected summary after reload');
-    expect(sum2.progress).toEqual(sum1.progress);
+    s2.start();
+    const delayed = taskScreen(s2.screen());
+    expect(delayed.taskId).toBe('task.test.delayed.hear');
+    expect(delayed.purpose).toBe('delayed_retrieval');
+    await s2.play();
+    await s2.commit({ optionId: 'yes' });
+
+    const slot = s2.projection().byCapability.get(TEST_CAP);
+    expect(slot?.milestones.independent).toBe(true);
+    expect(slot?.milestones.retained).toBe(true);
+    const evt = s2.log().find((e) => e.taskId === 'task.test.delayed.hear' && e.attempt?.outcome != null);
+    expect(evt?.eventType).toBe('delayed_retrieval');
   });
 
-  it('every served step carries a planner reason — no hard-coded happy path', async () => {
-    const s = sessionFor();
+  it('a mission whose eliciting surface is spoken fails closed at surface_unavailable', async () => {
+    const s = sessionFor(TEST_MISSION_SPOKEN);
     await s.init();
-    s.start({ learnerName: 'Mai' });
-    await scriptedDrive(s);
-    clock += 25 * HOUR;
-    const { reasons } = await scriptedDrive(s);
-    expect(reasons.length).toBeGreaterThan(0);
-    for (const r of reasons) expect(r).toBeTruthy();
+    s.start();
+    const diag = taskScreen(s.screen());
+    await s.play();
+    await s.commit({ optionId: 'no' }); // baseline miss → expose intent
+    s.next();
+
+    /* The only eliciting task is spoken_turn — the planner legitimately
+     * selects it, and the surface must refuse to run it. */
+    const blocked = s.screen();
+    expect(blocked.type).toBe('surface_unavailable');
+    if (blocked.type !== 'surface_unavailable') throw new Error('unreachable');
+    expect(blocked.taskId).toBe('task.test.say.unsupported');
+    expect(blocked.decisionReason).toBeTruthy();
+
+    // No channel mints evidence for an unsupported task.
+    const n0 = s.log().length;
+    await s.commit({ optionId: 'yes' });
+    await s.play();
+    await s.support('hint');
+    await s.view();
+    expect(s.log().length).toBe(n0);
+    expect(s.log().filter((e) => e.taskId === 'task.test.say.unsupported')).toHaveLength(0);
+
+    // The blocked attempt earned nothing: the capability stays untaught.
+    const slot = s.projection().byCapability.get(TEST_CAP);
+    expect(slot?.milestones.independent ?? false).toBe(false);
+    expect(slot?.milestones.supported ?? false).toBe(false);
   });
 });
 
-describe('full mission drive', () => {
-  it('walks the declared learning loop to summary with honest milestones', async () => {
+describe('planner auditability on the servable surface', () => {
+  it('every served step carries a planner reason — no hard-coded happy path', async () => {
     const s = sessionFor();
     await s.init();
-    s.start({ learnerName: 'Mai' });
-
-    // Phase 1: baseline + teaching + remediation + carriers (same-session).
-    await scriptedDrive(s);
-    // Delayed retrieval only exists after the retention lag.
-    clock += 25 * HOUR;
-    await scriptedDrive(s);
-
-    const summary = s.screen();
-    expect(summary.type).toBe('summary');
-    if (summary.type !== 'summary') return;
-
-    const log = s.log();
-    const types = new Map<string, string>();
-    for (const e of log) {
-      if (e.attempt?.outcome != null) types.set(e.taskId, e.eventType);
-    }
-    // Delayed retrieval emits its own event type; transfer a
-    // transfer_attempt; assessment a checkpoint — never blurred.
-    expect(types.get('task.meet.delayed.check')).toBe('delayed_retrieval');
-    expect(types.get('task.meet.transfer.street')).toBe('transfer_attempt');
-    expect(types.get('task.meet.assessment.checkpoint')).toBe('checkpoint');
-
-    const transferEvents = log.filter((e) => e.eventType === 'transfer_attempt');
-    for (const e of transferEvents) {
-      expect(e.context?.practicedOrTransfer).toBe('transfer');
-    }
-    const checkpoints = log.filter((e) => e.eventType === 'checkpoint');
-    expect(checkpoints.every((e) => e.attempt?.attemptId != null)).toBe(true);
-
-    // Honest trajectory: ask_name was SUPPORTED before INDEPENDENT —
-    // the hinted retrieval minted supported, never independent.
-    const askEvents = log.filter(
-      (e) => e.capabilityId === 'interaction.ask_name' && e.attempt?.outcome != null,
-    );
-    const hinted = askEvents.find((e) => e.support?.hint === true);
-    expect(hinted?.attempt?.outcome).toBe('success');
-
-    const proj = s.projection();
-    expect(proj.byCapability.get('interaction.ask_name')?.state).toBe('TRANSFERRED');
-    expect(proj.byCapability.get('production.speak.say_own_name')?.state).toBe('TRANSFERRED');
+    s.start();
+    const { served, reasons } = await drive(s);
+    // The honest terminal state: baseline success → INDEPENDENT → idle.
+    expect(served).toContain('task.test.diagnostic.hear');
+    expect(reasons.length).toBeGreaterThan(0);
+    for (const r of reasons) expect(r).toBeTruthy();
   });
 });

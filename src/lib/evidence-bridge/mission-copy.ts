@@ -82,6 +82,10 @@ export const CAP_LABEL: Record<string, string> = {
   'production.speak.say_own_name': 'Nói tên của mình',
   'interaction.ask_name': 'Hỏi tên người khác',
   'interaction.respond_to_introduction': 'Đáp lại lời giới thiệu',
+  'reception.listen.understand_clock_time': 'Nghe giờ',
+  'production.speak.state_clock_time': 'Nói giờ',
+  'interaction.greet': 'Chào hỏi',
+  'reception.listen.identify_spoken_number': 'Nghe số',
 };
 
 export const STATE_LABEL: Record<string, string> = {
