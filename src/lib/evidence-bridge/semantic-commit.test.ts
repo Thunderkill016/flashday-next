@@ -43,20 +43,30 @@ const seedEvent = (mapped: MappedAttempt) =>
 
 /**
  * Drive the seam the only legal way: runSemanticCommit owns the transaction
- * and requires a real history write.
+ * and mechanically verifies the canonical history row — a callback's return
+ * value is never treated as proof of a write.
  */
-const commitViaSeam = (mapped: MappedAttempt, writeHistory?: () => Promise<boolean>) =>
+const commitViaSeam = (
+  mapped: MappedAttempt,
+  over: {
+    writeHistory?: () => Promise<unknown>;
+    tables?: Parameters<typeof runSemanticCommit>[0]['tables'];
+    verify?: () => void;
+  } = {},
+) =>
   runSemanticCommit({
     database: db,
-    tables: [db.learningAttempts],
+    tables: over.tables ?? [db.learningAttempts],
+    historyTable: db.learningAttempts,
     mapped,
     learnerId: LEARNER,
-    // Mirrors the real producers: an existing row early-exits (false), so
-    // a retry never reaches the event append — pre-cutover stays clean.
-    writeHistory: writeHistory ?? (async () => {
-      if (await db.learningAttempts.get(mapped.attemptId ?? 'sub-1')) return false;
+    verify: over.verify,
+    // Mirrors the real producers: an existing row early-exits, so a retry
+    // never re-writes history — and the seam still skips the event append.
+    writeHistory: over.writeHistory ?? (async () => {
+      if (await db.learningAttempts.get(mapped.attemptId ?? 'sub-1')) return 'noop';
       await db.learningAttempts.add(attemptRow(mapped.attemptId ?? 'sub-1'));
-      return true;
+      return 'created';
     }),
   });
 
@@ -215,9 +225,10 @@ describe('atomic commit mechanics (W2-02 §3, §13, W2-02R2)', () => {
 
   it('F2 — legacy write failure inside the transaction rolls back the event', async () => {
     await expect(
-      commitViaSeam(MAPPED, async () => {
-        await db.learningAttempts.add({ answer: 'no id' } as never);
-        return true;
+      commitViaSeam(MAPPED, {
+        writeHistory: async () => {
+          await db.learningAttempts.add({ answer: 'no id' } as never);
+        },
       }),
     ).rejects.toThrow();
     expect(await db.evidenceEvents.count()).toBe(0);
@@ -232,34 +243,74 @@ describe('atomic commit mechanics (W2-02 §3, §13, W2-02R2)', () => {
     expect(events[0].id).toBe('evt.sub-1');
   });
 
-  it('same event id with different content is refused (fail-closed)', async () => {
+  it('same attempt id redelivery leaves the original event immutable', async () => {
     await commitViaSeam(MAPPED);
-    // History write occurs (put overwrites), but the divergent event
-    // conflicts — the append failure rolls back the history write too.
-    await expect(
-      commitViaSeam({ ...MAPPED, occurredAt: 2000 }, async () => {
-        await db.learningAttempts.put(attemptRow('sub-1'));
-        return true;
-      }),
-    ).rejects.toThrow(/conflict/);
-    expect(await db.evidenceEvents.count()).toBe(1);
+    // History row already exists → the seam never reaches the append; the
+    // committed event stays the original and cannot be mutated by a
+    // divergent redelivery (fail-closed at the event layer).
+    await commitViaSeam({ ...MAPPED, occurredAt: 2000 });
     const events = await db.evidenceEvents.toArray();
+    expect(events).toHaveLength(1);
     expect(events[0].occurredAt).toBe(1000);
   });
 
-  it('the legacy seam has NO event-only escape hatch (W2-02R2)', async () => {
+  it('the legacy seam has NO event-only escape hatch (W2-02R2/R3)', async () => {
     // The append primitive is module-private — the only export is the
     // transaction-owning coordinator, so `commitMappedAttempt`-style
     // standalone minting cannot be expressed by any caller.
     const adapter = await import('./adapter');
     expect('commitMappedAttempt' in adapter).toBe(false);
-    // An evidenceEvents-only transaction through the seam is impossible:
-    // writeHistory is required, and a no-write history returns false.
-    await commitViaSeam(MAPPED, async () => false);
+    // History tables alone cannot smuggle an event — the seam adds
+    // evidenceEvents to the transaction itself, and the append primitive
+    // never reaches a caller at all.
+  });
+
+  it('R3-A — a lying writeHistory (claims success, writes nothing) is refused', async () => {
+    await expect(
+      commitViaSeam(MAPPED, { writeHistory: async () => 'created' }),
+    ).rejects.toThrow(/no history row/);
+    expect(await db.learningAttempts.count()).toBe(0);
     expect(await db.evidenceEvents.count()).toBe(0);
-    // And history tables alone cannot smuggle an event — the seam adds
-    // evidenceEvents to the transaction itself, so history-only callers
-    // never see the append primitive at all.
+  });
+
+  it('R3-B — empty tables cannot mint an event either', async () => {
+    await expect(
+      commitViaSeam(MAPPED, { tables: [], writeHistory: async () => 'created' }),
+    ).rejects.toThrow(/no history row/);
+    expect(await db.evidenceEvents.count()).toBe(0);
+  });
+
+  it('R3-C — a history row under the wrong id does not satisfy the proof', async () => {
+    await expect(
+      commitViaSeam(MAPPED, {
+        writeHistory: async () => {
+          await db.learningAttempts.add(attemptRow('a-different-attempt'));
+          return 'created';
+        },
+      }),
+    ).rejects.toThrow(/no history row/);
+    // Everything rolls back — including the wrong-id row the callback wrote.
+    expect(await db.learningAttempts.count()).toBe(0);
+    expect(await db.evidenceEvents.count()).toBe(0);
+  });
+
+  it('R3-E — a pre-cutover history row never gains a synthetic event', async () => {
+    await db.learningAttempts.add(attemptRow('sub-1'));
+    await commitViaSeam(MAPPED, { writeHistory: async () => 'noop' });
+    expect(await db.learningAttempts.count()).toBe(1);
+    expect(await db.evidenceEvents.count()).toBe(0);
+  });
+
+  it('R3-G — post-append verify failure rolls back history AND event', async () => {
+    await expect(
+      commitViaSeam(MAPPED, {
+        verify: () => {
+          throw new Error('Account changed');
+        },
+      }),
+    ).rejects.toThrow(/Account changed/);
+    expect(await db.learningAttempts.count()).toBe(0);
+    expect(await db.evidenceEvents.count()).toBe(0);
   });
 });
 

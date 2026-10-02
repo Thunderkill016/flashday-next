@@ -68,6 +68,7 @@ export async function persistLearningAttempt(
     await runSemanticCommit({
       database,
       tables: [database.learningAttempts, database.mediaBlobs],
+      historyTable: database.learningAttempts,
       mapped,
       learnerId: currentLearnerId(),
       writeHistory,

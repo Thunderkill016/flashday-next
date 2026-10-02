@@ -77,24 +77,34 @@ property of identity, not of bookkeeping.
 
 ## Atomicity
 
-Design A (§5): the caller opens one Dexie transaction that includes
-`evidenceEvents` **only when** `mapLegacyAttempt` returns a mapping; the
-bridge's `submitAttempt → createDexieEventStore(db.evidenceEvents).append`
-joins the ambient transaction. Unmapped actions keep the exact legacy
+The semantic seam owns the mapped transaction: `mapLegacyAttempt` resolves
+the audit-gated mapping outside the transaction, then
+`runSemanticCommit({ database, tables, historyTable, mapped, learnerId,
+writeHistory, verify })` opens the single Dexie transaction itself —
+every caller-declared history table plus `evidenceEvents` plus the
+canonical `historyTable`. Unmapped actions keep the exact legacy
 transaction shape — zero behavioral change while every audit entry is
 unmapped.
 
 W2-02R2 — the coupling is **structural**: the event append primitive
-(`appendMappedEvent`) is module-private and the only export is
-`runSemanticCommit({ database, tables, mapped, learnerId, writeHistory,
-verify })`. The seam owns the transaction — one Dexie transaction covers
-every history table plus `evidenceEvents`; `writeHistory` performs the real
-legacy writes inside it; the event appends only when a history row was
-actually committed (`writeHistory → true`); `verify` runs post-append in
-the same transaction (account-switch guard). An event-only commit is
-inexpressible through this API — there is no caller-visible primitive that
-mints without a real history write. Defense-in-depth invariants remain:
-the append still asserts `Dexie.currentTransaction` and `evidenceEvents`
+(`appendMappedEvent`) is module-private and the only export is the
+transaction-owning coordinator.
+
+W2-02R3 — the seam does **not** trust `writeHistory`'s return value (a
+callback's `return true` is a claim, not evidence). Inside the transaction
+the seam reads the canonical history row `historyTable.get(mapped.attemptId)`
+BEFORE and AFTER `writeHistory()`:
+
+- row absent before + matching row present after → append the event
+- row present before → never mint (retry or pre-cutover; no event repair)
+- row absent before + absent after → throw; the whole transaction rolls
+  back — a lying or empty `writeHistory` cannot mint
+
+The verified id is `mapped.attemptId` — seam-derived, so a caller cannot
+satisfy the proof with a row under a different key. `verify` runs
+post-append in the same transaction (account-switch guard) and still runs
+on the pre-existing-history path. Defense-in-depth invariants remain: the
+append asserts `Dexie.currentTransaction` and `evidenceEvents`
 participation. Native mission surfaces keep standalone `submitAttempt`.
 
 | Path | Transaction tables (mapped case) |
@@ -112,23 +122,25 @@ Remote sync is outside the semantic transaction (F3): no sync call was added;
 | F1 — event append fails inside tx (conflict) | all legacy writes roll back | `semantic-commit.test.ts` mechanism + real-path tests |
 | F2 — legacy write fails inside tx | the event rolls back | mechanism test (forced legacy failure) |
 | F3 — remote/sync failure after commit | irrelevant — local commit already durable; nothing calls sync | by construction; no sync in the seam |
-| Duplicate submit | `learningAttempts.get(id)` early-return → no-op; or identical event → dedupe | wired-path test |
-| Same id, different content | conflict → refusal, old rows unchanged | store-level + mechanism tests |
+| Duplicate submit | `learningAttempts.get(id)` early-return → seam sees the row → no mint; identical event → dedupe | wired-path test |
+| Same attempt id, divergent content | history row already exists → seam never appends; original event stays immutable | redelivery immutability test |
 | Account switch mid-tx | `database !== db` / `isCurrent()` guards roll back history AND event | guard runs after the commit call |
-| Event-only commit | inexpressible — append primitive is module-private; `runSemanticCommit` requires `writeHistory` | escape-hatch test (W2-02R2) |
-| `writeHistory` early-exits (retry/pre-cutover) | returns false → event append skipped — nothing minted | escape-hatch + pre-cutover tests |
+| Event-only commit | inexpressible — append primitive is module-private; `runSemanticCommit` mechanically verifies a new `historyTable[mapped.attemptId]` row materialized inside the transaction | escape-hatch + lying-callback + empty-tables + wrong-id tests (W2-02R2/R3) |
+| `writeHistory` claims success but writes nothing | seam reads the row itself → throw → full rollback | lying-callback regression (R3-A/B) |
+| `writeHistory` writes a row under a different id | `get(mapped.attemptId)` still absent → throw → rollback | wrong-id regression (R3-C) |
+| Pre-existing history row (retry/pre-cutover) | seam sees row before the write → never mints (no event repair) | pre-cutover regression (R3-E) |
+| Post-append `verify` throws | history AND event roll back | post-append verify regression (R3-G) |
 | `MAPPED_SAFE` w/o provenance mapper | `mapLegacyAttempt` throws | mapper-contract tests |
 | Mapper drops declared support fact | `mapLegacyAttempt` throws `dropped support provenance` | laundering-guard test |
 | Unmapped action | history persists, zero EvidenceEvents | production-path test |
-| Pre-cutover row | history exists + no event → retry mints nothing (early-return precedes the commit call) | pre-cutover test |
 
 ## Forward-only cutover
 
 No discriminator column is needed: events are minted only inside the live
-submission transaction, and the idempotent early-return
-(`learningAttempts.get(submission.id)`) precedes the commit call. A row that
-predates the adapter can never gain an event — retries hit the early return,
-and no read path mints (§10, §12, §27: no upgrade/hydration/sync backfill).
+submission transaction, and the seam itself reads the canonical row before
+`writeHistory` — a row that predates the adapter is seen as existing and
+can never gain an event (W2-02R3; no event repair). No read path mints
+either (§10, §12, §27: no upgrade/hydration/sync backfill).
 
 ## MAPPED_SAFE is a mapper contract, not a flag (W2-02R)
 
@@ -165,7 +177,8 @@ changes, no new capability semantics — and no fabricated task contracts.
 ## Files
 
 - `src/lib/evidence-bridge/adapter.ts` — audit table + `mapLegacyAttempt` +
-  `commitMappedAttempt` (the single adapter surface)
+  `runSemanticCommit` (the single adapter surface; `appendMappedEvent` is
+  module-private)
 - `src/lib/db.ts` — `currentLearnerId()` (persistent `local.<uuid>` subject)
 - `src/app/(app)/mission/page.tsx` — mission path shares `currentLearnerId()`
 - `src/lib/vocabulary-repository.ts` — tx list + seam call

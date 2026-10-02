@@ -208,58 +208,89 @@ const registry = () => (cachedRegistry ??= fixtureRegistry());
  * ambient-transaction assertions are kept as defense-in-depth invariants.
  */
 async function appendMappedEvent(
-  database: { evidenceEvents?: Table<EvidenceEvent, string> },
+  evidenceEvents: Table<EvidenceEvent, string>,
   mapped: MappedAttempt,
   learnerId: string,
 ): Promise<void> {
   const tx = Dexie.currentTransaction;
   if (!tx) throw new Error('legacy semantic event append requires the ambient semantic transaction');
-  if (!database.evidenceEvents) {
-    throw new Error('mapped semantic commit requires the evidenceEvents table in scope');
-  }
-  if (!tx.storeNames.includes(database.evidenceEvents.name))
+  if (!tx.storeNames.includes(evidenceEvents.name))
     throw new Error('ambient transaction does not include evidenceEvents');
-  await submitAttempt(createDexieEventStore(database.evidenceEvents), registry(), {
+  await submitAttempt(createDexieEventStore(evidenceEvents), registry(), {
     ...mapped,
     learnerId,
   });
 }
 
 /**
- * W2-02R2 — the ONLY legacy semantic-commit operation. The seam owns the
+ * The canonical history artifact the seam verifies: a row readable by id.
+ * Both producers persist `learningAttempts` keyed by the submission /
+ * attempt id — which is `mapped.attemptId`. The seam derives the id itself
+ * so a caller cannot name a different row than the event's attempt.
+ * Typed as plain `Table` (any) — a narrower structural interface triggers
+ * TS2589 against Dexie's overloaded Table surface on generic call sites.
+ */
+export type SemanticHistoryTable = Table;
+
+/**
+ * W2-02R3 — the ONLY legacy semantic-commit operation. The seam owns the
  * transaction: one Dexie transaction covers every history table plus
- * evidenceEvents; `writeHistory` performs the real legacy writes inside it;
- * the event appends only if a history row was actually committed. Either
- * side throwing aborts everything — and because the append primitive is
- * module-private, no caller can mint an event without supplying a real
- * history write.
+ * evidenceEvents; `writeHistory` performs the real legacy writes inside it.
+ *
+ * The seam does NOT trust writeHistory's return value — a callback's
+ * `return true` is a claim, not evidence. Inside the transaction the seam
+ * reads the canonical history row BEFORE and AFTER the callback:
+ *
+ *   row absent before + matching row present after → append event
+ *   row present before                            → never mint (a retry or
+ *     pre-cutover row can never gain a synthetic event — no event repair)
+ *   row absent before + absent after              → throw: writeHistory
+ *     lied, the whole transaction rolls back
+ *
+ * The verified id is `mapped.attemptId` — seam-derived, not caller-chosen.
+ * Either side throwing aborts everything, and because the append primitive
+ * is module-private, no caller can mint an event without a materialized
+ * history row.
  *
  * Contract semantics stay in the bridge (taskId → evaluator/binder); this
  * coordinator owns ordering and atomicity only, never semantic fields.
  *
- * `writeHistory` returns false when it early-exited (e.g. an idempotent
- * retry finding the row already present) — the event append is then
- * skipped, so a pre-cutover history row can never gain a synthetic event.
+ * `writeHistory`'s return value is control-flow only (e.g. 'created' vs
+ * 'noop') — it is never used as proof of history.
  */
 export async function runSemanticCommit(args: {
-  database: Dexie & { evidenceEvents?: Table<EvidenceEvent, string> };
-  /** Every table the history write touches. evidenceEvents is added by the seam. */
+  /** The live Dexie instance the seam opens its transaction on. Must expose
+   *  an `evidenceEvents` object store — a database without it is refused. */
+  database: Dexie;
+  /** Every table the history write touches. evidenceEvents + historyTable are added by the seam. */
   tables: Table[];
+  /** Canonical history table — the seam reads row `mapped.attemptId` before/after the write. */
+  historyTable: SemanticHistoryTable;
   mapped: MappedAttempt;
   learnerId: string;
-  writeHistory: () => Promise<boolean>;
+  /** Performs the real legacy writes. Its return value is control-flow
+   *  only ('created'/'noop') — never used as proof that history exists. */
+  writeHistory: () => Promise<unknown>;
   /** Post-append check inside the transaction (e.g. account-switch guard). */
   verify?: () => void;
 }): Promise<void> {
-  const { database, tables, mapped, learnerId, writeHistory, verify } = args;
-  if (!database.evidenceEvents) throw new Error('mapped semantic commit requires the evidenceEvents table in scope');
-  const storeNames = [...tables.map((t) => t.name), database.evidenceEvents.name];
-  // Plain-Dexie view keeps transaction()'s table-mapped generics cheap;
-  // the intersection-with-optional-table type otherwise explodes (TS2589).
-  const dexie: Dexie = database;
-  await dexie.transaction('rw', storeNames, async () => {
-    const wrote = await writeHistory();
-    if (wrote) await appendMappedEvent(database, mapped, learnerId);
+  const { database, tables, historyTable, mapped, learnerId, writeHistory, verify } = args;
+  // evidenceEvents is a dynamic Dexie member declared on db subclasses —
+  // narrowing here keeps callers from comparing their full concrete type
+  // against an intersection (TS2589 on Dexie's overloaded surface).
+  const evidenceEvents = (database as { evidenceEvents?: Table<EvidenceEvent, string> }).evidenceEvents;
+  if (!evidenceEvents) throw new Error('mapped semantic commit requires the evidenceEvents table in scope');
+  if (!mapped.attemptId) throw new Error('semantic commit refused: mapped attempt has no attemptId to verify history');
+  const historyId = mapped.attemptId;
+  const storeNames = [...new Set([...tables.map((t) => t.name), historyTable.name, evidenceEvents.name])];
+  await database.transaction('rw', storeNames, async () => {
+    const before = await historyTable.get(historyId);
+    await writeHistory();
+    if (!before) {
+      const after = await historyTable.get(historyId);
+      if (!after) throw new Error(`semantic commit refused: writeHistory materialized no history row ${historyId}`);
+      await appendMappedEvent(evidenceEvents, mapped, learnerId);
+    }
     verify?.();
   });
 }

@@ -2495,11 +2495,13 @@
         "database.learningAttempts,",
         "await database.learningAttempts.add({",
         "const introduced = introducedVocabularyToday(await database.learningAttempts.toArray(), mode, now);",
+        "historyTable: database.learningAttempts,",
         "if (await database.learningAttempts.get(submission.id)) return false;",
+        "// verifies the canonical history row (learningAttempts[submission.id])",
         "introducedVocabularyToday,"
       ],
       "classification": "LEGIT_SCHEDULING",
-      "reason": "attempt writes + introducedVocabularyToday budget (W2-02: evidenceEvents joins the tx list only when a registered contract maps the action)",
+      "reason": "attempt writes + introducedVocabularyToday budget (W2-02: evidenceEvents joins the tx list only when a registered contract maps the action; W2-02R3: seam verifies the canonical row)",
       "migrationNode": "W2-PL1"
     },
     {
@@ -2825,11 +2827,22 @@
         "...(attempt.cycle?.assisted ? { assisted: true } : {}),",
         "...(attempt.cycle?.sourceRevealed ? { sourceRevealed: true } : {}),",
         "feedback: attempt.feedback,",
+        "historyTable: database.learningAttempts,",
         "tables: [database.learningAttempts, database.mediaBlobs],",
         "await database.transaction('rw', [database.learningAttempts, database.mediaBlobs], writeHistory);"
       ],
       "classification": "LEGIT_HISTORY",
       "reason": "W2-02 adapter input: attempt fields → LegacyAction for contract-audited mapping; mints nothing without a MAPPED_SAFE contract (W2-03 gap)",
+      "migrationNode": "W2-AT1"
+    },
+    {
+      "id": "lib-evidence-bridge-adapter.learningAttempts",
+      "file": "src/lib/evidence-bridge/adapter.ts",
+      "source": "learningAttempts",
+      "anchor": "see reason",
+      "occurrences": ["* Both producers persist `learningAttempts` keyed by the submission /"],
+      "classification": "LEGIT_HISTORY",
+      "reason": "doc comment naming the canonical history table the W2-02R3 seam verifies — no read or claim",
       "migrationNode": "W2-AT1"
     }
   ]

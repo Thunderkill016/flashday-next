@@ -236,12 +236,14 @@ export async function saveVocabularySubmission(
     });
     return true;
   };
-  // W2-02R2: the seam owns the mapped transaction — history write and event
-  // append are structurally coupled; an event can never commit alone.
+  // W2-02R2/R3: the seam owns the mapped transaction and mechanically
+  // verifies the canonical history row (learningAttempts[submission.id])
+  // materialized before the event append — a caller claim is not evidence.
   if (mapped) {
     await runSemanticCommit({
       database,
       tables: historyTables,
+      historyTable: database.learningAttempts,
       mapped,
       learnerId: currentLearnerId(),
       writeHistory,
