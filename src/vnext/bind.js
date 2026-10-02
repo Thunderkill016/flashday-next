@@ -49,7 +49,7 @@ const derivedContext = (task, raw) => ({
   partnerType: raw?.partnerType ?? null
 });
 
-const bindEvaluation = (task, raw) => {
+const bindEvaluation = (task, raw, evalReport) => {
   // Authority is contract-derived — the caller may report evaluator
   // identity/version, never a stronger authority than declared.
   const declared = task.evaluation?.authority ?? 'deterministic';
@@ -76,12 +76,20 @@ const bindEvaluation = (task, raw) => {
   if (missing.some((f) => !required.includes(f))) {
     throw new Error(`evaluation.missingFunctions must be a subset of the task's requiredFunctions — got '${missing.filter((f) => !required.includes(f)).join(', ')}'`);
   }
+  /* scoredAgainst is evaluator-derived scoring provenance (W2-02.5):
+   * which authoritative artifact + canonical target the evaluator
+   * actually scored. A caller authoring it could claim any target — it
+   * enters only through the eval report the bridge computed. */
+  if (raw?.evaluation?.scoredAgainst != null) {
+    throw new Error('evaluation.scoredAgainst is evaluator-derived — the caller may not author it');
+  }
   return {
     authority: declared,
     contractId,
     evaluator: raw?.evaluation?.evaluator ?? null,
     version: raw?.evaluation?.version ?? null,
-    missingFunctions: missing
+    missingFunctions: missing,
+    ...(evalReport?.scoredAgainst != null ? { scoredAgainst: evalReport.scoredAgainst } : {})
   };
 };
 
@@ -92,7 +100,10 @@ const bindingMeta = (task, capability) => ({
   effectiveSupportAllowed: effectiveAllowedSupport(capability, task)
 });
 
-export function bindAttempt(task, capability, raw = {}) {
+/** @param {*} task @param {*} capability @param {*} [raw]
+ * @param {{ scoredAgainst?: { contentId?: string | null, scoredTarget?: string } }} [evalReport]
+ *   evaluator-computed provenance (bridge only — never caller-authored) */
+export function bindAttempt(task, capability, raw = {}, evalReport = undefined) {
   if (task.capabilityId !== capability.id) {
     throw new Error(`task '${task.id}' belongs to capability '${task.capabilityId}', not '${capability.id}'`);
   }
@@ -126,7 +137,7 @@ export function bindAttempt(task, capability, raw = {}) {
     attempt: raw.attempt,
     support: raw.support,
     feedback: raw.feedback,
-    evaluation: bindEvaluation(task, raw),
+    evaluation: bindEvaluation(task, raw, evalReport),
     binding: bindingMeta(task, capability)
   });
 }

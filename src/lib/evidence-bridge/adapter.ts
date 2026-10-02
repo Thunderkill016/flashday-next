@@ -35,6 +35,9 @@ export interface LegacyAction {
   /** Mode/activity/stage discriminator — combined with kind into the audit key. */
   mode: string;
   occurredAt: number;
+  /** Authoritative source artifact a scoring resolver may consult inside the
+   * transaction (e.g. the ContentItem id whose title is the spelling target). */
+  contentId?: string;
   /** Observed learner production — passed through verbatim, never interpreted. */
   response?: unknown;
   /** Support actually exposed to the learner (revealed answer, hints...). */
@@ -54,7 +57,11 @@ export type MappingStatus = 'MAPPED_SAFE' | 'HISTORY_ONLY' | 'BLOCKED_PENDING_W2
  * state — those remain registered-contract derived inside the bridge.
  * Event identity (id/attemptId) and taskId stay adapter-owned.
  */
-export type ObservedAttempt = Pick<MappedAttempt, 'response' | 'support' | 'feedback' | 'occurredAt' | 'evaluationCtx'>;
+export type ObservedAttempt = Pick<MappedAttempt, 'response' | 'support' | 'feedback' | 'evaluationCtx'> & {
+  /** May override the action's attempt timestamp; omitted → the seam
+   * stamps action.occurredAt (the immutable Compare-boundary time). */
+  occurredAt?: number;
+};
 
 /**
  * One audit row per live legacy action shape. MAPPED_SAFE requires BOTH a
@@ -64,11 +71,26 @@ export type ObservedAttempt = Pick<MappedAttempt, 'response' | 'support' | 'feed
  * submission. BLOCKED_PENDING_W2_03 names the contract gap W2-03 must
  * close. Nothing here may invent semantics to force a mapping.
  */
+/**
+ * Trusted scoring truth a contract may need beyond the response — e.g.
+ * the authoritative spelling target. It resolves INSIDE the seam's
+ * transaction (same atomic view as the history write) and reaches the
+ * evaluator through the bridge's trusted channel — never through the
+ * caller-visible submission (a caller-supplied target could score
+ * answer===answer). Returning undefined leaves the evaluator unscorable
+ * → the commit refuses closed.
+ */
+export type ScoringResolver = (
+  database: Dexie,
+  action: LegacyAction,
+) => Promise<{ target?: string; contentId?: string } | undefined>;
+
 export interface LegacyAuditEntry {
   action: string;
   status: MappingStatus;
   taskId?: string;
   map?: (action: LegacyAction) => ObservedAttempt;
+  resolveScoring?: ScoringResolver;
   reason: string;
 }
 
@@ -81,8 +103,24 @@ export const LEGACY_CONTRACT_AUDIT: readonly LegacyAuditEntry[] = [
   },
   {
     action: 'vocabulary:spelling',
-    status: 'BLOCKED_PENDING_W2_03',
-    reason: 'typed orthographic production; no typed response shape exists in any registered contract',
+    status: 'MAPPED_SAFE',
+    taskId: 'task.vocab.spelling.v1',
+    // W2-02.5 pilot: typed orthographic production under a meaning cue.
+    // `revealed` is the post-production compare step (the target word is
+    // hidden until the answer is locked), so the mapper authors NO support
+    // flags — declaring it here would mislabel provenance.
+    map: (action) => ({
+      response: { text: typeof action.response === 'string' ? action.response : '' },
+      support: {},
+    }),
+    // The scoring target is the authoritative ContentItem's title,
+    // resolved inside the seam transaction — never the UI snapshot.
+    resolveScoring: async (database, action) => {
+      if (!action.contentId) return undefined;
+      const item = await database.table('contents').get(action.contentId);
+      return item?.type === 'word' && !item.deletedAt ? { target: item.title, contentId: item.id } : undefined;
+    },
+    reason: 'W2-02.5 pilot — deterministic exact-match contract on typed spelling production',
   },
   {
     action: 'vocabulary:dictation',
@@ -157,7 +195,11 @@ export const LEGACY_CONTRACT_AUDIT: readonly LegacyAuditEntry[] = [
  * submission may never carry capabilityId, purpose, modality, transfer, or
  * evaluation authority — those stay contract-derived inside the bridge.
  */
-export type MappedAttempt = Omit<AttemptSubmission, 'learnerId'>;
+export type MappedAttempt = Omit<AttemptSubmission, 'learnerId'> & {
+  /** Seam-internal: resolves trusted scoring truth inside the commit
+   * transaction. Stripped before the submission reaches the bridge. */
+  resolveScoring?: (database: Dexie) => ReturnType<ScoringResolver>;
+};
 
 const auditKey = (action: LegacyAction) => `${action.kind}:${action.mode}`;
 
@@ -190,11 +232,14 @@ export function mapLegacyAttempt(action: LegacyAction): MappedAttempt | null {
   if (dropped.length > 0)
     throw new Error(`mapped submission for ${entry.action} dropped support provenance: ${dropped.join(', ')}`);
   return {
+    ...observed,
+    // Identity is adapter-pinned AFTER the observed spread — a mapper can
+    // never redirect the event id, the attempt id, or the contract.
     taskId: entry.taskId,
     id: `evt.${action.id}`,
     attemptId: action.id,
-    ...observed,
     occurredAt: observed.occurredAt ?? action.occurredAt,
+    resolveScoring: entry.resolveScoring ? (db) => entry.resolveScoring!(db, action) : undefined,
   };
 }
 
@@ -208,6 +253,7 @@ const registry = () => (cachedRegistry ??= fixtureRegistry());
  * ambient-transaction assertions are kept as defense-in-depth invariants.
  */
 async function appendMappedEvent(
+  database: Dexie,
   evidenceEvents: Table<EvidenceEvent, string>,
   mapped: MappedAttempt,
   learnerId: string,
@@ -216,10 +262,21 @@ async function appendMappedEvent(
   if (!tx) throw new Error('legacy semantic event append requires the ambient semantic transaction');
   if (!tx.storeNames.includes(evidenceEvents.name))
     throw new Error('ambient transaction does not include evidenceEvents');
-  await submitAttempt(createDexieEventStore(evidenceEvents), registry(), {
-    ...mapped,
-    learnerId,
-  });
+  // Trusted scoring truth resolves inside the ambient transaction — the
+  // same atomic view the history write saw — and reaches the evaluator
+  // through the bridge's trusted channel, never the submission. A
+  // resolver that finds nothing leaves the evaluator unscorable → the
+  // bridge refuses and the whole commit rolls back (fail closed).
+  const scoring = await mapped.resolveScoring?.(database);
+  const { resolveScoring: _resolver, ...observed } = mapped;
+  await submitAttempt(
+    createDexieEventStore(evidenceEvents),
+    registry(),
+    // The event id is pinned to evt.<attemptId> at the mint point — a
+    // payload-carried id can never redirect the canonical identity.
+    { ...observed, learnerId, id: `evt.${mapped.attemptId}` },
+    scoring ? { scoring } : undefined,
+  );
 }
 
 /**
@@ -296,13 +353,15 @@ export async function runSemanticCommit(args: {
       // event exists, re-deliver through the canonical store: identical
       // content dedupes, divergent content throws the conflict — a mutated
       // retry is refused. Event absent ⇒ pre-cutover row: no mint, no repair.
-      const existing = await evidenceEvents.get(mapped.id ?? `evt.${historyId}`);
-      if (existing) await appendMappedEvent(evidenceEvents, mapped, learnerId);
+      // Canonical event identity is pinned to the attempt — never
+      // whatever id the mapped payload happens to carry.
+      const existing = await evidenceEvents.get(`evt.${historyId}`);
+      if (existing) await appendMappedEvent(database, evidenceEvents, mapped, learnerId);
     } else {
       await writeHistory();
       const after = await historyTable.get(historyId);
       if (!after) throw new Error(`semantic commit refused: writeHistory materialized no history row ${historyId}`);
-      await appendMappedEvent(evidenceEvents, mapped, learnerId);
+      await appendMappedEvent(database, evidenceEvents, mapped, learnerId);
     }
     verify?.();
   });

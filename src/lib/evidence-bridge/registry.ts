@@ -10,6 +10,7 @@
 import { CAPABILITIES } from '@/vnext/capabilities';
 import { checkCurriculum } from '@/vnext/curriculum-checks';
 import { FIXTURES } from '@/vnext/fixtures';
+import { CAP_VOCAB_LEXICAL_FORM_RECALL, MISSION_VOCABULARY_PRACTICE, TASK_VOCAB_SPELLING } from '@/vnext/vocab-pilot';
 import type { ContractRegistry, KernelCapability, KernelMission, KernelTask } from './types';
 
 export function createRegistry(input: {
@@ -62,8 +63,10 @@ export function createRegistry(input: {
 /** The vendored curriculum + canonical capability set, as shipped. */
 export function fixtureRegistry(): ContractRegistry {
   return createRegistry({
-    tasks: FIXTURES.flatMap((f) => f.tasks) as KernelTask[],
-    capabilities: CAPABILITIES as KernelCapability[],
-    missions: FIXTURES.map((f) => f.mission) as KernelMission[],
+    // W2-02.5 spelling pilot contracts — registered through the same
+    // authoring gate, never a side-channel.
+    tasks: [...FIXTURES.flatMap((f) => f.tasks), TASK_VOCAB_SPELLING] as KernelTask[],
+    capabilities: [...CAPABILITIES, CAP_VOCAB_LEXICAL_FORM_RECALL] as KernelCapability[],
+    missions: [...FIXTURES.map((f) => f.mission), MISSION_VOCABULARY_PRACTICE] as KernelMission[],
   });
 }

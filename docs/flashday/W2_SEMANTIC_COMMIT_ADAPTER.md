@@ -199,3 +199,85 @@ changes, no new capability semantics — and no fabricated task contracts.
 - `src/lib/authority-guardrails/legacy-claim-sites.json` — reclassified the
   seam's sensitive occurrences (new `learningAttempts-semantic-seam` site;
   vocabulary tx-list lines updated per family)
+
+---
+
+# W2-02.5 — Single Contract Pilot (vocabulary `spelling`)
+
+The first honest activation: `vocabulary:spelling` flips
+`BLOCKED_PENDING_W2_03 → MAPPED_SAFE`. Every other audited action remains
+blocked — the pilot proves the mechanism on the smallest honest surface,
+it does not begin the W2-03 migration.
+
+## Contracts (registered through `checkCurriculum`, no side-channel)
+
+- **Capability** `production.write.lexical_form_recall` (modality
+  `writing`, `supportAllowed: []`) — produce the written form of a learned
+  lexical item cued by its stored meaning. Deliberately narrow: one verified
+  unaided exact-match attempt evidences lexical-form retrieval, NOT general
+  writing or vocabulary mastery. `evidence.delayedRequired/transferRequired`
+  stay false — retention and transfer are later contract coverage.
+- **Mission** `mission.vocabulary_practice.v1` — the capability rides as a
+  **carrier** (rehearsed evidence only; the mission owes it no diagnostic,
+  delayed-retrieval, transfer, or assessment package).
+- **Task** `task.vocab.spelling.v1` — purpose `retrieval`, response `text`,
+  practiced family, `evaluation: { authority: deterministic, contractId:
+  eval.exact_match.v1 }`. Canonical prompt family derived via
+  `canonicalFamilyId` over its context signature.
+
+## `eval.exact_match.v1` — deterministic orthographic evaluator
+
+`src/vnext/evaluators.js`. Scores `canonicalExactText(response) ===
+canonicalExactText(trusted target)` — `success`/`fail`, never `partial`,
+`attributesFunctions: false` (a miss cannot attribute to a substrate
+function). Shares the ONE normalization definition with the legacy
+spelling check via `src/vnext/normalize.js` (`vocabulary.ts` delegates —
+parity is structural, not a duplicated implementation).
+
+Returns `null` when no trusted target is present — unscorable.
+
+## Trusted scoring target — never UI-authored (the forged-target guard)
+
+The target is **trusted evaluator input**, resolved inside the seam's own
+transaction by the audit entry's `resolveScoring(database, action)` — the
+pilot reads the authoritative `ContentItem.title` under the same atomic
+view that wrote history. It reaches the evaluator only through
+`submitAttempt`'s `trusted` parameter — never through the submission:
+
+- `checkForgery` rejects `evaluationCtx.target` / `evaluationCtx.scoring`
+  and `evaluation.scoredAgainst` on any caller submission.
+- `bindEvaluation` rejects `raw.evaluation.scoredAgainst` — it enters only
+  via the evaluator report the bridge computed.
+- A declared contract whose evaluator abstains (`null` report — e.g. no
+  trusted target) **fails closed**: the bridge throws rather than mint an
+  outcome-less (or caller-outcome-laundered) event.
+- The event stamps `evaluation.scoredAgainst = { contentId, scoredTarget }`
+  (the canonical target actually scored) — replay audits what "correct"
+  meant at commit time, not whatever `contents.title` holds today. A word
+  title mutated between retries makes the re-delivery divergent →
+  canonical conflict, never silent dedupe.
+
+## Immutable attempt timestamp + pinned event identity
+
+- `VocabularySubmission.attemptedAt` is captured once in
+  `vocabulary-practice.tsx` when the learner locks the answer (Compare
+  answer / "I don't know yet" — the target only becomes visible after
+  that boundary). `saveVocabularySubmission` maps `occurredAt:
+  attemptedAt ?? now` — persist wall-clock never backdates the attempt,
+  and a retry carrying a *different* `attemptedAt` is a divergent
+  redelivery → conflict.
+- Event id is pinned to `evt.<attemptId>` at the mint point — the seam
+  derives it from `mapped.attemptId`, ignoring any payload-carried id.
+- The seam pins adapter-owned fields AFTER the observed spread — a mapper
+  can never redirect `taskId`, `id`, or `attemptId`.
+
+## What the pilot proves end-to-end (`spelling-pilot.test.ts`, 33 tests)
+
+`saveVocabularySubmission → runSemanticCommit → learningAttempts row +
+EvidenceEvent` in one Dexie transaction; outcome comes from the
+deterministic evaluator, not the self-rating (`rating 4` on a wrong
+spelling mints `fail`); a fail marks EXPOSED without independent credit;
+one unaided exact-match success promotes `INDEPENDENT` on the narrow
+capability only and touches nothing else; deleted/renamed targets roll
+back or conflict. `revealed` is post-production compare — it lands in
+history only, never in `event.support`.

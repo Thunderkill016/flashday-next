@@ -20,6 +20,7 @@
  * name must never mint an outcome (fail closed).
  */
 import { meetsCheck } from '../core/mission-checks.js';
+import { canonicalExactText } from './normalize.js';
 
 export const EVALUATOR_VERSION = 1;
 
@@ -249,6 +250,33 @@ export const EVALUATORS = {
      * fail justifies them as missingFunctions. */
     attributesFunctions: true,
     score: (task, response) => scoreChoice(task, response?.optionId ?? response)
+  },
+  /* W2-02.5 vocabulary-spelling pilot. Scores a typed response against an
+   * authoritative target — but the target is TRUSTED evaluator input, never
+   * caller-supplied: it arrives on ctx.scoring, a channel only reachable
+   * through the bridge's trusted-context parameter (a caller who put
+   * 'target' on the untrusted submission could score answer===answer).
+   * No target → null (unscorable → the bridge refuses to mint). */
+  'eval.exact_match.v1': {
+    contractId: 'eval.exact_match.v1',
+    describe: 'success iff canonicalExactText(response) === canonicalExactText(trusted target)',
+    /* 'wrong form' is not a substrate function — a miss cannot attribute
+     * to anything the task declared. */
+    attributesFunctions: false,
+    score: (task, response, ctx = {}) => {
+      const target = ctx?.scoring?.target;
+      if (typeof target !== 'string' || !target.trim()) return null;
+      const scoredTarget = canonicalExactText(target);
+      const text = typeof response === 'string' ? response : response?.text ?? '';
+      return {
+        outcome: canonicalExactText(text) === scoredTarget ? 'success' : 'fail',
+        /* The canonical target actually scored — stamped into the event's
+         * evaluation so replay audits what 'correct' meant at commit time,
+         * not whatever contents.title happens to hold today. */
+        scoredTarget,
+        missingFunctions: []
+      };
+    }
   }
 };
 

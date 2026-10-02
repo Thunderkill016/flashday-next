@@ -108,6 +108,10 @@ export interface VocabularySubmission {
   rating: number;
   expectedReview?: number;
   context?: string;
+  /** Immutable attempt timestamp — captured when the learner locked the
+   * answer (Compare boundary), reused verbatim on every retry. `now`
+   * (persist wall-clock) must never backdate or refresh it. */
+  attemptedAt?: number;
 }
 export async function saveVocabularySubmission(
   submission: VocabularySubmission,
@@ -132,9 +136,16 @@ export async function saveVocabularySubmission(
     id: submission.id,
     kind: 'vocabulary',
     mode,
-    occurredAt: now,
+    // The attempt's own timestamp — `now` is persist wall-clock and must
+    // not backdate the attempt or make a redelivery look divergent.
+    occurredAt: submission.attemptedAt ?? now,
     response: answer,
-    support: { revealed: true, context: context ?? null },
+    contentId,
+    // `revealed` is the post-production compare step — it cannot scaffold
+    // production (the target stays hidden until the answer is locked), so
+    // it is never declared as attempt support. `context` is observational
+    // learner metadata, not an answer-bearing flag.
+    support: { context: context ?? null },
   });
   const historyTables = [
     database.contents,

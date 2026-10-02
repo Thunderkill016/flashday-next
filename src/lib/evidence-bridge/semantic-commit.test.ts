@@ -124,16 +124,20 @@ describe('contract-mapping audit (W2-02 §6–§8)', () => {
     expect(LEGACY_CONTRACT_AUDIT.map((e) => e.action).sort()).toEqual(expected.sort());
   });
 
-  it('maps nothing today — every action is history-only or a W2-03 gap', () => {
+  it('maps exactly one action — the W2-02.5 spelling pilot; the rest stay blocked', () => {
+    const safe = LEGACY_CONTRACT_AUDIT.filter((e) => e.status === 'MAPPED_SAFE');
+    expect(safe.map((e) => e.action)).toEqual(['vocabulary:spelling']);
+    expect(safe[0].taskId).toBe('task.vocab.spelling.v1');
+    expect(typeof safe[0].map).toBe('function');
+    expect(typeof safe[0].resolveScoring).toBe('function');
     for (const entry of LEGACY_CONTRACT_AUDIT) {
-      expect(entry.status, `${entry.action} claims a mapping`).not.toBe('MAPPED_SAFE');
-      expect(entry.status).not.toBe('MAPPED_SAFE');
       expect(entry.reason.length).toBeGreaterThan(0);
     }
   });
 
-  it('mapLegacyAttempt returns null for every audited action — no fake minting', () => {
+  it('mapLegacyAttempt returns null for every still-unmapped action — no fake minting', () => {
     for (const entry of LEGACY_CONTRACT_AUDIT) {
+      if (entry.status === 'MAPPED_SAFE') continue;
       const [kind, mode] = entry.action.split(':') as [LegacyAction['kind'], string];
       expect(mapLegacyAttempt(legacyAction({ kind, mode })), entry.action).toBeNull();
     }
