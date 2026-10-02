@@ -460,28 +460,6 @@
       "migrationNode": "W2-PL1"
     },
     {
-      "id": "components-dashboard-today-plan.assessment-currentLevel",
-      "file": "src/components/dashboard/today-plan.tsx",
-      "source": "assessment.currentLevel",
-      "anchor": "TodayPlan:levelToPlanInput",
-      "occurrences": [
-        "import { useAssessmentStore } from '@/stores/assessment-store';",
-        "const levelEstimate = useAssessmentStore((state) => state.placement?.levelEstimate ?? null);",
-        "const plan = await generateDailyPlan(goalOverride, { levelEstimate, learningGoal: currentGoal });",
-        "setTasks(syncedPlan, signature, levelEstimate ?? '');",
-        "[currentGoal, levelEstimate, setTasks],",
-        "if (dateKey !== today || dataSignature !== signature || levelKey !== (levelEstimate ?? '')) {",
-        "}, [levelEstimate, dataSignature, dateKey, generate, goal, levelKey, syncCompletedTasks]);",
-        "const planExplanation = `${buildDailyPlanGoalExplanation(currentGoal, levelEstimate)} ${",
-        "levelEstimate",
-        "? messages.todayPlan.explanationWithLevel.replace('{{level}}', levelEstimate)"
-      ],
-      "classification": "LEGIT_CANDIDATE_SIGNAL",
-      "reason": "TRANSITIONAL advisory candidate: currentLevel \u2192 generateDailyPlan input + levelKey invalidation. Permitted today as placement-advisory; does not survive final planner authority (W2-PL1) unless the W2-00R2 placement boundary justifies it.",
-      "migrationNode": "W2-AS1",
-      "transitional": true
-    },
-    {
       "id": "components-dashboard-today-plan.dailyPlan",
       "file": "src/components/dashboard/today-plan.tsx",
       "source": "dailyPlan",
@@ -490,10 +468,10 @@
         "import { generateDailyPlan, getDailyPlanSignature } from '@/lib/daily-plan';",
         "import { SESSION_ACTIVITY_EVENT, syncPlanTasksWithActivity } from '@/lib/daily-plan-progress';",
         "import { todayKey, useDailyPlanStore } from '@/stores/daily-plan-store';",
-        "useDailyPlanStore();",
+        "const { tasks, dateKey, dataSignature, goal, skipTask, setTasks, updateStreak, hydrate } = useDailyPlanStore();",
         "const syncedTasks = await syncPlanTasksWithActivity(tasks);",
         "async (goalOverride = useDailyPlanStore.getState().goal, signatureOverride?: string) => {",
-        "const plan = await generateDailyPlan(goalOverride, { levelEstimate, learningGoal: currentGoal });",
+        "const plan = await generateDailyPlan(goalOverride, { learningGoal: currentGoal });",
         "const syncedPlan = await syncPlanTasksWithActivity(plan);",
         "const signature = signatureOverride ?? (await getDailyPlanSignature());",
         "const signature = await getDailyPlanSignature();"
@@ -1484,7 +1462,7 @@
         "const records = await db.records.toArray();",
         "db.records.toArray(),",
         "if (typeof record.lastPracticed === 'number' && record.lastPracticed >= windowStart) {",
-        "import type { ContentItem, Difficulty, LearningRecord, TypingSession } from '@/types/content';",
+        "import type { ContentItem, LearningRecord, TypingSession } from '@/types/content';",
         "records: LearningRecord[],",
         "records: LearningRecord[],"
       ],
@@ -1511,7 +1489,7 @@
       "source": "sessions",
       "anchor": "see reason",
       "occurrences": [
-        "import type { ContentItem, Difficulty, LearningRecord, TypingSession } from '@/types/content';",
+        "import type { ContentItem, LearningRecord, TypingSession } from '@/types/content';",
         "db.sessions.toArray(),",
         "function getSessionTimestamp(session: TypingSession): number {",
         "return session.endTime ?? session.startTime;",
@@ -1527,22 +1505,6 @@
       "classification": "LEGIT_SCHEDULING",
       "reason": "sessions as plan-task completion evidence",
       "migrationNode": "W2-PL1"
-    },
-    {
-      "id": "lib-daily-plan.assessment-currentLevel-advisory-difficulty",
-      "file": "src/lib/daily-plan.ts",
-      "source": "assessment.currentLevel",
-      "anchor": "generateDailyPlan:levelToDifficulty",
-      "occurrences": [
-        "import type { CEFRLevel } from '@/stores/assessment-store';",
-        "levelEstimate?: CEFRLevel | null;",
-        "const targetDifficulty = levelToDifficulty(options.levelEstimate);",
-        "function levelToDifficulty(level?: CEFRLevel | null): Difficulty | undefined {"
-      ],
-      "classification": "LEGIT_CANDIDATE_SIGNAL",
-      "reason": "TRANSITIONAL advisory candidate: currentLevel \u2192 levelToDifficulty feeds ongoing daily-plan difficulty targeting. Permitted today as placement-advisory input; does NOT survive final planner authority (W2-PL1) unless the W2-00R2 placement boundary explicitly justifies it. Not a capability truth source.",
-      "migrationNode": "W2-AS1",
-      "transitional": true
     },
     {
       "id": "lib-daily-plan.dailyPlan",
@@ -2064,19 +2026,6 @@
       "classification": "LEGIT_HISTORY",
       "reason": "createLearningAttempt factory",
       "migrationNode": "W2-AT1"
-    },
-    {
-      "id": "lib-learning-goals.assessment-currentLevel",
-      "file": "src/lib/learning-goals.ts",
-      "source": "assessment.currentLevel",
-      "anchor": "see reason",
-      "occurrences": [
-        "export function buildDailyPlanGoalExplanation(goal: LearningGoal | null | undefined, level?: CEFRLevel | null) {",
-        "import type { CEFRLevel } from '@/stores/assessment-store';"
-      ],
-      "classification": "LEGIT_HISTORY",
-      "reason": "CEFRLevel type import only",
-      "migrationNode": "W2-AS1"
     },
     {
       "id": "lib-learning-navigation.weakSpots",
@@ -2643,14 +2592,15 @@
         "placement: PlacementEstimate | null;",
         "/** Persisted payload keeps the legacy `currentLevel` mirror so older readers",
         "currentLevel?: CEFRLevel | null;",
-        "setPlacementEstimate: (level: CEFRLevel, source: Exclude<PlacementSource, 'legacy_payload'>) => void;",
+        "setPlacementEstimate: (level: CEFRLevel, source: 'chat_tool') => void;",
         "currentLevel: settings.placement?.levelEstimate ?? null,",
-        "/** True when a persisted value looks like a PlacementEstimate. */",
+        "/** True when a persisted value is a well-formed PlacementEstimate with",
         "function isPlacementEstimate(value: unknown): value is PlacementEstimate {",
-        "const level = (value as PlacementEstimate).levelEstimate;",
+        "const v = value as PlacementEstimate;",
+        "typeof v.levelEstimate !== 'string' ||",
+        "!CEFR_ORDER.includes(v.levelEstimate) ||",
         "/** Hydrate a legacy `currentLevel` string into an advisory estimate. The",
-        "level: CEFRLevel | null | undefined,",
-        "): PlacementEstimate | null {",
+        "function legacyPlacementFrom(level: CEFRLevel | null | undefined): PlacementEstimate | null {",
         "levelEstimate: level,",
         "export const useAssessmentStore = create<AssessmentStore>((set, get) => ({",
         "setPlacementEstimate: (level, source) => {",
@@ -2660,7 +2610,7 @@
         "levelEstimate: result.level,",
         "/* Accepts both shapes: the legacy `{ currentLevel, history, ... }` payload",
         "* and the current `{ placement, currentLevel, history, ... }` payload.",
-        ": legacyPlacementFrom(saved.currentLevel, history);",
+        "const placement = isPlacementEstimate(saved.placement) ? saved.placement : legacyPlacementFrom(saved.currentLevel);",
         "export function scoreToLevel(score: number): CEFRLevel {",
         "export function levelComparison(prev: CEFRLevel, current: CEFRLevel): 'improved' | 'same' | 'declined' {"
       ],
@@ -2674,11 +2624,11 @@
       "source": "dailyPlan",
       "anchor": "see reason",
       "occurrences": [
-        "export const useDailyPlanStore = create<DailyPlanStore>((set, get) => ({",
-        "export function getPlanTaskCompletionKey(task: Pick<PlanTask, 'module' | 'contentId' | 'bookId' | 'type'>): string {",
         "export interface PlanTask {",
-        "setTasks: (tasks: PlanTask[], dataSignature?: string, levelKey?: string) => void;",
-        "tasks: PlanTask[];"
+        "tasks: PlanTask[];",
+        "setTasks: (tasks: PlanTask[], dataSignature?: string) => void;",
+        "export function getPlanTaskCompletionKey(task: Pick<PlanTask, 'module' | 'contentId' | 'bookId' | 'type'>): string {",
+        "export const useDailyPlanStore = create<DailyPlanStore>((set, get) => ({"
       ],
       "classification": "LEGIT_SCHEDULING",
       "reason": "planner-cache store definition",

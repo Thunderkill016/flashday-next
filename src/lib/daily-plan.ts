@@ -3,9 +3,8 @@ import { toLocalDateKey } from '@/lib/date-key';
 import { db } from '@/lib/db';
 import { getGoalModuleBonus, type LearningGoal } from '@/lib/learning-goals';
 import { ALL_WORDBOOKS } from '@/lib/wordbooks';
-import type { CEFRLevel } from '@/stores/assessment-store';
 import type { DailyGoal, PlanTask } from '@/stores/daily-plan-store';
-import type { ContentItem, Difficulty, LearningRecord, TypingSession } from '@/types/content';
+import type { ContentItem, LearningRecord, TypingSession } from '@/types/content';
 import { getWordBookItemCount } from '@/types/wordbook';
 
 const DAY_MS = 24 * 60 * 60 * 1000;
@@ -18,8 +17,6 @@ const MODULE_BASE_BONUS: Record<PlanTask['module'], number> = {
 };
 
 interface DailyPlanOptions {
-  /** Advisory placement estimate — biases content-difficulty fit only. */
-  levelEstimate?: CEFRLevel | null;
   dateKey?: string;
   learningGoal?: LearningGoal | null;
 }
@@ -33,14 +30,13 @@ interface ModuleStats {
 interface PlannedCandidate {
   task: PlanTask;
   score: number;
-  weeklyPriorityEligible: boolean;
 }
 
 /**
  * Generate today's forward-learning plan tasks based on user data.
  *
  * Priority:
- * 1. Skill tasks ranked by weakness + recency + difficulty fit
+ * 1. Skill tasks ranked by weakness + recency
  *
  * Due review is intentionally handled outside this generator via Today Review
  * so the Dashboard can present plan and review as two separate choices.
@@ -49,7 +45,6 @@ export async function generateDailyPlan(goal: DailyGoal, options: DailyPlanOptio
   const now = Date.now();
   const dateKey = options.dateKey ?? toLocalDateKey(now);
   const maxTasks = Math.max(1, Math.min(goal.sessionsPerDay, 5));
-  const targetDifficulty = levelToDifficulty(options.levelEstimate);
 
   const [records, sessions, contents] = await Promise.all([
     db.records.toArray(),
@@ -64,19 +59,18 @@ export async function generateDailyPlan(goal: DailyGoal, options: DailyPlanOptio
   const contentsById = new Map(contents.map((content) => [content.id, content]));
 
   const candidates: PlannedCandidate[] = [];
-  const writeTask = await buildNewWordsTask(goal, targetDifficulty, modulePriority.write, dateKey);
+  const writeTask = await buildNewWordsTask(goal, modulePriority.write, dateKey);
   if (writeTask) candidates.push(writeTask);
 
-  const readTask = await buildArticleTask(contents, sessions, targetDifficulty, modulePriority.read, dateKey);
+  const readTask = await buildArticleTask(contents, sessions, modulePriority.read, dateKey);
   if (readTask) candidates.push(readTask);
 
-  const speakTask = await buildSpeakTask(goal, targetDifficulty, modulePriority.speak, sessions, contentsById, dateKey);
+  const speakTask = await buildSpeakTask(goal, modulePriority.speak, sessions, contentsById, dateKey);
   if (speakTask) candidates.push(speakTask);
 
   const listenTask = await buildListenTask(
     contents,
     sessions,
-    targetDifficulty,
     modulePriority.listen,
     dateKey,
     readTask?.task.contentId,
@@ -106,32 +100,6 @@ export async function getDailyPlanSignature(): Promise<string> {
   const categoryCount = new Set(contents.map((content) => content.category ?? '')).size;
 
   return `${contents.length}:${categoryCount}:${latestUpdate}`;
-}
-
-function levelToDifficulty(level?: CEFRLevel | null): Difficulty | undefined {
-  if (!level) return undefined;
-  if (level === 'A1' || level === 'A2') return 'beginner';
-  if (level === 'B1' || level === 'B2') return 'intermediate';
-  return 'advanced';
-}
-
-function difficultyDistance(target: Difficulty | undefined, actual: Difficulty | undefined): number {
-  if (!target || !actual) return 1;
-  const order: Difficulty[] = ['beginner', 'intermediate', 'advanced'];
-  return Math.abs(order.indexOf(target) - order.indexOf(actual));
-}
-
-function difficultyFitScore(target: Difficulty | undefined, actual: Difficulty | undefined): number {
-  const distance = difficultyDistance(target, actual);
-  if (distance === 0) return 12;
-  if (distance === 1) return 6;
-  if (distance >= 2) return -12;
-  return actual ? 0 : 4;
-}
-
-function isWeeklyBalanceEligible(target: Difficulty | undefined, actual: Difficulty | undefined): boolean {
-  if (!target || !actual) return true;
-  return difficultyDistance(target, actual) <= 1;
 }
 
 function getSessionTimestamp(session: TypingSession): number {
@@ -208,7 +176,6 @@ function buildModulePriority(
 
 async function buildNewWordsTask(
   goal: DailyGoal,
-  targetDifficulty: Difficulty | undefined,
   modulePriority: number,
   dateKey: string,
 ): Promise<PlannedCandidate | null> {
@@ -246,8 +213,7 @@ async function buildNewWordsTask(
         completed: false,
         skipped: false,
       },
-      score: modulePriority + difficultyFitScore(targetDifficulty, book.difficulty) + 3 + Math.min(wordCount, 20) / 20,
-      weeklyPriorityEligible: isWeeklyBalanceEligible(targetDifficulty, book.difficulty),
+      score: modulePriority + 3 + Math.min(wordCount, 20) / 20,
     });
   }
 
@@ -257,7 +223,6 @@ async function buildNewWordsTask(
 async function buildArticleTask(
   contents: ContentItem[],
   sessions: TypingSession[],
-  targetDifficulty: Difficulty | undefined,
   modulePriority: number,
   dateKey: string,
 ): Promise<PlannedCandidate | null> {
@@ -277,11 +242,7 @@ async function buildArticleTask(
         completed: false,
         skipped: false,
       },
-      score:
-        modulePriority +
-        difficultyFitScore(targetDifficulty, article.difficulty) +
-        Math.max(0, 3 - Math.min(practiceCount, 3)),
-      weeklyPriorityEligible: isWeeklyBalanceEligible(targetDifficulty, article.difficulty),
+      score: modulePriority + Math.max(0, 3 - Math.min(practiceCount, 3)),
     };
   });
 
@@ -291,7 +252,6 @@ async function buildArticleTask(
 async function buildListenTask(
   contents: ContentItem[],
   sessions: TypingSession[],
-  targetDifficulty: Difficulty | undefined,
   modulePriority: number,
   dateKey: string,
   excludeContentId?: string,
@@ -317,11 +277,7 @@ async function buildListenTask(
         completed: false,
         skipped: false,
       },
-      score:
-        modulePriority +
-        difficultyFitScore(targetDifficulty, content.difficulty) +
-        Math.max(0, 3 - Math.min(practiceCount, 3)),
-      weeklyPriorityEligible: isWeeklyBalanceEligible(targetDifficulty, content.difficulty),
+      score: modulePriority + Math.max(0, 3 - Math.min(practiceCount, 3)),
     };
   });
 
@@ -330,7 +286,6 @@ async function buildListenTask(
 
 async function buildSpeakTask(
   goal: DailyGoal,
-  targetDifficulty: Difficulty | undefined,
   modulePriority: number,
   sessions: TypingSession[],
   contentsById: Map<string, ContentItem>,
@@ -365,11 +320,7 @@ async function buildSpeakTask(
         completed: false,
         skipped: false,
       },
-      score:
-        modulePriority +
-        difficultyFitScore(targetDifficulty, book.difficulty) +
-        Math.max(0, 3 - Math.min(practicedIds.size, 3)),
-      weeklyPriorityEligible: isWeeklyBalanceEligible(targetDifficulty, book.difficulty),
+      score: modulePriority + Math.max(0, 3 - Math.min(practicedIds.size, 3)),
     });
   }
 
@@ -408,9 +359,7 @@ function pickCandidatesForCoverage(
   const missingThisWeek = new Set([...weeklyMissingModules].filter((module) => !coveredModules.has(module)));
 
   while (selected.length < limit) {
-    const weeklyIndex = remaining.findIndex(
-      (candidate) => missingThisWeek.has(candidate.task.module) && candidate.weeklyPriorityEligible,
-    );
+    const weeklyIndex = remaining.findIndex((candidate) => missingThisWeek.has(candidate.task.module));
     const unseenIndex = remaining.findIndex((candidate) => !coveredModules.has(candidate.task.module));
     const nextIndex = weeklyIndex >= 0 ? weeklyIndex : unseenIndex >= 0 ? unseenIndex : 0;
     const [next] = remaining.splice(nextIndex, 1);

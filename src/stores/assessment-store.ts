@@ -114,11 +114,11 @@ interface PersistedAssessmentSettings extends AssessmentSettings {
 
 interface AssessmentStore extends AssessmentSettings {
   /**
-   * Record a claimed level from a non-quiz source (e.g. the chat tool's
-   * updateUserLevel). Provenance is recorded as a claim — it is still an
-   * advisory estimate, not evidence.
+   * Record a claimed level from the chat tool's updateUserLevel. The source
+   * literal is pinned to 'chat_tool' — placement_test provenance can only be
+   * produced by setResult() with a real AssessmentResult.
    */
-  setPlacementEstimate: (level: CEFRLevel, source: Exclude<PlacementSource, 'legacy_payload'>) => void;
+  setPlacementEstimate: (level: CEFRLevel, source: 'chat_tool') => void;
   setResult: (result: AssessmentResult) => void;
   dismissReminder: () => void;
   resetReminder: () => void;
@@ -150,28 +150,42 @@ function saveToStorage(settings: AssessmentSettings) {
   }
 }
 
-/** True when a persisted value looks like a PlacementEstimate. */
+/** True when a persisted value is a well-formed PlacementEstimate with
+ * internally consistent provenance — a placement_test claim must carry a real
+ * quiz score and the adaptive_quiz method; claims and legacy hydration never
+ * carry a score. Anything inconsistent is rejected rather than trusted. */
 function isPlacementEstimate(value: unknown): value is PlacementEstimate {
   if (typeof value !== 'object' || value === null) return false;
-  const level = (value as PlacementEstimate).levelEstimate;
-  return typeof level === 'string' && CEFR_ORDER.includes(level);
+  const v = value as PlacementEstimate;
+  if (
+    typeof v.levelEstimate !== 'string' ||
+    !CEFR_ORDER.includes(v.levelEstimate) ||
+    v.version !== PLACEMENT_ESTIMATE_VERSION ||
+    typeof v.completedAt !== 'number'
+  ) {
+    return false;
+  }
+  if (v.source === 'placement_test') {
+    return v.method === 'adaptive_quiz' && typeof v.score === 'number' && v.completedAt > 0;
+  }
+  if (v.source === 'chat_tool') {
+    return v.method === 'chat_tool' && v.score === null && v.completedAt > 0;
+  }
+  return v.source === 'legacy_payload' && v.method === 'hydrated_legacy' && v.score === null;
 }
 
 /** Hydrate a legacy `currentLevel` string into an advisory estimate. The
  * provenance is honestly 'legacy_payload' — the old payload never recorded
- * how the level was produced. Score/completedAt are recovered from the newest
- * history entry matching the level when one exists; never invented. */
-function legacyPlacementFrom(
-  level: CEFRLevel | null | undefined,
-  history: AssessmentResult[] | undefined,
-): PlacementEstimate | null {
+ * how the level was produced, so score/completedAt stay unknown (null/0)
+ * rather than inferring them from a history entry that merely shares the
+ * level string. History stays intact and separate. */
+function legacyPlacementFrom(level: CEFRLevel | null | undefined): PlacementEstimate | null {
   if (!level) return null;
-  const matching = [...(history ?? [])].reverse().find((entry) => entry.level === level);
   return {
     levelEstimate: level,
     source: 'legacy_payload',
-    score: matching?.score ?? null,
-    completedAt: matching?.completedAt ?? 0,
+    score: null,
+    completedAt: 0,
     method: 'hydrated_legacy',
     version: PLACEMENT_ESTIMATE_VERSION,
   };
@@ -194,7 +208,7 @@ export const useAssessmentStore = create<AssessmentStore>((set, get) => ({
       source,
       score: null,
       completedAt: Date.now(),
-      method: source === 'placement_test' ? 'adaptive_quiz' : 'chat_tool',
+      method: 'chat_tool',
       version: PLACEMENT_ESTIMATE_VERSION,
     };
     const updated: AssessmentSettings = {
@@ -267,9 +281,7 @@ export const useAssessmentStore = create<AssessmentStore>((set, get) => ({
     const saved = loadFromStorage();
     if (Object.keys(saved).length === 0) return;
     const history = Array.isArray(saved.history) ? saved.history : [];
-    const placement = isPlacementEstimate(saved.placement)
-      ? saved.placement
-      : legacyPlacementFrom(saved.currentLevel, history);
+    const placement = isPlacementEstimate(saved.placement) ? saved.placement : legacyPlacementFrom(saved.currentLevel);
     set({
       placement,
       history,

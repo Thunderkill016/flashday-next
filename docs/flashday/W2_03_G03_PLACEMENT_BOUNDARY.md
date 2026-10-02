@@ -20,20 +20,23 @@ PlacementEstimate != EvidenceEvent
 demonstrated ability:
 
 - `daily-plan.ts` fed it through `levelToDifficulty` into
-  `difficultyFitScore` — silently shaping plan-task ranking.
+  `difficultyFitScore` — placement silently steered *which* recurring
+  tasks/content the daily plan selected (a planner-authority leak, since
+  the permitted uses are orientation/onboarding/initial-content only).
 - `use-recommendations.ts` sent it to the AI recommendations API as
-  `userLevel`.
+  `userLevel` (content-recommendation hint — within the permitted uses;
+  flagged for reviewer confirmation).
 - `chat-panel.tsx` exposed an `updateUserLevel` tool letting the chatbot
   *write* the level with no provenance.
 - `app/api/assessment/route.ts` used it to tune the next quiz's question
-  distribution.
+  distribution (producer-side input to the placement flow itself).
 - `chat-analytics.ts` read `parsed.state?.currentLevel` — a path that
   never existed in the flat persisted payload, so the analytics level was
   silently always `null` (latent broken read, fixed).
 
 None of these are capability authority — but nothing in the type system
-or storage schema said so. The field's shape invited capability truth
-interpretation; G03 makes the boundary explicit.
+or storage schema said so, and the daily-plan edge crossed into planner
+authority. G03 makes the boundary explicit **and cuts the leak**.
 
 ## 2. The boundary — `PlacementEstimate`
 
@@ -51,14 +54,20 @@ export interface PlacementEstimate {
 ```
 
 - `setResult(assessment)` — quiz completion mints an estimate with real
-  score + timestamp and appends the result to `history` unchanged.
-- `setPlacementEstimate(level, source)` — chat/self-report claims mint an
-  estimate with `score: null` and provenance source `chat_tool`.
+  score + timestamp and appends the result to `history` unchanged. This is
+  the ONLY way `source: 'placement_test'` can be produced.
+- `setPlacementEstimate(level, 'chat_tool')` — the source literal is
+  type-pinned to `'chat_tool'`; quiz provenance cannot be forged through
+  the claim path.
 - `hydrate()` — accepts the legacy `{ currentLevel, history }` payload and
   lifts it to `placement` with `source: 'legacy_payload'`,
-  `method: 'hydrated_legacy'`. If a matching level exists in `history`,
-  the newest matching score/timestamp is reused; otherwise `score: null`,
-  `completedAt: 0`. **No fabricated evidence.**
+  `method: 'hydrated_legacy'`, `score: null`, `completedAt: 0`. The bare
+  legacy level never proved which history entry (if any) produced it — a
+  chat claim could have overwritten it — so provenance is honestly
+  unknown rather than inferred from a colliding level string.
+- `isPlacementEstimate()` validates the full shape including
+  source↔method↔score correlation; malformed persisted objects hydrate
+  to `null`, never to a trusted estimate.
 - The persisted payload still carries `currentLevel` as a compatibility
   mirror so older builds/readers keep working; it is a projection of
   `placement.levelEstimate`, never an input.
@@ -76,14 +85,35 @@ Every consumer of the store was inventoried and classified:
 | File | Read | Class |
 |---|---|---|
 | `dashboard/page.tsx` | reminder + display copy | advisory presentation |
-| `dashboard/today-plan.tsx` | `levelEstimate` → plan signature/explanation | advisory presentation |
-| `lib/daily-plan.ts` | `levelEstimate` → `difficultyFitScore` ranking | advisory recommendation |
-| `hooks/use-recommendations.ts` | `levelEstimate` → API `userLevel` hint | advisory recommendation |
+| `dashboard/today-plan.tsx` | **none** — placement read removed entirely | cut (see §3a) |
+| `lib/daily-plan.ts` | **none** — `levelEstimate` option removed | cut (see §3a) |
+| `stores/daily-plan-store.ts` | **none** — `levelKey` invalidation removed | cut (see §3a) |
+| `lib/learning-goals.ts` | **none** — `level` param removed from plan explanation | cut (see §3a) |
+| `hooks/use-recommendations.ts` | `levelEstimate` → API `userLevel` hint | advisory recommendation (flagged) |
 | `assessment/assessment-section.tsx` | display + seeds next quiz | advisory |
 | `app/api/assessment/route.ts` | question-distribution tuning | advisory producer |
 | `chat/chat-panel.tsx` | context + `updateUserLevel` tool | advisory (write path → `setPlacementEstimate`) |
 | `lib/chat-analytics.ts` | persisted-payload level for analytics | advisory analytics (read path fixed) |
 | `(app)/layout.tsx` | `hydrate()` call only | plumbing |
+
+### 3a. The recurring-planner edge is cut, not reclassified
+
+First-pass review found `levelEstimate` still steering recurring daily-plan
+selection (`difficultyFitScore` in candidate scoring, `levelKey` plan
+invalidation). A daily plan is a recurring planner — the doctrine permits
+orientation/onboarding/initial-content recommendation only — so the edge
+is removed structurally:
+
+- `DailyPlanOptions.levelEstimate` deleted; `generateDailyPlan` has no
+  placement input channel.
+- `levelToDifficulty` / `difficultyFitScore` / `difficultyDistance` /
+  `isWeeklyBalanceEligible` / `weeklyPriorityEligible` deleted — the whole
+  difficulty-fit surface existed only to consume placement.
+- `daily-plan-store.levelKey` deleted — placement changes no longer
+  invalidate or regenerate plans.
+- Plan explanation copy no longer claims level-driven difficulty.
+- Selection now ranks by weakness + recency + goal with deterministic
+  date-seeded rotation; content difficulty metadata is not a selector.
 
 Verified negatives (repo-wide):
 
@@ -111,10 +141,11 @@ Verified negatives (repo-wide):
   set; G03 acceptance reworded so verbatim estimate-copy relabeling stays
   W2-AS1's scope (G03 owns the structural boundary only).
 
-## 5. Regressions landed — `placement-boundary.test.ts` (10/10)
+## 5. Regressions landed — `placement-boundary.test.ts` (14/14)
 
 - legacy `{ currentLevel }` payload hydrates to an advisory estimate;
-  `history` preserved verbatim
+  `history` preserved verbatim — and a colliding history level does NOT
+  donate its score/timestamp (provenance stays honestly unknown)
 - `placement` persists round-trip through the `echotype_assessment` key
 - `setResult`/`setPlacementEstimate` append **zero** rows to
   `db.evidenceEvents`
@@ -123,15 +154,23 @@ Verified negatives (repo-wide):
 - a real mission session (`mission.meet_at_a_time`) serves, evaluates,
   and evidences identically regardless of placement — same
   `recognition_attempt` + `feedback` event pair, same deterministic ids
+- **placement A1 vs C2 yields an identical recurring daily plan**
+  (semantic task keys equal) and `generateDailyPlan` rejects a
+  `levelEstimate` option at the type level (`@ts-expect-error` pin)
+- `setPlacementEstimate` cannot mint `placement_test` provenance
+  (`@ts-expect-error` pin); `isPlacementEstimate` rejects malformed or
+  source-inconsistent persisted objects
 - sensitive-read inventory unchanged by authority: scanning
   `evidence-bridge/**` + `vnext/**` for the placement token family
   detects nothing
 - evidence-bridge APIs are not callable as a generic placement bus (the
   store holds no reference to them)
+- `daily-plan.test.ts` re-pins selection as placement-independent
+  (difficulty-neutral deterministic rotation)
 
 ## 6. Verification gates
 
-- `pnpm vitest run src/lib/evidence-bridge/placement-boundary.test.ts` — 10/10
+- `pnpm vitest run src/lib/evidence-bridge/placement-boundary.test.ts` — 14/14
 - `pnpm vitest run src/lib/authority-guardrails/` — 15/15
 - `pnpm vitest run src/lib/evidence-bridge/` — full seam suite
 - `pnpm test` — full Vitest suite

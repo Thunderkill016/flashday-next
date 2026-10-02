@@ -56,7 +56,6 @@ describe('daily-plan-store', () => {
       tasks: [],
       dateKey: '',
       dataSignature: '',
-      levelKey: '',
       streak: 0,
       lastActiveDate: '',
     });
@@ -100,7 +99,6 @@ describe('daily-plan-store', () => {
       expect(s.tasks).toEqual([]);
       expect(s.dateKey).toBe('');
       expect(s.dataSignature).toBe('');
-      expect(s.levelKey).toBe('');
       expect(s.streak).toBe(0);
       expect(s.lastActiveDate).toBe('');
     });
@@ -152,11 +150,6 @@ describe('daily-plan-store', () => {
     it('stores a data signature when provided', () => {
       useDailyPlanStore.getState().setTasks(makeTasks(1), '361:0:0');
       expect(useDailyPlanStore.getState().dataSignature).toBe('361:0:0');
-    });
-
-    it('stores the assessment level when provided', () => {
-      useDailyPlanStore.getState().setTasks(makeTasks(1), '361:0:0', 'B2');
-      expect(useDailyPlanStore.getState().levelKey).toBe('B2');
     });
 
     it('replaces previous tasks entirely', () => {
@@ -392,7 +385,6 @@ describe('daily-plan-store', () => {
       expect(s.tasks).toHaveLength(2);
       expect(s.dateKey).toBe('2025-01-15');
       expect(s.dataSignature).toBe('10:2:1');
-      expect(s.levelKey).toBe('B1');
     });
 
     it('does nothing when localStorage is empty', () => {
@@ -473,7 +465,6 @@ describe('daily-plan-store', () => {
         tasks: [],
         dateKey: '',
         dataSignature: '',
-        levelKey: '',
         streak: 0,
         lastActiveDate: '',
       });

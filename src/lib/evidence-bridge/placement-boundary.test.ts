@@ -4,6 +4,7 @@ import { join } from 'node:path';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { extractOccurrences } from '@/lib/authority-guardrails/patterns';
 import { useAssessmentStore } from '@/stores/assessment-store';
+import type { PlanTask } from '@/stores/daily-plan-store';
 import { projectLearnerState } from '@/vnext/projection';
 import { db } from '../db';
 import { createDexieEventStore } from './index';
@@ -245,8 +246,12 @@ describe('hydration', () => {
       levelEstimate: 'B1',
       source: 'legacy_payload',
       method: 'hydrated_legacy',
-      score: 52,
-      completedAt: legacyResult.completedAt,
+      // No inference: the bare legacy level never proved which (if any)
+      // history entry produced it — a chat claim could have written it after
+      // this quiz. score/completedAt stay unknown rather than borrowing the
+      // colliding history entry's provenance.
+      score: null,
+      completedAt: 0,
       version: 1,
     });
     expect(state.history).toEqual([legacyResult]);
@@ -294,5 +299,115 @@ describe('hydration', () => {
     useAssessmentStore.getState().hydrate();
     expect(useAssessmentStore.getState().placement?.levelEstimate).toBe('B2');
     expect(await db.evidenceEvents.count()).toBe(0);
+  });
+});
+
+/* ── 6. Provenance cannot be forged ── */
+
+describe('provenance integrity', () => {
+  it('the claim setter cannot produce placement_test provenance', () => {
+    // Type-level pin: 'placement_test' is not assignable to the setter's
+    // source parameter — quiz provenance exists only through setResult().
+    const source: 'chat_tool' = 'chat_tool';
+    // @ts-expect-error — 'placement_test' must never be settable via claims
+    useAssessmentStore.getState().setPlacementEstimate('C1', 'placement_test');
+
+    useAssessmentStore.getState().setPlacementEstimate('C1', source);
+    const placement = useAssessmentStore.getState().placement;
+    expect(placement).toMatchObject({
+      levelEstimate: 'C1',
+      source: 'chat_tool',
+      method: 'chat_tool',
+      score: null,
+      version: 1,
+    });
+  });
+
+  it('a malformed persisted placement object is rejected, not trusted', () => {
+    for (const bad of [
+      { levelEstimate: 'B1' }, // missing provenance fields
+      {
+        levelEstimate: 'B1',
+        source: 'placement_test',
+        method: 'adaptive_quiz',
+        score: null,
+        completedAt: 0,
+        version: 1,
+      }, // score null on a claimed quiz provenance — malformed
+      {
+        levelEstimate: 'C9',
+        source: 'chat_tool',
+        method: 'chat_tool',
+        score: null,
+        completedAt: 1,
+        version: 1,
+      }, // invalid CEFR
+    ]) {
+      localStorageData.set('echotype_assessment', JSON.stringify({ placement: bad }));
+      resetPlacementStore();
+      useAssessmentStore.getState().hydrate();
+      expect(useAssessmentStore.getState().placement).toBeNull();
+    }
+  });
+});
+
+/* ── 7. Placement cannot steer the recurring daily plan ── */
+
+describe('daily-plan boundary', () => {
+  const goal = { wordsPerDay: 10, sessionsPerDay: 4 };
+  const seedContent = async () => {
+    await db.contents.bulkAdd([
+      {
+        id: 'art-a',
+        title: 'Article A',
+        text: 'Sample text a',
+        type: 'article',
+        tags: [],
+        source: 'builtin',
+        difficulty: 'beginner',
+        createdAt: 1,
+        updatedAt: 1,
+      },
+      {
+        id: 'sen-b',
+        title: 'Sentence B',
+        text: 'Sample text b',
+        type: 'sentence',
+        tags: [],
+        source: 'builtin',
+        difficulty: 'advanced',
+        createdAt: 1,
+        updatedAt: 1,
+      },
+    ]);
+  };
+
+  const semanticKey = (tasks: PlanTask[]) =>
+    tasks
+      .map((t) => `${t.type}|${t.module}|${t.bookId ?? ''}|${t.contentId ?? ''}|${t.limit ?? ''}`)
+      .sort();
+
+  it('placement A1 vs C2 yields an identical recurring plan', async () => {
+    await seedContent();
+    const { generateDailyPlan } = await import('@/lib/daily-plan');
+
+    useAssessmentStore.getState().setPlacementEstimate('A1', 'chat_tool');
+    const lowPlan = await generateDailyPlan(goal, { dateKey: '2026-03-12' });
+
+    useAssessmentStore.getState().setPlacementEstimate('C2', 'chat_tool');
+    const highPlan = await generateDailyPlan(goal, { dateKey: '2026-03-12' });
+
+    expect(semanticKey(highPlan)).toEqual(semanticKey(lowPlan));
+    expect(lowPlan.length).toBeGreaterThan(0);
+  });
+
+  it('generateDailyPlan exposes no placement parameter', async () => {
+    const { generateDailyPlan } = await import('@/lib/daily-plan');
+    // Structural pin: the recurring planner has no input channel for the
+    // estimate — the option was removed, not merely left unused.
+    // @ts-expect-error — levelEstimate must never steer the recurring plan
+    await generateDailyPlan(goal, { levelEstimate: 'C2' });
+    const plan = await generateDailyPlan(goal, { dateKey: '2026-03-12' });
+    expect(Array.isArray(plan)).toBe(true);
   });
 });

@@ -26,14 +26,13 @@ interface DailyPlanSettings {
   tasks: PlanTask[];
   dateKey: string;
   dataSignature: string;
-  levelKey: string;
   streak: number;
   lastActiveDate: string;
 }
 
 interface DailyPlanStore extends DailyPlanSettings {
   setGoal: (goal: Partial<DailyGoal>) => void;
-  setTasks: (tasks: PlanTask[], dataSignature?: string, levelKey?: string) => void;
+  setTasks: (tasks: PlanTask[], dataSignature?: string) => void;
   setDateKey: (key: string) => void;
   completeTask: (taskId: string) => void;
   skipTask: (taskId: string) => void;
@@ -90,7 +89,6 @@ function getSettings(state: DailyPlanStore): DailyPlanSettings {
     tasks: state.tasks,
     dateKey: state.dateKey,
     dataSignature: state.dataSignature,
-    levelKey: state.levelKey,
     streak: state.streak,
     lastActiveDate: state.lastActiveDate,
   };
@@ -113,7 +111,6 @@ const defaults: DailyPlanSettings = {
   tasks: [],
   dateKey: '',
   dataSignature: '',
-  levelKey: '',
   streak: 0,
   lastActiveDate: '',
 };
@@ -128,11 +125,10 @@ export const useDailyPlanStore = create<DailyPlanStore>((set, get) => ({
     saveToStorage(getSettings({ ...state, goal }));
   },
 
-  setTasks: (tasks, dataSignature, levelKey) => {
+  setTasks: (tasks, dataSignature) => {
     const state = get();
     const dateKey = todayKey();
     const nextSignature = dataSignature ?? state.dataSignature;
-    const nextLevelKey = levelKey ?? state.levelKey;
     const completedKeys = new Set(
       state.tasks.filter((task) => task.completed).map((task) => getPlanTaskCompletionKey(task)),
     );
@@ -144,10 +140,8 @@ export const useDailyPlanStore = create<DailyPlanStore>((set, get) => ({
       completed: task.completed || completedKeys.has(getPlanTaskCompletionKey(task)),
       skipped: task.skipped || skippedKeys.has(getPlanTaskCompletionKey(task)),
     }));
-    set({ tasks: mergedTasks, dateKey, dataSignature: nextSignature, levelKey: nextLevelKey });
-    saveToStorage(
-      getSettings({ ...state, tasks: mergedTasks, dateKey, dataSignature: nextSignature, levelKey: nextLevelKey }),
-    );
+    set({ tasks: mergedTasks, dateKey, dataSignature: nextSignature });
+    saveToStorage(getSettings({ ...state, tasks: mergedTasks, dateKey, dataSignature: nextSignature }));
   },
 
   setDateKey: (dateKey) => {
