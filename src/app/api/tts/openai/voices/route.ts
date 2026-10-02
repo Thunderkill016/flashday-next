@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import { OPENAI_TTS_MODELS, OPENAI_TTS_VOICES } from '@/lib/openai-tts';
+import { OPENAI_TTS_MODELS, OPENAI_TTS_VOICES } from '@/lib/openai-tts-presets';
 import { enforceRouteRateLimit, rateLimitResponse } from '@/lib/platform-provider';
 
 export async function GET(req: NextRequest) {

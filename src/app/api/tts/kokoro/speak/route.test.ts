@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { NextRequest } from 'next/server';
+import { EgressPolicyError } from '@/lib/egress';
 
 const synthesizeMock = vi.fn();
 
@@ -83,6 +84,16 @@ describe('POST /api/tts/kokoro/speak', () => {
     expect(res.status).toBe(500);
     const data = await res.json();
     expect(data.error).toBe('Server unavailable');
+  });
+
+  it('returns 403 when the egress policy blocks the target', async () => {
+    synthesizeMock.mockRejectedValue(new EgressPolicyError('Private or local URLs are not allowed'));
+
+    const res = await POST(makeRequest({ serverUrl: 'http://169.254.169.254:8880', text: 'Hello', voice: 'af_heart' }));
+
+    expect(res.status).toBe(403);
+    const data = await res.json();
+    expect(data.code).toBe('egress_blocked');
   });
 
   it('returns generic error message for non-Error exceptions', async () => {

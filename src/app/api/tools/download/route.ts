@@ -6,6 +6,7 @@ import path from 'node:path';
 import { promisify } from 'node:util';
 import { nanoid } from 'nanoid';
 import { NextRequest, NextResponse } from 'next/server';
+import { assertPublicEgressUrl, EgressPolicyError } from '@/lib/egress';
 import { enforceRouteRateLimit, rateLimitResponse } from '@/lib/platform-provider';
 
 const execFileAsync = promisify(execFile);
@@ -134,6 +135,15 @@ export async function POST(req: NextRequest) {
 
     if (format !== 'audio' && format !== 'video') {
       return NextResponse.json({ error: 'Invalid format. Must be "audio" or "video"' }, { status: 400 });
+    }
+
+    try {
+      await assertPublicEgressUrl(url);
+    } catch (error) {
+      if (error instanceof EgressPolicyError) {
+        return NextResponse.json({ error: error.message, code: 'egress_blocked' }, { status: 403 });
+      }
+      throw error;
     }
 
     if (IS_VERCEL) {

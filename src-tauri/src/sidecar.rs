@@ -158,7 +158,11 @@ fn server_command(
         // Bind explicitly to IPv4. On Windows, `localhost` may resolve to ::1
         // while the readiness probe and WebView use 127.0.0.1.
         .env("HOSTNAME", "127.0.0.1")
-        .env("NODE_ENV", "production");
+        .env("NODE_ENV", "production")
+        // The desktop app IS the self-host deployment: its server is reachable
+        // only from 127.0.0.1, so operator-controlled local providers (Ollama,
+        // LM Studio, LAN Kokoro) are a legitimate egress class here.
+        .env("FLASHDAY_SELF_HOST", "1");
     Ok(command)
 }
 

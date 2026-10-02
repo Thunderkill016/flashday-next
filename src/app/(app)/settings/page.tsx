@@ -63,7 +63,7 @@ import {
 } from '@/lib/model-recommendations';
 import { shouldEvaluateModelRecommendations } from '@/lib/model-refresh-policy';
 import { clearOAuthStorage, getStoredOAuthState, getStoredVerifier, startOAuthFlow } from '@/lib/oauth';
-import { OPENAI_TTS_MODELS } from '@/lib/openai-tts';
+import { OPENAI_TTS_MODELS } from '@/lib/openai-tts-presets';
 import { canFetchProviderModels } from '@/lib/provider-model-fetch';
 import {
   getLocalizedProviderDefinition,

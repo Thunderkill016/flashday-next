@@ -5,7 +5,7 @@ import { getBrowserVoiceMetadata } from '@/lib/browser-voice-metadata';
 import type { FishVoice } from '@/lib/fish-audio-shared';
 import { resolveTTSSource } from '@/lib/fish-audio-shared';
 import type { GoogleTTSVoice } from '@/lib/google-tts';
-import { OPENAI_TTS_VOICES, type OpenAITTSVoice } from '@/lib/openai-tts';
+import { OPENAI_TTS_VOICES, type OpenAITTSVoice } from '@/lib/openai-tts-presets';
 import type { WordTimestamp } from '@/lib/word-alignment';
 import { type TTSSource, useTTSStore } from '@/stores/tts-store';
 

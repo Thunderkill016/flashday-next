@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { EgressPolicyError, fetchEgress } from '@/lib/egress';
 import { enforceRouteRateLimit, rateLimitResponse } from '@/lib/platform-provider';
 import { PROVIDER_REGISTRY, type ProviderId, type ProviderModel } from '@/lib/providers';
 
@@ -32,7 +33,7 @@ async function fetchJsonWithRetries<T>(
 
   for (let attempt = 0; attempt < MODELS_FETCH_MAX_ATTEMPTS; attempt += 1) {
     try {
-      const res = await fetch(url, init);
+      const res = await fetchEgress(url, init);
       if (!res.ok) {
         lastError = `Model endpoint responded ${res.status}`;
         continue;
@@ -47,6 +48,7 @@ async function fetchJsonWithRetries<T>(
 
       return { data: (await res.json()) as T };
     } catch (error) {
+      if (error instanceof EgressPolicyError) throw error;
       lastError = error instanceof Error ? error.message : 'Failed to fetch models';
     }
   }
@@ -130,6 +132,17 @@ export async function GET(req: NextRequest) {
     return NextResponse.json({ error: 'Invalid provider' }, { status: 400 });
   }
 
+  try {
+    return await listProviderModels(req, providerId);
+  } catch (error) {
+    if (error instanceof EgressPolicyError) {
+      return NextResponse.json({ error: error.message, code: 'egress_blocked' }, { status: 403 });
+    }
+    throw error;
+  }
+}
+
+async function listProviderModels(req: NextRequest, providerId: ProviderId) {
   const provider = PROVIDER_REGISTRY[providerId];
   const apiKey = req.headers.get('x-api-key') ?? '';
   const baseUrl = req.headers.get('x-base-url') || provider.baseUrl || '';

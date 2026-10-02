@@ -12,36 +12,78 @@ Wave-2 migration work starts. Branch: `flashday/sec-gate` from clean
   build is now off the tree regardless.
 - `baseline-browser-mapping` bumped transitively with the Next release.
 
-## B. SSRF hardening — `src/lib/web-page.ts`
+## B. Server egress policy — `src/lib/egress.ts` (FDN-SEC-001R)
 
-URL import fetches user-supplied links; the previous guard compared hostnames
-against a literal-IP blocklist only. Replaced with:
+External review found the first-pass guard had a **TOCTOU gap**: it resolved
+and validated the hostname, then `fetch()`ed the hostname again — the socket
+performed a second, uncontrolled DNS resolution (DNS-rebinding window). It also
+found more caller-controlled egress than reported.
 
-- **Per-hop DNS resolution** via `node:dns/promises` `lookup` — every request
-  host is resolved and every returned address is classified before connect
-  (defeats DNS rebinding between the check and the fetch).
-- **Manual redirects** (`redirect: 'manual'`) — each `Location` target is
-  resolved and re-validated through the same DNS + IP checks, capped at
-  `MAX_REDIRECT_HOPS = 5` (previously undici auto-followed redirects with no
-  revalidation).
-- **Fail closed**: DNS errors, empty answer sets, or disallowed address
-  families reject the fetch.
-- **Blocked address space** (`isUnsafeAddress`): IPv4 `0.0.0.0/8`, loopback,
-  RFC1918, CGNAT `100.64.0.0/10`, link-local/metadata `169.254.0.0/16`,
-  documentation ranges, benchmarking `198.18.0.0/15`, multicast/reserved;
-  IPv6 unspecified/loopback/multicast/unique-local/link-local/site-local,
-  IPv4-mapped `::ffff:0:0/96`, NAT64 `64:ff9b::/96`, 6to4 `2002::/16`.
-- Retry behaviour and the BBC HTTP→HTTPS fallback are preserved.
+The fix is a shared egress module that binds validation to the connection:
 
-Regression coverage: `src/lib/web-page-ssrf.test.ts` (12 tests — rebinding,
-redirect-to-private, safe redirects, DNS failure, redirect cap, IPv4-mapped/
-NAT64/6to4 forms) + `web-page.test.ts` / `web-page-retry.test.ts` updated to
-mock `lookup` (32 tests total in the SSRF surface).
+- **Pinned connection**: `resolveEgressTarget` resolves the hostname once and
+  validates every answer; `fetchEgress` then issues the request through a
+  per-request undici `Agent` whose `connect.lookup` callback serves **only the
+  validated addresses**. The socket never re-queries the system resolver, so a
+  DNS answer flipping to private between check and connect cannot redirect the
+  connection. TLS `servername`/SNI and `Host` still use the original hostname,
+  and certificate verification is unaffected — only the destination IP is
+  pinned.
+- **Validated redirects**: `redirect: 'manual'` per hop; every `Location`
+  target re-enters `resolveEgressTarget` (protocol + literal IP + hostname +
+  DNS). Internal follow mode strips `Authorization`/`x-api-key`/`Cookie` on
+  cross-origin hops and caps chains at 5.
+- **Fail closed**: DNS errors, empty answers, non-http(s) protocols, or any
+  private answer reject before any socket opens.
+- **Blocked address space**: IPv4 `0.0.0.0/8`, loopback, RFC1918, CGNAT
+  `100.64.0.0/10`, link-local/metadata `169.254.0.0/16`, documentation ranges,
+  benchmarking `198.18.0.0/15`, multicast/reserved; IPv6 unspecified/loopback/
+  multicast/unique-local/link-local/site-local, IPv4-mapped `::ffff:0:0/96`,
+  NAT64 `64:ff9b::/96`, 6to4 `2002::/16`.
 
-**Residual:** `src/app/api/ollama/warmup/route.ts` still proxies a
-caller-supplied `baseUrl` (self-hosted Ollama by design). It is now
-rate-limited; hardening it is deferred — it is an intentional local-network
-feature, documented here rather than silently "fixed".
+### Two egress classes
+
+**Class 1 — hosted public fetch** (URL import, public provider endpoints):
+http/https only → all-DNS-answers validated → connection pinned to the
+validated set → no private/reserved destination → manual redirects, bounded.
+
+**Class 2 — local/self-host provider** (Ollama, LM Studio, LAN Kokoro): a
+hosted FlashDay server refuses to proxy arbitrary LAN/private targets from
+unauthenticated callers. Private destinations are only permitted when the
+**server operator** opted in:
+
+- `FLASHDAY_SELF_HOST=1` — self-host mode (the Tauri sidecar sets this; its
+  server binds to 127.0.0.1 and only the local app reaches it), or
+- `FLASHDAY_LOCAL_PROVIDERS=http://localhost:11434,http://nas.lan:8880` —
+  exact-origin allowlist for hosted operators.
+
+Callers may still choose model/path within the permitted provider contract —
+never an arbitrary host. Redirect hops off an allowlisted origin are
+revalidated the same way (an allowlisted server cannot redirect the server
+into private space).
+
+### Caller-controlled egress matrix
+
+| Route / path | URL source | Class | Policy applied |
+|---|---|---|---|
+| `src/lib/web-page.ts` (import/url, chat tools) | caller URL | public | pinned fetch, per-hop revalidation |
+| `src/lib/ai-model.ts` → all AI SDK routes (`chat`, `speak`, `translate`, `ai/generate`, `collections/generate`, `model-recommendations`, `assessment`, `recommendations`, `tools/classify`, `journal/*`, `import/organize`, `learning/feedback`) | `providerConfigs.baseUrl` / `x-base-url` | both | `fetch: egressFetch` injected into every provider factory — validation + pinning at connection time; private → operator opt-in only |
+| `/api/models` | `x-base-url`, `x-api-path` headers | both | `fetchEgress`; policy block → `403 egress_blocked` |
+| `/api/ollama/warmup` | `baseUrl`, `apiPath` body | local | `fetchEgress`; block → `403 egress_blocked` |
+| `/api/tts/kokoro/{speak,voices}` | `serverUrl` body | local | `fetchEgress`; block → `403 egress_blocked` |
+| `/api/tts/openai/speak` | `baseUrl` body | public custom | `fetchEgress`; block → `403 egress_blocked` |
+| `/api/tools/download` | `url` body | subprocess | `assertPublicEgressUrl` preflight before `yt-dlp` spawn |
+| `/api/tools/extract` | `url` body | subprocess | platform-host allowlist (`supportedPlatforms`) + Vercel gate; **residual**: yt-dlp resolves DNS in-process (no pinning possible) — document |
+| `src/lib/youtube-transcript.ts` | YouTube-derived URLs | public | `fetchEgress` (defense-in-depth on derived URLs) |
+| `stt`, `import/transcribe`, `tts/align`, `translate/free`, `pronunciation`, `auth/token`, `fish` TTS | registry/env-fixed endpoints | fixed | no caller control — unchanged |
+
+Regression coverage: `src/lib/egress.test.ts` (pin-bound connection — DNS
+flips to private after validation and the socket still receives the validated
+address; literal-IP/hostname/DNS-private refusals; redirect revalidation,
+credential stripping, cap; self-host + origin-allowlist behavior) plus updated
+`web-page-ssrf.test.ts`, `models/route.test.ts` (hosted refusal + allowlist),
+`ollama/warmup/route.test.ts` (new — proxy refusal + allowlist + pinned public),
+kokoro/openai-tts 403 mapping tests.
 
 ## C. Shared route-level rate limiting
 
@@ -69,6 +111,12 @@ Backends: Upstash Redis when `UPSTASH_REDIS_REST_URL` +
 (correct for single-instance deployments; multi-instance deploys should set
 Upstash — noted for ops).
 
+**Status:** this limiter is an *abuse guard*, not a quota architecture — per-IP
+ceilings throttle a shared-NAT classroom/family behind one address. Accepted
+for the personal proving-ground stage; before multi-user/classroom use the
+target is an authenticated learner/account limiter + per-IP abuse backstop
+(external review, FDN-SEC-001R — documented debt, not expanded here).
+
 ## D. AGPL removal — `edge-tts-universal`
 
 `edge-tts-universal@1.4.0` (AGPL-3.0) removed from `dependencies`. AGPL's
@@ -86,8 +134,10 @@ Migration: `TTSSource` is now `'browser' | 'fish' | 'google' | 'openai'`.
 Persisted `voiceSource: 'edge'` (and the already-retired `'kokoro'`) fails
 safe to `browser` on hydrate (`normalizeSavedSettings` in
 `src/stores/tts-store.ts`). Kokoro server settings are retained in the store
-and the `/api/tts/kokoro/*` routes remain — they proxy a user-configured
-self-hosted server, carry no AGPL dep, and are still functional API surface.
+and the `/api/tts/kokoro/*` routes remain — self-hosted Kokoro is a legitimate
+Class-2 provider: no AGPL dep, and after FDN-SEC-001R the routes enforce the
+egress policy (private targets need the operator opt-in; arbitrary public
+targets are pinned-validated).
 
 Consequence: the built-in word-boundary karaoke path that Edge provided now
 uses browser SpeechSynthesis boundary events or Fish/Google/OpenAI audio

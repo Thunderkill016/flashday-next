@@ -1,8 +1,17 @@
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
+import { afterEach, beforeEach, describe, expect, it, vi, type Mock } from 'vitest';
 import { NextRequest } from 'next/server';
+import type { LookupAddress } from 'node:dns';
+import { lookup } from 'node:dns/promises';
 import type { ProviderId } from '@/lib/providers';
 
+// Public hostnames resolve to public addresses; local providers need the
+// self-host opt-in per test.
+vi.mock('node:dns/promises', () => ({
+  lookup: vi.fn(async () => [{ address: '93.184.216.34', family: 4 }]),
+}));
+
 const fetchMock = vi.fn();
+const lookupMock = lookup as unknown as Mock<(hostname: string, options?: { all?: boolean }) => Promise<LookupAddress[]>>;
 
 vi.stubGlobal('fetch', fetchMock);
 
@@ -20,10 +29,15 @@ function makeRequest(
 describe('GET /api/models', () => {
   beforeEach(() => {
     fetchMock.mockReset();
+    lookupMock.mockReset();
+    lookupMock.mockResolvedValue([{ address: '93.184.216.34', family: 4 }]);
+    vi.stubEnv('FLASHDAY_SELF_HOST', '');
+    vi.stubEnv('FLASHDAY_LOCAL_PROVIDERS', '');
   });
 
   afterEach(() => {
     vi.clearAllMocks();
+    vi.unstubAllEnvs();
   });
 
   it('derives the OpenRouter models endpoint from apiPath', async () => {
@@ -312,7 +326,8 @@ describe('GET /api/models', () => {
     expect(data.models).toEqual([{ id: 'gemini-2.5-flash', name: 'Gemini 2.5 Flash' }]);
   });
 
-  it('dynamically fetches ollama tags instead of using static models', async () => {
+  it('dynamically fetches ollama tags instead of using static models (self-host mode)', async () => {
+    vi.stubEnv('FLASHDAY_SELF_HOST', '1');
     fetchMock.mockResolvedValue(
       new Response(JSON.stringify({ models: [{ name: 'llama3.2' }, { name: 'qwen2.5' }] }), {
         status: 200,
@@ -334,7 +349,8 @@ describe('GET /api/models', () => {
     ]);
   });
 
-  it('dynamically fetches lmstudio models instead of using static models', async () => {
+  it('dynamically fetches lmstudio models instead of using static models (self-host mode)', async () => {
+    vi.stubEnv('FLASHDAY_SELF_HOST', '1');
     fetchMock.mockResolvedValue(
       new Response(JSON.stringify({ data: [{ id: 'local-model-a' }] }), {
         status: 200,
@@ -351,5 +367,56 @@ describe('GET /api/models', () => {
     );
     expect(data.dynamic).toBe(true);
     expect(data.models).toEqual([{ id: 'local-model-a', name: 'local-model-a' }]);
+  });
+
+  it('refuses local provider targets on hosted deployments (no self-host opt-in)', async () => {
+    const res = await GET(makeRequest('ollama'));
+    expect(res.status).toBe(403);
+    const data = await res.json();
+    expect(data.code).toBe('egress_blocked');
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('refuses an arbitrary private x-base-url on hosted deployments', async () => {
+    const res = await GET(
+      makeRequest('openai', {
+        'x-api-key': 'sk-test',
+        'x-base-url': 'http://169.254.169.254',
+        'x-api-path': '/latest/meta-data',
+      }),
+    );
+    expect(res.status).toBe(403);
+    const data = await res.json();
+    expect(data.code).toBe('egress_blocked');
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('refuses a DNS-private custom base URL on hosted deployments', async () => {
+    lookupMock.mockImplementationOnce(async () => [{ address: '192.168.1.5', family: 4 }]);
+
+    const res = await GET(
+      makeRequest('openai', {
+        'x-api-key': 'sk-test',
+        'x-base-url': 'https://internal.example.org',
+        'x-api-path': '/v1/chat/completions',
+      }),
+    );
+    expect(res.status).toBe(403);
+    expect(fetchMock).not.toHaveBeenCalled();
+  });
+
+  it('permits an allowlisted local provider origin via FLASHDAY_LOCAL_PROVIDERS', async () => {
+    vi.stubEnv('FLASHDAY_LOCAL_PROVIDERS', 'http://192.168.1.20:11434');
+    fetchMock.mockResolvedValue(
+      new Response(JSON.stringify({ models: [{ name: 'qwen3' }] }), {
+        status: 200,
+        headers: { 'Content-Type': 'application/json' },
+      }),
+    );
+
+    const res = await GET(makeRequest('ollama', { 'x-base-url': 'http://192.168.1.20:11434' }));
+    const data = await res.json();
+    expect(fetchMock).toHaveBeenCalledWith('http://192.168.1.20:11434/api/tags', expect.any(Object));
+    expect(data.models).toEqual([{ id: 'qwen3', name: 'qwen3' }]);
   });
 });

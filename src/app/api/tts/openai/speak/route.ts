@@ -1,4 +1,5 @@
 import { NextRequest } from 'next/server';
+import { EgressPolicyError } from '@/lib/egress';
 import { synthesizeOpenAISpeech } from '@/lib/openai-tts';
 import { enforceRouteRateLimit, rateLimitResponse } from '@/lib/platform-provider';
 
@@ -56,6 +57,9 @@ export async function POST(req: NextRequest) {
       },
     });
   } catch (error) {
+    if (error instanceof EgressPolicyError) {
+      return Response.json({ error: error.message, code: 'egress_blocked' }, { status: 403 });
+    }
     const message = error instanceof Error ? error.message : 'OpenAI TTS synthesis failed.';
     return Response.json({ error: message }, { status: 500 });
   }

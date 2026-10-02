@@ -5,6 +5,8 @@
  * Uses the same API that YouTube's web player uses to fetch captions.
  */
 
+import { fetchEgress } from './egress';
+
 export interface TranscriptSegment {
   text: string;
   start: number;
@@ -35,29 +37,7 @@ export interface CaptionTrack {
   kind?: string;
 }
 
-/**
- * Extract YouTube video ID from various URL formats
- */
-export function extractYouTubeVideoId(url: string): string | null {
-  try {
-    const urlObj = new URL(url);
-    const hostname = urlObj.hostname.toLowerCase();
-    const isYouTube = hostname === 'youtube.com' || hostname.endsWith('.youtube.com');
-
-    if (isYouTube) {
-      if (urlObj.pathname === '/watch') return urlObj.searchParams.get('v') || null;
-      const [type, videoId] = urlObj.pathname.split('/').filter(Boolean);
-      if (['shorts', 'live', 'embed'].includes(type) && videoId) return videoId;
-      return null;
-    }
-
-    if (hostname === 'youtu.be') return urlObj.pathname.split('/').filter(Boolean)[0] || null;
-
-    return null;
-  } catch {
-    return null;
-  }
-}
+export { extractYouTubeVideoId } from './youtube-url';
 
 const baseLanguage = (language = '') => language.toLowerCase().split('-')[0];
 
@@ -329,7 +309,7 @@ function selectCaptionTrack(tracks: CaptionTrack[], preferredLang = 'en'): Capti
  */
 export async function fetchYouTubeTranscript(videoId: string, preferredLang = 'en'): Promise<TranscriptResponse> {
   const videoPageUrl = `https://www.youtube.com/watch?v=${videoId}`;
-  const pageResponse = await fetch(videoPageUrl, {
+  const pageResponse = await fetchEgress(videoPageUrl, {
     headers: {
       'User-Agent':
         'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
@@ -354,7 +334,7 @@ export async function fetchYouTubeTranscript(videoId: string, preferredLang = 'e
     throw new Error('No suitable caption track found');
   }
 
-  const captionResponse = await fetch(track.baseUrl, {
+  const captionResponse = await fetchEgress(track.baseUrl, {
     signal: AbortSignal.timeout(10000),
   });
 
@@ -461,7 +441,7 @@ export function sortAudioCandidates(candidates: YouTubeAudioCandidate[]): YouTub
 }
 
 export async function extractYouTubeAudioCandidates(videoId: string): Promise<YouTubeAudioCandidate[]> {
-  const pageResponse = await fetch(`https://www.youtube.com/watch?v=${videoId}`, {
+  const pageResponse = await fetchEgress(`https://www.youtube.com/watch?v=${videoId}`, {
     headers: {
       'User-Agent':
         'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36',
@@ -513,7 +493,7 @@ export async function fetchYouTubeMetadata(url: string): Promise<{
   thumbnail_url?: string;
 }> {
   const oembedUrl = `https://www.youtube.com/oembed?url=${encodeURIComponent(url)}&format=json`;
-  const response = await fetch(oembedUrl, {
+  const response = await fetchEgress(oembedUrl, {
     signal: AbortSignal.timeout(10000),
   });
 
