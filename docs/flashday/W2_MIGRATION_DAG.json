@@ -1,0 +1,551 @@
+{
+  "mission": "W2-00",
+  "version": 2,
+  "revision": "W2-00R2 — placement boundary fix",
+  "base": "main @ 672b3f389aad06aa1ea05d2b66731212e79778b4",
+  "doctrine": "capability authority = kernel projection over evidenceEvents; FSRS = scheduling only; no deletions in Wave 2",
+  "nodes": [
+    {
+      "id": "W2-G01",
+      "title": "Authority guardrails",
+      "subsystem": "cross-cutting",
+      "priority": "P0",
+      "dependsOn": [],
+      "currentAuthority": "heuristic stores mint implicit capability claims (accuracy, due-ness, weakSpots.resolved, pronunciationProgress, assessment.currentLevel)",
+      "targetAuthority": "capability claims originate only from kernel projection over evidenceEvents",
+      "writers": ["policy-only: no schema writes"],
+      "readers": ["all surfaces"],
+      "action": "Freeze new authority violations. Forbid new readers treating records.accuracy, fsrsCard/nextReview due-ness, weakSpots.resolved, pronunciationProgress, or assessment.currentLevel as capability. Enforced via review checklist + invariant grep list in ADR.",
+      "adapter": "none — policy boundary",
+      "backfill": "NONE",
+      "syncImpact": "no sync change",
+      "rollbackCategory": "simple",
+      "rollback": "Remove the policy; no data touched.",
+      "invariants": [
+        "no new ability-claim readers outside evidence-bridge projectState",
+        "FSRS due-ness never implies mastery",
+        "completion never implies mastery"
+      ],
+      "acceptance": [
+        "grep inventory of ability-claim read sites lands in this doc",
+        "STATE_AUTHORITY.md invariant column cites this node"
+      ],
+      "stopConditions": ["any existing reader found minting new capability claims -> escalate, scope guardrail first"]
+    },
+    {
+      "id": "W2-G02",
+      "title": "Semantic commit contract",
+      "subsystem": "evidence-commit",
+      "priority": "P0",
+      "dependsOn": [],
+      "currentAuthority": "legacy tables commit in one Dexie transaction; EvidenceEvent would be a later best-effort side write",
+      "targetAuthority": "semantic outcome and legacy history commit atomically in one local transaction",
+      "writers": [
+        "src/lib/vocabulary-repository.ts (saveVocabularySubmission tx: contents+records+sessions+learningAttempts+dailyTasks)",
+        "src/lib/learning-activity-persistence.ts (learningAttempts+mediaBlobs tx)"
+      ],
+      "readers": ["evidence-bridge", "learning surfaces"],
+      "action": "Decide commit semantics: extend the existing Dexie transactions to include db.evidenceEvents so history+event commit atomically. evaluate -> construct event -> single local tx -> remote sync separately. Rejected alternative: post-commit side write (split-brain).",
+      "adapter": "evidence-bridge submitAttempt/submitObservation write inside the caller's Dexie transaction scope",
+      "backfill": "NONE — live minting only",
+      "syncImpact": "no sync change for the commit itself; event mirror is W2-SY1",
+      "rollbackCategory": "simple",
+      "rollback": "Adapter stops emitting events; legacy transaction shape unchanged.",
+      "invariants": [
+        "a semantic outcome in history implies a matching event committed in the same transaction",
+        "embedded self/AI feedback inside an attempt never mints capability events",
+        "remote sync failure never blocks the local semantic commit"
+      ],
+      "acceptance": [
+        "failure matrix F1/F2/F3 answered in ADR",
+        "atomicity test plan: event absent => whole transaction absent"
+      ],
+      "stopConditions": [
+        "evidenceEvents cannot join the existing transaction -> must switch to durable outbox design before any W2 adapter code"
+      ]
+    },
+    {
+      "id": "W2-G03",
+      "title": "Placement boundary contract",
+      "subsystem": "assessment",
+      "priority": "P0",
+      "dependsOn": [],
+      "currentAuthority": "assessment-store.currentLevel (localStorage) displays a CEFR level as ability",
+      "targetAuthority": "explicit non-authoritative placement domain: PlacementEstimate advisory state; never an EvidenceEvent, never capability truth",
+      "writers": ["spec/docs", "src/stores/assessment-store.ts (state shape only)"],
+      "readers": ["dashboard reminder", "speak surfaces"],
+      "action": "Define the placement domain as advisory state outside the event log: PlacementEstimate { levelEstimate, source, score, completedAt, method/version }. EvidenceEvent stays capability-scoped — placement_estimate is NOT a registered event type, ai_eval is NOT an authority, and submitObservation is a capability-bound TaskContract API, not a generic observation bus. Reviewer decision: do not extend the kernel to hold placement; audited placement evidence would require a separate ADR (separate placement/history domain or a generic non-capability ledger).",
+      "adapter": "none — advisory state, no event emission",
+      "backfill": "HISTORY ONLY — the stored CEFR label is never replayed as an event",
+      "syncImpact": "no sync change — assessment-store stays localStorage prefs",
+      "rollbackCategory": "simple",
+      "rollback": "Boundary doc + label revert; no data touched.",
+      "invariants": [
+        "placement estimate never enters capability projection inputs",
+        "no capability promotion, prerequisite satisfaction, mission completion, retained/transfer credit, or projection override may read placement state",
+        "UI always labels it as an estimate",
+        "permitted uses only: learner-facing orientation, onboarding suggestion, optional initial-content recommendation"
+      ],
+      "acceptance": [
+        "no capability projection reads placement state",
+        "no mission/task gating reads currentLevel",
+        "UI labels it as estimate",
+        "history remains intact"
+      ],
+      "stopConditions": [
+        "audited placement evidence desired -> separate ADR first; do not expand EvidenceEvent in Wave 2"
+      ]
+    },
+    {
+      "id": "W2-G04",
+      "title": "Projection coverage audit",
+      "subsystem": "kernel-projection",
+      "priority": "P0",
+      "dependsOn": ["W2-G01"],
+      "currentAuthority": "projection exists (projectLearnerState, buildLearnerModel, deriveCorrectionEpisodes) but coverage vs required consumer constructs is unverified",
+      "targetAuthority": "every consumer-facing construct has a named kernel projection artifact",
+      "writers": ["none — audit"],
+      "readers": ["downstream nodes W2-WS1/W2-PL1/W2-CS1"],
+      "action": "Produce the coverage table: required construct -> kernel artifact (CAPABILITY_STATES, deriveCorrectionEpisodes, deriveSupportLifecycle, fn-gap ledgers, next-for-you selector) -> present|missing. Missing constructs route to W2-PC1.",
+      "adapter": "none",
+      "backfill": "NONE",
+      "syncImpact": "no sync change",
+      "rollbackCategory": "simple",
+      "rollback": "n/a — audit artifact only.",
+      "invariants": ["no consumer migration may begin against a construct marked missing"],
+      "acceptance": [
+        "coverage table merged in W2_MIGRATION_DAG.md",
+        "each missing construct names its prerequisite node"
+      ],
+      "stopConditions": ["any missing construct -> W2-PC1 becomes required before its dependents"]
+    },
+    {
+      "id": "W2-PC1",
+      "title": "Kernel projection extension",
+      "subsystem": "kernel-projection",
+      "priority": "P1",
+      "dependsOn": ["W2-G04"],
+      "currentAuthority": "n/a — conditional extension",
+      "targetAuthority": "missing constructs implemented in kernel, not shimmed in UI",
+      "writers": ["src/vnext/* (kernel)"],
+      "readers": ["evidence-bridge projectState consumers"],
+      "action": "Always executes as a gate node; it never disappears from the DAG. Consumes W2-G04's recorded coverage result: if missingConstructs is non-empty, implement exactly those constructs in kernel (candidate: standalone recurring-error surface if correction episodes do not cover it) with contracts registered in the bridge registry; if empty, resolve skipped-satisfied with recorded result missingConstructs=[]. Downstream nodes depend on this gate's recorded resolution, not on optional work. Additive kernel work only.",
+      "adapter": "kernel + bridge registry additions",
+      "backfill": "NONE",
+      "syncImpact": "no sync change",
+      "rollbackCategory": "simple",
+      "rollback": "Extension is additive; dependents keep legacy reads.",
+      "conditionalGate": {
+        "decidedBy": "W2-G04",
+        "skippedSatisfiedWhen": "W2-G04 records missingConstructs = []",
+        "skippedResolution": "skipped-satisfied",
+        "skippedSatisfiesDependencies": true
+      },
+      "invariants": [
+        "no construct may be simulated in UI code — kernel or nothing",
+        "resolution is always recorded (implemented | skipped-satisfied), never implicit"
+      ],
+      "acceptance": [
+        "either constructs present with contract + kernel tests, or recorded resolution skipped-satisfied with missingConstructs=[]"
+      ],
+      "stopConditions": ["G04 coverage result missing or unrecorded -> gate cannot resolve; block dependents"]
+    },
+    {
+      "id": "W2-WS1",
+      "title": "Weakness construct mapping",
+      "subsystem": "weakness-remediation",
+      "priority": "P1",
+      "dependsOn": ["W2-G04"],
+      "currentAuthority": "weakSpots rows: module+weakSpotType+normalizedText keyed, count + resolved flag",
+      "targetAuthority": "distinct kernel constructs: consecutive failure, recurring error, support dependency, remediation demand",
+      "writers": ["spec-only"],
+      "readers": ["W2-WS2", "W2-PL1"],
+      "action": "Define each selected construct: source EvidenceEvents, projection field, decay/resolution condition, planner use, UI wording, capability-specific flag. Map: recurring error -> correction-episode triggers (deriveCorrectionEpisodes); support dependency -> support lifecycle state (learner-model view); remediation demand -> open episode + retestSurfaces; consecutive failure -> support-demand ledger input. Legacy count/resolved never copied.",
+      "adapter": "projection reads via projectState/buildLearnerModel",
+      "backfill": "HISTORY ONLY — generic weakSpot rows never mint events",
+      "syncImpact": "no sync change",
+      "rollbackCategory": "simple",
+      "rollback": "Mapping doc only; no reads switched yet.",
+      "invariants": [
+        "no generic 'weak' boolean may ship",
+        "UI wording comes from construct semantics (e.g. needs practice / recovering), not from weakSpots.count"
+      ],
+      "acceptance": ["per-construct spec table merged", "missing kernel support routed to W2-PC1 explicitly"],
+      "stopConditions": ["required construct absent and not coverable -> escalate to external review"]
+    },
+    {
+      "id": "W2-AT1",
+      "title": "Attempt dual-write adapter",
+      "subsystem": "evidence-commit",
+      "priority": "P0",
+      "dependsOn": ["W2-G01", "W2-G02"],
+      "currentAuthority": "learningAttempts/sessions/records commit locally; no EvidenceEvent minted",
+      "targetAuthority": "semantic outcomes mint EvidenceEvents inside the same Dexie transaction",
+      "writers": [
+        "src/lib/vocabulary-repository.ts",
+        "src/lib/learning-activity-persistence.ts",
+        "lesson/workshop flows"
+      ],
+      "readers": ["kernel projection"],
+      "action": "Extend the existing Dexie transactions to include evidenceEvents; submitAttempt writes history rows + the semantic event atomically. TextCycleEvidence/cycle data maps to contract-registered task outcomes; embedded feedback stays context-only.",
+      "adapter": "bridge submitAttempt/submitObservation inside caller transaction",
+      "backfill": "NONE — forward minting only",
+      "syncImpact": "evidenceEvents stays local-only until W2-SY1",
+      "rollbackCategory": "simple",
+      "rollback": "Stop emitting; legacy rows identical to today.",
+      "invariants": [
+        "attempt with semantic outcome => event in same transaction",
+        "feedback.source self/ai never appears in evaluation.authority for capability claims"
+      ],
+      "acceptance": [
+        "atomicity test: history committed <=> event committed",
+        "falsification e2e re-pinned: double-submit mints one attempt, corrupted rows earn nothing"
+      ],
+      "stopConditions": ["single-transaction commit impossible -> durable outbox per W2-G02 decision"]
+    },
+    {
+      "id": "W2-WS2",
+      "title": "Weak-spot read migration",
+      "subsystem": "weakness-remediation",
+      "priority": "P1",
+      "dependsOn": ["W2-WS1", "W2-PC1"],
+      "currentAuthority": "lesson-workshop, use-review-summary, use-learning-workspace read weakSpots table",
+      "targetAuthority": "surfaces read correction-episode/support-lifecycle projection; weakSpots table demoted to candidate signal",
+      "writers": ["weak-spots-store.ts keeps writing candidate signal (sync mirror compat)"],
+      "readers": ["lesson-workshop", "use-review-summary", "use-learning-workspace"],
+      "action": "Repoint the three readers to projection constructs per W2-WS1 mapping. Legacy writer output may feed candidate-signal events, never authority.",
+      "adapter": "projectState/buildLearnerModel view",
+      "backfill": "HISTORY ONLY",
+      "syncImpact": "no sync change",
+      "rollbackCategory": "dual-read",
+      "rollback": "Readers switch back to the table; both sources coexist.",
+      "invariants": ["no UI weakness/resolved claim without projection source"],
+      "acceptance": ["all three readers use projection; falsification spec covers stale-table case"],
+      "stopConditions": ["projection diverges unexplainably from expectations -> keep dual-read, escalate"]
+    },
+    {
+      "id": "W2-PL1",
+      "title": "Planner authority migration",
+      "subsystem": "planner",
+      "priority": "P1",
+      "dependsOn": ["W2-AT1", "W2-PC1"],
+      "currentAuthority": "daily-task-planner selects over legacy records/sessions heuristics; dailyTasks mixes row classes",
+      "targetAuthority": "kernel nextAction/selectNextTask decides; planner-generated dailyTasks rows record the decision id",
+      "writers": ["daily-task-planner -> dailyTasks"],
+      "readers": ["daily-task-queue", "vocabulary-workspace", "import-schedule"],
+      "action": "Split dailyTasks row semantics: planner-generated learning rows (require decision provenance), lifecycle rows, settings/preferences rows (e.g. preferences:vocabulary — exempt). Selection logic delegated to kernel; rows are executable cache. Legacy queued tasks keep completing as cache — no re-authorization.",
+      "adapter": "nextAction -> dailyTasks row materialization",
+      "backfill": "HISTORY ONLY",
+      "syncImpact": "no sync change — dailyTasks stays sync mirror of generated cache",
+      "rollbackCategory": "dual-read",
+      "rollback": "Planner flag returns to legacy budget selection; existing rows still render.",
+      "invariants": [
+        "every planner-generated learning task row traces to a planner decision id",
+        "settings/preferences rows never require decision provenance"
+      ],
+      "acceptance": ["decision-id provenance on new planner rows", "queued legacy tasks render + complete"],
+      "stopConditions": ["nextAction coverage insufficient for task kinds -> route via W2-PC1"]
+    },
+    {
+      "id": "W2-AS1",
+      "title": "Assessment placement relabel",
+      "subsystem": "assessment",
+      "priority": "P1",
+      "dependsOn": ["W2-G03"],
+      "currentAuthority": "currentLevel renders as level truth",
+      "targetAuthority": "advisory placement-estimate label; no capability or gating consumers",
+      "writers": ["assessment flow", "assessment-store"],
+      "readers": ["dashboard reminder", "speak surfaces"],
+      "action": "Relabel UI copy to placement estimate; remove capability/gating consumers; preserve history. Does NOT emit submitObservation and does NOT invent a capability/task contract — placement stays outside the event log per the W2-G03 boundary.",
+      "adapter": "none — no event emission",
+      "backfill": "HISTORY ONLY",
+      "syncImpact": "no sync change",
+      "rollbackCategory": "simple",
+      "rollback": "Copy + read-path revert; store untouched.",
+      "invariants": ["placement estimate never feeds capability state", "no gating consumes currentLevel"],
+      "acceptance": ["vi/en/zh copy says estimate", "no gating consumer remains", "history preserved"],
+      "stopConditions": ["placement boundary undefined -> block on W2-G03"]
+    },
+    {
+      "id": "W2-PR1",
+      "title": "pronunciationProgress demotion",
+      "subsystem": "pronunciation",
+      "priority": "P1",
+      "dependsOn": ["W2-G01"],
+      "currentAuthority": "per-sound progress row renders as ability",
+      "targetAuthority": "practice/diagnostic history display only; capability claims wait for Wave-3 acoustic EvidenceEvents",
+      "writers": ["pronunciation-studio"],
+      "readers": ["pronunciation-studio", "daily-task-queue badge"],
+      "action": "Presentation reads as practice history. No acoustic eval in W2 — OpenPronounce audit is a W3 gate.",
+      "adapter": "none",
+      "backfill": "HISTORY ONLY — progress scores never mint events",
+      "syncImpact": "no sync change — stays raw-synced compat table",
+      "rollbackCategory": "simple",
+      "rollback": "Copy/read-path revert.",
+      "invariants": ["strong-looking progress with zero acoustic events must not surface as ability"],
+      "acceptance": ["UI copy says practice history", "no capability claim path exists"],
+      "stopConditions": []
+    },
+    {
+      "id": "W2-MB1",
+      "title": "Memory boundary verification",
+      "subsystem": "fsrs",
+      "priority": "P1",
+      "dependsOn": ["W2-G01"],
+      "currentAuthority": "records.fsrsCard + favorites.fsrsCard drive scheduling; occasionally read as ability",
+      "targetAuthority": "FSRS stays memory-scheduling authority; all readers verified scheduling-only",
+      "writers": ["practice flows", "favorite-store.gradeReview"],
+      "readers": ["today-review", "daily-task-planner", "dashboard", "favorites review"],
+      "action": "Audit every fsrsCard/nextReview reader; demote ability-shaped reads (e.g. last_review as review evidence) to scheduling context; pin with grep list.",
+      "adapter": "none",
+      "backfill": "NONE — scheduling state stays live authority",
+      "syncImpact": "no sync change — records keep mapped sync",
+      "rollbackCategory": "simple",
+      "rollback": "Read-path revert.",
+      "invariants": ["due-ness never implies mastery", "retention claims come only from projection"],
+      "acceptance": ["reader inventory pinned", "no ability-claim FSRS reader remains"],
+      "stopConditions": []
+    },
+    {
+      "id": "W2-CS1",
+      "title": "Consumer sweep",
+      "subsystem": "cross-cutting",
+      "priority": "P1",
+      "dependsOn": ["W2-WS2", "W2-PL1", "W2-AS1", "W2-PR1", "W2-MB1"],
+      "currentAuthority": "dashboard/recommendations/review read capability-shaped data from legacy stores",
+      "targetAuthority": "capability surfaces read exclusively from projectState/learner model",
+      "writers": ["none"],
+      "readers": ["dashboard", "recommendations", "review surfaces", "chat analytics"],
+      "action": "Repoint remaining capability-claim readers to the projection. sessions.avgAccuracy and streaks stay display-only analytics.",
+      "adapter": "projectState/learner-model view",
+      "backfill": "NONE",
+      "syncImpact": "no sync change",
+      "rollbackCategory": "dual-read",
+      "rollback": "Per-surface read-path revert; coexistence allowed.",
+      "invariants": ["avgAccuracy display-only, never proficiency", "no direct ability reads outside projection"],
+      "acceptance": ["falsification specs re-pinned", "reader audit clean"],
+      "stopConditions": ["surface has no projection construct -> prerequisite via W2-PC1"]
+    },
+    {
+      "id": "W2-FZ1",
+      "title": "Writer freeze completion",
+      "subsystem": "cross-cutting",
+      "priority": "P0",
+      "dependsOn": ["W2-CS1"],
+      "currentAuthority": "legacy writers write history + implicit claims",
+      "targetAuthority": "legacy writers write history only; adapter is sole semantic-outcome path",
+      "writers": ["all legacy writers"],
+      "readers": ["all surfaces"],
+      "action": "Complete the freeze: no writer mints capability claims outside the bridge. Falsification + meet-person e2e pins re-run as the gate.",
+      "adapter": "n/a — enforcement",
+      "backfill": "NONE",
+      "syncImpact": "no sync change",
+      "rollbackCategory": "simple",
+      "rollback": "Unfreeze; nothing destructive was done.",
+      "invariants": ["semantic truth flows only through evidenceEvents"],
+      "acceptance": ["mission-falsification + meet-person specs green", "writer audit clean"],
+      "stopConditions": []
+    },
+    {
+      "id": "W2-SY1",
+      "title": "evidenceEvents sync mirror",
+      "subsystem": "sync",
+      "priority": "P1",
+      "dependsOn": ["W2-G02"],
+      "currentAuthority": "evidenceEvents is local-only (not in SYNC_TABLES)",
+      "targetAuthority": "append-only Supabase mirror of evidenceEvents",
+      "writers": ["sync engine push"],
+      "readers": ["sync engine pull on other devices"],
+      "action": "Add append-only event mirror. Events are immutable -> conflict handling is dedupe by deterministic id, never merge. Local projection remains the computation point.",
+      "adapter": "sync mapper + remote table",
+      "backfill": "NONE — mirror starts from creation; local log remains source during transition",
+      "syncImpact": "sync mapper change + remote schema (append-only table) + conflict handling (id dedupe)",
+      "rollbackCategory": "simple",
+      "rollback": "Stop syncing events; local log unaffected.",
+      "invariants": [
+        "mirror never rewrites events",
+        "a stale synced legacy row arriving post-freeze applies as history only, never authority"
+      ],
+      "acceptance": [
+        "two-device replay produces identical projection",
+        "legacy rows post-freeze do not alter capability state"
+      ],
+      "stopConditions": ["remote schema requires destructive migration -> escalate"]
+    },
+    {
+      "id": "W2-VR1",
+      "title": "Replay + sync verification",
+      "subsystem": "sync",
+      "priority": "P1",
+      "dependsOn": ["W2-SY1", "W2-FZ1"],
+      "currentAuthority": "unverified multi-device/offline behavior",
+      "targetAuthority": "projection reproducible from event replay; edge cases covered",
+      "writers": ["none"],
+      "readers": ["all surfaces"],
+      "action": "Verify: multi-tab same-version behavior, downgrade (old app reads legacy tables fine, events inert), anonymous->authenticated transition (events carry learnerId; namespace migration plan documented), stale sync rows post-freeze, replay equivalence.",
+      "adapter": "none",
+      "backfill": "NONE",
+      "syncImpact": "verification only",
+      "rollbackCategory": "simple",
+      "rollback": "n/a — verification node.",
+      "invariants": ["replay determinism: same events -> same projection"],
+      "acceptance": ["edge-case matrix in ADR all answered by tests or explicit doctrine"],
+      "stopConditions": ["replay nondeterminism found -> block wave"]
+    },
+    {
+      "id": "W2-BF1",
+      "title": "Fact-preserving backfill gate",
+      "subsystem": "backfill",
+      "priority": "P2",
+      "dependsOn": ["W2-FZ1"],
+      "currentAuthority": "legacy history exists without semantic events",
+      "targetAuthority": "only provably-fact-preserving sources may mint historical_replay events, via separate review",
+      "writers": ["migration tooling (future)"],
+      "readers": ["projection"],
+      "action": "Separate review gate. Eligibility requires raw learner response + stable task identity/revision + context + evaluator inputs + support provenance where the contract demands it. Re-evaluate against frozen contract; never copy the old verdict; deterministic id; provenance historical_replay.",
+      "adapter": "replay evaluator over frozen contracts",
+      "backfill": "FACT-PRESERVING CANDIDATE — only rows passing the eligibility proof",
+      "syncImpact": "events mirror through W2-SY1",
+      "rollbackCategory": "dual-read",
+      "rollback": "Exclude provenance=historical_replay from projection inputs.",
+      "invariants": [
+        "no synthetic semantic backfill by default",
+        "sessions.accuracy never becomes mastery evidence",
+        "uncopyable aggregate rows stay history forever"
+      ],
+      "acceptance": ["per-source classification table merged", "external review approves the candidate set"],
+      "stopConditions": ["eligibility proof cannot be demonstrated -> source stays HISTORY ONLY"]
+    },
+    {
+      "id": "W2-RT1",
+      "title": "Retirement planning",
+      "subsystem": "cross-cutting",
+      "priority": "P2",
+      "dependsOn": ["W2-FZ1", "W2-VR1"],
+      "currentAuthority": "legacy tables still authoritative for some reads",
+      "targetAuthority": "documented pruning candidates + gate; no deletion in Wave 2",
+      "writers": ["none"],
+      "readers": ["downstream waves"],
+      "action": "Document which tables become prune candidates (weakSpots, obsolete planner cache classes) and what evidence must exist before any deletion. Actual pruning is a separate post-W2 gate with external review.",
+      "adapter": "none",
+      "backfill": "NONE",
+      "syncImpact": "documentation only",
+      "rollbackCategory": "simple",
+      "rollback": "n/a — planning artifact.",
+      "invariants": ["no table deletion inside Wave 2"],
+      "acceptance": ["retirement gate criteria documented"],
+      "stopConditions": []
+    }
+  ],
+  "missions": [
+    {
+      "id": "W2-01",
+      "title": "Authority Guardrails",
+      "nodes": ["W2-G01"],
+      "scope": "policy + invariant doc + claim-site inventory",
+      "runtimeChange": false,
+      "dataMigration": false,
+      "externalReviewGate": "mission close"
+    },
+    {
+      "id": "W2-02",
+      "title": "Semantic Commit Adapter",
+      "nodes": ["W2-G02", "W2-AT1"],
+      "scope": "single-transaction commit contract + dual-write implementation",
+      "files": [
+        "src/lib/vocabulary-repository.ts",
+        "src/lib/learning-activity-persistence.ts",
+        "src/lib/evidence-bridge/*"
+      ],
+      "runtimeChange": true,
+      "dataMigration": false,
+      "externalReviewGate": "pre-merge"
+    },
+    {
+      "id": "W2-03",
+      "title": "Projection Coverage",
+      "nodes": ["W2-G03", "W2-G04", "W2-PC1", "W2-WS1"],
+      "scope": "coverage audit + kernel extensions + weakness construct mapping + placement boundary",
+      "files": ["src/vnext/*", "src/lib/evidence-bridge/registry.ts", "docs/flashday/*"],
+      "runtimeChange": true,
+      "dataMigration": false,
+      "externalReviewGate": "pre-merge"
+    },
+    {
+      "id": "W2-04",
+      "title": "Planner Authority",
+      "nodes": ["W2-PL1"],
+      "scope": "kernel selection drives dailyTasks; row-class split documented",
+      "files": [
+        "src/lib/daily-task-planner.ts",
+        "src/lib/import-schedule.ts",
+        "src/components/learning/daily-task-queue.tsx"
+      ],
+      "runtimeChange": true,
+      "dataMigration": false,
+      "externalReviewGate": "pre-merge"
+    },
+    {
+      "id": "W2-05",
+      "title": "Weakness/Remediation Surfaces",
+      "nodes": ["W2-WS2"],
+      "scope": "three readers repointed to projection; weakSpots demoted to signal",
+      "files": [
+        "src/components/learning/lesson-workshop.tsx",
+        "src/hooks/use-review-summary.ts",
+        "src/hooks/use-learning-workspace.ts"
+      ],
+      "runtimeChange": true,
+      "dataMigration": false,
+      "externalReviewGate": "pre-merge"
+    },
+    {
+      "id": "W2-06",
+      "title": "Legacy Consumer Migration",
+      "nodes": ["W2-AS1", "W2-PR1", "W2-CS1"],
+      "scope": "assessment relabel, pronunciation demotion, dashboard/review consumer sweep",
+      "files": ["src/stores/assessment-store.ts", "src/components/pronunciation/*", "dashboard/review surfaces"],
+      "runtimeChange": true,
+      "dataMigration": false,
+      "externalReviewGate": "pre-merge"
+    },
+    {
+      "id": "W2-07",
+      "title": "Memory Boundary",
+      "nodes": ["W2-MB1"],
+      "scope": "FSRS reader audit + scheduling-only enforcement",
+      "files": ["src/lib/daily-plan-progress.ts", "src/lib/today-review.ts", "src/stores/favorite-store.ts"],
+      "runtimeChange": true,
+      "dataMigration": false,
+      "externalReviewGate": "pre-merge"
+    },
+    {
+      "id": "W2-08",
+      "title": "Writer Freeze",
+      "nodes": ["W2-FZ1"],
+      "scope": "freeze completion + falsification pins",
+      "runtimeChange": false,
+      "dataMigration": false,
+      "externalReviewGate": "pre-merge"
+    },
+    {
+      "id": "W2-09",
+      "title": "Replay/Sync Verification",
+      "nodes": ["W2-SY1", "W2-VR1"],
+      "scope": "append-only event mirror + multi-device/edge-case verification",
+      "files": ["src/lib/sync/*", "supabase migrations"],
+      "runtimeChange": true,
+      "dataMigration": true,
+      "externalReviewGate": "pre-merge"
+    },
+    {
+      "id": "W2-10",
+      "title": "Retirement",
+      "nodes": ["W2-RT1", "W2-BF1"],
+      "scope": "pruning gate criteria + optional fact-preserving backfill review",
+      "runtimeChange": false,
+      "dataMigration": true,
+      "externalReviewGate": "explicit separate review"
+    }
+  ]
+}
