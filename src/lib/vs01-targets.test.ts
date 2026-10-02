@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest';
 import type { ContentItem } from '@/types/content';
 import { builtinArticles } from './seed-data/articles';
 import {
+  isVs01TargetId,
   resolveVs01Source,
   VS01_CATEGORY,
   VS01_SOURCE_TITLE,
@@ -65,6 +66,14 @@ describe('vs01-targets fixture', () => {
     for (const target of VS01_TARGETS) {
       expect(target.productionPattern.toLowerCase()).toContain(target.recallTarget.toLowerCase());
       expect(target.productionPattern).toMatch(/</);
+    }
+  });
+
+  it('isVs01TargetId is the exact five-id miss-persistence boundary', () => {
+    for (const target of VS01_TARGETS) expect(isVs01TargetId(target.id)).toBe(true);
+    // R1 B2: ordinary wordbook/review content must not write miss history
+    for (const id of ['', 'vs01', 'vs01.', 'vs01.unknown', 'daily-1', 'some-nanoid', 'vs01.wake-up-at ']) {
+      expect(isVs01TargetId(id)).toBe(false);
     }
   });
 

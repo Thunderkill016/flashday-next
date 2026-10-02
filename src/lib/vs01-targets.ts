@@ -79,6 +79,13 @@ export const VS01_TARGETS: Vs01Target[] = [
   },
 ];
 
+const VS01_TARGET_IDS = new Set(VS01_TARGETS.map((t) => t.id));
+
+/** True only for the five pilot target ids — the miss-persistence boundary. */
+export function isVs01TargetId(id: string): boolean {
+  return VS01_TARGET_IDS.has(id);
+}
+
 const normalize = (text: string) => text.trim().replace(/\s+/g, ' ').toLowerCase();
 
 /**

@@ -50,6 +50,7 @@ import {
 } from '@/lib/speech-feedback';
 import { IS_IOS_NATIVE_HOST, IS_TAURI, reportNativeQAState } from '@/lib/tauri';
 import { cn } from '@/lib/utils';
+import { isVs01TargetId } from '@/lib/vs01-targets';
 import {
   canFinishWordBookPractice,
   resolveWordBookPracticeItems,
@@ -423,25 +424,28 @@ function WritePractice({
     if (submitted.current) return;
     if (!isWordBookWriteMatch(typedText, target.text)) {
       setResult('wrong');
-      /* Persist the miss as history only — no FSRS grade, no record
-       * mutation — so VS01 telemetry can see the first-attempt outcome. */
-      try {
-        await recordFailedPracticeSession({
-          id: nanoid(),
-          contentId: item.id,
-          module: 'write',
-          startTime: startedAtRef.current,
-          endTime: Date.now(),
-          totalChars: target.text.length,
-          correctChars: 0,
-          wrongChars: 0,
-          totalWords: target.text.split(/\s+/).filter(Boolean).length,
-          wpm: 0,
-          accuracy: 0,
-          completed: false,
-        });
-      } catch {
-        setSaveError(true);
+      /* VS01 only: persist the miss as history — no FSRS grade, no
+       * record mutation — so telemetry sees the first-attempt outcome.
+       * Every other item keeps the pre-VS01 behavior (no write). */
+      if (isVs01TargetId(item.id)) {
+        try {
+          await recordFailedPracticeSession({
+            id: nanoid(),
+            contentId: item.id,
+            module: 'write',
+            startTime: startedAtRef.current,
+            endTime: Date.now(),
+            totalChars: target.text.length,
+            correctChars: 0,
+            wrongChars: 0,
+            totalWords: target.text.split(/\s+/).filter(Boolean).length,
+            wpm: 0,
+            accuracy: 0,
+            completed: false,
+          });
+        } catch {
+          setSaveError(true);
+        }
       }
       return;
     }
