@@ -124,16 +124,30 @@ describe('contract-mapping audit (W2-02 §6–§8)', () => {
     expect(LEGACY_CONTRACT_AUDIT.map((e) => e.action).sort()).toEqual(expected.sort());
   });
 
-  it('maps nothing today — every action is history-only or a W2-03 gap', () => {
+  it('maps nothing — no honest capability contract exists for any legacy action (W2-02.5)', () => {
+    const safe = LEGACY_CONTRACT_AUDIT.filter((e) => e.status === 'MAPPED_SAFE');
+    expect(safe.map((e) => e.action)).toEqual([]);
     for (const entry of LEGACY_CONTRACT_AUDIT) {
-      expect(entry.status, `${entry.action} claims a mapping`).not.toBe('MAPPED_SAFE');
-      expect(entry.status).not.toBe('MAPPED_SAFE');
       expect(entry.reason.length).toBeGreaterThan(0);
     }
   });
 
-  it('mapLegacyAttempt returns null for every audited action — no fake minting', () => {
+  it('classifies every action by authority domain — W2-02.5 re-audit', () => {
+    const DOMAINS = ['MEMORY_ITEM', 'CAPABILITY', 'FEEDBACK_ONLY', 'HISTORY_ONLY', 'AMBIGUOUS'];
     for (const entry of LEGACY_CONTRACT_AUDIT) {
+      expect(DOMAINS, entry.action).toContain(entry.authorityDomain);
+    }
+    // The falsification's headline: spelling is item-level memory
+    // evidence — deterministic exact-match scoring does not make it
+    // capability evidence, so it stays unmapped.
+    const spelling = LEGACY_CONTRACT_AUDIT.find((e) => e.action === 'vocabulary:spelling');
+    expect(spelling?.authorityDomain).toBe('MEMORY_ITEM');
+    expect(spelling?.status).not.toBe('MAPPED_SAFE');
+  });
+
+  it('mapLegacyAttempt returns null for every still-unmapped action — no fake minting', () => {
+    for (const entry of LEGACY_CONTRACT_AUDIT) {
+      if (entry.status === 'MAPPED_SAFE') continue;
       const [kind, mode] = entry.action.split(':') as [LegacyAction['kind'], string];
       expect(mapLegacyAttempt(legacyAction({ kind, mode })), entry.action).toBeNull();
     }
@@ -147,6 +161,7 @@ describe('MAPPED_SAFE requires an action-specific provenance mapper (W2-02R)', (
     AUDIT.push({
       action: 'vocabulary:meaning',
       status: 'MAPPED_SAFE',
+      authorityDomain: 'MEMORY_ITEM',
       taskId: 'task.meet.retrieval.ask_name',
       reason: 'injected MAPPED_SAFE without a mapper',
     });
@@ -161,6 +176,7 @@ describe('MAPPED_SAFE requires an action-specific provenance mapper (W2-02R)', (
     AUDIT.push({
       action: 'text-cycle:recall',
       status: 'MAPPED_SAFE',
+      authorityDomain: 'MEMORY_ITEM',
       taskId: 'task.meet.retrieval.ask_name',
       // Dishonest mapper: omits assisted/sourceRevealed → would mint
       // apparent independent evidence from an assisted recall.
@@ -185,6 +201,7 @@ describe('MAPPED_SAFE requires an action-specific provenance mapper (W2-02R)', (
     AUDIT.push({
       action: 'text-cycle:recall',
       status: 'MAPPED_SAFE',
+      authorityDomain: 'MEMORY_ITEM',
       taskId: 'task.meet.retrieval.ask_name',
       map: (a: LegacyAction) => ({ response: a.response, support: { ...a.support } }),
       reason: 'injected honest mapper',
@@ -408,6 +425,7 @@ describe('wired production path — seam proven end-to-end (W2-02 §13, §24, §
     AUDIT.push({
       action: 'vocabulary:meaning',
       status: 'MAPPED_SAFE',
+      authorityDomain: 'MEMORY_ITEM',
       taskId: 'task.meet.retrieval.ask_name',
       // Action-specific provenance mapper (W2-02R): carries declared support
       // facts (revealed) through verbatim — the guard refuses any drop.
@@ -506,6 +524,7 @@ describe('mapped persistLearningAttempt retry integrity (W2-02R4 D/E)', () => {
     AUDIT.push({
       action: 'learning-attempt:writing',
       status: 'MAPPED_SAFE',
+      authorityDomain: 'CAPABILITY',
       taskId: 'task.meet.retrieval.ask_name',
       map: (a: LegacyAction) => ({ response: a.response }),
       reason: 'test-injected mapping — exercises the seam through persistLearningAttempt',

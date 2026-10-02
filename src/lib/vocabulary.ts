@@ -1,6 +1,7 @@
 import type { ContentItem, LearningRecord } from '@/types/content';
 import type { DailyTask } from '@/types/daily-task';
 import type { LearningAttempt } from '@/types/learning-activity';
+import { canonicalExactText } from '@/vnext/normalize';
 import { toLocalDateKey } from './date-key';
 import { VOCABULARY_MAX_BYTES, VOCABULARY_MAX_ROWS } from './import-limits';
 export function introducedVocabularyToday(attempts: LearningAttempt[], mode: VocabularyMode, now: number) {
@@ -209,14 +210,11 @@ export function vocabularyQueue(
       .slice(0, Math.max(0, Math.min(100, Math.floor(limit) || 0) - todayNew)),
   ];
 }
+/* Canonical text normalization lives in one shared definition —
+ * src/vnext/normalize.js — so a future deterministic scorer can never
+ * diverge from the check the learner experienced. */
 export function normalizeSpelling(value: string) {
-  return value
-    .normalize('NFKC')
-    .trim()
-    .toLowerCase()
-    .replace(/[‘’ʼ]/g, "'")
-    .replace(/[‐‑–—]/g, '-')
-    .replace(/\s+/g, ' ');
+  return canonicalExactText(value);
 }
 export function spellingMatches(answer: string, word: string) {
   return !!answer.trim() && normalizeSpelling(answer) === normalizeSpelling(word);

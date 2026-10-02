@@ -134,7 +134,11 @@ export async function saveVocabularySubmission(
     mode,
     occurredAt: now,
     response: answer,
-    support: { revealed: true, context: context ?? null },
+    // `revealed` is the post-production compare step — it cannot scaffold
+    // production (the target stays hidden until the answer is locked), so
+    // it is never declared as attempt support. `context` is observational
+    // learner metadata, not an answer-bearing flag.
+    support: { context: context ?? null },
   });
   const historyTables = [
     database.contents,

@@ -54,7 +54,11 @@ export type MappingStatus = 'MAPPED_SAFE' | 'HISTORY_ONLY' | 'BLOCKED_PENDING_W2
  * state — those remain registered-contract derived inside the bridge.
  * Event identity (id/attemptId) and taskId stay adapter-owned.
  */
-export type ObservedAttempt = Pick<MappedAttempt, 'response' | 'support' | 'feedback' | 'occurredAt' | 'evaluationCtx'>;
+export type ObservedAttempt = Pick<MappedAttempt, 'response' | 'support' | 'feedback' | 'evaluationCtx'> & {
+  /** May override the action's attempt timestamp; omitted → the seam
+   * stamps action.occurredAt (the immutable Compare-boundary time). */
+  occurredAt?: number;
+};
 
 /**
  * One audit row per live legacy action shape. MAPPED_SAFE requires BOTH a
@@ -64,9 +68,32 @@ export type ObservedAttempt = Pick<MappedAttempt, 'response' | 'support' | 'feed
  * submission. BLOCKED_PENDING_W2_03 names the contract gap W2-03 must
  * close. Nothing here may invent semantics to force a mapping.
  */
+/**
+ * W2-02.5 authority-domain classification — WHICH evidence domain an
+ * action's observation honestly belongs to. Distinct from MappingStatus:
+ * status is 'can it mint today?', domain is 'should it ever mint, and
+ * where?'. The classification is argued from the evidence claim, never
+ * inferred from evaluator availability alone (a deterministic scorer does
+ * not promote item memory into capability evidence).
+ *
+ *   MEMORY_ITEM    — item-scoped retention knowledge (vocabulary FSRS
+ *                    domain); belongs to records/scheduler, never to
+ *                    LearnerProjection capability milestones
+ *   CAPABILITY     — ability-claim domain ('what can this learner do');
+ *                    requires an honest capability contract + evaluator
+ *   FEEDBACK_ONLY  — observational artifact: informs coaching/history but
+ *                    may never mint ability or item mastery
+ *   HISTORY_ONLY   — bookkeeping artifact, no learning evidence content
+ *   AMBIGUOUS      — genuinely sits between domains; needs a deeper
+ *                    contract decision before any mapping is designed
+ */
+export type AuthorityDomain = 'MEMORY_ITEM' | 'CAPABILITY' | 'FEEDBACK_ONLY' | 'HISTORY_ONLY' | 'AMBIGUOUS';
+
 export interface LegacyAuditEntry {
   action: string;
   status: MappingStatus;
+  /** Which evidence domain this action's observation belongs to (W2-02.5). */
+  authorityDomain: AuthorityDomain;
   taskId?: string;
   map?: (action: LegacyAction) => ObservedAttempt;
   reason: string;
@@ -76,79 +103,105 @@ export const LEGACY_CONTRACT_AUDIT: readonly LegacyAuditEntry[] = [
   {
     action: 'vocabulary:meaning',
     status: 'BLOCKED_PENDING_W2_03',
+    authorityDomain: 'MEMORY_ITEM',
     reason:
-      'self-rated meaning recall; no registered vocabulary-retrieval contract — kernel retrieval tasks are mission listening items',
+      'self-rated meaning recall of a stored item; even under a future contract the claim is per-item retention, not a generic ability',
   },
   {
     action: 'vocabulary:spelling',
     status: 'BLOCKED_PENDING_W2_03',
-    reason: 'typed orthographic production; no typed response shape exists in any registered contract',
+    authorityDomain: 'MEMORY_ITEM',
+    // W2-02.5 falsification: deterministic exact-match scoring exists and
+    // the seam CAN mint it — but the evidence claim is item-level form
+    // recall. One correct item → generic-capability INDEPENDENT and a
+    // delayed second → RETAINED is the documented overclaim; the item
+    // identity that would make the claim honest lives in the memory
+    // domain (FSRS item state), not LearnerProjection.
+    reason:
+      'item-scoped orthographic recall — deterministic scoring ≠ capability evidence; a generic lexical-form capability overclaims on one item, per-item capabilities duplicate the memory domain (W2-02.5 boundary analysis)',
   },
   {
     action: 'vocabulary:dictation',
     status: 'BLOCKED_PENDING_W2_03',
-    reason: 'listen+type; no dictation response shape or orthographic evaluator is registered',
+    authorityDomain: 'MEMORY_ITEM',
+    reason: 'item-scoped form recall cued by audio; no dictation contract and the claim is per-item retention',
   },
   {
     action: 'vocabulary:application',
     status: 'BLOCKED_PENDING_W2_03',
+    authorityDomain: 'MEMORY_ITEM',
     reason:
-      'free production looks transfer-like but no fresh-context transfer contract exists for vocabulary; validateVocabularyApplication is a heuristic, not an evaluator',
+      'capability-shaped response (own sentence) but the recorded claim is per-item command of the word; validateVocabularyApplication is a heuristic, not an evaluator — a generic free-production contract would re-scope the claim',
   },
   {
     action: 'vocabulary:construction',
     status: 'BLOCKED_PENDING_W2_03',
-    reason: 'morphology assembly; no registered contract covers word-construction evidence',
+    authorityDomain: 'MEMORY_ITEM',
+    reason: 'item-internal morphology assembly; the evidence claim is per-item form knowledge',
   },
   {
     action: 'learning-attempt:comprehension',
     status: 'BLOCKED_PENDING_W2_03',
-    reason: 'open-text comprehension; no registered contract for text comprehension evidence',
+    authorityDomain: 'FEEDBACK_ONLY',
+    reason:
+      'self/AI-assessed open-text comprehension is observational coaching data, not an ability or item-memory claim',
   },
   {
     action: 'learning-attempt:writing',
     status: 'BLOCKED_PENDING_W2_03',
-    reason: 'free writing attempt; no registered free-production contract outside mission tasks',
+    authorityDomain: 'CAPABILITY',
+    reason:
+      'free production IS ability-shaped evidence — the honest blocker is evaluator authority (self/AI feedback cannot mint independent credit), not the domain',
   },
   {
     action: 'learning-attempt:retelling',
     status: 'BLOCKED_PENDING_W2_03',
-    reason: 'audio retelling; no registered retelling contract or evaluator',
+    authorityDomain: 'CAPABILITY',
+    reason: 'spoken retelling is ability-shaped; blocked on ASR/evaluator honesty, not domain',
   },
   {
     action: 'learning-attempt:personal-example',
     status: 'BLOCKED_PENDING_W2_03',
-    reason: 'personal-example production; no registered contract; vocabulary application also lands here',
+    authorityDomain: 'CAPABILITY',
+    reason: 'self-composed production is ability-shaped; blocked on evaluator honesty + task contract scope',
   },
   {
     action: 'learning-attempt:sentence-pronunciation',
     status: 'BLOCKED_PENDING_W2_03',
-    reason: 'pronunciation scoring is not a communicative-function evaluator; no pronunciation contract registered',
+    authorityDomain: 'AMBIGUOUS',
+    reason:
+      'per-sentence pronunciation practice sits between item-scoped accuracy and spoken-production ability; heuristic scoring is not a communicative evaluator and the domain needs a deeper contract decision',
   },
   {
     action: 'text-cycle:understand',
     status: 'BLOCKED_PENDING_W2_03',
-    reason: 'comprehension phase — needs an exposure/comprehension observation contract',
+    authorityDomain: 'FEEDBACK_ONLY',
+    reason: 'comprehension phase is an observation artifact about the text episode, not an ability claim',
   },
   {
     action: 'text-cycle:output',
     status: 'BLOCKED_PENDING_W2_03',
-    reason: 'supported production phase — support provenance needs an honest contract first',
+    authorityDomain: 'FEEDBACK_ONLY',
+    reason: 'source-visible supported production can never mint independence by construction — rehearsal evidence only',
   },
   {
     action: 'text-cycle:correct',
     status: 'BLOCKED_PENDING_W2_03',
-    reason: 'self-correction phase — needs a correction-episode contract binding',
+    authorityDomain: 'FEEDBACK_ONLY',
+    reason: 'correction episodes are metacognitive metadata — they inform repair, they do not claim ability',
   },
   {
     action: 'text-cycle:recall',
     status: 'BLOCKED_PENDING_W2_03',
-    reason: 'delayed recall — needs a registered delayed_retrieval contract; cycle rating is not kernel authority',
+    authorityDomain: 'MEMORY_ITEM',
+    reason: 'delayed recall of learned text content is item-scoped retention; cycle rating is not kernel authority',
   },
   {
     action: 'text-cycle:apply',
     status: 'BLOCKED_PENDING_W2_03',
-    reason: 'application stage looks like transfer — needs a fresh-context transfer contract, not a heuristic',
+    authorityDomain: 'AMBIGUOUS',
+    reason:
+      'fresh-context production is transfer-shaped but self-rated and text-scoped — the memory/capability boundary needs a contract decision before any mapping',
   },
 ];
 
@@ -190,10 +243,12 @@ export function mapLegacyAttempt(action: LegacyAction): MappedAttempt | null {
   if (dropped.length > 0)
     throw new Error(`mapped submission for ${entry.action} dropped support provenance: ${dropped.join(', ')}`);
   return {
+    ...observed,
+    // Identity is adapter-pinned AFTER the observed spread — a mapper can
+    // never redirect the event id, the attempt id, or the contract.
     taskId: entry.taskId,
     id: `evt.${action.id}`,
     attemptId: action.id,
-    ...observed,
     occurredAt: observed.occurredAt ?? action.occurredAt,
   };
 }
@@ -219,6 +274,9 @@ async function appendMappedEvent(
   await submitAttempt(createDexieEventStore(evidenceEvents), registry(), {
     ...mapped,
     learnerId,
+    // The event id is pinned to evt.<attemptId> at the mint point — a
+    // payload-carried id can never redirect the canonical identity.
+    id: `evt.${mapped.attemptId}`,
   });
 }
 
@@ -251,9 +309,10 @@ export type SemanticHistoryTable = Table;
  *   history exists, no event → pre-cutover row: never mint, never
  *     repair, writeHistory never runs — a no-op
  *
- * The verified history id is `mapped.attemptId` — seam-derived, not
- * caller-chosen; the event id is `mapped.id ?? evt.<attemptId>`, matching
- * the bridge's own derivation. Either side throwing aborts everything, and
+ * The verified history id is `mapped.attemptId`. The canonical event id
+ * is always `evt.<mapped.attemptId>`; a payload-carried `mapped.id` is
+ * never authoritative at mint or retry lookup. Either side throwing
+ * aborts everything, and
  * because the append primitive is module-private, no caller can mint an
  * event without a materialized history row.
  *
@@ -296,7 +355,9 @@ export async function runSemanticCommit(args: {
       // event exists, re-deliver through the canonical store: identical
       // content dedupes, divergent content throws the conflict — a mutated
       // retry is refused. Event absent ⇒ pre-cutover row: no mint, no repair.
-      const existing = await evidenceEvents.get(mapped.id ?? `evt.${historyId}`);
+      // Canonical event identity is pinned to the attempt — never
+      // whatever id the mapped payload happens to carry.
+      const existing = await evidenceEvents.get(`evt.${historyId}`);
       if (existing) await appendMappedEvent(evidenceEvents, mapped, learnerId);
     } else {
       await writeHistory();

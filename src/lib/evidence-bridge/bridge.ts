@@ -52,6 +52,21 @@ const checkForgery = (sub: object) => {
       throw new Error(`submission may not author '${key}' — it is derived from the TaskContract`);
     }
   }
+  // Scoring truth (exact-match targets, scored-against provenance) is
+  // reserved for seam-resolved authoritative data — no production
+  // mechanism supplies it yet, and a caller who could set
+  // evaluationCtx.target would score answer===answer. The requirement is
+  // enforced structurally: callers may never author these keys.
+  const ctx = rec.evaluationCtx as Record<string, unknown> | undefined;
+  for (const key of ['target', 'scoring']) {
+    if (ctx?.[key] != null) {
+      throw new Error(`evaluationCtx may not author '${key}' — scoring truth is seam-resolved, never caller data`);
+    }
+  }
+  const evaluation = rec.evaluation as Record<string, unknown> | undefined;
+  if (evaluation?.scoredAgainst != null) {
+    throw new Error('submission may not author evaluation.scoredAgainst — evaluator-derived provenance');
+  }
 };
 
 const genEventId = (sub: { id?: string; attemptId?: string }) =>
@@ -97,10 +112,20 @@ export async function submitAttempt(
    * response (caller's outcome is ignored — the UI cannot claim
    * success). Without a contract, the caller's report is honored but
    * stamped with the task's declared authority — self_report/asr/
-   * ai_llm evidence can never mint independent credit either. */
+   * ai_llm evidence can never mint independent credit either.
+   *
+   * A declared contract whose evaluator abstains (returns null —
+   * unregistered contract, missing scoring truth) fails CLOSED: falling
+   * back to the caller's claimed outcome would let an unscorable
+   * attempt mint evidence anyway. */
   const evalResult = task.evaluation?.contractId
     ? ((evaluateAttempt(task as never, sub.response, sub.evaluationCtx as never) ?? null) as AttemptEvalResult | null)
     : null;
+  if (task.evaluation?.contractId && !evalResult) {
+    throw new Error(
+      `evaluator '${task.evaluation.contractId}' produced no report — refusing to mint outcome-less evidence`,
+    );
+  }
   const outcome = evalResult ? evalResult.outcome : (sub.outcome ?? null);
 
   const event = bindAttempt(task as never, capability as never, {

@@ -108,11 +108,11 @@ three ways:
 - **history exists + event absent** → pre-cutover row: `writeHistory` is
   never invoked and nothing mints — no repair, no backfill, a no-op
 
-The verified history id is `mapped.attemptId` and the event id is
-`mapped.id ?? evt.<attemptId>` — both seam-derived (the derivation matches
-the bridge's own), so a caller cannot satisfy the proof with a row or
-event under a different key. `verify` runs in the same transaction on all
-branches (account-switch guard). Defense-in-depth invariants remain: the
+The verified history id is `mapped.attemptId`. The canonical event id is
+always `evt.<mapped.attemptId>` — a payload-carried `mapped.id` is never
+authoritative at mint or retry lookup, so a caller cannot satisfy the
+proof with a row or event under a different key. `verify` runs in the
+same transaction on all branches (account-switch guard). Defense-in-depth invariants remain: the
 append asserts `Dexie.currentTransaction` and `evidenceEvents`
 participation. Native mission surfaces keep standalone `submitAttempt`.
 
@@ -199,3 +199,59 @@ changes, no new capability semantics — and no fabricated task contracts.
 - `src/lib/authority-guardrails/legacy-claim-sites.json` — reclassified the
   seam's sensitive occurrences (new `learningAttempts-semantic-seam` site;
   vocabulary tx-list lines updated per family)
+
+---
+
+# W2-02.5 — Memory/Capability Authority Boundary (vocabulary `spelling`)
+
+**Verdict: `MEMORY_BOUNDARY_CONFIRMED — SPELLING REJECTED AS CAPABILITY
+PILOT`.** `vocabulary:spelling` remains `BLOCKED_PENDING_W2_03` and is
+classified `MEMORY_ITEM`. The full falsification lives in
+[`W2_02_5_MEMORY_CAPABILITY_BOUNDARY.md`](./W2_02_5_MEMORY_CAPABILITY_BOUNDARY.md);
+this section records only what the seam kept.
+
+## What the boundary analysis settled
+
+A test-only generic lexical-form capability (`capability.test.*`) scored
+by a test-only deterministic exact-match evaluator was replayed through
+the real projection (`memory-capability-boundary.test.ts`, 23 tests):
+
+- one independently correct lexical item → capability `INDEPENDENT`
+- a second correct attempt `>=` retention delay → `RETAINED`
+
+Both promotions are mechanically real and semantically dishonest: the
+evidence proves retention of ONE item while the generic capability claim
+erases the item identity. Deterministic scoring is therefore necessary
+but NOT sufficient for capability evidence — the authority domain is the
+gate. The honest home for item-scoped form recall is the memory domain
+(FSRS item state in `records`), which already owns it.
+
+## Reusable findings kept (requirements + hardening, not activation)
+
+- **Scoring truth is never caller-authored** — `checkForgery` rejects
+  `evaluationCtx.target` / `evaluationCtx.scoring` and
+  `evaluation.scoredAgainst` on every submission, and a declared contract
+  whose evaluator abstains (`null`) fails closed rather than minting
+  outcome-less evidence. A speculative `submitAttempt(..., trusted?)`
+  parameter was *removed* in R1 review: a public export cannot be
+  structurally trusted. The trusted-resolution seam (authoritative data
+  resolved inside the commit transaction) remains a design requirement
+  for a future real capability pilot, not shipped machinery.
+- **`scoredAgainst` provenance** — requirement only: when a real
+  evaluator consumer exists, the event should stamp which authoritative
+  artifact supplied the target plus its canonical scored form.
+- **Canonical normalization** — `src/vnext/normalize.js`
+  (`canonicalExactText`) is shared *text normalization only*, not a
+  scoring contract; the legacy `normalizeSpelling` in `vocabulary.ts`
+  delegates to it.
+- **Immutable attempt timestamp** — deferred: a future semantic attempt
+  must persist a stable attempt identity (`attemptId`, `occurredAt`,
+  frozen response) reused on retries. A `useRef` timestamp does not
+  survive reload, and spelling mints no events — nothing was built here.
+- **Post-response reveal is not attempt support** — the producer declares
+  no `revealed` flag on the semantic action; the kernel's answer-bearing
+  support kinds are a closed set a post-hoc flag cannot enter anyway.
+- **`authorityDomain` on the audit table** — every legacy action now
+  carries its evidence-domain classification (`MEMORY_ITEM` /
+  `CAPABILITY` / `FEEDBACK_ONLY` / `HISTORY_ONLY` / `AMBIGUOUS`),
+  argued from the evidence claim, not evaluator availability.

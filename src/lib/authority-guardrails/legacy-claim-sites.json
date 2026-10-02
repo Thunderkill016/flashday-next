@@ -2844,6 +2844,19 @@
       "classification": "LEGIT_HISTORY",
       "reason": "doc comment naming the canonical history table the W2-02R3 seam verifies — no read or claim",
       "migrationNode": "W2-AT1"
+    },
+    {
+      "id": "lib-evidence-bridge-adapter.fsrs",
+      "file": "src/lib/evidence-bridge/adapter.ts",
+      "source": "fsrs",
+      "anchor": "see reason",
+      "occurrences": [
+        "* MEMORY_ITEM — item-scoped retention knowledge (vocabulary FSRS",
+        "// domain (FSRS item state), not LearnerProjection."
+      ],
+      "classification": "LEGIT_HISTORY",
+      "reason": "W2-02.5 doc comments naming FSRS as the memory-domain owner — no runtime read, no scheduling decision",
+      "migrationNode": "W2-AT1"
     }
   ]
 }
