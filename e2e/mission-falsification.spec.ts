@@ -59,6 +59,50 @@ async function stubSpeechDelivered(page: Page) {
   });
 }
 
+/** Stub speechSynthesis that parks each utterance — the test fires
+ * `onend` by hand, so delivery timing is fully under test control. */
+async function stubSpeechManual(page: Page) {
+  await page.addInitScript(() => {
+    class FakeUtterance {
+      text = '';
+      lang = '';
+      onend: (() => void) | null = null;
+      onerror: (() => void) | null = null;
+      constructor(text?: string) {
+        this.text = text ?? '';
+      }
+    }
+    (window as unknown as { __fdnUtterances: FakeUtterance[] }).__fdnUtterances = [];
+    Object.defineProperty(window, 'SpeechSynthesisUtterance', { value: FakeUtterance });
+    Object.defineProperty(window, 'speechSynthesis', {
+      value: {
+        pending: false,
+        speaking: false,
+        paused: false,
+        cancel() {},
+        pause() {},
+        resume() {},
+        getVoices: () => [],
+        speak(u: FakeUtterance) {
+          (window as unknown as { __fdnUtterances: FakeUtterance[] }).__fdnUtterances.push(u);
+        },
+        addEventListener() {},
+        removeEventListener() {},
+      },
+    });
+  });
+}
+
+/** Fire the last parked utterance's onend — a completion arriving at
+ * whatever moment the test chooses (e.g. after the session swapped). */
+async function fireLastUtteranceEnd(page: Page) {
+  await page.evaluate(() => {
+    const us = (window as unknown as { __fdnUtterances?: { onend?: (() => void) | null }[] })
+      .__fdnUtterances;
+    us?.[us.length - 1]?.onend?.();
+  });
+}
+
 /** Stub speechSynthesis whose speak() never reports delivery. */
 async function stubSpeechSilent(page: Page) {
   await page.addInitScript(() => {
@@ -361,6 +405,46 @@ test('corrupted and forged rows earn nothing and never crash the session', async
   );
   expect(minted).toHaveLength(1);
   expect(events.length).toBe(committed + 2);
+});
+
+test('an utterance completing after a session swap delivers nothing — stale audio cannot unlock the live session', async ({
+  page,
+}) => {
+  await stubSpeechManual(page);
+  await startPilot(page);
+
+  // Session A's audio is in flight — the utterance exists but onend
+  // has not fired yet.
+  await page.getByTestId('mission-play').click();
+  await page.waitForTimeout(50);
+
+  // Swap the session underneath it: ?m= rebuilds the component's
+  // session (missionId is an effect dependency). Session B is
+  // meet_new_person — its intro proves the swap landed.
+  await page.evaluate(() =>
+    window.history.pushState({}, '', '/mission?m=mission.meet_new_person'),
+  );
+  await expect(page.getByTestId('mission-intro')).toBeVisible({ timeout: SCREEN_TIMEOUT });
+  await expect(page.getByTestId('mission-intro')).toContainText('mission.meet_new_person');
+
+  // Swap back to the pilot: session C is a FRESH session on the same
+  // listening task — it even shares A's pending attemptId (a1 is
+  // derived from committed evidence, of which there is none). Only the
+  // session-instance binding can tell A's completion apart from C's.
+  await page.evaluate((url) => window.history.pushState({}, '', url), PILOT_URL);
+  await expect(page.getByTestId('mission-intro')).toBeVisible({ timeout: SCREEN_TIMEOUT });
+  await page.getByTestId('mission-start').click();
+  await expect(page.getByTestId('mission-task')).toBeVisible({ timeout: SCREEN_TIMEOUT });
+  await expect(page.getByTestId('mission-task-id')).toContainText(HEAR_TASK);
+  await expect(page.getByTestId('mission-awaiting-delivery')).toBeVisible();
+
+  // A's utterance finally completes while C is live — the stale
+  // completion must not deliver C (provenance laundering).
+  await fireLastUtteranceEnd(page);
+  await page.waitForTimeout(300);
+  await expect(page.getByTestId('mission-awaiting-delivery')).toBeVisible();
+  await expect(page.getByTestId('mission-option-three')).toBeDisabled();
+  expect((await allEvents(page)).length).toBe(0);
 });
 
 test('an unknown ?m= falls back to the pilot mission — never an unregistered run', async ({

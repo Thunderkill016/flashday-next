@@ -177,10 +177,18 @@ const inputScreen = (s: SessionScreen) => {
   return s;
 };
 
+/** Mirror the page's delivery handshake: the utterance binds the
+ * taskId+attemptId its screen showed at press time, then onend calls
+ * confirmDelivery with that identity. */
+const deliver = (s: ReturnType<typeof sessionFor>) => {
+  const scr = s.screen();
+  return s.confirmDelivery(scr.type === 'task' ? { taskId: scr.taskId, attemptId: scr.attemptId } : {});
+};
+
 /** Honest interaction: hear the stimulus (transport-confirmed), then
  * pick the correct option. */
 const answerCorrect = async (s: ReturnType<typeof sessionFor>) => {
-  await s.play();
+  await deliver(s);
   await s.commit({ optionId: 'yes' });
 };
 
@@ -242,7 +250,7 @@ describe('mission session driver', () => {
     await s.init();
     s.start();
     const prompt = taskScreen(s.screen());
-    await s.play();
+    await deliver(s);
     const feedback = taskScreen(await s.commit({ optionId: 'yes' }));
     expect(feedback.phase).toBe('feedback');
     expect(feedback.evaluation?.outcome).toBe('success');
@@ -259,7 +267,7 @@ describe('mission session driver', () => {
     const s = sessionFor();
     await s.init();
     s.start();
-    await s.play();
+    await deliver(s);
     await s.commit({ optionId: 'no' }); // baseline miss → planner exposes
     s.next();
 
@@ -277,14 +285,14 @@ describe('mission session driver', () => {
     const s = sessionFor();
     await s.init();
     s.start();
-    await s.play();
+    await deliver(s);
     await s.commit({ optionId: 'no' }); // baseline miss → expose → input
     s.next();
     await s.view();
 
     const task = taskScreen(s.screen());
     expect(task.taskId).toBe('task.test.retrieval.hear');
-    await s.play();
+    await deliver(s);
     await s.support('hint');
     await s.commit({ optionId: 'yes' });
 
@@ -298,7 +306,7 @@ describe('mission session driver', () => {
     const s = sessionFor();
     await s.init();
     s.start();
-    await s.play();
+    await deliver(s);
     await s.commit({ optionId: 'no' }); // baseline miss → expose → input
     s.next();
     await s.view();
@@ -306,7 +314,7 @@ describe('mission session driver', () => {
     const a1 = taskScreen(s.screen());
     expect(a1.taskId).toBe('task.test.retrieval.hear');
     expect(a1.attemptId).toMatch(/:a1$/);
-    await s.play();
+    await deliver(s);
     await s.support('hint');
     await s.commit({ optionId: 'yes' }); // supported success → not independent
     s.next();
@@ -317,7 +325,7 @@ describe('mission session driver', () => {
     const a2 = taskScreen(s.screen());
     expect(a2.taskId).toBe(a1.taskId);
     expect(a2.attemptId).toMatch(/:a2$/);
-    await s.play();
+    await deliver(s);
     await s.commit({ optionId: 'yes' });
 
     const slot = s.projection().byCapability.get(a1.capabilityId);
@@ -347,13 +355,13 @@ describe('falsification', () => {
     const s1 = sessionFor();
     await s1.init();
     s1.start();
-    await s1.play();
+    await deliver(s1);
     await s1.commit({ optionId: 'no' }); // baseline miss
     s1.next();
     await s1.view();
     const task = taskScreen(s1.screen());
     const attemptId = task.attemptId;
-    await s1.play();
+    await deliver(s1);
     await s1.support('hint');
     expect(s1.log().some((e) => e.eventType === 'support_use')).toBe(true);
 
@@ -366,7 +374,7 @@ describe('falsification', () => {
     expect(resumed.taskId).toBe(task.taskId);
     expect(resumed.attemptId).toBe(attemptId);
 
-    await s2.play();
+    await deliver(s2);
     await s2.commit({ optionId: 'yes' });
     const attemptEvent = s2
       .log()
@@ -381,7 +389,7 @@ describe('falsification', () => {
     const a = sessionForLearner('learner.alpha');
     await a.init();
     a.start();
-    await a.play();
+    await deliver(a);
     await a.commit({ optionId: 'yes' });
 
     const b = sessionForLearner('learner.beta');
@@ -437,7 +445,7 @@ describe('falsification', () => {
     expect(s.log().length).toBe(n0);
 
     // On an input screen: commit() must not mint an attempt.
-    await s.play();
+    await deliver(s);
     await s.commit({ optionId: 'no' }); // baseline miss → expose → input
     s.next();
     const input = inputScreen(s.screen());
@@ -451,7 +459,7 @@ describe('falsification', () => {
     const s = sessionFor();
     await s.init();
     s.start();
-    await s.play();
+    await deliver(s);
 
     await Promise.all([s.commit({ optionId: 'no' }), s.commit({ optionId: 'no' })]);
     const attempts = s.log().filter((e) => e.attempt?.outcome != null);
@@ -460,7 +468,7 @@ describe('falsification', () => {
     s.next();
     await s.view(); // input
     const task2 = taskScreen(s.screen());
-    await s.play();
+    await deliver(s);
     const p1 = s.commit({ optionId: 'yes' });
     const p2 = s.commit({ optionId: 'no' });
     const settled = await Promise.allSettled([p1, p2]);
@@ -475,7 +483,7 @@ describe('falsification', () => {
     await s1.init();
     s1.start();
     const task = taskScreen(s1.screen());
-    await s1.play();
+    await deliver(s1);
     await s1.commit({ optionId: 'yes' }); // baseline success → INDEPENDENT
 
     const s2 = sessionFor();
@@ -496,7 +504,7 @@ describe('falsification', () => {
     await s.init();
     s.start();
     // Baseline success → INDEPENDENT; the planner then has nothing due.
-    await s.play();
+    await deliver(s);
     await s.commit({ optionId: 'yes' });
     s.next();
     expect(s.screen().type).toBe('summary');
@@ -508,7 +516,7 @@ describe('falsification', () => {
     const delayed = taskScreen(s2.screen());
     expect(delayed.taskId).toBe('task.test.delayed.hear');
     expect(delayed.purpose).toBe('delayed_retrieval');
-    await s2.play();
+    await deliver(s2);
     await s2.commit({ optionId: 'yes' });
 
     const slot = s2.projection().byCapability.get(TEST_CAP);
@@ -523,7 +531,7 @@ describe('falsification', () => {
     await s.init();
     s.start();
     const diag = taskScreen(s.screen());
-    await s.play();
+    await deliver(s);
     await s.commit({ optionId: 'no' }); // baseline miss → expose intent
     s.next();
 
@@ -538,7 +546,7 @@ describe('falsification', () => {
     // No channel mints evidence for an unsupported task.
     const n0 = s.log().length;
     await s.commit({ optionId: 'yes' });
-    await s.play();
+    await deliver(s);
     await s.support('hint');
     await s.view();
     expect(s.log().length).toBe(n0);

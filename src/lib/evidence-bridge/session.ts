@@ -181,10 +181,13 @@ export function createMissionSession({
   let supportCounts = new Map<string, number>();
   let playCount = 0;
   /* Stimulus delivery is transport-confirmed, not a button press: the
-   * page calls play() only after the browser reports the audio finished.
-   * First confirmation = delivered (never support); each further one is
-   * a repeat support_use. `deliveredAt` anchors response latency — the
-   * clock starts when the stimulus finished, not when React rendered. */
+   * page calls confirmDelivery() only after the browser reports the
+   * audio finished, and it must name WHICH attempt the utterance
+   * belonged to — a completion for a stale task/attempt confirms
+   * nothing for the live one. First confirmation = delivered (never
+   * support); each further one is a repeat support_use. `deliveredAt`
+   * anchors response latency — the clock starts when the stimulus
+   * finished, not when React rendered. */
   let delivered = false;
   let deliveredAt: number | null = null;
 
@@ -441,12 +444,24 @@ export function createMissionSession({
     },
 
     /** Transport-confirmed stimulus delivery: the page calls this only
-     * after the browser reports playback completed (utterance onend).
-     * The first confirmation is the stimulus itself — required, never
-     * support; each further one is a repeat, recorded as support. */
-    async play(): Promise<SessionScreen> {
+     * after the browser reports playback completed (utterance onend),
+     * carrying the taskId+attemptId the audio was started for. Both are
+     * re-verified against the LIVE selection — an utterance that outlives
+     * its prompt (task advanced, attempt committed, feedback showing)
+     * confirms nothing for whatever replaced it. The first confirmation
+     * is the stimulus itself — required, never support; each further one
+     * is a repeat, recorded as support. */
+    async confirmDelivery({
+      taskId = null,
+      attemptId = null,
+    }: {
+      taskId?: string | null;
+      attemptId?: string | null;
+    } = {}): Promise<SessionScreen> {
       if (!liveTask || phase !== 'prompt') return session.screen();
-      if (surfaceKindForTask(liveTask.task) === 'unsupported') return session.screen();
+      const task = liveTask.task;
+      if (surfaceKindForTask(task) !== 'listening_choice_audio') return session.screen();
+      if (taskId !== task.id || attemptId !== attemptIdFor(task)) return session.screen();
       playCount += 1;
       if (playCount === 1) {
         delivered = true;

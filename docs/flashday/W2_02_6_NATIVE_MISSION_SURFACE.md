@@ -37,7 +37,7 @@ refuse the task rather than substitute another response channel.**
 
 `unsupported` renders a fail-closed card: no text input, no choice
 approximation, no self-report button — and the session-level guards mean no
-channel (`commit`, `play`, `support`, `view`) mints an event for it. The
+channel (`commit`, `confirmDelivery`, `support`, `view`) mints an event for it. The
 planner is unchanged; the refusal lives at execution.
 
 ## Pilot contract (nothing new authored)
@@ -52,11 +52,25 @@ No new evaluator, capability, mission, or task was created.
 
 Listening evidence requires *auditory* stimulus delivery:
 
-- `session.play()` is the delivery handshake — the page calls it **only** from
-  the utterance's `onend` callback (`speechSynthesis` transport confirmation).
-  A button press alone confirms nothing.
+- `session.confirmDelivery({ taskId, attemptId })` is the delivery handshake —
+  the page calls it **only** from the utterance's `onend` callback
+  (`speechSynthesis` transport confirmation). A button press alone confirms
+  nothing.
+- The confirmation is *identity-bound*: the page captures the session
+  instance, `taskId`, and `attemptId` when the audio **starts**, and `onend`
+  drops the completion if `sessionRef` has since moved to a different session
+  (`?m=` / account swap). Session-side, `confirmDelivery` re-verifies the
+  carried identity against the live selection — task advanced, attempt
+  consumed, or feedback phase → stale → no-op. Audio that finished under a
+  dead prompt can never mark a live one delivered (the R1 stale-delivery
+  race).
+- Session teardown also calls `speechSynthesis.cancel()` — that shrinks the
+  stale-completion window and stops audio audibly bleeding across a swap, but
+  it is *not* the authority boundary: the identity check is, because a
+  cancel-racing `onend` could still fire.
 - `commit()` refuses (no-op, zero events) until `delivered` is set by a real
-  `play()` call — the gate lives in the session, not just in disabled buttons.
+  `confirmDelivery()` call — the gate lives in the session, not just in
+  disabled buttons.
 - If the transport can't confirm (`speechSynthesis` missing, `onerror`,
   cancelled, never completes) → no delivery → the task can never commit.
 - `delivered`/`deliveredAt` are volatile session state: a reload resets them —
@@ -105,7 +119,9 @@ cast to prove the runtime refusal).
 ## Route
 
 `/mission?m=<missionId>` — validated against `fixtureRegistry().missionById()`;
-unknown/unregistered ids fall back to the pilot `mission.meet_at_a_time`.
+unknown/unregistered ids **fall back to the registered default**
+`mission.meet_at_a_time` (no unregistered mission can enter the surface — but
+the fallback is silent today rather than an explicit invalid-mission state).
 Caller-supplied mission data can never bypass the registry. Intro copy
 (`scenario`, `learnerGoal`) is derived from the mission contract — no
 page-authored copy that could drift. The former hard-coded
@@ -138,13 +154,17 @@ to a text box.
 
 ## Tests
 
-- `session-surface.test.ts` — 14 tests: matrix, fail-closed, delivery gate,
-  repeats, canonical identity, projection isolation, reload reset.
+- `session-surface.test.ts` — 17 tests: matrix, fail-closed, delivery gate,
+  stale-identity refusal (wrong taskId / wrong attemptId / post-commit
+  completion / cross-session), repeats, canonical identity, projection
+  isolation, reload reset.
 - `session.test.ts` — rewritten onto a TEST-ONLY all-listening mission
   (registry-passed contracts) covering driver semantics that no fixture
   mission can exercise on web anymore, plus the spoken-terminal pin on a
   mission whose only eliciting task is spoken.
 - `e2e/mission-falsification.spec.ts` — real-browser pilot: delivery gating,
   silent-transport refusal, canonical event shape, wrong answer, repeats,
-  reload behavior, forged rows, `?m=` fallback.
+  reload behavior, forged rows, `?m=` fallback, and the stale-utterance race
+  (audio A completing after the session swapped to B and then to a fresh
+  session C delivers nothing).
 - `e2e/mission-meet-person.spec.ts` — the spoken fail-closed lock.

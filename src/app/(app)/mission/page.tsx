@@ -57,7 +57,9 @@ const testOffsetMs = () =>
  * utterance's `onend` — the browser's report that the stimulus actually
  * finished playing. A press alone confirms nothing; an error or a
  * missing speech engine confirms nothing either, and the session stays
- * undelivered (commit remains refused). */
+ * undelivered (commit remains refused). The utterance's identity is
+ * bound by the caller — a completion arriving after the session or task
+ * moved on must not mark anything delivered. */
 const speak = (text: string | null, onDelivered: () => void): void => {
   if (!text || typeof window === 'undefined' || !('speechSynthesis' in window)) return;
   window.speechSynthesis.cancel();
@@ -112,6 +114,13 @@ function MissionPageInner() {
     sessionRef.current = session;
     setBusy(true);
     sync(session.init());
+    /* Session teardown is also transport teardown: an utterance owned
+     * by the old session must not be allowed to finish and mark the
+     * NEW session delivered. cancel() alone is not the boundary — the
+     * utterance→(session, taskId, attemptId) binding in the play
+     * handler is — but cancelling shrinks the stale-completion window
+     * and stops audio actually bleeding across a swap. */
+    return () => window.speechSynthesis?.cancel();
   }, [user?.id, missionId, sync]);
 
   const act = (fn: () => SessionScreen | Promise<SessionScreen>) => {
@@ -324,11 +333,21 @@ function MissionPageInner() {
                 size="sm"
                 data-testid="mission-play"
                 disabled={busy}
-                onClick={() =>
-                  /* session.play() is called ONLY from the utterance's
-                   * onend — transport confirmation, not the press. */
-                  speak(screen.prompt.audioText, () => act(() => sessionRef.current!.play()))
-                }
+                onClick={() => {
+                  /* confirmDelivery is called ONLY from this utterance's
+                   * onend — transport confirmation, not the press. The
+                   * utterance is bound to the session + task + attempt
+                   * that started it: if the session was swapped (?m= or
+                   * account change) or the attempt advanced while the
+                   * audio was in flight, this completion is stale and
+                   * confirms nothing for the live session. */
+                  const owner = sessionRef.current;
+                  const { taskId, attemptId } = screen;
+                  speak(screen.prompt.audioText, () => {
+                    if (sessionRef.current !== owner) return;
+                    act(() => owner!.confirmDelivery({ taskId, attemptId }));
+                  });
+                }}
               >
                 <Volume2 className="w-4 h-4" /> Nghe
               </Button>

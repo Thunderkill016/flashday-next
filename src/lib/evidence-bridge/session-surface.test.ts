@@ -48,6 +48,14 @@ const sessionFor = (missionId = PILOT_MISSION, learnerId = LEARNER) =>
 const attemptEvents = async () =>
   (await db.evidenceEvents.toArray()).filter((e) => e.attempt?.outcome != null);
 
+/** Mirror the page's delivery handshake: the utterance binds the
+ * taskId+attemptId its screen showed at press time, then onend calls
+ * confirmDelivery with that identity. */
+const deliver = (s: ReturnType<typeof sessionFor>) => {
+  const scr = s.screen();
+  return s.confirmDelivery(scr.type === 'task' ? { taskId: scr.taskId, attemptId: scr.attemptId } : {});
+};
+
 beforeEach(async () => {
   clock = Date.parse('2026-03-02T09:00:00Z');
   await db.evidenceEvents.clear();
@@ -88,7 +96,7 @@ describe('spoken tasks fail closed', () => {
     await s.init();
     s.start({ learnerName: 'Mai' });
     // Commit the servable diagnostic first so the planner reaches 'say'.
-    await s.play();
+    await deliver(s);
     const hear = s.screen();
     if (hear.type !== 'task' || hear.taskId !== PILOT_TASK) {
       throw new Error(`expected ${PILOT_TASK}, got ${hear.type}`);
@@ -145,7 +153,7 @@ describe('listening choice requires stimulus delivery', () => {
   it('confirmed delivery enables exactly the canonical attempt: evt.<attemptId>', async () => {
     const s = sessionFor();
     const scr = await openHear(s);
-    await s.play(); // transport-confirmed stimulus delivery
+    await deliver(s); // transport-confirmed stimulus delivery
     const gated = s.screen();
     if (gated.type !== 'task') throw new Error('expected task screen');
     expect(gated.delivered).toBe(true);
@@ -166,7 +174,7 @@ describe('listening choice requires stimulus delivery', () => {
   it('a wrong option mints a deterministic fail with attributed misses', async () => {
     const s = sessionFor();
     await openHear(s);
-    await s.play();
+    await deliver(s);
     const fb = await s.commit({ optionId: 'four' });
     if (fb.type !== 'task') throw new Error('expected feedback');
     expect(fb.evaluation?.outcome).toBe('fail');
@@ -184,7 +192,7 @@ describe('listening choice requires stimulus delivery', () => {
     const s = sessionFor();
     await openHear(s);
     clock += 5_000; // learner stares at the screen before pressing play
-    await s.play();
+    await deliver(s);
     clock += 1_200; // hears it, decides, answers
     await s.commit({ optionId: 'three' });
     const [attempt] = await attemptEvents();
@@ -194,10 +202,10 @@ describe('listening choice requires stimulus delivery', () => {
   it('first play is stimulus delivery — never support; play #2+ is repeat support', async () => {
     const s = sessionFor();
     const scr = await openHear(s);
-    await s.play();
+    await deliver(s);
     expect(s.log().filter((e) => e.eventType === 'support_use')).toHaveLength(0);
-    await s.play();
-    await s.play();
+    await deliver(s);
+    await deliver(s);
     const repeats = s.log().filter((e) => e.eventType === 'support_use' && e.support?.repeat);
     expect(repeats).toHaveLength(2);
     // The kernel unions repeatCount additively — each event contributes
@@ -217,7 +225,7 @@ describe('listening choice requires stimulus delivery', () => {
   it('text input is not a response channel on a choice task', async () => {
     const s = sessionFor();
     await openHear(s);
-    await s.play();
+    await deliver(s);
     const n0 = await db.evidenceEvents.count();
     const scr = await s.commit({ text: 'three' } as never);
     expect(scr.type).toBe('task');
@@ -225,10 +233,71 @@ describe('listening choice requires stimulus delivery', () => {
     expect(await db.evidenceEvents.count()).toBe(n0);
   });
 
+  it('a stale utterance completion confirms nothing — wrong taskId or attemptId is a no-op', async () => {
+    const s = sessionFor();
+    const scr = await openHear(s);
+    // The audio that finished belonged to a different task, a different
+    // attempt, or carried no identity at all — none of these may mark
+    // the LIVE prompt delivered.
+    await s.confirmDelivery({ taskId: 'task.time.retrieval.hear', attemptId: scr.attemptId });
+    await s.confirmDelivery({ taskId: scr.taskId, attemptId: 'task.time.diagnostic.hear@1:a9' });
+    await s.confirmDelivery({});
+    const after = s.screen();
+    if (after.type !== 'task') throw new Error('expected task');
+    expect(after.delivered).toBe(false);
+    const n0 = await db.evidenceEvents.count();
+    await s.commit({ optionId: 'three' });
+    expect(await db.evidenceEvents.count()).toBe(n0);
+  });
+
+  it('a completion arriving after the commit is stale — feedback phase mints no repeat', async () => {
+    const s = sessionFor();
+    const scr = await openHear(s);
+    await s.confirmDelivery({ taskId: scr.taskId, attemptId: scr.attemptId });
+    await s.commit({ optionId: 'three' });
+    const n0 = s.log().length;
+    // A trailing onend for the consumed attempt must not mint a repeat
+    // support row or otherwise touch the log.
+    await s.confirmDelivery({ taskId: scr.taskId, attemptId: scr.attemptId });
+    expect(s.log().length).toBe(n0);
+  });
+
+  it('audio bound to a replaced session confirms only that session — the live one stays undelivered', async () => {
+    // The page binds each utterance to (session, taskId, attemptId) at
+    // press time and drops the completion when sessionRef moved on. The
+    // session-level twin of that guard: even if the stale callback ran
+    // against the OLD session object, the NEW session's gate is its own
+    // — and B cannot commit on A's audio.
+    const a = sessionFor();
+    const scrA = await openHear(a);
+    const b = sessionFor();
+    await b.init();
+    b.start({ learnerName: 'Mai' });
+    const scrB = b.screen();
+    // B serves the same pending attempt identity (a1 is derived from
+    // committed evidence — none exists yet), so the boundary is the
+    // session instance, not the ids.
+    if (scrB.type !== 'task') throw new Error('expected task');
+    expect(scrB.taskId).toBe(scrA.taskId);
+    expect(scrB.attemptId).toBe(scrA.attemptId);
+
+    await a.confirmDelivery({ taskId: scrA.taskId, attemptId: scrA.attemptId });
+    const afterA = a.screen();
+    if (afterA.type !== 'task') throw new Error('expected task');
+    expect(afterA.delivered).toBe(true); // A's own audio did confirm A
+
+    const bNow = b.screen();
+    if (bNow.type !== 'task') throw new Error('expected task');
+    expect(bNow.delivered).toBe(false);
+    const n0 = await db.evidenceEvents.count();
+    await b.commit({ optionId: 'three' });
+    expect(await db.evidenceEvents.count()).toBe(n0);
+  });
+
   it('reload resets delivery — the learner must hear it again (fail-safe)', async () => {
     const s1 = sessionFor();
     const scr = await openHear(s1);
-    await s1.play();
+    await deliver(s1);
     expect(s1.screen().type).toBe('task');
 
     const s2 = sessionFor();
@@ -242,7 +311,7 @@ describe('listening choice requires stimulus delivery', () => {
     const n0 = await db.evidenceEvents.count();
     await s2.commit({ optionId: 'three' });
     expect(await db.evidenceEvents.count()).toBe(n0);
-    await s2.play();
+    await deliver(s2);
     await s2.commit({ optionId: 'three' });
     const attempts = await attemptEvents();
     expect(attempts).toHaveLength(1);
@@ -292,7 +361,7 @@ describe('pilot projection isolation (§19)', () => {
     const s = sessionFor();
     await s.init();
     s.start({ learnerName: 'Mai' });
-    await s.play();
+    await deliver(s);
     await s.commit({ optionId: 'three' });
 
     const projection = s.projection();
