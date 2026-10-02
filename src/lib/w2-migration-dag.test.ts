@@ -20,6 +20,12 @@ interface DagNode {
   invariants: string[];
   acceptance: string[];
   stopConditions: string[];
+  conditionalGate?: {
+    decidedBy: string;
+    skippedSatisfiedWhen: string;
+    skippedResolution: string;
+    skippedSatisfiesDependencies: boolean;
+  };
 }
 
 const REQUIRED_KEYS = [
@@ -143,6 +149,34 @@ describe('W2 migration DAG contract', () => {
   it('no P0/P1 node is irreversible', () => {
     for (const node of nodes.filter((n) => n.priority !== 'P2')) {
       expect(node.rollbackCategory, `${node.id} is irreversible`).not.toBe('irreversible');
+    }
+  });
+
+  it('conditional gate nodes always resolve — skipped means skipped-satisfied', () => {
+    for (const node of nodes) {
+      if (!node.conditionalGate) continue;
+      const gate = node.conditionalGate;
+      expect(ids.has(gate.decidedBy), `${node.id} decidedBy missing node ${gate.decidedBy}`).toBe(true);
+      expect(gate.skippedResolution, `${node.id} skippedResolution`).toBe('skipped-satisfied');
+      expect(
+        gate.skippedSatisfiesDependencies,
+        `${node.id} skip must satisfy downstream dependencies`,
+      ).toBe(true);
+      expect(gate.skippedSatisfiedWhen.length, `${node.id} missing skip condition`).toBeGreaterThan(0);
+    }
+  });
+
+  it('a depended-upon node may not disappear — skippable nodes declare a conditionalGate', () => {
+    const dependedUpon = new Set(nodes.flatMap((n) => n.dependsOn));
+    for (const node of nodes) {
+      if (!dependedUpon.has(node.id)) continue;
+      const text = `${node.action} ${node.stopConditions.join(' ')}`.toLowerCase();
+      if (text.includes('skip')) {
+        expect(
+          node.conditionalGate,
+          `${node.id} mentions skipping but has no conditionalGate semantics`,
+        ).toBeDefined();
+      }
     }
   });
 

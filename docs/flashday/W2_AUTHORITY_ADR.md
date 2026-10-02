@@ -1,6 +1,6 @@
 # W2_AUTHORITY_ADR — State Authority Migration (Architecture Decision Record)
 
-Status: proposed for external review · Mission: W2-00R · Base: `main @ 672b3f3`
+Status: proposed for external review · Mission: W2-00R2 · Base: `main @ 672b3f3`
 Companion artifacts: `W2_MIGRATION_DAG.md` (readable plan), `W2_MIGRATION_DAG.json` (executable graph).
 
 ## 1. Decision
@@ -22,9 +22,23 @@ authority permanently. Scheduling is not ability.
 | Attempt/artifact history | `learningAttempts`, `sessions` | history; semantic outcomes also mint events (W2-AT1) |
 | Next-action selection | kernel `nextAction`/`selectNextTask` | `dailyTasks` = executable cache (planner rows only) |
 | Weakness/remediation | correction episodes + support lifecycle | `weakSpots` = candidate signal, raw-synced compat |
-| Level estimate | `placement_estimate` observation (contract W2-G03) | `currentLevel` = advisory label |
+| Level estimate | `PlacementEstimate` advisory state (W2-G03 boundary) — deliberately **not** an `EvidenceEvent` | `currentLevel` = advisory label, HISTORY ONLY |
 | Pronunciation capability | acoustic events (Wave 3, OpenPronounce gate) | `pronunciationProgress` = practice history |
 | Corpus / prefs / caches / sync bookkeeping | existing stores | unchanged |
+
+**Placement boundary (W2-G03).** The kernel's `EVENT_TYPES` and
+`evaluation.authority` enums contain no placement kind, and
+`submitObservation` is a capability-bound `TaskContract` API — not a generic
+observation bus. Placement therefore lives **outside** the event log as a
+separate advisory domain: `PlacementEstimate { levelEstimate, source, score,
+completedAt, method/version }`. It may drive learner-facing orientation,
+onboarding suggestion, and optional initial-content recommendation; it may
+never drive capability promotion, prerequisite satisfaction, mission
+completion, retained/transfer credit, or projection override. Extending
+`EvidenceEvent` to hold placement is rejected in Wave 2 — the event log stays
+capability-scoped. If audited placement evidence is ever needed, it requires
+its own ADR (separate placement/history domain or generic non-capability
+ledger).
 
 ## 3. Transaction / failure semantics
 
@@ -87,7 +101,7 @@ Per legacy source, classified as one of:
 | `weakSpots` rows | HISTORY ONLY | heuristic count/resolved, no observation |
 | `dailyTasks` rows | HISTORY ONLY | generated cache; not evidence |
 | `pronunciationProgress` | HISTORY ONLY | practice score ≠ acoustic observation |
-| `assessment.currentLevel` | HISTORY ONLY | label ≠ placement observation contract |
+| `assessment.currentLevel` | HISTORY ONLY | advisory estimate; lives outside the event log, never replayed |
 | `favorites`, `journals`, `lookupHistory`, prefs | NONE | outside capability authority entirely |
 
 ## 6. Sync doctrine
@@ -131,7 +145,7 @@ Three categories per node (`simple` | `dual-read` | `irreversible`):
 | App rollback/downgrade | Legacy tables were never deleted — downgrade is safe; events sit unused in the downgraded build (table is additive in v15). |
 | Anonymous → authenticated | Events carry `learnerId`; W2-VR1 documents the namespace merge at first sync. |
 | Legacy daily task queued post-planner-migration | Executes as cache to completion; only *planner-generated* rows carry decision provenance (W2-PL1). |
-| CEFR label conflicts with projection | Label is advisory placement, never compared as truth; projection is the only capability surface (W2-AS1/G03). |
+| CEFR label conflicts with projection | Label is an advisory placement estimate, never compared as truth; projection is the only capability surface (W2-G03 boundary, W2-AS1 relabel). |
 | FSRS due while capability is TRANSFERRED | Scheduling vs ability are orthogonal by doctrine — due-ness schedules rehearsal of carrier material; it never modifies capability state. |
 | pronunciationProgress strong, zero acoustic events | Presents as practice history only; capability claims require W3 acoustic events (W2-PR1). |
 
@@ -141,5 +155,7 @@ Three categories per node (`simple` | `dual-read` | `irreversible`):
 - No writer freeze execution, no data migration, no table drops.
 - No Speech/OpenPronounce work — acoustic eval is a Wave-3 gate.
 - No `dailyTasks` schema split — row-class semantics documented only.
+- No `EvidenceEvent` ontology extension for placement or analytics — the event
+  log stays capability-scoped; audited placement evidence requires a separate ADR.
 - No per-user auth/quota redesign (tracked as accepted debt).
 - No WordBook schema work; no cold-seed performance work.

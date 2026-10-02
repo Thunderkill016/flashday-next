@@ -1,6 +1,7 @@
 {
   "mission": "W2-00",
-  "version": 1,
+  "version": 2,
+  "revision": "W2-00R2 — placement boundary fix",
   "base": "main @ 672b3f389aad06aa1ea05d2b66731212e79778b4",
   "doctrine": "capability authority = kernel projection over evidenceEvents; FSRS = scheduling only; no deletions in Wave 2",
   "nodes": [
@@ -65,26 +66,35 @@
     },
     {
       "id": "W2-G03",
-      "title": "Placement observation contract",
+      "title": "Placement boundary contract",
       "subsystem": "assessment",
       "priority": "P0",
       "dependsOn": [],
       "currentAuthority": "assessment-store.currentLevel (localStorage) displays a CEFR level as ability",
-      "targetAuthority": "explicit placement_estimate observation contract; advisory only, never capability",
-      "writers": ["src/stores/assessment-store.ts"],
+      "targetAuthority": "explicit non-authoritative placement domain: PlacementEstimate advisory state; never an EvidenceEvent, never capability truth",
+      "writers": ["spec/docs", "src/stores/assessment-store.ts (state shape only)"],
       "readers": ["dashboard reminder", "speak surfaces"],
-      "action": "Register a placement observation contract in the bridge registry: eventType placement_estimate, evaluation.authority self_report|ai_eval, explicit contractId. placement observation != capability mastery != retention != transfer.",
-      "adapter": "submitObservation with the registered placement contract",
+      "action": "Define the placement domain as advisory state outside the event log: PlacementEstimate { levelEstimate, source, score, completedAt, method/version }. EvidenceEvent stays capability-scoped — placement_estimate is NOT a registered event type, ai_eval is NOT an authority, and submitObservation is a capability-bound TaskContract API, not a generic observation bus. Reviewer decision: do not extend the kernel to hold placement; audited placement evidence would require a separate ADR (separate placement/history domain or a generic non-capability ledger).",
+      "adapter": "none — advisory state, no event emission",
       "backfill": "HISTORY ONLY — the stored CEFR label is never replayed as an event",
       "syncImpact": "no sync change — assessment-store stays localStorage prefs",
       "rollbackCategory": "simple",
-      "rollback": "Remove contract + emission; label display reverts.",
+      "rollback": "Boundary doc + label revert; no data touched.",
       "invariants": [
-        "placement_estimate never enters capability projection inputs",
-        "no gating decision may read currentLevel"
+        "placement estimate never enters capability projection inputs",
+        "no capability promotion, prerequisite satisfaction, mission completion, retained/transfer credit, or projection override may read placement state",
+        "UI always labels it as an estimate",
+        "permitted uses only: learner-facing orientation, onboarding suggestion, optional initial-content recommendation"
       ],
-      "acceptance": ["contract present in registry with authority + contractId documented"],
-      "stopConditions": ["no registered contract exists -> do not emit; prerequisite for W2-AS1"]
+      "acceptance": [
+        "no capability projection reads placement state",
+        "no mission/task gating reads currentLevel",
+        "UI labels it as estimate",
+        "history remains intact"
+      ],
+      "stopConditions": [
+        "audited placement evidence desired -> separate ADR first; do not expand EvidenceEvent in Wave 2"
+      ]
     },
     {
       "id": "W2-G04",
@@ -119,15 +129,26 @@
       "targetAuthority": "missing constructs implemented in kernel, not shimmed in UI",
       "writers": ["src/vnext/* (kernel)"],
       "readers": ["evidence-bridge projectState consumers"],
-      "action": "Implement only the constructs W2-G04 marked missing (candidate: standalone recurring-error surface if correction episodes do not cover it). Additive kernel work; contracts registered in bridge registry.",
+      "action": "Always executes as a gate node; it never disappears from the DAG. Consumes W2-G04's recorded coverage result: if missingConstructs is non-empty, implement exactly those constructs in kernel (candidate: standalone recurring-error surface if correction episodes do not cover it) with contracts registered in the bridge registry; if empty, resolve skipped-satisfied with recorded result missingConstructs=[]. Downstream nodes depend on this gate's recorded resolution, not on optional work. Additive kernel work only.",
       "adapter": "kernel + bridge registry additions",
       "backfill": "NONE",
       "syncImpact": "no sync change",
       "rollbackCategory": "simple",
       "rollback": "Extension is additive; dependents keep legacy reads.",
-      "invariants": ["no construct may be simulated in UI code — kernel or nothing"],
-      "acceptance": ["construct present with contract + kernel tests"],
-      "stopConditions": ["skip entirely iff W2-G04 finds zero missing constructs"]
+      "conditionalGate": {
+        "decidedBy": "W2-G04",
+        "skippedSatisfiedWhen": "W2-G04 records missingConstructs = []",
+        "skippedResolution": "skipped-satisfied",
+        "skippedSatisfiesDependencies": true
+      },
+      "invariants": [
+        "no construct may be simulated in UI code — kernel or nothing",
+        "resolution is always recorded (implemented | skipped-satisfied), never implicit"
+      ],
+      "acceptance": [
+        "either constructs present with contract + kernel tests, or recorded resolution skipped-satisfied with missingConstructs=[]"
+      ],
+      "stopConditions": ["G04 coverage result missing or unrecorded -> gate cannot resolve; block dependents"]
     },
     {
       "id": "W2-WS1",
@@ -232,18 +253,18 @@
       "priority": "P1",
       "dependsOn": ["W2-G03"],
       "currentAuthority": "currentLevel renders as level truth",
-      "targetAuthority": "advisory placement-estimate label + optional placement_estimate observation",
+      "targetAuthority": "advisory placement-estimate label; no capability or gating consumers",
       "writers": ["assessment flow", "assessment-store"],
       "readers": ["dashboard reminder", "speak surfaces"],
-      "action": "Relabel UI copy to placement estimate; emit submitObservation under W2-G03 contract; strip any gating reads. Historical label stays localStorage history.",
-      "adapter": "placement observation via registered contract",
+      "action": "Relabel UI copy to placement estimate; remove capability/gating consumers; preserve history. Does NOT emit submitObservation and does NOT invent a capability/task contract — placement stays outside the event log per the W2-G03 boundary.",
+      "adapter": "none — no event emission",
       "backfill": "HISTORY ONLY",
       "syncImpact": "no sync change",
       "rollbackCategory": "simple",
-      "rollback": "Copy + emission revert; store untouched.",
-      "invariants": ["placement observation never feeds capability state", "no gating consumes currentLevel"],
-      "acceptance": ["vi/en/zh copy says estimate", "event uses registered contract"],
-      "stopConditions": ["contract missing -> block on W2-G03"]
+      "rollback": "Copy + read-path revert; store untouched.",
+      "invariants": ["placement estimate never feeds capability state", "no gating consumes currentLevel"],
+      "acceptance": ["vi/en/zh copy says estimate", "no gating consumer remains", "history preserved"],
+      "stopConditions": ["placement boundary undefined -> block on W2-G03"]
     },
     {
       "id": "W2-PR1",
@@ -444,7 +465,7 @@
       "id": "W2-03",
       "title": "Projection Coverage",
       "nodes": ["W2-G03", "W2-G04", "W2-PC1", "W2-WS1"],
-      "scope": "coverage audit + kernel extensions + weakness construct mapping + placement contract",
+      "scope": "coverage audit + kernel extensions + weakness construct mapping + placement boundary",
       "files": ["src/vnext/*", "src/lib/evidence-bridge/registry.ts", "docs/flashday/*"],
       "runtimeChange": true,
       "dataMigration": false,
