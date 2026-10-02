@@ -25,7 +25,7 @@ export function useRecommendations() {
   });
   const activeHeaderKey = PROVIDER_REGISTRY[activeProviderId]?.headerKey;
   const recommendationsCount = useTTSStore((s) => s.recommendationsCount);
-  const currentLevel = useAssessmentStore((s) => s.currentLevel);
+  const levelEstimate = useAssessmentStore((s) => s.placement?.levelEstimate ?? null);
 
   const fetchRecommendations = useCallback(
     async (content: string, contentType: string, count?: number) => {
@@ -73,7 +73,7 @@ export function useRecommendations() {
             count: resolvedCount,
             provider: activeProviderId,
             providerConfigs: providers,
-            userLevel: currentLevel,
+            userLevel: levelEstimate,
           }),
         });
         const data = await res.json();
@@ -92,7 +92,7 @@ export function useRecommendations() {
         setIsLoading(false);
       }
     },
-    [activeProviderId, providers, activeApiKey, activeHeaderKey, recommendationsCount, currentLevel],
+    [activeProviderId, providers, activeApiKey, activeHeaderKey, recommendationsCount, levelEstimate],
   );
 
   const clear = useCallback(() => setRecommendations([]), []);

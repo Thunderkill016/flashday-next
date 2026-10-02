@@ -73,7 +73,7 @@ export function TodayPlan() {
   const { messages: common } = useI18n('common');
   const { tasks, dateKey, dataSignature, levelKey, goal, skipTask, setTasks, updateStreak, hydrate } =
     useDailyPlanStore();
-  const currentLevel = useAssessmentStore((state) => state.currentLevel);
+  const levelEstimate = useAssessmentStore((state) => state.placement?.levelEstimate ?? null);
   const currentGoal = useLearningGoalStore((state) => state.currentGoal);
   const [loading, setLoading] = useState(false);
   const [hydrated, setHydrated] = useState(false);
@@ -110,26 +110,26 @@ export function TodayPlan() {
     async (goalOverride = useDailyPlanStore.getState().goal, signatureOverride?: string) => {
       setLoading(true);
       try {
-        const plan = await generateDailyPlan(goalOverride, { currentLevel, learningGoal: currentGoal });
+        const plan = await generateDailyPlan(goalOverride, { levelEstimate, learningGoal: currentGoal });
         const syncedPlan = await syncPlanTasksWithActivity(plan);
         const signature = signatureOverride ?? (await getDailyPlanSignature());
-        setTasks(syncedPlan, signature, currentLevel ?? '');
+        setTasks(syncedPlan, signature, levelEstimate ?? '');
       } finally {
         setLoading(false);
       }
     },
-    [currentGoal, currentLevel, setTasks],
+    [currentGoal, levelEstimate, setTasks],
   );
 
   const refreshPlan = useCallback(async () => {
     const today = todayKey();
     const signature = await getDailyPlanSignature();
-    if (dateKey !== today || dataSignature !== signature || levelKey !== (currentLevel ?? '')) {
+    if (dateKey !== today || dataSignature !== signature || levelKey !== (levelEstimate ?? '')) {
       await generate(goal, signature);
       return;
     }
     await syncCompletedTasks();
-  }, [currentLevel, dataSignature, dateKey, generate, goal, levelKey, syncCompletedTasks]);
+  }, [levelEstimate, dataSignature, dateKey, generate, goal, levelKey, syncCompletedTasks]);
 
   useEffect(() => {
     if (!hydrated) return;
@@ -226,9 +226,9 @@ export function TodayPlan() {
   const doneCount = activeTasks.filter((task) => task.completed).length;
   const totalCount = activeTasks.length;
   const progress = totalCount > 0 ? (doneCount / totalCount) * 100 : 0;
-  const planExplanation = `${buildDailyPlanGoalExplanation(currentGoal, currentLevel)} ${
-    currentLevel
-      ? messages.todayPlan.explanationWithLevel.replace('{{level}}', currentLevel)
+  const planExplanation = `${buildDailyPlanGoalExplanation(currentGoal, levelEstimate)} ${
+    levelEstimate
+      ? messages.todayPlan.explanationWithLevel.replace('{{level}}', levelEstimate)
       : messages.todayPlan.explanationWithoutLevel
   }`;
 

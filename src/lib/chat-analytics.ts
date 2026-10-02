@@ -95,13 +95,16 @@ export async function collectLearningSnapshot(): Promise<LearningSnapshot> {
     .filter((m) => m.sessions === 0 || (m.lastPracticed && m.lastPracticed < day7Ago))
     .map((m) => m.module);
 
-  // ─── CEFR Level ───────────────────────────────────────────────────────
+  // ─── Placement estimate (advisory) ────────────────────────────────────
+  // The persisted payload is flat: { placement, currentLevel, history, ... }.
+  // `currentLevel` is the legacy mirror of placement.levelEstimate; older
+  // payloads carry only `currentLevel`.
   let cefrLevel: string | null = null;
   try {
     const assessmentData = localStorage.getItem('echotype_assessment');
     if (assessmentData) {
       const parsed = JSON.parse(assessmentData);
-      cefrLevel = parsed.state?.currentLevel || null;
+      cefrLevel = parsed.placement?.levelEstimate ?? parsed.currentLevel ?? null;
     }
   } catch {
     /* ignore */

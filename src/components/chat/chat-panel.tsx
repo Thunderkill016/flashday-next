@@ -186,8 +186,8 @@ export function ChatPanel({ onClose }: ChatPanelProps) {
 
   useOllamaPreload(true);
 
-  const currentLevel = useAssessmentStore((s) => s.currentLevel);
-  const setCurrentLevel = useAssessmentStore((s) => s.setCurrentLevel);
+  const levelEstimate = useAssessmentStore((s) => s.placement?.levelEstimate ?? null);
+  const setPlacementEstimate = useAssessmentStore((s) => s.setPlacementEstimate);
 
   const contentItems = useContentStore((s) => s.items);
   const loadContents = useContentStore((s) => s.loadContents);
@@ -287,7 +287,7 @@ export function ChatPanel({ onClose }: ChatPanelProps) {
           provider: activeProviderId,
           providerConfigs: providers,
           context,
-          userLevel: currentLevel,
+          userLevel: levelEstimate,
           maxTokens: effectiveMaxTokens,
           toolSuite: getNativeChatToolSuite(isIOSNativeHost),
         },
@@ -298,7 +298,7 @@ export function ChatPanel({ onClose }: ChatPanelProps) {
       activeProviderId,
       buildApiHeaders,
       chatMode,
-      currentLevel,
+      levelEstimate,
       effectiveMaxTokens,
       isIOSNativeHost,
       providers,
@@ -352,12 +352,12 @@ export function ChatPanel({ onClose }: ChatPanelProps) {
         setChatMode,
         setExerciseType: setActiveExercise,
         speakText: (text) => speak(text),
-        updateUserLevel: (level) => setCurrentLevel(level as CEFRLevel),
+        updateUserLevel: (level) => setPlacementEstimate(level as CEFRLevel, 'chat_tool'),
         updateProviderConfig,
         buildApiHeaders,
         providerId: activeProviderId,
         providerConfigs: providers as Record<string, unknown>,
-        currentDifficulty: activeContentItem?.difficulty ?? cefrToDifficulty(currentLevel),
+        currentDifficulty: activeContentItem?.difficulty ?? cefrToDifficulty(levelEstimate),
       });
 
       queueMicrotask(() => {

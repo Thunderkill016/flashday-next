@@ -24,7 +24,7 @@ export const SENSITIVE_SOURCES = {
     /\bweakSpots?\b|\bweakSpotType\b|useWeakSpotsStore|weak-spots|\bWeakSpot\b|\bsourceWeakSpotId\b|\bcanResolveTransfer\b/,
   pronunciationProgress: /\bpronunciationProgress\b|\bevidence\.pronunciation\b|\bPronunciationProgress\b/,
   'assessment.currentLevel':
-    /\bcurrentLevel\b|\buseAssessmentStore\b|echotype_assessment|\bCEFRLevel\b|\blevelToDifficulty\b|\bcefrToDifficulty\b/,
+    /\bcurrentLevel\b|\buseAssessmentStore\b|echotype_assessment|\bCEFRLevel\b|\blevelToDifficulty\b|\bcefrToDifficulty\b|\blevelEstimate\b|\bPlacementEstimate\b|\bsetPlacementEstimate\b/,
   learningAttempts:
     /\blearningAttempts\b|persistLearningAttempt|\bLearningAttempt\b|\battempt\.(?:answer|lessonId|parentAttemptId|sourceWeakSpotId|status|createdAt|cycle|feedback|id|completedAt|stage)\b|\battempts\.[A-Za-z]+\b|\bstate\.attempts\b|\bevidence\.attempts\b|\bderiveTextCycle\b|\bintroducedVocabularyToday\b|\bvalidateTextCycleAttempt\b|\bvalidateTextCorrection\b/,
   // Dexie dailyTasks rows (planner cache + lifecycle + preferences rows)

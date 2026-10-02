@@ -67,20 +67,58 @@ export interface AssessmentResult {
   breakdown: { vocabulary: number; grammar: number; reading: number };
 }
 
+/**
+ * W2-G03 — PlacementEstimate.
+ *
+ * Placement is an ADVISORY domain: an orientation estimate of where to start
+ * practicing, not a capability claim. It is structurally barred from the
+ * evidence kernel — no placement_estimate event type exists, it never enters
+ * EvidenceEvent, it is never read by the capability projection, learner model,
+ * prerequisites, mission completion, retained/transfer credit, weakness state,
+ * or any evaluator. `levelEstimate` answers "where to aim content", never
+ * "what the learner can do".
+ */
+export type PlacementSource = 'placement_test' | 'chat_tool' | 'legacy_payload';
+
+export interface PlacementEstimate {
+  levelEstimate: CEFRLevel;
+  /** Where the estimate came from — provenance, not authority. */
+  source: PlacementSource;
+  /** Raw quiz score when the source produced one; null for claimed levels. */
+  score: number | null;
+  completedAt: number;
+  method: 'adaptive_quiz' | 'chat_tool' | 'hydrated_legacy';
+  version: 1;
+}
+
 // ─── Store ─────────────────────────────────────────────────────────────────────
 
 const STORAGE_KEY = 'echotype_assessment';
 const DEFAULT_THRESHOLD = 50;
+const PLACEMENT_ESTIMATE_VERSION = 1;
 
 interface AssessmentSettings {
-  currentLevel: CEFRLevel | null;
+  /** Advisory placement estimate — HISTORY ONLY, never capability truth. */
+  placement: PlacementEstimate | null;
   history: AssessmentResult[];
   dismissedReminder: boolean;
   reminderThreshold: number;
 }
 
+/** Persisted payload keeps the legacy `currentLevel` mirror so older readers
+ * (and older app builds) still see the level string; `placement` is the
+ * authoritative advisory record. */
+interface PersistedAssessmentSettings extends AssessmentSettings {
+  currentLevel?: CEFRLevel | null;
+}
+
 interface AssessmentStore extends AssessmentSettings {
-  setCurrentLevel: (level: CEFRLevel) => void;
+  /**
+   * Record a claimed level from a non-quiz source (e.g. the chat tool's
+   * updateUserLevel). Provenance is recorded as a claim — it is still an
+   * advisory estimate, not evidence.
+   */
+  setPlacementEstimate: (level: CEFRLevel, source: Exclude<PlacementSource, 'legacy_payload'>) => void;
   setResult: (result: AssessmentResult) => void;
   dismissReminder: () => void;
   resetReminder: () => void;
@@ -88,7 +126,7 @@ interface AssessmentStore extends AssessmentSettings {
   hydrate: () => void;
 }
 
-function loadFromStorage(): Partial<AssessmentSettings> {
+function loadFromStorage(): Partial<PersistedAssessmentSettings> {
   if (typeof window === 'undefined') return {};
   try {
     const raw = localStorage.getItem(STORAGE_KEY);
@@ -102,14 +140,45 @@ function loadFromStorage(): Partial<AssessmentSettings> {
 function saveToStorage(settings: AssessmentSettings) {
   if (typeof window === 'undefined') return;
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(settings));
+    const persisted: PersistedAssessmentSettings = {
+      ...settings,
+      currentLevel: settings.placement?.levelEstimate ?? null,
+    };
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(persisted));
   } catch {
     /* ignore */
   }
 }
 
+/** True when a persisted value looks like a PlacementEstimate. */
+function isPlacementEstimate(value: unknown): value is PlacementEstimate {
+  if (typeof value !== 'object' || value === null) return false;
+  const level = (value as PlacementEstimate).levelEstimate;
+  return typeof level === 'string' && CEFR_ORDER.includes(level);
+}
+
+/** Hydrate a legacy `currentLevel` string into an advisory estimate. The
+ * provenance is honestly 'legacy_payload' — the old payload never recorded
+ * how the level was produced. Score/completedAt are recovered from the newest
+ * history entry matching the level when one exists; never invented. */
+function legacyPlacementFrom(
+  level: CEFRLevel | null | undefined,
+  history: AssessmentResult[] | undefined,
+): PlacementEstimate | null {
+  if (!level) return null;
+  const matching = [...(history ?? [])].reverse().find((entry) => entry.level === level);
+  return {
+    levelEstimate: level,
+    source: 'legacy_payload',
+    score: matching?.score ?? null,
+    completedAt: matching?.completedAt ?? 0,
+    method: 'hydrated_legacy',
+    version: PLACEMENT_ESTIMATE_VERSION,
+  };
+}
+
 const defaults: AssessmentSettings = {
-  currentLevel: null,
+  placement: null,
   history: [],
   dismissedReminder: false,
   reminderThreshold: DEFAULT_THRESHOLD,
@@ -118,22 +187,38 @@ const defaults: AssessmentSettings = {
 export const useAssessmentStore = create<AssessmentStore>((set, get) => ({
   ...defaults,
 
-  setCurrentLevel: (level) => {
+  setPlacementEstimate: (level, source) => {
     const state = get();
+    const placement: PlacementEstimate = {
+      levelEstimate: level,
+      source,
+      score: null,
+      completedAt: Date.now(),
+      method: source === 'placement_test' ? 'adaptive_quiz' : 'chat_tool',
+      version: PLACEMENT_ESTIMATE_VERSION,
+    };
     const updated: AssessmentSettings = {
-      currentLevel: level,
+      placement,
       history: state.history,
       dismissedReminder: state.dismissedReminder,
       reminderThreshold: state.reminderThreshold,
     };
-    set({ currentLevel: level });
+    set({ placement });
     saveToStorage(updated);
   },
 
   setResult: (result) => {
     const state = get();
-    const updated = {
-      currentLevel: result.level,
+    const placement: PlacementEstimate = {
+      levelEstimate: result.level,
+      source: 'placement_test',
+      score: result.score,
+      completedAt: result.completedAt,
+      method: 'adaptive_quiz',
+      version: PLACEMENT_ESTIMATE_VERSION,
+    };
+    const updated: AssessmentSettings = {
+      placement,
       history: [...state.history, result],
       dismissedReminder: false,
       reminderThreshold: state.reminderThreshold,
@@ -145,7 +230,7 @@ export const useAssessmentStore = create<AssessmentStore>((set, get) => ({
   dismissReminder: () => {
     const state = get();
     const updated: AssessmentSettings = {
-      currentLevel: state.currentLevel,
+      placement: state.placement,
       history: state.history,
       dismissedReminder: true,
       reminderThreshold: state.reminderThreshold,
@@ -157,7 +242,7 @@ export const useAssessmentStore = create<AssessmentStore>((set, get) => ({
   resetReminder: () => {
     const state = get();
     const updated: AssessmentSettings = {
-      currentLevel: state.currentLevel,
+      placement: state.placement,
       history: state.history,
       dismissedReminder: false,
       reminderThreshold: state.reminderThreshold,
@@ -174,11 +259,23 @@ export const useAssessmentStore = create<AssessmentStore>((set, get) => ({
     return totalSessions - lastTest.sessionsAtTest >= reminderThreshold;
   },
 
+  /* Accepts both shapes: the legacy `{ currentLevel, history, ... }` payload
+   * and the current `{ placement, currentLevel, history, ... }` payload.
+   * History is preserved verbatim; a legacy level is re-expressed as an
+   * advisory estimate, never replayed as evidence. */
   hydrate: () => {
     const saved = loadFromStorage();
-    if (Object.keys(saved).length > 0) {
-      set(saved);
-    }
+    if (Object.keys(saved).length === 0) return;
+    const history = Array.isArray(saved.history) ? saved.history : [];
+    const placement = isPlacementEstimate(saved.placement)
+      ? saved.placement
+      : legacyPlacementFrom(saved.currentLevel, history);
+    set({
+      placement,
+      history,
+      dismissedReminder: saved.dismissedReminder === true,
+      reminderThreshold: typeof saved.reminderThreshold === 'number' ? saved.reminderThreshold : DEFAULT_THRESHOLD,
+    });
   },
 }));
 

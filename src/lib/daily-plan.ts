@@ -18,7 +18,8 @@ const MODULE_BASE_BONUS: Record<PlanTask['module'], number> = {
 };
 
 interface DailyPlanOptions {
-  currentLevel?: CEFRLevel | null;
+  /** Advisory placement estimate — biases content-difficulty fit only. */
+  levelEstimate?: CEFRLevel | null;
   dateKey?: string;
   learningGoal?: LearningGoal | null;
 }
@@ -48,7 +49,7 @@ export async function generateDailyPlan(goal: DailyGoal, options: DailyPlanOptio
   const now = Date.now();
   const dateKey = options.dateKey ?? toLocalDateKey(now);
   const maxTasks = Math.max(1, Math.min(goal.sessionsPerDay, 5));
-  const targetDifficulty = levelToDifficulty(options.currentLevel);
+  const targetDifficulty = levelToDifficulty(options.levelEstimate);
 
   const [records, sessions, contents] = await Promise.all([
     db.records.toArray(),
