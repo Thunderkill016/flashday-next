@@ -226,24 +226,24 @@ describe('G04 function_gap_ledger — PRESENT', () => {
   });
 });
 
-describe('G04 recurring_error — MISSING (reproduction)', () => {
+describe('G04 recurring_error — PRESENT via episode RELAPSED; recurringFunctions is NOT the authority', () => {
   const miss = (id: string, at: number) =>
     price('task.price.retrieval.hear', { id, at, outcome: 'fail', missing: [PRICE_FN] });
   const win = (id: string, at: number) => price('task.price.retrieval.hear', { id, at, outcome: 'success' });
 
-  it('two back-to-back misses with no recovery are reported as "recurring" (repeated failure ≠ recurrence)', () => {
+  it('learner-model recurringFunctions is a looser signal: two back-to-back misses with no recovery are flagged "recurring" (repeated failure ≠ recurrence)', () => {
     const view = priceView([taught, miss('m1', T0 + MIN), miss('m2', T0 + 2 * MIN)]);
     expect(view.failures.recurringFunctions).toEqual([PRICE_FN]);
   });
 
-  it('a true miss→recover→miss relapse is indistinguishable in the exposed output', () => {
+  it('recurringFunctions cannot distinguish a true miss→recover→miss relapse from plain repetition', () => {
     const repeated = priceView([taught, miss('m1', T0 + MIN), miss('m2', T0 + 2 * MIN)]).failures;
     const relapse = priceView([taught, miss('m1', T0 + MIN), win('w1', T0 + 2 * MIN), miss('m2', T0 + 3 * MIN)]).failures;
     expect(relapse.recurringFunctions).toEqual(repeated.recurringFunctions);
     expect(relapse.unresolvedFunctions).toEqual(repeated.unresolvedFunctions);
   });
 
-  it('the recurring flag never decays — a healed function stays "recurring" forever', () => {
+  it('recurringFunctions never decays — a healed function stays "recurring" forever (consumers must use episode relapseCount instead)', () => {
     const view = priceView([
       taught,
       miss('m1', T0 + MIN),

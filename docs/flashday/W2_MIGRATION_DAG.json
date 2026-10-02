@@ -125,7 +125,7 @@
         "status": "audited",
         "baseSha": "2b0bb79940d886767956e550f3db84b9312d1df2",
         "verdict": "PROJECTION_GAPS_FOUND",
-        "missingConstructs": ["verified_consecutive_failure", "selection_decision_provenance"],
+        "missingConstructs": ["verified_consecutive_failure", "support_dependency", "selection_decision_provenance"],
         "coverageArtifact": "docs/flashday/W2_03_G04_PROJECTION_COVERAGE.md"
       }
     },
