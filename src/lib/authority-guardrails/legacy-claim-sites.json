@@ -2814,9 +2814,9 @@
       "file": "src/components/shared/word-book-practice.tsx",
       "source": "fsrs",
       "anchor": "miss-history-comment",
-      "occurrences": ["/* Persist the miss as history only \u2014 no FSRS grade, no record"],
+      "occurrences": ["/* VS01 only: persist the miss as history \u2014 no FSRS grade, no"],
       "classification": "LEGIT_HISTORY",
-      "reason": "doc comment on the FD-VS01 miss path: failed exact-typing recalls persist via recordFailedPracticeSession \u2014 explicitly no FSRS grade or record mutation",
+      "reason": "doc comment on the FD-VS01 miss path: failed exact-typing recalls persist via recordFailedPracticeSession for VS01 targets only \u2014 explicitly no FSRS grade or record mutation",
       "migrationNode": null
     },
     {

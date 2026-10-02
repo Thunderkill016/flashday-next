@@ -18,7 +18,6 @@ import { I18nProvider } from '@/lib/i18n/provider';
 import { hydrateIOSNativeQA } from '@/lib/ios-native-qa';
 import { reconcileLearningUnits } from '@/lib/learning-unit-repository';
 import { seedDatabase } from '@/lib/seed';
-import '@/lib/vs01-debug';
 import { detectIOSNativeHost, IS_TAURI } from '@/lib/tauri';
 import { useAssessmentStore } from '@/stores/assessment-store';
 import { useAuthStore } from '@/stores/auth-store';
@@ -200,6 +199,9 @@ export default function AppLayout({ children }: { children: React.ReactNode }) {
       }
 
       await seedDatabase();
+      /* FD-VS01 dev-only inspection hook — registers window.__vs01Report.
+       * Dynamic import keeps the module out of production bundles. */
+      if (process.env.NODE_ENV === 'development') await import('@/lib/vs01-debug');
       // Migration is additive and retryable; a failure must not block the old app.
       await reconcileLearningUnits().catch((error) => console.warn('Course preparation deferred', error));
       await hydrateIOSNativeQA();

@@ -5,7 +5,9 @@ real sentence, can you still produce and reuse it ≥24h later in a changed
 context, without answer-bearing help?*
 
 **Setup:** `pnpm dev`, open the app, stay signed out (anonymous local
-learner is fine — everything is on-device).
+learner is fine — everything is on-device). The five targets only seed
+in development builds — a production/default install never receives them,
+and `__vs01Report` only exists in `pnpm dev`.
 
 **The 5 targets** (source: lesson *My Morning Routine*):
 
