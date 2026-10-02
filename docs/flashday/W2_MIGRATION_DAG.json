@@ -73,7 +73,10 @@
       "currentAuthority": "assessment-store.currentLevel (localStorage) displays a CEFR level as ability",
       "targetAuthority": "explicit non-authoritative placement domain: PlacementEstimate advisory state; never an EvidenceEvent, never capability truth",
       "writers": ["spec/docs", "src/stores/assessment-store.ts (state shape only)"],
-      "readers": ["dashboard reminder", "speak surfaces"],
+      "readers": [
+        "dashboard orientation/reminder",
+        "assessment flow (assessment-section display + next-quiz seeding via /api/assessment)"
+      ],
       "action": "Define the placement domain as advisory state outside the event log: PlacementEstimate { levelEstimate, source, score, completedAt, method/version }. EvidenceEvent stays capability-scoped — placement_estimate is NOT a registered event type, ai_eval is NOT an authority, and submitObservation is a capability-bound TaskContract API, not a generic observation bus. Reviewer decision: do not extend the kernel to hold placement; audited placement evidence would require a separate ADR (separate placement/history domain or a generic non-capability ledger).",
       "adapter": "none — advisory state, no event emission",
       "backfill": "HISTORY ONLY — the stored CEFR label is never replayed as an event",
@@ -89,7 +92,7 @@
       "acceptance": [
         "no capability projection reads placement state",
         "no mission/task gating reads currentLevel",
-        "UI labels it as estimate",
+        "placement value is typed and persisted as an estimate (verbatim UI copy relabel owned by W2-AS1)",
         "history remains intact"
       ],
       "stopConditions": [
@@ -255,7 +258,10 @@
       "currentAuthority": "currentLevel renders as level truth",
       "targetAuthority": "advisory placement-estimate label; no capability or gating consumers",
       "writers": ["assessment flow", "assessment-store"],
-      "readers": ["dashboard reminder", "speak surfaces"],
+      "readers": [
+        "dashboard orientation/reminder",
+        "assessment flow (assessment-section display + next-quiz seeding via /api/assessment)"
+      ],
       "action": "Relabel UI copy to placement estimate; remove capability/gating consumers; preserve history. Does NOT emit submitObservation and does NOT invent a capability/task contract — placement stays outside the event log per the W2-G03 boundary.",
       "adapter": "none — no event emission",
       "backfill": "HISTORY ONLY",

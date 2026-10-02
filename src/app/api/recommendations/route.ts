@@ -190,7 +190,7 @@ function buildLocalRecommendations(content: string, contentType: string, count: 
 
 export async function POST(req: NextRequest) {
   try {
-    const { content, contentType, count = 5, provider = 'groq', providerConfigs = {}, userLevel } = await req.json();
+    const { content, contentType, count = 5, provider = 'groq', providerConfigs = {} } = await req.json();
 
     if (!content || !contentType) {
       return NextResponse.json({ error: 'Missing content or contentType' }, { status: 400 });
@@ -234,16 +234,11 @@ export async function POST(req: NextRequest) {
     });
     const isWord = contentType === 'word';
 
-    let systemPrompt = isWord
+    const systemPrompt = isWord
       ? `You are an English vocabulary assistant. Given a word, return exactly ${count} related vocabulary items. Include synonyms, antonyms, words with the same root, and common collocations. Respond ONLY with valid JSON in this exact format:
 {"recommendations":[{"title":"word","text":"example sentence using the word","type":"word","relation":"synonym|antonym|word-root|collocation"},...]}`
       : `You are an English learning assistant. Given a sentence or article, return exactly ${count} related English learning content items on similar topics. Respond ONLY with valid JSON in this exact format:
 {"recommendations":[{"title":"short label","text":"the learning content","type":"sentence|phrase|article","relation":"why it is related"},...]}`;
-
-    // Inject user level for personalized difficulty
-    if (userLevel) {
-      systemPrompt += `\nThe learner is at ${userLevel} level (CEFR). Recommend content appropriate for this proficiency level.`;
-    }
 
     const userPrompt = isWord
       ? `Word: "${content}"\n\nReturn ${count} related vocabulary items as JSON.`

@@ -1,6 +1,6 @@
 {
   "mission": "W2-01R",
-  "description": "Site-level inventory of authority-sensitive legacy reads. Each site owns an occurrences list of normalized sensitive lines WITH MULTIPLICITY PRESERVED — per (file, source) the claimed multiset must equal the detected multiset exactly. Added, removed, duplicated, or edited sensitive lines all fail until a human re-classifies.",
+  "description": "Site-level inventory of authority-sensitive legacy reads. Each site owns an occurrences list of normalized sensitive lines WITH MULTIPLICITY PRESERVED \u2014 per (file, source) the claimed multiset must equal the detected multiset exactly. Added, removed, duplicated, or edited sensitive lines all fail until a human re-classifies.",
   "baseCommit": "c2ef466",
   "classifications": [
     "LEGIT_SCHEDULING",
@@ -19,7 +19,7 @@
       "anchor": "read-page:word-match-results",
       "occurrences": ["db.records.toArray(),"],
       "classification": "LEGIT_PRESENTATION",
-      "reason": "wordResults r.accuracy categorical (correct/close/wrong/missing/extra) — word-level ASR match output, NOT the records table",
+      "reason": "wordResults r.accuracy categorical (correct/close/wrong/missing/extra) \u2014 word-level ASR match output, NOT the records table",
       "migrationNode": "W2-CS1"
     },
     {
@@ -28,11 +28,11 @@
       "source": "fsrs",
       "anchor": "see reason",
       "occurrences": [
-        "const forecast = buildReviewForecast(records, 7);",
-        "import { buildActivityHeatmapData, buildReviewForecast, buildStreakData } from '@/lib/analytics';"
+        "import { buildActivityHeatmapData, buildReviewForecast, buildStreakData } from '@/lib/analytics';",
+        "const forecast = buildReviewForecast(records, 7);"
       ],
       "classification": "LEGIT_SCHEDULING",
-      "reason": "buildReviewForecast — upcoming-due forecast",
+      "reason": "buildReviewForecast \u2014 upcoming-due forecast",
       "migrationNode": "W2-MB1"
     },
     {
@@ -53,7 +53,7 @@
         "session: TypingSession;"
       ],
       "classification": "LEGIT_ANALYTICS",
-      "reason": "sessions → streak/words/avgAccuracy aggregate stats",
+      "reason": "sessions \u2192 streak/words/avgAccuracy aggregate stats",
       "migrationNode": "W2-CS1"
     },
     {
@@ -67,7 +67,7 @@
         "accuracy: s.accuracy,",
         "const mod = s.module || 'write';",
         "href: `/${s.module === 'speak' ? 'read' : s.module || 'write'}/${s.contentId}`,",
-        "subtitle: `${mod?.label ?? dashboard.modules.write.label} · ${timeAgo(s.endTime ?? s.startTime, common)}`,"
+        "subtitle: `${mod?.label ?? dashboard.modules.write.label} \u00b7 ${timeAgo(s.endTime ?? s.startTime, common)}`,"
       ],
       "classification": "LEGIT_PRESENTATION",
       "reason": "recent session rows rendered as activity items (title, href, accuracy, time)",
@@ -89,11 +89,12 @@
       "source": "assessment.currentLevel",
       "anchor": "see reason",
       "occurrences": [
-        "const { currentLevel, shouldShowReminder, dismissReminder } = useAssessmentStore();",
         "import { useAssessmentStore } from '@/stores/assessment-store';",
-        "{!currentLevel && !isNewUser && (",
-        "{dashboard.assessment.reminderDescription.replace('{{level}}', currentLevel)}",
-        "{showReminder && currentLevel && ("
+        "const { placement, shouldShowReminder, dismissReminder } = useAssessmentStore();",
+        "const levelEstimate = placement?.levelEstimate ?? null;",
+        "{!levelEstimate && !isNewUser && (",
+        "{showReminder && levelEstimate && (",
+        "{dashboard.assessment.reminderDescription.replace('{{level}}', levelEstimate)}"
       ],
       "classification": "LEGIT_PRESENTATION",
       "reason": "assessment reminder/nudge; advisory only",
@@ -140,7 +141,7 @@
         "onClick={() => setStepIndex(progress.steps.findIndex((s) => s.module === module))}"
       ],
       "classification": "LEGIT_PRESENTATION",
-      "reason": "lessonProgress → step completion display",
+      "reason": "lessonProgress \u2192 step completion display",
       "migrationNode": "W2-CS1"
     },
     {
@@ -169,7 +170,7 @@
         "{deriveTextCycle(l.id, l.exercises.map((item) => item.text).join('\\n\\n'), attempts, Date.now())"
       ],
       "classification": "LEGIT_PRESENTATION",
-      "reason": "deriveTextCycle → cycle step display",
+      "reason": "deriveTextCycle \u2192 cycle step display",
       "migrationNode": "W2-CS1"
     },
     {
@@ -182,7 +183,7 @@
         "import { lessonProgress } from '@/lib/learning-units';"
       ],
       "classification": "LEGIT_PRESENTATION",
-      "reason": "lessonProgress → lesson completion display",
+      "reason": "lessonProgress \u2192 lesson completion display",
       "migrationNode": "W2-CS1"
     },
     {
@@ -196,7 +197,7 @@
         "import { deriveTextCycle } from '@/lib/text-learning-cycle';"
       ],
       "classification": "LEGIT_PRESENTATION",
-      "reason": "deriveTextCycle → cycle state display",
+      "reason": "deriveTextCycle \u2192 cycle state display",
       "migrationNode": "W2-CS1"
     },
     {
@@ -224,7 +225,7 @@
         "{sessionCompleted && isDailyPlanPractice && <PracticeCompleteBanner module=\"listen\" />}"
       ],
       "classification": "LEGIT_SCHEDULING",
-      "reason": "isDailyPlanPractice → task completion wiring",
+      "reason": "isDailyPlanPractice \u2192 task completion wiring",
       "migrationNode": "W2-PL1"
     },
     {
@@ -237,7 +238,7 @@
         "const total = wordResults.filter((r) => r.accuracy !== 'extra').length;"
       ],
       "classification": "LEGIT_PRESENTATION",
-      "reason": "wordResults r.accuracy categorical (correct/close/wrong/missing/extra) — word-level ASR match output, NOT the records table",
+      "reason": "wordResults r.accuracy categorical (correct/close/wrong/missing/extra) \u2014 word-level ASR match output, NOT the records table",
       "migrationNode": "W2-CS1"
     },
     {
@@ -251,7 +252,7 @@
         "{phase === 'completed' && isDailyPlanPractice && <PracticeCompleteBanner module=\"read\" />}"
       ],
       "classification": "LEGIT_SCHEDULING",
-      "reason": "isDailyPlanPractice → task completion wiring",
+      "reason": "isDailyPlanPractice \u2192 task completion wiring",
       "migrationNode": "W2-PL1"
     },
     {
@@ -305,7 +306,7 @@
         "{state.mode === 'finished' && isDailyPlanPractice && <PracticeCompleteBanner module=\"write\" />}"
       ],
       "classification": "LEGIT_SCHEDULING",
-      "reason": "isDailyPlanPractice → task completion wiring",
+      "reason": "isDailyPlanPractice \u2192 task completion wiring",
       "migrationNode": "W2-PL1"
     },
     {
@@ -314,22 +315,22 @@
       "source": "assessment.currentLevel",
       "anchor": "see reason",
       "occurrences": [
-        "${getAdaptiveDistribution(currentLevel)}`;",
-        "? `Generate 30 questions focused on ${currentLevel} level. Output ONLY the JSON object, nothing else.`",
-        "Distribution (30 questions total, focused on ${currentLevel} level):",
-        "console.log('[Assessment] Generating questions for level:', currentLevel || 'first-time');",
-        "const distributions: Record<CEFRLevel, string> = {",
-        "const systemPrompt = buildSystemPrompt(currentLevel);",
-        "const userPrompt = currentLevel",
-        "currentLevel,",
-        "currentLevel?: CEFRLevel;",
-        "function buildSystemPrompt(currentLevel?: CEFRLevel): string {",
+        "type CEFRLevel = 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2';",
         "function getAdaptiveDistribution(level: CEFRLevel): string {",
-        "if (!currentLevel) {",
-        "type CEFRLevel = 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2';"
+        "const distributions: Record<CEFRLevel, string> = {",
+        "function buildSystemPrompt(levelEstimate?: CEFRLevel): string {",
+        "if (!levelEstimate) {",
+        "Distribution (30 questions total, focused on ${levelEstimate} level):",
+        "${getAdaptiveDistribution(levelEstimate)}`;",
+        "levelEstimate,",
+        "levelEstimate?: CEFRLevel;",
+        "const systemPrompt = buildSystemPrompt(levelEstimate);",
+        "const userPrompt = levelEstimate",
+        "? `Generate 30 questions focused on ${levelEstimate} level. Output ONLY the JSON object, nothing else.`",
+        "console.log('[Assessment] Generating questions for level estimate:', levelEstimate || 'first-time');"
       ],
       "classification": "LEGIT_CANDIDATE_SIGNAL",
-      "reason": "adaptive question distribution input — advisory placement use",
+      "reason": "adaptive question distribution input \u2014 advisory placement use",
       "migrationNode": "W2-AS1"
     },
     {
@@ -338,8 +339,8 @@
       "source": "sessions",
       "anchor": "see reason",
       "occurrences": [
-        "`Here is what you practiced today:\\n${formatList(sessions.map((session) => `${session.title} (${session.module})`))}`,",
-        "if (sessions.length === 0) {"
+        "if (sessions.length === 0) {",
+        "`Here is what you practiced today:\\n${formatList(sessions.map((session) => `${session.title} (${session.module})`))}`,"
       ],
       "classification": "LEGIT_PRESENTATION",
       "reason": "formats stats tool output for the chat tutor",
@@ -361,25 +362,26 @@
       "source": "assessment.currentLevel",
       "anchor": "see reason",
       "occurrences": [
-        "<p className=\"text-sm font-medium text-slate-800\">{copy.idle.currentLevel}</p>",
-        "<p className=\"text-xs text-slate-500\">{copy.levels[currentLevel].label}</p>",
-        "<span className={cn('px-3 py-1.5 rounded-lg text-sm font-bold border', LEVEL_COLORS[currentLevel])}>",
-        "CEFRLevel,",
-        "className={cn('ml-auto px-2.5 py-0.5 rounded-full text-xs font-bold border', LEVEL_COLORS[currentLevel])}",
-        "const LEVEL_COLORS: Record<CEFRLevel, string> = {",
-        "const { currentLevel, history, setResult } = useAssessmentStore();",
-        "currentLevel: currentLevel, // Pass current level for adaptive testing",
-        "currentLevel: string;",
-        "previous: (prev: CEFRLevel, current: CEFRLevel, comparison: AssessmentComparison) =>",
-        "previous: (prev: CEFRLevel, current: CEFRLevel, comparison: AssessmentComparison) => string;",
         "type CEFRLevel,",
         "useAssessmentStore,",
-        "{currentLevel && phase === 'idle' && (",
-        "{currentLevel}",
-        "{currentLevel}",
-        "{phase === 'idle' && !currentLevel && (",
-        "{phase === 'idle' && currentLevel && (",
-        "}, [providerStore, currentLevel, copy]);"
+        "currentLevel: string;",
+        "previous: (prev: CEFRLevel, current: CEFRLevel, comparison: AssessmentComparison) => string;",
+        "CEFRLevel,",
+        "const LEVEL_COLORS: Record<CEFRLevel, string> = {",
+        "previous: (prev: CEFRLevel, current: CEFRLevel, comparison: AssessmentComparison) =>",
+        "const { placement, history, setResult } = useAssessmentStore();",
+        "const levelEstimate = placement?.levelEstimate ?? null;",
+        "levelEstimate, // Advisory estimate \u2014 adapts the next test's question mix",
+        "}, [providerStore, levelEstimate, copy]);",
+        "{levelEstimate && phase === 'idle' && (",
+        "className={cn('ml-auto px-2.5 py-0.5 rounded-full text-xs font-bold border', LEVEL_COLORS[levelEstimate])}",
+        "{levelEstimate}",
+        "{phase === 'idle' && !levelEstimate && (",
+        "{phase === 'idle' && levelEstimate && (",
+        "<span className={cn('px-3 py-1.5 rounded-lg text-sm font-bold border', LEVEL_COLORS[levelEstimate])}>",
+        "{levelEstimate}",
+        "<p className=\"text-sm font-medium text-slate-800\">{copy.idle.currentLevel}</p>",
+        "<p className=\"text-xs text-slate-500\">{copy.levels[levelEstimate].label}</p>"
       ],
       "classification": "LEGIT_CANDIDATE_SIGNAL",
       "reason": "level display + advisory adaptive input; no gating",
@@ -391,17 +393,12 @@
       "source": "assessment.currentLevel",
       "anchor": "see reason",
       "occurrences": [
-        "const currentLevel = useAssessmentStore((s) => s.currentLevel);",
-        "const setCurrentLevel = useAssessmentStore((s) => s.setCurrentLevel);",
-        "currentDifficulty: activeContentItem?.difficulty ?? cefrToDifficulty(currentLevel),",
-        "currentLevel,",
-        "function cefrToDifficulty(level: CEFRLevel | null): 'beginner' | 'intermediate' | 'advanced' {",
         "import { type CEFRLevel, useAssessmentStore } from '@/stores/assessment-store';",
-        "updateUserLevel: (level) => setCurrentLevel(level as CEFRLevel),",
-        "userLevel: currentLevel,"
+        "const setPlacementEstimate = useAssessmentStore((s) => s.setPlacementEstimate);",
+        "updateUserLevel: (level) => setPlacementEstimate(level as CEFRLevel),"
       ],
       "classification": "LEGIT_CANDIDATE_SIGNAL",
-      "reason": "userLevel → difficulty context for tutor; advisory",
+      "reason": "updateUserLevel chat tool \u2192 setPlacementEstimate(level) advisory claim writer only; no placement read (W2-G03 R3 cut userLevel + difficulty fallback)",
       "migrationNode": "W2-AS1"
     },
     {
@@ -438,7 +435,7 @@
       "anchor": "see reason",
       "occurrences": ["db.records.orderBy('lastPracticed').last(),"],
       "classification": "LEGIT_HISTORY",
-      "reason": "latest lastPracticed → activity signature for plan refresh",
+      "reason": "latest lastPracticed \u2192 activity signature for plan refresh",
       "migrationNode": "W2-PL1"
     },
     {
@@ -447,37 +444,15 @@
       "source": "sessions",
       "anchor": "see reason",
       "occurrences": [
-        "const sessions = await db.sessions.toArray();",
-        "db.sessions.orderBy('startTime').last(),",
-        "if (!session.completed) return false;",
         "import type { TypingSession } from '@/types/content';",
-        "sessions: TypingSession[],"
+        "sessions: TypingSession[],",
+        "if (!session.completed) return false;",
+        "db.sessions.orderBy('startTime').last(),",
+        "const sessions = await db.sessions.toArray();"
       ],
       "classification": "LEGIT_HISTORY",
-      "reason": "latest session → signature + per-task session summaries",
+      "reason": "latest session \u2192 signature + per-task session summaries",
       "migrationNode": "W2-PL1"
-    },
-    {
-      "id": "components-dashboard-today-plan.assessment-currentLevel",
-      "file": "src/components/dashboard/today-plan.tsx",
-      "source": "assessment.currentLevel",
-      "anchor": "TodayPlan:levelToPlanInput",
-      "occurrences": [
-        "? messages.todayPlan.explanationWithLevel.replace('{{level}}', currentLevel)",
-        "[currentGoal, currentLevel, setTasks],",
-        "const currentLevel = useAssessmentStore((state) => state.currentLevel);",
-        "const plan = await generateDailyPlan(goalOverride, { currentLevel, learningGoal: currentGoal });",
-        "const planExplanation = `${buildDailyPlanGoalExplanation(currentGoal, currentLevel)} ${",
-        "currentLevel",
-        "if (dateKey !== today || dataSignature !== signature || levelKey !== (currentLevel ?? '')) {",
-        "import { useAssessmentStore } from '@/stores/assessment-store';",
-        "setTasks(syncedPlan, signature, currentLevel ?? '');",
-        "}, [currentLevel, dataSignature, dateKey, generate, goal, levelKey, syncCompletedTasks]);"
-      ],
-      "classification": "LEGIT_CANDIDATE_SIGNAL",
-      "reason": "TRANSITIONAL advisory candidate: currentLevel → generateDailyPlan input + levelKey invalidation. Permitted today as placement-advisory; does not survive final planner authority (W2-PL1) unless the W2-00R2 placement boundary justifies it.",
-      "migrationNode": "W2-AS1",
-      "transitional": true
     },
     {
       "id": "components-dashboard-today-plan.dailyPlan",
@@ -485,16 +460,16 @@
       "source": "dailyPlan",
       "anchor": "see reason",
       "occurrences": [
-        "async (goalOverride = useDailyPlanStore.getState().goal, signatureOverride?: string) => {",
-        "const plan = await generateDailyPlan(goalOverride, { currentLevel, learningGoal: currentGoal });",
-        "const signature = await getDailyPlanSignature();",
-        "const signature = signatureOverride ?? (await getDailyPlanSignature());",
-        "const syncedPlan = await syncPlanTasksWithActivity(plan);",
-        "const syncedTasks = await syncPlanTasksWithActivity(tasks);",
-        "import { SESSION_ACTIVITY_EVENT, syncPlanTasksWithActivity } from '@/lib/daily-plan-progress';",
         "import { generateDailyPlan, getDailyPlanSignature } from '@/lib/daily-plan';",
+        "import { SESSION_ACTIVITY_EVENT, syncPlanTasksWithActivity } from '@/lib/daily-plan-progress';",
         "import { todayKey, useDailyPlanStore } from '@/stores/daily-plan-store';",
-        "useDailyPlanStore();"
+        "const { tasks, dateKey, dataSignature, goal, skipTask, setTasks, updateStreak, hydrate } = useDailyPlanStore();",
+        "const syncedTasks = await syncPlanTasksWithActivity(tasks);",
+        "async (goalOverride = useDailyPlanStore.getState().goal, signatureOverride?: string) => {",
+        "const plan = await generateDailyPlan(goalOverride, { learningGoal: currentGoal });",
+        "const syncedPlan = await syncPlanTasksWithActivity(plan);",
+        "const signature = signatureOverride ?? (await getDailyPlanSignature());",
+        "const signature = await getDailyPlanSignature();"
       ],
       "classification": "LEGIT_SCHEDULING",
       "reason": "plan store read/write + task lifecycle",
@@ -599,7 +574,7 @@
         "for (const item of data.favorites.filter((item) => (item.fsrsCard?.due ?? item.nextReview ?? Infinity) <= now)) {"
       ],
       "classification": "LEGIT_SCHEDULING",
-      "reason": "favorites fsrsCard.due → review task candidate",
+      "reason": "favorites fsrsCard.due \u2192 review task candidate",
       "migrationNode": "W2-MB1"
     },
     {
@@ -622,7 +597,7 @@
       "anchor": "see reason",
       "occurrences": ["const weak = data.weakSpots[0];", "weakSpots: data.weakSpots,"],
       "classification": "LEGIT_CANDIDATE_SIGNAL",
-      "reason": "weakSpots[0] → weak-spot task candidate",
+      "reason": "weakSpots[0] \u2192 weak-spot task candidate",
       "migrationNode": "W2-PL1"
     },
     {
@@ -682,9 +657,9 @@
         "extra: Partial<DailyTask> = {},",
         "id: 'preferences:daily',",
         "if (changed.length) await database.dailyTasks.bulkPut(changed);",
-        "if (task.kind === 'favorite') return t('Saved phrases', '收藏表达', 'Cụm từ đã lưu');",
-        "if (task.kind === 'pronunciation') return t('Pronunciation', '发音', 'Phát âm');",
-        "if (task.kind === 'weak-spot') return t('Weak spots', '薄弱项', 'Điểm yếu');",
+        "if (task.kind === 'favorite') return t('Saved phrases', '\u6536\u85cf\u8868\u8fbe', 'C\u1ee5m t\u1eeb \u0111\u00e3 l\u01b0u');",
+        "if (task.kind === 'pronunciation') return t('Pronunciation', '\u53d1\u97f3', 'Ph\u00e1t \u00e2m');",
+        "if (task.kind === 'weak-spot') return t('Weak spots', '\u8584\u5f31\u9879', '\u0110i\u1ec3m y\u1ebfu');",
         "import type { DailyTask } from '@/types/daily-task';",
         "kind: DailyTask['kind'],",
         "reconcileDailyTasks,",
@@ -703,7 +678,7 @@
       "file": "src/components/learning/learning-section-nav.tsx",
       "source": "weakSpots",
       "anchor": "see reason",
-      "occurrences": ["['/weak-spots', 'Weak spots', '薄弱项', 'Điểm yếu'],"],
+      "occurrences": ["['/weak-spots', 'Weak spots', '\u8584\u5f31\u9879', '\u0110i\u1ec3m y\u1ebfu'],"],
       "classification": "LEGIT_PRESENTATION",
       "reason": "nav link/section routing to weak-spots",
       "migrationNode": "W2-WS2"
@@ -737,7 +712,7 @@
         "const weakSpot = weakSpots.find((item) => item.id === sourceWeakSpotId);",
         "if (!current || !canResolveTransfer(current.id, current.lastSeenAt, evidence)) throw new Error('No evidence');",
         "if (!weakSpot || !confirm) return;",
-        "{t('Targeted weak spot', '针对薄弱项', 'Điểm yếu cần luyện')}: {weakSpot.text}",
+        "{t('Targeted weak spot', '\u9488\u5bf9\u8584\u5f31\u9879', '\u0110i\u1ec3m y\u1ebfu c\u1ea7n luy\u1ec7n')}: {weakSpot.text}",
         "{weakSpot && (",
         "{weakSpot.resolved ? ("
       ],
@@ -828,7 +803,7 @@
         "import { persistLearningAttempt } from '@/lib/learning-activity-persistence';"
       ],
       "classification": "LEGIT_HISTORY",
-      "reason": "attempts → deriveTextCycle + persistLearningAttempt writer",
+      "reason": "attempts \u2192 deriveTextCycle + persistLearningAttempt writer",
       "migrationNode": "W2-AT1"
     },
     {
@@ -866,7 +841,7 @@
         "record={data.records.find((r) => r.id === vocabularyRecordId(active.id, mode))}"
       ],
       "classification": "LEGIT_SCHEDULING",
-      "reason": "records → vocab practice data",
+      "reason": "records \u2192 vocab practice data",
       "migrationNode": "W2-MB1"
     },
     {
@@ -894,7 +869,7 @@
         "settings: await data.database.dailyTasks.get('preferences:vocabulary'),"
       ],
       "classification": "LEGIT_HISTORY",
-      "reason": "preferences:vocabulary row — settings, not evidence",
+      "reason": "preferences:vocabulary row \u2014 settings, not evidence",
       "migrationNode": "W2-PL1"
     },
     {
@@ -904,7 +879,7 @@
       "anchor": "see reason",
       "occurrences": ["times.set(s.contentId, Math.max(times.get(s.contentId) || 0, s.endTime || s.startTime));"],
       "classification": "LEGIT_PRESENTATION",
-      "reason": "sessions → lessonProgress per-unit completion",
+      "reason": "sessions \u2192 lessonProgress per-unit completion",
       "migrationNode": "W2-CS1"
     },
     {
@@ -966,7 +941,7 @@
         "{isIOSNativeHost ? <span className={IOS_PILL_CLASS}>FSRS rating</span> : null}"
       ],
       "classification": "LEGIT_SCHEDULING",
-      "reason": "previewRatings → grade write path",
+      "reason": "previewRatings \u2192 grade write path",
       "migrationNode": "W2-MB1"
     },
     {
@@ -1026,7 +1001,7 @@
         "practicedIds: limit > 0 ? new Set((await db.records.toArray()).map((record) => record.contentId)) : undefined,"
       ],
       "classification": "LEGIT_SCHEDULING",
-      "reason": "records → practiced set / due selection",
+      "reason": "records \u2192 practiced set / due selection",
       "migrationNode": "W2-MB1"
     },
     {
@@ -1043,7 +1018,7 @@
         "{isDailyPlanPractice && <PracticeCompleteBanner module={module as 'listen' | 'speak' | 'read' | 'write'} />}"
       ],
       "classification": "LEGIT_SCHEDULING",
-      "reason": "isDailyPlanPractice → task completion wiring",
+      "reason": "isDailyPlanPractice \u2192 task completion wiring",
       "migrationNode": "W2-PL1"
     },
     {
@@ -1057,7 +1032,7 @@
         "const style = accuracyStyle[r.accuracy];"
       ],
       "classification": "LEGIT_PRESENTATION",
-      "reason": "results r.accuracy categorical word-match display — NOT the records table",
+      "reason": "results r.accuracy categorical word-match display \u2014 NOT the records table",
       "migrationNode": "W2-PR1"
     },
     {
@@ -1119,21 +1094,6 @@
       "classification": "LEGIT_CANDIDATE_SIGNAL",
       "reason": "unresolved spots feed workspace remediation data",
       "migrationNode": "W2-WS2"
-    },
-    {
-      "id": "hooks-use-recommendations.assessment-currentLevel",
-      "file": "src/hooks/use-recommendations.ts",
-      "source": "assessment.currentLevel",
-      "anchor": "see reason",
-      "occurrences": [
-        "[activeProviderId, providers, activeApiKey, activeHeaderKey, recommendationsCount, currentLevel],",
-        "const currentLevel = useAssessmentStore((s) => s.currentLevel);",
-        "import { useAssessmentStore } from '@/stores/assessment-store';",
-        "userLevel: currentLevel,"
-      ],
-      "classification": "LEGIT_CANDIDATE_SIGNAL",
-      "reason": "userLevel → recommendation request; advisory",
-      "migrationNode": "W2-AS1"
     },
     {
       "id": "hooks-use-review-summary.records",
@@ -1287,13 +1247,13 @@
       "source": "records",
       "anchor": "collectLearningSnapshot:lowAccuracyContent",
       "occurrences": [
+        "db.records.toArray(),",
         ".filter((r) => r.accuracy < 70 && r.attempts >= 1)",
         ".sort((a, b) => a.accuracy - b.accuracy)",
-        "accuracy: Math.round(r.accuracy),",
-        "db.records.toArray(),"
+        "accuracy: Math.round(r.accuracy),"
       ],
       "classification": "CAPABILITY_CLAIM",
-      "reason": "records accuracy<70 → \"weaknesses\" injected into AI tutor context — capability-shaped claim from raw accuracy",
+      "reason": "records accuracy<70 \u2192 \"weaknesses\" injected into AI tutor context \u2014 capability-shaped claim from raw accuracy",
       "migrationNode": "W2-CS1"
     },
     {
@@ -1302,36 +1262,23 @@
       "source": "sessions",
       "anchor": "see reason",
       "occurrences": [
-        "? Math.round(periodScored.reduce((sum, s) => sum + s.accuracy, 0) / periodScored.length)",
+        "db.sessions.toArray(),",
         "const completed = sessions.filter((s) => s.completed);",
-        "const lastPracticed = modSessions.length > 0 ? Math.max(...modSessions.map((s) => s.endTime ?? s.startTime)) : null;",
+        "const totalWords = completed.reduce((sum, s) => sum + (s.totalWords || 0), 0);",
+        "const scored = completed.filter((s) => (s.module || 'write') !== 'listen');",
+        "scored.length > 0 ? Math.round(scored.reduce((sum, s) => sum + s.accuracy, 0) / scored.length) : 0;",
+        "const writes = completed.filter((s) => (s.module || 'write') === 'write');",
         "const modSessions = completed.filter((s) => (s.module || 'write') === mod);",
-        "const periodScored = periodSessions.filter((s) => (s.module || 'write') !== 'listen');",
+        "modScored.length > 0 ? Math.round(modScored.reduce((sum, s) => sum + s.accuracy, 0) / modScored.length) : 0;",
+        "const lastPracticed = modSessions.length > 0 ? Math.max(...modSessions.map((s) => s.endTime ?? s.startTime)) : null;",
         "const periodSessions = completed.filter((s) => (s.endTime ?? s.startTime) >= since);",
         "const periodWords = periodSessions.reduce((sum, s) => sum + (s.totalWords || 0), 0);",
-        "const scored = completed.filter((s) => (s.module || 'write') !== 'listen');",
-        "const totalWords = completed.reduce((sum, s) => sum + (s.totalWords || 0), 0);",
-        "const writes = completed.filter((s) => (s.module || 'write') === 'write');",
-        "db.sessions.toArray(),",
-        "modScored.length > 0 ? Math.round(modScored.reduce((sum, s) => sum + s.accuracy, 0) / modScored.length) : 0;",
-        "scored.length > 0 ? Math.round(scored.reduce((sum, s) => sum + s.accuracy, 0) / scored.length) : 0;"
+        "const periodScored = periodSessions.filter((s) => (s.module || 'write') !== 'listen');",
+        "? Math.round(periodScored.reduce((sum, s) => sum + s.accuracy, 0) / periodScored.length)"
       ],
       "classification": "LEGIT_ANALYTICS",
       "reason": "session aggregates for tutor context",
       "migrationNode": "W2-CS1"
-    },
-    {
-      "id": "lib-chat-analytics.assessment-currentLevel",
-      "file": "src/lib/chat-analytics.ts",
-      "source": "assessment.currentLevel",
-      "anchor": "see reason",
-      "occurrences": [
-        "cefrLevel = parsed.state?.currentLevel || null;",
-        "const assessmentData = localStorage.getItem('echotype_assessment');"
-      ],
-      "classification": "LEGIT_CANDIDATE_SIGNAL",
-      "reason": "cefrLevel → tutor context; advisory",
-      "migrationNode": "W2-AS1"
     },
     {
       "id": "lib-chat-tool-executor.sessions",
@@ -1339,15 +1286,15 @@
       "source": "sessions",
       "anchor": "see reason",
       "occurrences": [
-        ".filter((session) => session.completed)",
-        "? Math.round(scoredSessions.reduce((sum, session) => sum + session.accuracy, 0) / scoredSessions.length)",
-        "accuracy: session.accuracy,",
-        "const scoredSessions = sessions.filter((session) => session.module !== 'listen');",
-        "const words = sessions.reduce((sum, session) => sum + session.totalWords, 0);",
-        "endedAt: session.endTime ?? session.startTime,",
         "return db.sessions",
-        "return ok(`Collected ${sessions.length} completed session(s) from today.`, { sessions });",
-        "sessions: sessions.length,"
+        ".filter((session) => session.completed)",
+        "accuracy: session.accuracy,",
+        "endedAt: session.endTime ?? session.startTime,",
+        "const words = sessions.reduce((sum, session) => sum + session.totalWords, 0);",
+        "const scoredSessions = sessions.filter((session) => session.module !== 'listen');",
+        "? Math.round(scoredSessions.reduce((sum, session) => sum + session.accuracy, 0) / scoredSessions.length)",
+        "sessions: sessions.length,",
+        "return ok(`Collected ${sessions.length} completed session(s) from today.`, { sessions });"
       ],
       "classification": "LEGIT_ANALYTICS",
       "reason": "stats tool reads sessions",
@@ -1379,7 +1326,7 @@
         "import type { PlanTask } from '@/stores/daily-plan-store';"
       ],
       "classification": "LEGIT_SCHEDULING",
-      "reason": "PlanTask→route linking helper",
+      "reason": "PlanTask\u2192route linking helper",
       "migrationNode": "W2-PL1"
     },
     {
@@ -1408,7 +1355,7 @@
         "wpm: session.module === 'write' ? session.wpm : existingRecord?.wpm,"
       ],
       "classification": "LEGIT_SCHEDULING",
-      "reason": "writer: session.accuracy → accuracyToRating → record+fsrsCard write (fact-preserving write path)",
+      "reason": "writer: session.accuracy \u2192 accuracyToRating \u2192 record+fsrsCard write (fact-preserving write path)",
       "migrationNode": "W2-AT1"
     },
     {
@@ -1428,7 +1375,7 @@
         "nextReview,"
       ],
       "classification": "LEGIT_SCHEDULING",
-      "reason": "writer: gradeCard → fsrsCard/nextReview",
+      "reason": "writer: gradeCard \u2192 fsrsCard/nextReview",
       "migrationNode": "W2-MB1"
     },
     {
@@ -1465,7 +1412,7 @@
         "task: PlanTask,"
       ],
       "classification": "LEGIT_SCHEDULING",
-      "reason": "syncPlanTasks → task completion propagation",
+      "reason": "syncPlanTasks \u2192 task completion propagation",
       "migrationNode": "W2-PL1"
     },
     {
@@ -1479,7 +1426,7 @@
         "const records = await db.records.toArray();",
         "db.records.toArray(),",
         "if (typeof record.lastPracticed === 'number' && record.lastPracticed >= windowStart) {",
-        "import type { ContentItem, Difficulty, LearningRecord, TypingSession } from '@/types/content';",
+        "import type { ContentItem, LearningRecord, TypingSession } from '@/types/content';",
         "records: LearningRecord[],",
         "records: LearningRecord[],"
       ],
@@ -1497,7 +1444,7 @@
         "const moduleRecords = records.filter((record) => record.module === module);"
       ],
       "classification": "CAPABILITY_CLAIM",
-      "reason": "moduleRecords avg accuracy → weakness score drives module priority — capability-shaped claim from raw accuracy",
+      "reason": "moduleRecords avg accuracy \u2192 weakness score drives module priority \u2014 capability-shaped claim from raw accuracy",
       "migrationNode": "W2-PL1"
     },
     {
@@ -1506,17 +1453,17 @@
       "source": "sessions",
       "anchor": "see reason",
       "occurrences": [
-        "const moduleSessions = sessions.filter((session) => session.module === module);",
-        "const practiceCount = sessions.filter(",
-        "const practiceCount = sessions.filter((session) => session.contentId === article.id).length;",
+        "import type { ContentItem, LearningRecord, TypingSession } from '@/types/content';",
         "db.sessions.toArray(),",
         "function getSessionTimestamp(session: TypingSession): number {",
-        "import type { ContentItem, Difficulty, LearningRecord, TypingSession } from '@/types/content';",
         "return session.endTime ?? session.startTime;",
         "sessions: TypingSession[],",
         "sessions: TypingSession[],",
+        "const moduleSessions = sessions.filter((session) => session.module === module);",
         "sessions: TypingSession[],",
+        "const practiceCount = sessions.filter((session) => session.contentId === article.id).length;",
         "sessions: TypingSession[],",
+        "const practiceCount = sessions.filter(",
         "sessions: TypingSession[],"
       ],
       "classification": "LEGIT_SCHEDULING",
@@ -1524,43 +1471,27 @@
       "migrationNode": "W2-PL1"
     },
     {
-      "id": "lib-daily-plan.assessment-currentLevel-advisory-difficulty",
-      "file": "src/lib/daily-plan.ts",
-      "source": "assessment.currentLevel",
-      "anchor": "generateDailyPlan:levelToDifficulty",
-      "occurrences": [
-        "const targetDifficulty = levelToDifficulty(options.currentLevel);",
-        "currentLevel?: CEFRLevel | null;",
-        "function levelToDifficulty(level?: CEFRLevel | null): Difficulty | undefined {",
-        "import type { CEFRLevel } from '@/stores/assessment-store';"
-      ],
-      "classification": "LEGIT_CANDIDATE_SIGNAL",
-      "reason": "TRANSITIONAL advisory candidate: currentLevel → levelToDifficulty feeds ongoing daily-plan difficulty targeting. Permitted today as placement-advisory input; does NOT survive final planner authority (W2-PL1) unless the W2-00R2 placement boundary explicitly justifies it. Not a capability truth source.",
-      "migrationNode": "W2-AS1",
-      "transitional": true
-    },
-    {
       "id": "lib-daily-plan.dailyPlan",
       "file": "src/lib/daily-plan.ts",
       "source": "dailyPlan",
       "anchor": "see reason",
       "occurrences": [
-        "): Record<PlanTask['module'], number> {",
-        "): Set<PlanTask['module']> {",
-        "const MODULE_BASE_BONUS: Record<PlanTask['module'], number> = {",
-        "const MODULE_ORDER: PlanTask['module'][] = ['write', 'read', 'speak', 'listen'];",
-        "const modules = new Set<PlanTask['module']>();",
-        "const stats = MODULE_ORDER.reduce<Record<PlanTask['module'], ModuleStats>>(",
-        "existingModules: Set<PlanTask['module']>,",
-        "export async function generateDailyPlan(goal: DailyGoal, options: DailyPlanOptions = {}): Promise<PlanTask[]> {",
-        "export async function getDailyPlanSignature(): Promise<string> {",
-        "function compareTasksForDate(a: PlanTask, b: PlanTask, dateKey: string): number {",
-        "function getTaskKey(task: PlanTask): string {",
         "import type { DailyGoal, PlanTask } from '@/stores/daily-plan-store';",
-        "new Set<PlanTask['module']>(),",
-        "return MODULE_ORDER.reduce<Record<PlanTask['module'], number>>(",
+        "const MODULE_ORDER: PlanTask['module'][] = ['write', 'read', 'speak', 'listen'];",
+        "const MODULE_BASE_BONUS: Record<PlanTask['module'], number> = {",
         "task: PlanTask;",
-        "weeklyMissingModules: Set<PlanTask['module']>,"
+        "export async function generateDailyPlan(goal: DailyGoal, options: DailyPlanOptions = {}): Promise<PlanTask[]> {",
+        "new Set<PlanTask['module']>(),",
+        "export async function getDailyPlanSignature(): Promise<string> {",
+        "): Set<PlanTask['module']> {",
+        "const modules = new Set<PlanTask['module']>();",
+        "): Record<PlanTask['module'], number> {",
+        "const stats = MODULE_ORDER.reduce<Record<PlanTask['module'], ModuleStats>>(",
+        "return MODULE_ORDER.reduce<Record<PlanTask['module'], number>>(",
+        "existingModules: Set<PlanTask['module']>,",
+        "weeklyMissingModules: Set<PlanTask['module']>,",
+        "function compareTasksForDate(a: PlanTask, b: PlanTask, dateKey: string): number {",
+        "function getTaskKey(task: PlanTask): string {"
       ],
       "classification": "LEGIT_SCHEDULING",
       "reason": "generateDailyPlan produces PlanTask[]",
@@ -1579,7 +1510,7 @@
         "records?: { id: string; contentId: string; module: string; fsrsCard?: { last_review?: number } }[];"
       ],
       "classification": "LEGIT_SCHEDULING",
-      "reason": "fsrsCard.last_review → task-completion detection",
+      "reason": "fsrsCard.last_review \u2192 task-completion detection",
       "migrationNode": "W2-PL1"
     },
     {
@@ -1718,7 +1649,7 @@
         "import type { ContentItem, TypingSession } from '@/types/content';"
       ],
       "classification": "LEGIT_ANALYTICS",
-      "reason": "completed-today → words/minutes progress",
+      "reason": "completed-today \u2192 words/minutes progress",
       "migrationNode": "W2-CS1"
     },
     {
@@ -1860,7 +1791,7 @@
         "* Build an FSRSCardData for an existing record that was created before FSRS.",
         "/** Create a brand-new FSRS card (New state). */",
         "/** Map an accuracy percentage (0-100) to an FSRS Rating. */",
-        "// ─── FSRS Scheduler Singleton ────────────────────────────────────────────────",
+        "// \u2500\u2500\u2500 FSRS Scheduler Singleton \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500",
         "cardData: FSRSCardData | undefined,",
         "cardData: FSRSCardData | undefined,",
         "const card = cardData ? dataToCard(cardData) : createNewCard(now);",
@@ -1890,7 +1821,7 @@
         "return { cardData: updated, nextReview: updated.due };"
       ],
       "classification": "LEGIT_SCHEDULING",
-      "reason": "FSRS algorithm implementation — scheduling authority",
+      "reason": "FSRS algorithm implementation \u2014 scheduling authority",
       "migrationNode": "W2-MB1"
     },
     {
@@ -1903,7 +1834,7 @@
         "[owner.contents, owner.dailyTasks, owner.learningAttempts, owner.records],"
       ],
       "classification": "LEGIT_SCHEDULING",
-      "reason": "owner.records → import-task scheduling inputs",
+      "reason": "owner.records \u2192 import-task scheduling inputs",
       "migrationNode": "W2-PL1"
     },
     {
@@ -1916,7 +1847,7 @@
         "const attempts = await owner.learningAttempts.toArray();"
       ],
       "classification": "LEGIT_SCHEDULING",
-      "reason": "attempts → import-task generation",
+      "reason": "attempts \u2192 import-task generation",
       "migrationNode": "W2-PL1"
     },
     {
@@ -2061,19 +1992,6 @@
       "migrationNode": "W2-AT1"
     },
     {
-      "id": "lib-learning-goals.assessment-currentLevel",
-      "file": "src/lib/learning-goals.ts",
-      "source": "assessment.currentLevel",
-      "anchor": "see reason",
-      "occurrences": [
-        "export function buildDailyPlanGoalExplanation(goal: LearningGoal | null | undefined, level?: CEFRLevel | null) {",
-        "import type { CEFRLevel } from '@/stores/assessment-store';"
-      ],
-      "classification": "LEGIT_HISTORY",
-      "reason": "CEFRLevel type import only",
-      "migrationNode": "W2-AS1"
-    },
-    {
       "id": "lib-learning-navigation.weakSpots",
       "file": "src/lib/learning-navigation.ts",
       "source": "weakSpots",
@@ -2098,7 +2016,7 @@
         "next: steps.find((s) => !s.completed),"
       ],
       "classification": "LEGIT_PRESENTATION",
-      "reason": "lessonProgress — sessions.completed → step completion",
+      "reason": "lessonProgress \u2014 sessions.completed \u2192 step completion",
       "migrationNode": "W2-CS1"
     },
     {
@@ -2115,7 +2033,7 @@
         "const wrong = results.filter((r) => r.accuracy === 'wrong').length;"
       ],
       "classification": "LEGIT_PRESENTATION",
-      "reason": "word-match categorical counts (correct/close/wrong/missing/extra) — NOT the records table",
+      "reason": "word-match categorical counts (correct/close/wrong/missing/extra) \u2014 NOT the records table",
       "migrationNode": null
     },
     {
@@ -2135,7 +2053,7 @@
         "r.accuracy === 'correct'"
       ],
       "classification": "LEGIT_PRESENTATION",
-      "reason": "wordResults r.accuracy categorical scoring — NOT the records table",
+      "reason": "wordResults r.accuracy categorical scoring \u2014 NOT the records table",
       "migrationNode": "W2-PR1"
     },
     {
@@ -2152,7 +2070,7 @@
         "recent: records.slice(0, 3),"
       ],
       "classification": "LEGIT_PRESENTATION",
-      "reason": "local `records` var holds PronunciationProgress rows — not the records table",
+      "reason": "local `records` var holds PronunciationProgress rows \u2014 not the records table",
       "migrationNode": "W2-PR1"
     },
     {
@@ -2165,7 +2083,7 @@
         "import type { PronunciationProgress } from '@/types/pronunciation';"
       ],
       "classification": "LEGIT_PRESENTATION",
-      "reason": "progress rows → SoundEvidenceStatus derivation",
+      "reason": "progress rows \u2192 SoundEvidenceStatus derivation",
       "migrationNode": "W2-PR1"
     },
     {
@@ -2314,7 +2232,7 @@
         "import { deriveTextCycle } from './text-learning-cycle';"
       ],
       "classification": "LEGIT_SCHEDULING",
-      "reason": "attempts → text-course task generation",
+      "reason": "attempts \u2192 text-course task generation",
       "migrationNode": "W2-PL1"
     },
     {
@@ -2381,7 +2299,7 @@
         "successfulRecallAt = attempt.createdAt;"
       ],
       "classification": "LEGIT_SCHEDULING",
-      "reason": "deriveTextCycle — attempt history → next cycle step",
+      "reason": "deriveTextCycle \u2014 attempt history \u2192 next cycle step",
       "migrationNode": "W2-AT1"
     },
     {
@@ -2396,7 +2314,7 @@
         "import type { ContentItem, FSRSCardData, LearningRecord } from '@/types/content';",
         "module: LearningRecord['module'];",
         "records: LearningRecord[],",
-        "subtitle: `${labelForModule(record.module)} review · ${record.accuracy}% accuracy · ${record.attempts} attempts`,"
+        "subtitle: `${labelForModule(record.module)} review \u00b7 ${record.accuracy}% accuracy \u00b7 ${record.attempts} attempts`,"
       ],
       "classification": "LEGIT_HISTORY",
       "reason": "type/import plumbing + db.records load for due-queue input",
@@ -2419,7 +2337,7 @@
       "anchor": "buildTodayReviewItems:weakest-first-sort",
       "occurrences": ["if (a.accuracy !== b.accuracy) return a.accuracy - b.accuracy;"],
       "classification": "LEGIT_CANDIDATE_SIGNAL",
-      "reason": "weakest-first ordering over records.accuracy is a review-surface consumer heuristic, not a planner decision — consolidated under consumer migration at W2-CS1 (FSRS due/nextReview stays with W2-MB1)",
+      "reason": "weakest-first ordering over records.accuracy is a review-surface consumer heuristic, not a planner decision \u2014 consolidated under consumer migration at W2-CS1 (FSRS due/nextReview stays with W2-MB1)",
       "migrationNode": "W2-CS1"
     },
     {
@@ -2439,7 +2357,7 @@
         "return (a.nextReview ?? 0) - (b.nextReview ?? 0);"
       ],
       "classification": "LEGIT_SCHEDULING",
-      "reason": "fsrsCard.due/nextReview → due-queue filter",
+      "reason": "fsrsCard.due/nextReview \u2192 due-queue filter",
       "migrationNode": "W2-MB1"
     },
     {
@@ -2531,7 +2449,7 @@
         "return r?.attempts === 1 && toLocalDateKey(r.lastPracticed) === toLocalDateKey(now);"
       ],
       "classification": "LEGIT_SCHEDULING",
-      "reason": "records → due/learned vocab queries",
+      "reason": "records \u2192 due/learned vocab queries",
       "migrationNode": "W2-MB1"
     },
     {
@@ -2625,23 +2543,40 @@
       "source": "assessment.currentLevel",
       "anchor": "see reason",
       "occurrences": [
-        "const STORAGE_KEY = 'echotype_assessment';",
-        "currentLevel: CEFRLevel | null;",
-        "currentLevel: level,",
-        "currentLevel: null,",
-        "currentLevel: result.level,",
-        "currentLevel: state.currentLevel,",
-        "currentLevel: state.currentLevel,",
-        "export const CEFR_DESCRIPTIONS: Record<CEFRLevel, { summary: string; canDo: string; tip: string }> = {",
-        "export const CEFR_LABELS: Record<CEFRLevel, string> = {",
-        "export const CEFR_ORDER: CEFRLevel[] = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];",
-        "export const useAssessmentStore = create<AssessmentStore>((set, get) => ({",
-        "export function levelComparison(prev: CEFRLevel, current: CEFRLevel): 'improved' | 'same' | 'declined' {",
-        "export function scoreToLevel(score: number): CEFRLevel {",
         "export type CEFRLevel = 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2';",
+        "export const CEFR_LABELS: Record<CEFRLevel, string> = {",
+        "export const CEFR_DESCRIPTIONS: Record<CEFRLevel, { summary: string; canDo: string; tip: string }> = {",
+        "export const CEFR_ORDER: CEFRLevel[] = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];",
         "level: CEFRLevel;",
-        "set({ currentLevel: level });",
-        "setCurrentLevel: (level: CEFRLevel) => void;"
+        "* W2-G03 \u2014 PlacementEstimate.",
+        "* or any evaluator. `levelEstimate` answers \"where to aim content\", never",
+        "export interface PlacementEstimate {",
+        "levelEstimate: CEFRLevel;",
+        "const STORAGE_KEY = 'echotype_assessment';",
+        "placement: PlacementEstimate | null;",
+        "/** Persisted payload keeps the legacy `currentLevel` mirror so older readers",
+        "currentLevel?: CEFRLevel | null;",
+        "setPlacementEstimate: (level: CEFRLevel) => void;",
+        "currentLevel: settings.placement?.levelEstimate ?? null,",
+        "/** True when a persisted value is a well-formed PlacementEstimate with",
+        "function isPlacementEstimate(value: unknown): value is PlacementEstimate {",
+        "const v = value as PlacementEstimate;",
+        "typeof v.levelEstimate !== 'string' ||",
+        "!CEFR_ORDER.includes(v.levelEstimate) ||",
+        "/** Hydrate a legacy `currentLevel` string into an advisory estimate. The",
+        "function legacyPlacementFrom(level: CEFRLevel | null | undefined): PlacementEstimate | null {",
+        "levelEstimate: level,",
+        "export const useAssessmentStore = create<AssessmentStore>((set, get) => ({",
+        "setPlacementEstimate: (level) => {",
+        "const placement: PlacementEstimate = {",
+        "levelEstimate: level,",
+        "const placement: PlacementEstimate = {",
+        "levelEstimate: result.level,",
+        "/* Accepts both shapes: the legacy `{ currentLevel, history, ... }` payload",
+        "* and the current `{ placement, currentLevel, history, ... }` payload.",
+        "const placement = isPlacementEstimate(saved.placement) ? saved.placement : legacyPlacementFrom(saved.currentLevel);",
+        "export function scoreToLevel(score: number): CEFRLevel {",
+        "export function levelComparison(prev: CEFRLevel, current: CEFRLevel): 'improved' | 'same' | 'declined' {"
       ],
       "classification": "LEGIT_HISTORY",
       "reason": "store definition + persistence; advisory placement state",
@@ -2653,11 +2588,11 @@
       "source": "dailyPlan",
       "anchor": "see reason",
       "occurrences": [
-        "export const useDailyPlanStore = create<DailyPlanStore>((set, get) => ({",
-        "export function getPlanTaskCompletionKey(task: Pick<PlanTask, 'module' | 'contentId' | 'bookId' | 'type'>): string {",
         "export interface PlanTask {",
-        "setTasks: (tasks: PlanTask[], dataSignature?: string, levelKey?: string) => void;",
-        "tasks: PlanTask[];"
+        "tasks: PlanTask[];",
+        "setTasks: (tasks: PlanTask[], dataSignature?: string) => void;",
+        "export function getPlanTaskCompletionKey(task: Pick<PlanTask, 'module' | 'contentId' | 'bookId' | 'type'>): string {",
+        "export const useDailyPlanStore = create<DailyPlanStore>((set, get) => ({"
       ],
       "classification": "LEGIT_SCHEDULING",
       "reason": "planner-cache store definition",
@@ -2693,7 +2628,7 @@
       "anchor": "journal-store:comment",
       "occurrences": ["// Highlight: push into Favorites so it enters the FSRS review queue."],
       "classification": "LEGIT_HISTORY",
-      "reason": "comment mentions FSRS review queue — no runtime read",
+      "reason": "comment mentions FSRS review queue \u2014 no runtime read",
       "migrationNode": null
     },
     {
@@ -2832,7 +2767,7 @@
         "await database.transaction('rw', [database.learningAttempts, database.mediaBlobs], writeHistory);"
       ],
       "classification": "LEGIT_HISTORY",
-      "reason": "W2-02 adapter input: attempt fields → LegacyAction for contract-audited mapping; mints nothing without a MAPPED_SAFE contract (W2-03 gap)",
+      "reason": "W2-02 adapter input: attempt fields \u2192 LegacyAction for contract-audited mapping; mints nothing without a MAPPED_SAFE contract (W2-03 gap)",
       "migrationNode": "W2-AT1"
     },
     {
@@ -2842,7 +2777,7 @@
       "anchor": "see reason",
       "occurrences": ["* Both producers persist `learningAttempts` keyed by the submission /"],
       "classification": "LEGIT_HISTORY",
-      "reason": "doc comment naming the canonical history table the W2-02R3 seam verifies — no read or claim",
+      "reason": "doc comment naming the canonical history table the W2-02R3 seam verifies \u2014 no read or claim",
       "migrationNode": "W2-AT1"
     },
     {
@@ -2851,11 +2786,11 @@
       "source": "fsrs",
       "anchor": "see reason",
       "occurrences": [
-        "* MEMORY_ITEM — item-scoped retention knowledge (vocabulary FSRS",
+        "* MEMORY_ITEM \u2014 item-scoped retention knowledge (vocabulary FSRS",
         "// domain (FSRS item state), not LearnerProjection."
       ],
       "classification": "LEGIT_HISTORY",
-      "reason": "W2-02.5 doc comments naming FSRS as the memory-domain owner — no runtime read, no scheduling decision",
+      "reason": "W2-02.5 doc comments naming FSRS as the memory-domain owner \u2014 no runtime read, no scheduling decision",
       "migrationNode": "W2-AT1"
     }
   ]

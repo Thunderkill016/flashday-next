@@ -1,6 +1,33 @@
-import { describe, expect, it } from 'vitest';
+import { NextRequest } from 'next/server';
+import { describe, expect, it, vi } from 'vitest';
 import { CHAT_TOOL_INPUT_SCHEMAS, CHAT_TOOL_NAMES, createChatTools } from '@/lib/chat-tools';
-import { isToolUnsupportedError } from './route';
+import { isToolUnsupportedError, POST } from './route';
+
+const { streamTextMock } = vi.hoisted(() => ({ streamTextMock: vi.fn() }));
+
+vi.mock('ai', async (importOriginal) => ({
+  ...(await importOriginal<typeof import('ai')>()),
+  streamText: streamTextMock,
+}));
+
+vi.mock('@/lib/ai-model', () => ({
+  resolveApiKey: vi.fn(() => 'test-api-key'),
+  resolveModel: vi.fn(() => ({ mocked: true })),
+}));
+
+vi.mock('@/lib/platform-provider', () => ({
+  enforcePlatformRateLimit: vi.fn(async () => ({ ok: true })),
+}));
+
+vi.mock('@/lib/provider-resolver', () => ({
+  ProviderResolutionError: class ProviderResolutionError extends Error {},
+  resolveProviderForCapability: vi.fn(() => ({
+    providerId: 'groq',
+    modelId: 'mock-model',
+    credentialSource: 'platform',
+    fallbackApplied: false,
+  })),
+}));
 
 describe('chat API tool schemas', () => {
   it('all 17 tools are defined', () => {
@@ -50,5 +77,46 @@ describe('chat API tool routing', () => {
     expect(isToolUnsupportedError('User not found')).toBe(false);
     expect(isToolUnsupportedError('Rate limit exceeded')).toBe(false);
     expect(isToolUnsupportedError('Requested 4096 tokens but only 48 available')).toBe(false);
+  });
+});
+
+describe('chat API placement boundary (W2-G03)', () => {
+  const callModel = async (body: Record<string, unknown>) => {
+    streamTextMock.mockReset();
+    streamTextMock.mockReturnValue({
+      toUIMessageStream: () =>
+        new ReadableStream({
+          start(controller) {
+            controller.enqueue({ type: 'text-start', id: 't1' });
+            controller.close();
+          },
+        }),
+    });
+    const response = await POST(
+      new NextRequest('http://localhost/api/chat', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(body),
+      }),
+    );
+    await response.text(); // drain the stream so execute() reaches streamText
+    expect(streamTextMock).toHaveBeenCalledTimes(1);
+    const [args] = streamTextMock.mock.calls[0];
+    return { system: args.system as string, messages: args.messages as unknown };
+  };
+
+  it('a client-supplied userLevel never reaches the model input', async () => {
+    const body = {
+      provider: 'groq',
+      messages: [{ id: 'm1', role: 'user', parts: [{ type: 'text', text: 'Help me practice' }] }],
+      context: { module: 'listen', chatMode: 'practice' },
+    };
+
+    const withoutLevel = await callModel(body);
+    const withLevel = await callModel({ ...body, userLevel: 'C2' });
+
+    expect(withLevel.system).toBe(withoutLevel.system);
+    expect(withLevel.messages).toEqual(withoutLevel.messages);
+    expect(withLevel.system).not.toContain('CEFR');
   });
 });

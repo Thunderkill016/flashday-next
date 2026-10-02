@@ -39,14 +39,14 @@ function getAdaptiveDistribution(level: CEFRLevel): string {
   return distributions[level];
 }
 
-function buildSystemPrompt(currentLevel?: CEFRLevel): string {
+function buildSystemPrompt(levelEstimate?: CEFRLevel): string {
   const basePrompt = `You are an English proficiency test generator. Generate exactly 30 multiple-choice questions.
 
 CRITICAL: Respond with ONLY valid JSON. No markdown code blocks, no explanations, no extra text.
 Start your response directly with { and end with }`;
 
   let distributionPrompt: string;
-  if (!currentLevel) {
+  if (!levelEstimate) {
     // First-time test: balanced distribution
     distributionPrompt = `
 Distribution (30 questions total):
@@ -59,8 +59,8 @@ Distribution (30 questions total):
   } else {
     // Adaptive test: focused on current level ±1
     distributionPrompt = `
-Distribution (30 questions total, focused on ${currentLevel} level):
-${getAdaptiveDistribution(currentLevel)}`;
+Distribution (30 questions total, focused on ${levelEstimate} level):
+${getAdaptiveDistribution(levelEstimate)}`;
   }
 
   return `${basePrompt}
@@ -84,11 +84,11 @@ export async function POST(req: NextRequest) {
     const {
       provider = 'groq',
       providerConfigs = {},
-      currentLevel,
+      levelEstimate,
     }: {
       provider?: ProviderId;
       providerConfigs?: Partial<Record<ProviderId, Partial<ProviderConfig>>>;
-      currentLevel?: CEFRLevel;
+      levelEstimate?: CEFRLevel;
     } = await req.json();
 
     const providerId = provider as ProviderId;
@@ -128,12 +128,12 @@ export async function POST(req: NextRequest) {
       apiPath: resolution.apiPath,
     });
 
-    const systemPrompt = buildSystemPrompt(currentLevel);
-    const userPrompt = currentLevel
-      ? `Generate 30 questions focused on ${currentLevel} level. Output ONLY the JSON object, nothing else.`
+    const systemPrompt = buildSystemPrompt(levelEstimate);
+    const userPrompt = levelEstimate
+      ? `Generate 30 questions focused on ${levelEstimate} level. Output ONLY the JSON object, nothing else.`
       : 'Generate 30 questions with balanced difficulty distribution. Output ONLY the JSON object, nothing else.';
 
-    console.log('[Assessment] Generating questions for level:', currentLevel || 'first-time');
+    console.log('[Assessment] Generating questions for level estimate:', levelEstimate || 'first-time');
 
     // Accumulate unique questions across attempts. With the static fallback
     // pool we only need a few retries — it guarantees 30 questions total.

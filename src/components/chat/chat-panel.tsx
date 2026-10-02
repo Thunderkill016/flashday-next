@@ -58,13 +58,6 @@ interface ChatPanelProps {
   onClose: () => void;
 }
 
-function cefrToDifficulty(level: CEFRLevel | null): 'beginner' | 'intermediate' | 'advanced' {
-  if (!level) return 'intermediate';
-  if (level === 'A1' || level === 'A2') return 'beginner';
-  if (level === 'B1' || level === 'B2') return 'intermediate';
-  return 'advanced';
-}
-
 interface ParsedError {
   title: string;
   description: string;
@@ -186,8 +179,7 @@ export function ChatPanel({ onClose }: ChatPanelProps) {
 
   useOllamaPreload(true);
 
-  const currentLevel = useAssessmentStore((s) => s.currentLevel);
-  const setCurrentLevel = useAssessmentStore((s) => s.setCurrentLevel);
+  const setPlacementEstimate = useAssessmentStore((s) => s.setPlacementEstimate);
 
   const contentItems = useContentStore((s) => s.items);
   const loadContents = useContentStore((s) => s.loadContents);
@@ -287,22 +279,12 @@ export function ChatPanel({ onClose }: ChatPanelProps) {
           provider: activeProviderId,
           providerConfigs: providers,
           context,
-          userLevel: currentLevel,
           maxTokens: effectiveMaxTokens,
           toolSuite: getNativeChatToolSuite(isIOSNativeHost),
         },
       };
     },
-    [
-      activeContentItem,
-      activeProviderId,
-      buildApiHeaders,
-      chatMode,
-      currentLevel,
-      effectiveMaxTokens,
-      isIOSNativeHost,
-      providers,
-    ],
+    [activeContentItem, activeProviderId, buildApiHeaders, chatMode, effectiveMaxTokens, isIOSNativeHost, providers],
   );
 
   const updateProviderConfig = useCallback(
@@ -352,12 +334,12 @@ export function ChatPanel({ onClose }: ChatPanelProps) {
         setChatMode,
         setExerciseType: setActiveExercise,
         speakText: (text) => speak(text),
-        updateUserLevel: (level) => setCurrentLevel(level as CEFRLevel),
+        updateUserLevel: (level) => setPlacementEstimate(level as CEFRLevel),
         updateProviderConfig,
         buildApiHeaders,
         providerId: activeProviderId,
         providerConfigs: providers as Record<string, unknown>,
-        currentDifficulty: activeContentItem?.difficulty ?? cefrToDifficulty(currentLevel),
+        currentDifficulty: activeContentItem?.difficulty,
       });
 
       queueMicrotask(() => {

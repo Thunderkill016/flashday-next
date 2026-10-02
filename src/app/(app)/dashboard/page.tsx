@@ -157,7 +157,8 @@ export default function DashboardPage() {
   const initialized = useLanguageStore((s) => s.initialized);
   const currentGoal = useLearningGoalStore((s) => s.currentGoal);
 
-  const { currentLevel, shouldShowReminder, dismissReminder } = useAssessmentStore();
+  const { placement, shouldShowReminder, dismissReminder } = useAssessmentStore();
+  const levelEstimate = placement?.levelEstimate ?? null;
   const showReminder = shouldShowReminder(stats.totalSessions);
   const showAutoLanguageNotice = initialized && !hasExplicitPreference;
   const iosNoticeCardClass =
@@ -733,7 +734,7 @@ export default function DashboardPage() {
       )}
 
       {/* First-time assessment prompt */}
-      {!currentLevel && !isNewUser && (
+      {!levelEstimate && !isNewUser && (
         <div
           className={
             isIOSNativeHost
@@ -778,7 +779,7 @@ export default function DashboardPage() {
       )}
 
       {/* Re-test reminder */}
-      {showReminder && currentLevel && (
+      {showReminder && levelEstimate && (
         <div
           className={
             isIOSNativeHost
@@ -804,7 +805,7 @@ export default function DashboardPage() {
               {dashboard.assessment.reminderTitle}
             </p>
             <p className={isIOSNativeHost ? 'mt-1 text-sm leading-6 text-slate-500' : 'text-xs text-indigo-500'}>
-              {dashboard.assessment.reminderDescription.replace('{{level}}', currentLevel)}
+              {dashboard.assessment.reminderDescription.replace('{{level}}', levelEstimate)}
             </p>
           </div>
           <div className={`flex gap-2 ${isIOSNativeHost ? 'flex-wrap' : 'shrink-0'}`}>

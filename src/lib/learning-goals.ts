@@ -1,4 +1,3 @@
-import type { CEFRLevel } from '@/stores/assessment-store';
 import type { Module } from '@/types/content';
 
 export type LearningGoal = 'speaking' | 'exam' | 'travel' | 'work' | 'balanced';
@@ -48,15 +47,9 @@ export function getGoalModuleBonus(goal: LearningGoal | null | undefined, module
   return LEARNING_GOAL_CONFIG[goal].moduleBonus[module];
 }
 
-export function buildDailyPlanGoalExplanation(goal: LearningGoal | null | undefined, level?: CEFRLevel | null) {
-  if (goal && level) {
-    return `${LEARNING_GOAL_CONFIG[goal].label} is active, so today's plan leans toward that goal while staying near ${level}.`;
-  }
+export function buildDailyPlanGoalExplanation(goal: LearningGoal | null | undefined) {
   if (goal) {
     return `${LEARNING_GOAL_CONFIG[goal].label} is active, so today's plan leans toward that goal.`;
-  }
-  if (level) {
-    return `Your current level is ${level}, so today's content stays near that difficulty.`;
   }
   return 'Your plan balances current weak spots and recent practice.';
 }

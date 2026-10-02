@@ -119,6 +119,29 @@ describe('POST /api/recommendations', () => {
     });
   });
 
+  it('ignores a client-supplied userLevel — placement never shapes the prompt (W2-G03)', async () => {
+    generateTextMock.mockResolvedValue({
+      text: JSON.stringify({
+        recommendations: [{ title: 't', text: 'x', type: 'sentence', relation: 'related topic' }],
+      }),
+    });
+
+    const body = {
+      content: 'Digital communication is part of daily life.',
+      contentType: 'article',
+      count: 1,
+      provider: 'groq',
+      providerConfigs: {},
+    };
+    await POST(makeRequest(body));
+    await POST(makeRequest({ ...body, userLevel: 'C2' }));
+
+    const [withoutLevel, withLevel] = generateTextMock.mock.calls.map(([args]) => args);
+    expect(withLevel.system).toBe(withoutLevel.system);
+    expect(withLevel.prompt).toBe(withoutLevel.prompt);
+    expect(String(withLevel.system)).not.toContain('CEFR');
+  });
+
   it('retries transient failures and then falls back locally', async () => {
     generateTextMock.mockRejectedValue(new Error('Connection timeout to upstream provider'));
 

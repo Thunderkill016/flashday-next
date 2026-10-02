@@ -252,7 +252,8 @@ function LoadingState({ onCancel, copy }: { onCancel: () => void; copy: Assessme
 export function AssessmentSection() {
   const { messages } = useI18n('assessment');
   const isIOSNativeHost = detectIOSNativeHost();
-  const { currentLevel, history, setResult } = useAssessmentStore();
+  const { placement, history, setResult } = useAssessmentStore();
+  const levelEstimate = placement?.levelEstimate ?? null;
   const providerStore = useProviderStore();
   const copy = getAssessmentCopy(messages);
 
@@ -289,7 +290,7 @@ export function AssessmentSection() {
         body: JSON.stringify({
           provider: config.providerId,
           providerConfigs: providerStore.providers,
-          currentLevel: currentLevel, // Pass current level for adaptive testing
+          levelEstimate, // Advisory estimate — adapts the next test's question mix
         }),
       });
 
@@ -309,7 +310,7 @@ export function AssessmentSection() {
       setError(normalizeAssessmentError((e as Error).message, copy));
       setPhase('idle');
     }
-  }, [providerStore, currentLevel, copy]);
+  }, [providerStore, levelEstimate, copy]);
 
   const handleAnswer = useCallback(
     (optionIndex: number) => {
@@ -410,18 +411,18 @@ export function AssessmentSection() {
             {copy.header}
           </h2>
         </div>
-        {currentLevel && phase === 'idle' && (
+        {levelEstimate && phase === 'idle' && (
           <span
-            className={cn('ml-auto px-2.5 py-0.5 rounded-full text-xs font-bold border', LEVEL_COLORS[currentLevel])}
+            className={cn('ml-auto px-2.5 py-0.5 rounded-full text-xs font-bold border', LEVEL_COLORS[levelEstimate])}
           >
-            {currentLevel}
+            {levelEstimate}
           </span>
         )}
       </div>
 
       <div className={cn('p-5', isIOSNativeHost && 'space-y-4')}>
         {/* ─── Idle: Not tested ────────────────────────────────────────── */}
-        {phase === 'idle' && !currentLevel && (
+        {phase === 'idle' && !levelEstimate && (
           <div className={cn('space-y-2', isIOSNativeHost && `${IOS_SUBCARD_CLASS} p-4`)}>
             <div className={cn('flex gap-3', isIOSNativeHost ? 'flex-col items-start' : 'items-center')}>
               <div
@@ -457,16 +458,16 @@ export function AssessmentSection() {
         )}
 
         {/* ─── Idle: Already tested (compact view) ────────────────────── */}
-        {phase === 'idle' && currentLevel && (
+        {phase === 'idle' && levelEstimate && (
           <div className={cn('space-y-3', isIOSNativeHost && `${IOS_SUBCARD_CLASS} p-4`)}>
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
-                <span className={cn('px-3 py-1.5 rounded-lg text-sm font-bold border', LEVEL_COLORS[currentLevel])}>
-                  {currentLevel}
+                <span className={cn('px-3 py-1.5 rounded-lg text-sm font-bold border', LEVEL_COLORS[levelEstimate])}>
+                  {levelEstimate}
                 </span>
                 <div>
                   <p className="text-sm font-medium text-slate-800">{copy.idle.currentLevel}</p>
-                  <p className="text-xs text-slate-500">{copy.levels[currentLevel].label}</p>
+                  <p className="text-xs text-slate-500">{copy.levels[levelEstimate].label}</p>
                   {lastResult && (
                     <p className="text-[11px] text-slate-400">
                       {copy.idle.lastTested(formatTimeAgo(lastResult.completedAt, messages), lastResult.score)}

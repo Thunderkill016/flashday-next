@@ -24,7 +24,6 @@ export interface LearningSnapshot {
     lowAccuracyContent: { contentId: string; title: string; accuracy: number; module: string }[];
     neglectedModules: string[];
   };
-  cefrLevel: string | null;
 }
 
 /**
@@ -95,18 +94,6 @@ export async function collectLearningSnapshot(): Promise<LearningSnapshot> {
     .filter((m) => m.sessions === 0 || (m.lastPracticed && m.lastPracticed < day7Ago))
     .map((m) => m.module);
 
-  // ─── CEFR Level ───────────────────────────────────────────────────────
-  let cefrLevel: string | null = null;
-  try {
-    const assessmentData = localStorage.getItem('echotype_assessment');
-    if (assessmentData) {
-      const parsed = JSON.parse(assessmentData);
-      cefrLevel = parsed.state?.currentLevel || null;
-    }
-  } catch {
-    /* ignore */
-  }
-
   return {
     overview: {
       totalContent: contents.length,
@@ -122,6 +109,5 @@ export async function collectLearningSnapshot(): Promise<LearningSnapshot> {
       last30Days: periodStats(day30Ago),
     },
     weaknesses: { lowAccuracyContent, neglectedModules },
-    cefrLevel,
   };
 }

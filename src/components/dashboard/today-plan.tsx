@@ -16,7 +16,7 @@ import { db } from '@/lib/db';
 import { useI18n } from '@/lib/i18n/use-i18n';
 import { buildDailyPlanGoalExplanation } from '@/lib/learning-goals';
 import { detectIOSNativeHost } from '@/lib/tauri';
-import { useAssessmentStore } from '@/stores/assessment-store';
+
 import { todayKey, useDailyPlanStore } from '@/stores/daily-plan-store';
 import { useLearningGoalStore } from '@/stores/learning-goal-store';
 import type { TypingSession } from '@/types/content';
@@ -71,9 +71,7 @@ function findLatestMatchingSession(
 export function TodayPlan() {
   const { messages } = useI18n('dashboard');
   const { messages: common } = useI18n('common');
-  const { tasks, dateKey, dataSignature, levelKey, goal, skipTask, setTasks, updateStreak, hydrate } =
-    useDailyPlanStore();
-  const currentLevel = useAssessmentStore((state) => state.currentLevel);
+  const { tasks, dateKey, dataSignature, goal, skipTask, setTasks, updateStreak, hydrate } = useDailyPlanStore();
   const currentGoal = useLearningGoalStore((state) => state.currentGoal);
   const [loading, setLoading] = useState(false);
   const [hydrated, setHydrated] = useState(false);
@@ -110,26 +108,26 @@ export function TodayPlan() {
     async (goalOverride = useDailyPlanStore.getState().goal, signatureOverride?: string) => {
       setLoading(true);
       try {
-        const plan = await generateDailyPlan(goalOverride, { currentLevel, learningGoal: currentGoal });
+        const plan = await generateDailyPlan(goalOverride, { learningGoal: currentGoal });
         const syncedPlan = await syncPlanTasksWithActivity(plan);
         const signature = signatureOverride ?? (await getDailyPlanSignature());
-        setTasks(syncedPlan, signature, currentLevel ?? '');
+        setTasks(syncedPlan, signature);
       } finally {
         setLoading(false);
       }
     },
-    [currentGoal, currentLevel, setTasks],
+    [currentGoal, setTasks],
   );
 
   const refreshPlan = useCallback(async () => {
     const today = todayKey();
     const signature = await getDailyPlanSignature();
-    if (dateKey !== today || dataSignature !== signature || levelKey !== (currentLevel ?? '')) {
+    if (dateKey !== today || dataSignature !== signature) {
       await generate(goal, signature);
       return;
     }
     await syncCompletedTasks();
-  }, [currentLevel, dataSignature, dateKey, generate, goal, levelKey, syncCompletedTasks]);
+  }, [dataSignature, dateKey, generate, goal, syncCompletedTasks]);
 
   useEffect(() => {
     if (!hydrated) return;
@@ -226,11 +224,7 @@ export function TodayPlan() {
   const doneCount = activeTasks.filter((task) => task.completed).length;
   const totalCount = activeTasks.length;
   const progress = totalCount > 0 ? (doneCount / totalCount) * 100 : 0;
-  const planExplanation = `${buildDailyPlanGoalExplanation(currentGoal, currentLevel)} ${
-    currentLevel
-      ? messages.todayPlan.explanationWithLevel.replace('{{level}}', currentLevel)
-      : messages.todayPlan.explanationWithoutLevel
-  }`;
+  const planExplanation = `${buildDailyPlanGoalExplanation(currentGoal)} ${messages.todayPlan.explanationWithoutLevel}`;
 
   if (loading) {
     return (

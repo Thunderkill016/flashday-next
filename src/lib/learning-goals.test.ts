@@ -6,11 +6,10 @@ describe('learning-goals', () => {
     expect(getGoalModuleBonus('travel', 'speak')).toBeGreaterThan(getGoalModuleBonus('travel', 'read'));
   });
 
-  it('builds a goal explanation from goal and level', () => {
-    const explanation = buildDailyPlanGoalExplanation('travel', 'B1');
+  it('builds a goal explanation from the active goal', () => {
+    const explanation = buildDailyPlanGoalExplanation('travel');
 
     expect(explanation).toContain('Travel');
-    expect(explanation).toContain('B1');
   });
 
   it('exposes the supported learning goals', () => {
