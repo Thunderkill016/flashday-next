@@ -2009,11 +2009,9 @@
       "occurrences": [
         "attempt: LearningAttempt,",
         "await database.learningAttempts.add(attempt);",
-        "await database.transaction('rw', database.learningAttempts, database.mediaBlobs, async () => {",
         "const attempts = await database.learningAttempts.toArray();",
         "const error = validateTextCycleAttempt(attempt, attempts);",
         "createdAt: attempt.createdAt,",
-        "database: Dexie & { learningAttempts: Table<LearningAttempt>; mediaBlobs: Table<MediaBlobEntry> },",
         "export async function persistLearningAttempt(",
         "if (attempt.cycle) {",
         "import type { LearningAttempt } from '@/types/learning-activity';",
@@ -2450,12 +2448,12 @@
       "source": "records",
       "anchor": "see reason",
       "occurrences": [
-        "[database.contents, database.records, database.sessions, database.learningAttempts, database.dailyTasks],",
+        "database.records,",
         "await database.records.put({",
         "const previous = await database.records.get(id);"
       ],
       "classification": "LEGIT_SCHEDULING",
-      "reason": "writer + due/budget reads inside one atomic submission commit",
+      "reason": "writer + due/budget reads inside one atomic submission commit (W2-02: evidenceEvents joins the tx list only when a registered contract maps the action)",
       "migrationNode": "W2-AT1"
     },
     {
@@ -2483,12 +2481,9 @@
       "file": "src/lib/vocabulary-repository.ts",
       "source": "sessions",
       "anchor": "see reason",
-      "occurrences": [
-        "[database.contents, database.records, database.sessions, database.learningAttempts, database.dailyTasks],",
-        "await database.sessions.add({"
-      ],
+      "occurrences": ["database.sessions,", "await database.sessions.add({"],
       "classification": "LEGIT_HISTORY",
-      "reason": "session rows written in submission commit",
+      "reason": "session rows written in submission commit (W2-02: evidenceEvents joins the tx list only when a registered contract maps the action)",
       "migrationNode": "W2-AT1"
     },
     {
@@ -2497,14 +2492,14 @@
       "source": "learningAttempts",
       "anchor": "see reason",
       "occurrences": [
-        "[database.contents, database.records, database.sessions, database.learningAttempts, database.dailyTasks],",
+        "database.learningAttempts,",
         "await database.learningAttempts.add({",
         "const introduced = introducedVocabularyToday(await database.learningAttempts.toArray(), mode, now);",
         "if (await database.learningAttempts.get(submission.id)) return;",
         "introducedVocabularyToday,"
       ],
       "classification": "LEGIT_SCHEDULING",
-      "reason": "attempt writes + introducedVocabularyToday budget",
+      "reason": "attempt writes + introducedVocabularyToday budget (W2-02: evidenceEvents joins the tx list only when a registered contract maps the action)",
       "migrationNode": "W2-PL1"
     },
     {
@@ -2513,11 +2508,11 @@
       "source": "dailyTasks",
       "anchor": "see reason",
       "occurrences": [
-        "[database.contents, database.records, database.sessions, database.learningAttempts, database.dailyTasks],",
+        "database.dailyTasks,",
         "const limit = (await database.dailyTasks.get('preferences:vocabulary'))?.newWordsPerDay ?? 10;"
       ],
       "classification": "LEGIT_HISTORY",
-      "reason": "preferences:vocabulary settings row",
+      "reason": "preferences:vocabulary settings row (W2-02: evidenceEvents joins the tx list only when a registered contract maps the action)",
       "migrationNode": "W2-PL1"
     },
     {
@@ -2814,6 +2809,25 @@
       "classification": "LEGIT_HISTORY",
       "reason": "WeakSpot type declaration",
       "migrationNode": null
+    },
+    {
+      "id": "lib-learning-activity-persistence.learningAttempts-semantic-seam",
+      "file": "src/lib/learning-activity-persistence.ts",
+      "source": "learningAttempts",
+      "anchor": "persistLearningAttempt:semantic-commit-seam",
+      "occurrences": [
+        "learningAttempts: Table<LearningAttempt>;",
+        "id: attempt.id,",
+        "kind: attempt.cycle ? 'text-cycle' : 'learning-attempt',",
+        "mode: attempt.cycle?.stage ?? attempt.activity,",
+        "occurredAt: attempt.createdAt,",
+        "response: attempt.answer,",
+        "feedback: attempt.feedback,",
+        "[database.learningAttempts, database.mediaBlobs, ...(mapped ? [database.evidenceEvents!] : [])],"
+      ],
+      "classification": "LEGIT_HISTORY",
+      "reason": "W2-02 adapter input: attempt fields → LegacyAction for contract-audited mapping; mints nothing without a MAPPED_SAFE contract (W2-03 gap)",
+      "migrationNode": "W2-AT1"
     }
   ]
 }

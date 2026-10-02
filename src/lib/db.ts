@@ -387,6 +387,17 @@ export function getDatabaseNameForUser(userId: string | null): string {
 let activeUserId: string | null = null;
 export let db = new FlashDayDB(getDatabaseNameForUser(activeUserId));
 
+/**
+ * The evidence learner subject: authenticated user id, or the device-local
+ * anonymous subject. Events are stored in the per-account database this id
+ * selects, so a learnerId is stable and immutable after commit — an
+ * anonymous→authenticated transition never rewrites existing events
+ * (association is a later replay/sync concern, not a mutation).
+ */
+export function currentLearnerId(): string {
+  return activeUserId ?? 'local.anonymous';
+}
+
 export async function switchDatabaseForUser(userId: string | null): Promise<void> {
   if (activeUserId === userId) return;
 

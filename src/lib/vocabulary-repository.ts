@@ -1,6 +1,7 @@
 import { nanoid } from 'nanoid';
 import type { Difficulty } from '@/types/content';
-import { db } from './db';
+import { currentLearnerId, db } from './db';
+import { commitMappedAttempt, mapLegacyAttempt } from './evidence-bridge/adapter';
 import { gradeCard, Rating } from './fsrs';
 import { findMorphology } from './morphology';
 import { normalizeTags } from './utils';
@@ -123,9 +124,28 @@ export async function saveVocabularySubmission(
   )
     throw new Error('Answer first, then compare and rate / 请先作答，再核对评分');
   if (database !== db) throw new Error('Account changed / 账号已切换');
+  // W2-02 semantic-commit seam: the mapping is resolved before the
+  // transaction so evidenceEvents joins the table list only when a
+  // registered contract can actually mint an event. Unmapped actions keep
+  // the exact legacy transaction shape — history only.
+  const mapped = mapLegacyAttempt({
+    id: submission.id,
+    kind: 'vocabulary',
+    mode,
+    occurredAt: now,
+    response: answer,
+    support: { revealed: true, context: context ?? null },
+  });
   await database.transaction(
     'rw',
-    [database.contents, database.records, database.sessions, database.learningAttempts, database.dailyTasks],
+    [
+      database.contents,
+      database.records,
+      database.sessions,
+      database.learningAttempts,
+      database.dailyTasks,
+      ...(mapped ? [database.evidenceEvents] : []),
+    ],
     async () => {
       if (database !== db) throw new Error('Account changed / 账号已切换');
       if (await database.learningAttempts.get(submission.id)) return;
@@ -217,6 +237,10 @@ export async function saveVocabularySubmission(
         completed: true,
         updatedAt: now,
       });
+      // The semantic event commits inside this same transaction — an event
+      // failure rolls back the history rows above, and the account guard
+      // below can still roll the event back too (no cross-account evidence).
+      if (mapped) await commitMappedAttempt(database, mapped, currentLearnerId());
       if (database !== db) throw new Error('Account changed / 账号已切换');
     },
   );
