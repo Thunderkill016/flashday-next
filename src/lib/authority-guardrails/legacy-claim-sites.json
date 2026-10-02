@@ -1,0 +1,2819 @@
+{
+  "mission": "W2-01R",
+  "description": "Site-level inventory of authority-sensitive legacy reads. Each site owns an occurrences list of normalized sensitive lines WITH MULTIPLICITY PRESERVED — per (file, source) the claimed multiset must equal the detected multiset exactly. Added, removed, duplicated, or edited sensitive lines all fail until a human re-classifies.",
+  "baseCommit": "c2ef466",
+  "classifications": [
+    "LEGIT_SCHEDULING",
+    "LEGIT_HISTORY",
+    "LEGIT_ANALYTICS",
+    "LEGIT_PRESENTATION",
+    "LEGIT_CANDIDATE_SIGNAL",
+    "CAPABILITY_CLAIM",
+    "AMBIGUOUS"
+  ],
+  "sites": [
+    {
+      "id": "app-app-dashboard-page.records",
+      "file": "src/app/(app)/dashboard/page.tsx",
+      "source": "records",
+      "anchor": "read-page:word-match-results",
+      "occurrences": ["db.records.toArray(),"],
+      "classification": "LEGIT_PRESENTATION",
+      "reason": "wordResults r.accuracy categorical (correct/close/wrong/missing/extra) — word-level ASR match output, NOT the records table",
+      "migrationNode": "W2-CS1"
+    },
+    {
+      "id": "app-app-dashboard-page.fsrs",
+      "file": "src/app/(app)/dashboard/page.tsx",
+      "source": "fsrs",
+      "anchor": "see reason",
+      "occurrences": [
+        "const forecast = buildReviewForecast(records, 7);",
+        "import { buildActivityHeatmapData, buildReviewForecast, buildStreakData } from '@/lib/analytics';"
+      ],
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "buildReviewForecast — upcoming-due forecast",
+      "migrationNode": "W2-MB1"
+    },
+    {
+      "id": "app-app-dashboard-page.sessions-aggregates",
+      "file": "src/app/(app)/dashboard/page.tsx",
+      "source": "sessions",
+      "anchor": "dashboard:stats",
+      "occurrences": [
+        "const avgAccuracy = scored.length > 0 ? scored.reduce((sum, s) => sum + s.accuracy, 0) / scored.length : 0;",
+        "const completed = sessions.filter((s) => s.completed);",
+        "const mod = moduleConfig[s.module || 'write'];",
+        "const practicedArticles = new Set(completed.filter((s) => articleIds.has(s.contentId)).map((s) => s.contentId));",
+        "const scored = completed.filter((s) => (s.module || 'write') !== 'listen');",
+        "const totalWords = completed.reduce((sum, s) => sum + (s.totalWords || 0), 0);",
+        "const writes = completed.filter((s) => (s.module || 'write') === 'write');",
+        "db.sessions.toArray(),",
+        "import type { TypingSession } from '@/types/content';",
+        "session: TypingSession;"
+      ],
+      "classification": "LEGIT_ANALYTICS",
+      "reason": "sessions → streak/words/avgAccuracy aggregate stats",
+      "migrationNode": "W2-CS1"
+    },
+    {
+      "id": "app-app-dashboard-page.sessions-recent-activity",
+      "file": "src/app/(app)/dashboard/page.tsx",
+      "source": "sessions",
+      "anchor": "dashboard:recent-activity-list",
+      "occurrences": [
+        ".map((s) => ({ session: s, contentTitle: contentMap.get(s.contentId) || dashboard.recentActivity.unknown }));",
+        ".sort((a, b) => (b.endTime ?? b.startTime) - (a.endTime ?? a.startTime))",
+        "accuracy: s.accuracy,",
+        "const mod = s.module || 'write';",
+        "href: `/${s.module === 'speak' ? 'read' : s.module || 'write'}/${s.contentId}`,",
+        "subtitle: `${mod?.label ?? dashboard.modules.write.label} · ${timeAgo(s.endTime ?? s.startTime, common)}`,"
+      ],
+      "classification": "LEGIT_PRESENTATION",
+      "reason": "recent session rows rendered as activity items (title, href, accuracy, time)",
+      "migrationNode": "W2-CS1"
+    },
+    {
+      "id": "app-app-dashboard-page.weakSpots",
+      "file": "src/app/(app)/dashboard/page.tsx",
+      "source": "weakSpots",
+      "anchor": "see reason",
+      "occurrences": ["href: '/weak-spots',"],
+      "classification": "LEGIT_PRESENTATION",
+      "reason": "open weak-spot count + nav link",
+      "migrationNode": "W2-WS2"
+    },
+    {
+      "id": "app-app-dashboard-page.assessment-currentLevel",
+      "file": "src/app/(app)/dashboard/page.tsx",
+      "source": "assessment.currentLevel",
+      "anchor": "see reason",
+      "occurrences": [
+        "const { currentLevel, shouldShowReminder, dismissReminder } = useAssessmentStore();",
+        "import { useAssessmentStore } from '@/stores/assessment-store';",
+        "{!currentLevel && !isNewUser && (",
+        "{dashboard.assessment.reminderDescription.replace('{{level}}', currentLevel)}",
+        "{showReminder && currentLevel && ("
+      ],
+      "classification": "LEGIT_PRESENTATION",
+      "reason": "assessment reminder/nudge; advisory only",
+      "migrationNode": "W2-AS1"
+    },
+    {
+      "id": "app-app-layout.assessment-currentLevel",
+      "file": "src/app/(app)/layout.tsx",
+      "source": "assessment.currentLevel",
+      "anchor": "see reason",
+      "occurrences": [
+        "import { useAssessmentStore } from '@/stores/assessment-store';",
+        "useAssessmentStore.getState().hydrate();"
+      ],
+      "classification": "LEGIT_HISTORY",
+      "reason": "store hydration on app init; no claim",
+      "migrationNode": null
+    },
+    {
+      "id": "app-app-layout.dailyPlan",
+      "file": "src/app/(app)/layout.tsx",
+      "source": "dailyPlan",
+      "anchor": "see reason",
+      "occurrences": [
+        "import { useDailyPlanStore } from '@/stores/daily-plan-store';",
+        "useDailyPlanStore.getState().hydrate();"
+      ],
+      "classification": "LEGIT_HISTORY",
+      "reason": "store hydration on app init; no claim",
+      "migrationNode": null
+    },
+    {
+      "id": "app-app-learn-unitId-page.sessions",
+      "file": "src/app/(app)/learn/[unitId]/page.tsx",
+      "source": "sessions",
+      "anchor": "see reason",
+      "occurrences": [
+        "const done = moduleSteps.every((s) => s.completed);",
+        "const drillsCompleted = lessons.filter((l) => !lessonProgress(l, data?.sessions ?? []).next).length;",
+        "const index = stepIndex ?? Math.max(0, progress?.steps.findIndex((s) => !s.completed) ?? 0);",
+        "const moduleSteps = progress.steps.filter((s) => s.module === module);",
+        "const progress = lesson ? lessonProgress(lesson, data?.sessions ?? []) : undefined;",
+        "import { lessonProgress } from '@/lib/learning-units';",
+        "onClick={() => setStepIndex(progress.steps.findIndex((s) => s.module === module))}"
+      ],
+      "classification": "LEGIT_PRESENTATION",
+      "reason": "lessonProgress → step completion display",
+      "migrationNode": "W2-CS1"
+    },
+    {
+      "id": "app-app-learn-unitId-page.weakSpots",
+      "file": "src/app/(app)/learn/[unitId]/page.tsx",
+      "source": "weakSpots",
+      "anchor": "see reason",
+      "occurrences": [
+        "key={`${lesson.id}:${query.get('weakSpot') ?? ''}`}",
+        "sourceWeakSpotId={query.get('weakSpot') ?? undefined}"
+      ],
+      "classification": "LEGIT_CANDIDATE_SIGNAL",
+      "reason": "sourceWeakSpotId passthrough into workshop flow",
+      "migrationNode": "W2-WS2"
+    },
+    {
+      "id": "app-app-learn-unitId-page.learningAttempts",
+      "file": "src/app/(app)/learn/[unitId]/page.tsx",
+      "source": "learningAttempts",
+      "anchor": "see reason",
+      "occurrences": [
+        "(l) => !deriveTextCycle(l.id, l.exercises.map((item) => item.text).join('\\n\\n'), attempts, Date.now()).completed,",
+        "(l) => deriveTextCycle(l.id, l.exercises.map((item) => item.text).join('\\n\\n'), attempts, Date.now()).completed,",
+        "const attempts = useLiveQuery(() => db.learningAttempts.toArray(), [data?.database.name]) ?? [];",
+        "import { deriveTextCycle } from '@/lib/text-learning-cycle';",
+        "{deriveTextCycle(l.id, l.exercises.map((item) => item.text).join('\\n\\n'), attempts, Date.now())"
+      ],
+      "classification": "LEGIT_PRESENTATION",
+      "reason": "deriveTextCycle → cycle step display",
+      "migrationNode": "W2-CS1"
+    },
+    {
+      "id": "app-app-learn-page.sessions",
+      "file": "src/app/(app)/learn/page.tsx",
+      "source": "sessions",
+      "anchor": "see reason",
+      "occurrences": [
+        "const drills = lessons.filter((l) => !lessonProgress(l, data.sessions).next).length;",
+        "import { lessonProgress } from '@/lib/learning-units';"
+      ],
+      "classification": "LEGIT_PRESENTATION",
+      "reason": "lessonProgress → lesson completion display",
+      "migrationNode": "W2-CS1"
+    },
+    {
+      "id": "app-app-learn-page.learningAttempts",
+      "file": "src/app/(app)/learn/page.tsx",
+      "source": "learningAttempts",
+      "anchor": "see reason",
+      "occurrences": [
+        "const attempts = useLiveQuery(() => db.learningAttempts.toArray(), [data?.database.name]) ?? [];",
+        "deriveTextCycle(l.id, l.exercises.map((item) => item.text).join('\\n\\n'), attempts, Date.now())",
+        "import { deriveTextCycle } from '@/lib/text-learning-cycle';"
+      ],
+      "classification": "LEGIT_PRESENTATION",
+      "reason": "deriveTextCycle → cycle state display",
+      "migrationNode": "W2-CS1"
+    },
+    {
+      "id": "app-app-listen-id-page.weakSpots",
+      "file": "src/app/(app)/listen/[id]/page.tsx",
+      "source": "weakSpots",
+      "anchor": "see reason",
+      "occurrences": [
+        "import { resolveWeakSpot, upsertWeakSpot } from '@/lib/weak-spots';",
+        "weakSpotType: 'dictation-sentence',",
+        "weakSpotType: 'dictation-sentence',"
+      ],
+      "classification": "LEGIT_CANDIDATE_SIGNAL",
+      "reason": "writes/updates weakSpot rows from dictation results",
+      "migrationNode": "W2-WS2"
+    },
+    {
+      "id": "app-app-listen-id-page.dailyPlan",
+      "file": "src/app/(app)/listen/[id]/page.tsx",
+      "source": "dailyPlan",
+      "anchor": "see reason",
+      "occurrences": [
+        "const isDailyPlanPractice = useDailyPlanStore((s) =>",
+        "import { useDailyPlanStore } from '@/stores/daily-plan-store';",
+        "{sessionCompleted && isDailyPlanPractice && <PracticeCompleteBanner module=\"listen\" />}"
+      ],
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "isDailyPlanPractice → task completion wiring",
+      "migrationNode": "W2-PL1"
+    },
+    {
+      "id": "app-app-read-id-page.records",
+      "file": "src/app/(app)/read/[id]/page.tsx",
+      "source": "records",
+      "anchor": "read-page:word-match-results",
+      "occurrences": [
+        "const correct = wordResults.filter((r) => r.accuracy === 'correct').length;",
+        "const total = wordResults.filter((r) => r.accuracy !== 'extra').length;"
+      ],
+      "classification": "LEGIT_PRESENTATION",
+      "reason": "wordResults r.accuracy categorical (correct/close/wrong/missing/extra) — word-level ASR match output, NOT the records table",
+      "migrationNode": "W2-CS1"
+    },
+    {
+      "id": "app-app-read-id-page.dailyPlan",
+      "file": "src/app/(app)/read/[id]/page.tsx",
+      "source": "dailyPlan",
+      "anchor": "see reason",
+      "occurrences": [
+        "const isDailyPlanPractice = useDailyPlanStore((s) =>",
+        "import { useDailyPlanStore } from '@/stores/daily-plan-store';",
+        "{phase === 'completed' && isDailyPlanPractice && <PracticeCompleteBanner module=\"read\" />}"
+      ],
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "isDailyPlanPractice → task completion wiring",
+      "migrationNode": "W2-PL1"
+    },
+    {
+      "id": "app-app-review-page.weakSpots",
+      "file": "src/app/(app)/review/page.tsx",
+      "source": "weakSpots",
+      "anchor": "see reason",
+      "occurrences": ["count: data.weakSpots,", "href: '/weak-spots',"],
+      "classification": "LEGIT_PRESENTATION",
+      "reason": "open weak-spot count",
+      "migrationNode": "W2-WS2"
+    },
+    {
+      "id": "app-app-review-today-page.fsrs",
+      "file": "src/app/(app)/review/today/page.tsx",
+      "source": "fsrs",
+      "anchor": "see reason",
+      "occurrences": ["fsrsCard={ratingItem.fsrsCard}"],
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "FSRS due queue",
+      "migrationNode": "W2-MB1"
+    },
+    {
+      "id": "app-app-weak-spots-page.weakSpots",
+      "file": "src/app/(app)/weak-spots/page.tsx",
+      "source": "weakSpots",
+      "anchor": "see reason",
+      "occurrences": [
+        "const items = useWeakSpotsStore((s) => s.items);",
+        "const load = useWeakSpotsStore((s) => s.load);",
+        "const markResolved = useWeakSpotsStore((s) => s.markResolved);",
+        "const moduleFilter = useWeakSpotsStore((s) => s.moduleFilter);",
+        "const setModuleFilter = useWeakSpotsStore((s) => s.setModuleFilter);",
+        "import { WeakSpotList } from '@/components/weak-spots/weak-spot-list';",
+        "import { WeakSpotSummary } from '@/components/weak-spots/weak-spot-summary';",
+        "import { useWeakSpotsStore } from '@/stores/weak-spots-store';",
+        "page: 'weak-spots',"
+      ],
+      "classification": "LEGIT_PRESENTATION",
+      "reason": "weak-spot list page",
+      "migrationNode": "W2-WS2"
+    },
+    {
+      "id": "app-app-write-id-page.dailyPlan",
+      "file": "src/app/(app)/write/[id]/page.tsx",
+      "source": "dailyPlan",
+      "anchor": "see reason",
+      "occurrences": [
+        "const isDailyPlanPractice = useDailyPlanStore((s) =>",
+        "import { useDailyPlanStore } from '@/stores/daily-plan-store';",
+        "{state.mode === 'finished' && isDailyPlanPractice && <PracticeCompleteBanner module=\"write\" />}"
+      ],
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "isDailyPlanPractice → task completion wiring",
+      "migrationNode": "W2-PL1"
+    },
+    {
+      "id": "app-api-assessment-route.assessment-currentLevel",
+      "file": "src/app/api/assessment/route.ts",
+      "source": "assessment.currentLevel",
+      "anchor": "see reason",
+      "occurrences": [
+        "${getAdaptiveDistribution(currentLevel)}`;",
+        "? `Generate 30 questions focused on ${currentLevel} level. Output ONLY the JSON object, nothing else.`",
+        "Distribution (30 questions total, focused on ${currentLevel} level):",
+        "console.log('[Assessment] Generating questions for level:', currentLevel || 'first-time');",
+        "const distributions: Record<CEFRLevel, string> = {",
+        "const systemPrompt = buildSystemPrompt(currentLevel);",
+        "const userPrompt = currentLevel",
+        "currentLevel,",
+        "currentLevel?: CEFRLevel;",
+        "function buildSystemPrompt(currentLevel?: CEFRLevel): string {",
+        "function getAdaptiveDistribution(level: CEFRLevel): string {",
+        "if (!currentLevel) {",
+        "type CEFRLevel = 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2';"
+      ],
+      "classification": "LEGIT_CANDIDATE_SIGNAL",
+      "reason": "adaptive question distribution input — advisory placement use",
+      "migrationNode": "W2-AS1"
+    },
+    {
+      "id": "app-api-chat-route.sessions",
+      "file": "src/app/api/chat/route.ts",
+      "source": "sessions",
+      "anchor": "see reason",
+      "occurrences": [
+        "`Here is what you practiced today:\\n${formatList(sessions.map((session) => `${session.title} (${session.module})`))}`,",
+        "if (sessions.length === 0) {"
+      ],
+      "classification": "LEGIT_PRESENTATION",
+      "reason": "formats stats tool output for the chat tutor",
+      "migrationNode": "W2-CS1"
+    },
+    {
+      "id": "components-assessment-assessment-section.sessions",
+      "file": "src/components/assessment/assessment-section.tsx",
+      "source": "sessions",
+      "anchor": "see reason",
+      "occurrences": ["db.sessions", "result.sessionsAtTest = sessions.filter((s) => s.completed).length;"],
+      "classification": "LEGIT_ANALYTICS",
+      "reason": "session counts as assessment metadata",
+      "migrationNode": "W2-CS1"
+    },
+    {
+      "id": "components-assessment-assessment-section.assessment-currentLevel",
+      "file": "src/components/assessment/assessment-section.tsx",
+      "source": "assessment.currentLevel",
+      "anchor": "see reason",
+      "occurrences": [
+        "<p className=\"text-sm font-medium text-slate-800\">{copy.idle.currentLevel}</p>",
+        "<p className=\"text-xs text-slate-500\">{copy.levels[currentLevel].label}</p>",
+        "<span className={cn('px-3 py-1.5 rounded-lg text-sm font-bold border', LEVEL_COLORS[currentLevel])}>",
+        "CEFRLevel,",
+        "className={cn('ml-auto px-2.5 py-0.5 rounded-full text-xs font-bold border', LEVEL_COLORS[currentLevel])}",
+        "const LEVEL_COLORS: Record<CEFRLevel, string> = {",
+        "const { currentLevel, history, setResult } = useAssessmentStore();",
+        "currentLevel: currentLevel, // Pass current level for adaptive testing",
+        "currentLevel: string;",
+        "previous: (prev: CEFRLevel, current: CEFRLevel, comparison: AssessmentComparison) =>",
+        "previous: (prev: CEFRLevel, current: CEFRLevel, comparison: AssessmentComparison) => string;",
+        "type CEFRLevel,",
+        "useAssessmentStore,",
+        "{currentLevel && phase === 'idle' && (",
+        "{currentLevel}",
+        "{currentLevel}",
+        "{phase === 'idle' && !currentLevel && (",
+        "{phase === 'idle' && currentLevel && (",
+        "}, [providerStore, currentLevel, copy]);"
+      ],
+      "classification": "LEGIT_CANDIDATE_SIGNAL",
+      "reason": "level display + advisory adaptive input; no gating",
+      "migrationNode": "W2-AS1"
+    },
+    {
+      "id": "components-chat-chat-panel.assessment-currentLevel",
+      "file": "src/components/chat/chat-panel.tsx",
+      "source": "assessment.currentLevel",
+      "anchor": "see reason",
+      "occurrences": [
+        "const currentLevel = useAssessmentStore((s) => s.currentLevel);",
+        "const setCurrentLevel = useAssessmentStore((s) => s.setCurrentLevel);",
+        "currentDifficulty: activeContentItem?.difficulty ?? cefrToDifficulty(currentLevel),",
+        "currentLevel,",
+        "function cefrToDifficulty(level: CEFRLevel | null): 'beginner' | 'intermediate' | 'advanced' {",
+        "import { type CEFRLevel, useAssessmentStore } from '@/stores/assessment-store';",
+        "updateUserLevel: (level) => setCurrentLevel(level as CEFRLevel),",
+        "userLevel: currentLevel,"
+      ],
+      "classification": "LEGIT_CANDIDATE_SIGNAL",
+      "reason": "userLevel → difficulty context for tutor; advisory",
+      "migrationNode": "W2-AS1"
+    },
+    {
+      "id": "components-dashboard-goal-setting-dialog.dailyPlan",
+      "file": "src/components/dashboard/goal-setting-dialog.tsx",
+      "source": "dailyPlan",
+      "anchor": "see reason",
+      "occurrences": [
+        "const { goal, setGoal } = useDailyPlanStore();",
+        "import type { DailyGoal } from '@/stores/daily-plan-store';",
+        "import { useDailyPlanStore } from '@/stores/daily-plan-store';"
+      ],
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "goal change triggers plan regeneration",
+      "migrationNode": "W2-PL1"
+    },
+    {
+      "id": "components-dashboard-streak-badge.dailyPlan",
+      "file": "src/components/dashboard/streak-badge.tsx",
+      "source": "dailyPlan",
+      "anchor": "see reason",
+      "occurrences": [
+        "const { streak, lastActiveDate, hydrate } = useDailyPlanStore();",
+        "import { useDailyPlanStore } from '@/stores/daily-plan-store';"
+      ],
+      "classification": "LEGIT_PRESENTATION",
+      "reason": "streak display from plan store",
+      "migrationNode": "W2-PL1"
+    },
+    {
+      "id": "components-dashboard-today-plan.records",
+      "file": "src/components/dashboard/today-plan.tsx",
+      "source": "records",
+      "anchor": "see reason",
+      "occurrences": ["db.records.orderBy('lastPracticed').last(),"],
+      "classification": "LEGIT_HISTORY",
+      "reason": "latest lastPracticed → activity signature for plan refresh",
+      "migrationNode": "W2-PL1"
+    },
+    {
+      "id": "components-dashboard-today-plan.sessions",
+      "file": "src/components/dashboard/today-plan.tsx",
+      "source": "sessions",
+      "anchor": "see reason",
+      "occurrences": [
+        "const sessions = await db.sessions.toArray();",
+        "db.sessions.orderBy('startTime').last(),",
+        "if (!session.completed) return false;",
+        "import type { TypingSession } from '@/types/content';",
+        "sessions: TypingSession[],"
+      ],
+      "classification": "LEGIT_HISTORY",
+      "reason": "latest session → signature + per-task session summaries",
+      "migrationNode": "W2-PL1"
+    },
+    {
+      "id": "components-dashboard-today-plan.assessment-currentLevel",
+      "file": "src/components/dashboard/today-plan.tsx",
+      "source": "assessment.currentLevel",
+      "anchor": "TodayPlan:levelToPlanInput",
+      "occurrences": [
+        "? messages.todayPlan.explanationWithLevel.replace('{{level}}', currentLevel)",
+        "[currentGoal, currentLevel, setTasks],",
+        "const currentLevel = useAssessmentStore((state) => state.currentLevel);",
+        "const plan = await generateDailyPlan(goalOverride, { currentLevel, learningGoal: currentGoal });",
+        "const planExplanation = `${buildDailyPlanGoalExplanation(currentGoal, currentLevel)} ${",
+        "currentLevel",
+        "if (dateKey !== today || dataSignature !== signature || levelKey !== (currentLevel ?? '')) {",
+        "import { useAssessmentStore } from '@/stores/assessment-store';",
+        "setTasks(syncedPlan, signature, currentLevel ?? '');",
+        "}, [currentLevel, dataSignature, dateKey, generate, goal, levelKey, syncCompletedTasks]);"
+      ],
+      "classification": "LEGIT_CANDIDATE_SIGNAL",
+      "reason": "TRANSITIONAL advisory candidate: currentLevel → generateDailyPlan input + levelKey invalidation. Permitted today as placement-advisory; does not survive final planner authority (W2-PL1) unless the W2-00R2 placement boundary justifies it.",
+      "migrationNode": "W2-AS1",
+      "transitional": true
+    },
+    {
+      "id": "components-dashboard-today-plan.dailyPlan",
+      "file": "src/components/dashboard/today-plan.tsx",
+      "source": "dailyPlan",
+      "anchor": "see reason",
+      "occurrences": [
+        "async (goalOverride = useDailyPlanStore.getState().goal, signatureOverride?: string) => {",
+        "const plan = await generateDailyPlan(goalOverride, { currentLevel, learningGoal: currentGoal });",
+        "const signature = await getDailyPlanSignature();",
+        "const signature = signatureOverride ?? (await getDailyPlanSignature());",
+        "const syncedPlan = await syncPlanTasksWithActivity(plan);",
+        "const syncedTasks = await syncPlanTasksWithActivity(tasks);",
+        "import { SESSION_ACTIVITY_EVENT, syncPlanTasksWithActivity } from '@/lib/daily-plan-progress';",
+        "import { generateDailyPlan, getDailyPlanSignature } from '@/lib/daily-plan';",
+        "import { todayKey, useDailyPlanStore } from '@/stores/daily-plan-store';",
+        "useDailyPlanStore();"
+      ],
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "plan store read/write + task lifecycle",
+      "migrationNode": "W2-PL1"
+    },
+    {
+      "id": "components-favorites-favorite-detail.fsrs",
+      "file": "src/components/favorites/favorite-detail.tsx",
+      "source": "fsrs",
+      "anchor": "see reason",
+      "occurrences": [
+        "[Rating.Again]: { label: 'Again', color: 'bg-red-500 hover:bg-red-600' },",
+        "[Rating.Easy]: { label: 'Easy', color: 'bg-blue-500 hover:bg-blue-600' },",
+        "[Rating.Good]: { label: 'Good', color: 'bg-green-500 hover:bg-green-600' },",
+        "[Rating.Hard]: { label: 'Hard', color: 'bg-amber-500 hover:bg-amber-600' },",
+        "const previews = previewRatings(item.fsrsCard);",
+        "import { previewRatings } from '@/lib/fsrs';",
+        "{/* FSRS rating */}",
+        "{[Rating.Again, Rating.Hard, Rating.Good, Rating.Easy].map((r) => {"
+      ],
+      "classification": "LEGIT_PRESENTATION",
+      "reason": "nextReview display on detail",
+      "migrationNode": "W2-MB1"
+    },
+    {
+      "id": "components-favorites-favorite-item-row.fsrs",
+      "file": "src/components/favorites/favorite-item-row.tsx",
+      "source": "fsrs",
+      "anchor": "see reason",
+      "occurrences": [
+        "const state = item.fsrsCard.state;",
+        "if (!item.fsrsCard) return { label: 'New', color: 'bg-slate-100 text-slate-500' };"
+      ],
+      "classification": "LEGIT_PRESENTATION",
+      "reason": "nextReview/due badge on rows",
+      "migrationNode": "W2-MB1"
+    },
+    {
+      "id": "components-favorites-favorites-list.fsrs",
+      "file": "src/components/favorites/favorites-list.tsx",
+      "source": "fsrs",
+      "anchor": "see reason",
+      "occurrences": [
+        "const dueCount = favorites.filter((item) => item.nextReview != null && item.nextReview <= Date.now()).length;"
+      ],
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "due-state grouping in list",
+      "migrationNode": "W2-MB1"
+    },
+    {
+      "id": "components-favorites-favorites-review.fsrs",
+      "file": "src/components/favorites/favorites-review.tsx",
+      "source": "fsrs",
+      "anchor": "see reason",
+      "occurrences": [
+        "(f.fsrsCard?.due ?? f.nextReview ?? Infinity) <= now,",
+        "const previews = previewRatings(item.fsrsCard);",
+        "import { previewRatings } from '@/lib/fsrs';",
+        "{ rating: Rating.Again, label: reviewMessages.rating.again, color: 'bg-red-500 hover:bg-red-600' },",
+        "{ rating: Rating.Easy, label: reviewMessages.rating.easy, color: 'bg-blue-500 hover:bg-blue-600' },",
+        "{ rating: Rating.Good, label: reviewMessages.rating.good, color: 'bg-green-500 hover:bg-green-600' },",
+        "{ rating: Rating.Hard, label: reviewMessages.rating.hard, color: 'bg-amber-500 hover:bg-amber-600' },"
+      ],
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "due filter + previewRatings + gradeCard write",
+      "migrationNode": "W2-MB1"
+    },
+    {
+      "id": "components-layout-command-palette.sessions",
+      "file": "src/components/layout/command-palette.tsx",
+      "source": "sessions",
+      "anchor": "see reason",
+      "occurrences": [
+        "const completed = sessions.filter((s) => s.completed);",
+        "const latest = completed.sort((a, b) => (b.endTime ?? b.startTime) - (a.endTime ?? a.startTime))[0];",
+        "const sessions = await db.sessions.toArray();"
+      ],
+      "classification": "LEGIT_ANALYTICS",
+      "reason": "today-stats snippet in palette",
+      "migrationNode": "W2-CS1"
+    },
+    {
+      "id": "components-learning-daily-task-queue.records",
+      "file": "src/components/learning/daily-task-queue.tsx",
+      "source": "records",
+      "anchor": "see reason",
+      "occurrences": [
+        "const candidates: DailyTask[] = buildTodayReviewItems(data.records, data.contents, now).map((item) =>",
+        "data.records,",
+        "records: data.records,"
+      ],
+      "classification": "LEGIT_CANDIDATE_SIGNAL",
+      "reason": "records feed review/vocab task candidates",
+      "migrationNode": "W2-PL1"
+    },
+    {
+      "id": "components-learning-daily-task-queue.fsrs",
+      "file": "src/components/learning/daily-task-queue.tsx",
+      "source": "fsrs",
+      "anchor": "see reason",
+      "occurrences": [
+        "for (const item of data.favorites.filter((item) => (item.fsrsCard?.due ?? item.nextReview ?? Infinity) <= now)) {"
+      ],
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "favorites fsrsCard.due → review task candidate",
+      "migrationNode": "W2-MB1"
+    },
+    {
+      "id": "components-learning-daily-task-queue.sessions",
+      "file": "src/components/learning/daily-task-queue.tsx",
+      "source": "sessions",
+      "anchor": "see reason",
+      "occurrences": [
+        "const progress = dailyWorkspaceProgress(data.sessions, data.contents);",
+        "sessions: data.sessions,"
+      ],
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "sessions as task-completion evidence",
+      "migrationNode": "W2-PL1"
+    },
+    {
+      "id": "components-learning-daily-task-queue.weakSpots",
+      "file": "src/components/learning/daily-task-queue.tsx",
+      "source": "weakSpots",
+      "anchor": "see reason",
+      "occurrences": ["const weak = data.weakSpots[0];", "weakSpots: data.weakSpots,"],
+      "classification": "LEGIT_CANDIDATE_SIGNAL",
+      "reason": "weakSpots[0] → weak-spot task candidate",
+      "migrationNode": "W2-PL1"
+    },
+    {
+      "id": "components-learning-daily-task-queue.pronunciationProgress",
+      "file": "src/components/learning/daily-task-queue.tsx",
+      "source": "pronunciationProgress",
+      "anchor": "see reason",
+      "occurrences": ["database.pronunciationProgress.toArray(),"],
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "pronunciation task-completion evidence",
+      "migrationNode": "W2-PR1"
+    },
+    {
+      "id": "components-learning-daily-task-queue.learningAttempts",
+      "file": "src/components/learning/daily-task-queue.tsx",
+      "source": "learningAttempts",
+      "anchor": "see reason",
+      "occurrences": [
+        "attempts: state.attempts,",
+        "candidates.push(...buildTextCourseTasks(ordered, state.attempts, now));",
+        "database.learningAttempts.toArray(),",
+        "state.attempts,"
+      ],
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "attempts as task-completion evidence",
+      "migrationNode": "W2-PL1"
+    },
+    {
+      "id": "components-learning-daily-task-queue.dailyTasks",
+      "file": "src/components/learning/daily-task-queue.tsx",
+      "source": "dailyTasks",
+      "anchor": "see reason",
+      "occurrences": [
+        "(!reviewOnly || task.stage === 'recall' || ['review', 'favorite', 'weak-spot'].includes(task.kind)),",
+        "): DailyTask => ({",
+        ".transaction('rw', database.dailyTasks, async () => {",
+        "applyDailyEvidence,",
+        "async function act(task: DailyTask, action: 'start' | 'pause' | 'defer' | 'skip' | 'restore') {",
+        "async function changeSettings(patch: Partial<DailyTask>) {",
+        "await active.dailyTasks.put(next);",
+        "await active.dailyTasks.put({",
+        "await active.transaction('rw', active.dailyTasks, async () => {",
+        "const candidates: DailyTask[] = buildTodayReviewItems(data.records, data.contents, now).map((item) =>",
+        "const credited = applyDailyEvidence(",
+        "const current = await active.dailyTasks.get('preferences:daily');",
+        "const current = await active.dailyTasks.get(task.id);",
+        "const next = reconcileDailyTasks(credited, candidates, dateKey, now);",
+        "const next = transitionDailyTask(allocated, action, Date.now());",
+        "const practiceLabel = (task: DailyTask) => {",
+        "const remaining = remainingDailyMinutes(state.tasks, dateKey, minutes);",
+        "const saved = await database.dailyTasks.toArray();",
+        "const settings = state?.tasks.find((task) => task.id === 'preferences:daily');",
+        "const statusLabel = (status: DailyTask['status']) =>",
+        "const updated = await active.transaction('rw', active.dailyTasks, async () => {",
+        "const visible = isLearningDay ? selectBudgetTasks(active, remaining, now) : [];",
+        "database.dailyTasks.toArray(),",
+        "extra: Partial<DailyTask> = {},",
+        "id: 'preferences:daily',",
+        "if (changed.length) await database.dailyTasks.bulkPut(changed);",
+        "if (task.kind === 'favorite') return t('Saved phrases', '收藏表达', 'Cụm từ đã lưu');",
+        "if (task.kind === 'pronunciation') return t('Pronunciation', '发音', 'Phát âm');",
+        "if (task.kind === 'weak-spot') return t('Weak spots', '薄弱项', 'Điểm yếu');",
+        "import type { DailyTask } from '@/types/daily-task';",
+        "kind: DailyTask['kind'],",
+        "reconcileDailyTasks,",
+        "remainingDailyMinutes,",
+        "selectBudgetTasks,",
+        "state.tasks.find((task) => task.id === 'preferences:vocabulary')?.newWordsPerDay ?? 10,",
+        "task.kind !== 'settings' &&",
+        "transitionDailyTask,"
+      ],
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "planner-cache CRUD + reconcile (executable cache, not truth)",
+      "migrationNode": "W2-PL1"
+    },
+    {
+      "id": "components-learning-learning-section-nav.weakSpots",
+      "file": "src/components/learning/learning-section-nav.tsx",
+      "source": "weakSpots",
+      "anchor": "see reason",
+      "occurrences": ["['/weak-spots', 'Weak spots', '薄弱项', 'Điểm yếu'],"],
+      "classification": "LEGIT_PRESENTATION",
+      "reason": "nav link/section routing to weak-spots",
+      "migrationNode": "W2-WS2"
+    },
+    {
+      "id": "components-learning-learning-settings.dailyPlan",
+      "file": "src/components/learning/learning-settings.tsx",
+      "source": "dailyPlan",
+      "anchor": "see reason",
+      "occurrences": [
+        "const goal = useDailyPlanStore((s) => s.goal);",
+        "const setGoal = useDailyPlanStore((s) => s.setGoal);",
+        "import { useDailyPlanStore } from '@/stores/daily-plan-store';",
+        "useDailyPlanStore.getState().hydrate();"
+      ],
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "plan preference settings",
+      "migrationNode": "W2-PL1"
+    },
+    {
+      "id": "components-learning-lesson-workshop.weakSpots-resolve-claim",
+      "file": "src/components/learning/lesson-workshop.tsx",
+      "source": "weakSpots",
+      "anchor": "LessonWorkshop:resolve-flow",
+      "occurrences": [
+        "await database.transaction('rw', database.weakSpots, database.learningAttempts, async () => {",
+        "await database.weakSpots.update(current.id, { resolved: true });",
+        "canResolveTransfer,",
+        "const canResolve = !!weakSpot && canResolveTransfer(weakSpot.id, weakSpot.lastSeenAt, attempts);",
+        "const current = await database.weakSpots.get(weakSpot.id);",
+        "const weakSpot = weakSpots.find((item) => item.id === sourceWeakSpotId);",
+        "if (!current || !canResolveTransfer(current.id, current.lastSeenAt, evidence)) throw new Error('No evidence');",
+        "if (!weakSpot || !confirm) return;",
+        "{t('Targeted weak spot', '针对薄弱项', 'Điểm yếu cần luyện')}: {weakSpot.text}",
+        "{weakSpot && (",
+        "{weakSpot.resolved ? ("
+      ],
+      "classification": "CAPABILITY_CLAIM",
+      "reason": "weakSpot.resolved drives learner-facing \"Resolved\" recovery claim; canResolveTransfer heuristic (attempts+age) gates the resolve write",
+      "migrationNode": "W2-WS2"
+    },
+    {
+      "id": "components-learning-lesson-workshop.weakSpots-context",
+      "file": "src/components/learning/lesson-workshop.tsx",
+      "source": "weakSpots",
+      "anchor": "LessonWorkshop:sourceWeakSpotId-context",
+      "occurrences": [
+        "const draftKey = `${draftDatabase}:${lesson.id}:${activity}:${sourceWeakSpotId ?? ''}`;",
+        "const related = weakSpots.filter(",
+        "const weakSpots = useLiveQuery(() => db.weakSpots.toArray(), [lesson.id]) ?? [];",
+        "export function LessonWorkshop({ lesson, sourceWeakSpotId }: { lesson: Lesson; sourceWeakSpotId?: string }) {",
+        "href={`/learn/${encodeURIComponent(lesson.unitId)}?lesson=${encodeURIComponent(lesson.id)}&weakSpot=${encodeURIComponent(item.id)}`}",
+        "key={JSON.stringify([db.name, lesson.id, source, activeActivity, weakSpot?.id])}",
+        "key={JSON.stringify([db.name, lesson.id, source, stage, progress.referenceAttemptId, weakSpot?.id])}",
+        "sourceWeakSpotId,",
+        "sourceWeakSpotId,",
+        "sourceWeakSpotId,",
+        "sourceWeakSpotId={weakSpot?.id}",
+        "sourceWeakSpotId={weakSpot?.id}",
+        "sourceWeakSpotId?: string;",
+        "{ databaseName: draftDatabase, lessonId: lesson.id, activity, source, sourceWeakSpotId },",
+        "{ databaseName: draftDatabase, lessonId: lesson.id, activity, source, sourceWeakSpotId },",
+        "{related.length > 0 && !weakSpot && (",
+        "}, [draftKey, draftDatabase, lesson.id, activity, sourceWeakSpotId, source]);"
+      ],
+      "classification": "LEGIT_CANDIDATE_SIGNAL",
+      "reason": "weak-spot id/context passthrough (props, links, draft keys, related list)",
+      "migrationNode": "W2-WS2"
+    },
+    {
+      "id": "components-learning-lesson-workshop.learningAttempts",
+      "file": "src/components/learning/lesson-workshop.tsx",
+      "source": "learningAttempts",
+      "anchor": "see reason",
+      "occurrences": [
+        "await database.transaction('rw', database.weakSpots, database.learningAttempts, async () => {",
+        "await persistLearningAttempt(database, attempt, blob, isCurrent);",
+        "const [feedback, setFeedback] = useState<LearningAttempt['feedback']>();",
+        "const attempts = useLiveQuery(() => db.learningAttempts.where('lessonId').equals(lesson.id).toArray(), [lesson.id]);",
+        "const correctionError = validateTextCorrection(attempt, attempts ?? []);",
+        "const cycle = deriveTextCycle(lesson.id, source, attempts ?? [], Date.now());",
+        "const evidence = await database.learningAttempts.where('lessonId').equals(lesson.id).toArray();",
+        "const progress = deriveTextCycle(lesson.id, source, attempts, Math.max(now, Date.now()));",
+        "import type { LearningActivity, LearningAttempt, TextCycleStage } from '@/types/learning-activity';",
+        "import { deriveTextCycle, validateTextCorrection } from '@/lib/text-learning-cycle';",
+        "import { persistLearningAttempt } from '@/lib/learning-activity-persistence';",
+        "setParent(attempt.id);",
+        "useLiveQuery(() => db.learningAttempts.where('lessonId').equals(lesson.id).toArray(), [lesson.id]) ?? [];"
+      ],
+      "classification": "LEGIT_HISTORY",
+      "reason": "attempt list shown as remediation evidence",
+      "migrationNode": "W2-AT1"
+    },
+    {
+      "id": "components-learning-text-cycle-practice.weakSpots",
+      "file": "src/components/learning/text-cycle-practice.tsx",
+      "source": "weakSpots",
+      "anchor": "see reason",
+      "occurrences": [
+        "const draftStage = JSON.stringify([stage, reference?.id, sourceWeakSpotId]);",
+        "sourceWeakSpotId,",
+        "sourceWeakSpotId,",
+        "sourceWeakSpotId?: string;"
+      ],
+      "classification": "LEGIT_CANDIDATE_SIGNAL",
+      "reason": "sourceWeakSpotId context passthrough into attempts",
+      "migrationNode": "W2-WS2"
+    },
+    {
+      "id": "components-learning-text-cycle-practice.learningAttempts",
+      "file": "src/components/learning/text-cycle-practice.tsx",
+      "source": "learningAttempts",
+      "anchor": "see reason",
+      "occurrences": [
+        "attempts: LearningAttempt[];",
+        "await persistLearningAttempt(database, attempt, undefined, isCurrent);",
+        "const cycle = deriveTextCycle(lesson.id, source, attempts, now);",
+        "const invalid = validateTextCycleAttempt(attempt, attempts);",
+        "const reference = attempts.find((item) => item.id === cycle.referenceAttemptId);",
+        "import type { LearningAttempt, RecallRating } from '@/types/learning-activity';",
+        "import { deriveTextCycle, validateTextCycleAttempt } from '@/lib/text-learning-cycle';",
+        "import { persistLearningAttempt } from '@/lib/learning-activity-persistence';"
+      ],
+      "classification": "LEGIT_HISTORY",
+      "reason": "attempts → deriveTextCycle + persistLearningAttempt writer",
+      "migrationNode": "W2-AT1"
+    },
+    {
+      "id": "components-learning-vocabulary-practice.records",
+      "file": "src/components/learning/vocabulary-practice.tsx",
+      "source": "records",
+      "anchor": "see reason",
+      "occurrences": [
+        "const next = await owner.current.records.get(`vocabulary:${mode}:${content.id}`);",
+        "import type { ContentItem, LearningRecord } from '@/types/content';",
+        "record?: LearningRecord;"
+      ],
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "records drive vocab practice ordering/due selection",
+      "migrationNode": "W2-MB1"
+    },
+    {
+      "id": "components-learning-vocabulary-practice.fsrs",
+      "file": "src/components/learning/vocabulary-practice.tsx",
+      "source": "fsrs",
+      "anchor": "see reason",
+      "occurrences": ["setSaved(new Date(next?.nextReview ?? Date.now()).toLocaleString());"],
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "fsrsCard/nextReview due ordering",
+      "migrationNode": "W2-MB1"
+    },
+    {
+      "id": "components-learning-vocabulary-workspace.records",
+      "file": "src/components/learning/vocabulary-workspace.tsx",
+      "source": "records",
+      "anchor": "see reason",
+      "occurrences": [
+        "const due = queue.filter((c) => data.records.some((r) => r.id === vocabularyRecordId(c.id, mode))).length;",
+        "data.records,",
+        "record={data.records.find((r) => r.id === vocabularyRecordId(active.id, mode))}"
+      ],
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "records → vocab practice data",
+      "migrationNode": "W2-MB1"
+    },
+    {
+      "id": "components-learning-vocabulary-workspace.learningAttempts",
+      "file": "src/components/learning/vocabulary-workspace.tsx",
+      "source": "learningAttempts",
+      "anchor": "see reason",
+      "occurrences": [
+        "attempts: await data.database.learningAttempts.toArray(),",
+        "import { introducedVocabularyToday, type VocabularyMode, vocabularyQueue, vocabularyRecordId } from '@/lib/vocabulary';",
+        "introducedVocabularyToday(state?.attempts ?? [], mode, Date.now()),"
+      ],
+      "classification": "LEGIT_HISTORY",
+      "reason": "attempt history feeding workspace tasks",
+      "migrationNode": "W2-AT1"
+    },
+    {
+      "id": "components-learning-vocabulary-workspace.dailyTasks",
+      "file": "src/components/learning/vocabulary-workspace.tsx",
+      "source": "dailyTasks",
+      "anchor": "see reason",
+      "occurrences": [
+        "await data.database.dailyTasks.put({",
+        "id: 'preferences:vocabulary',",
+        "settings: await data.database.dailyTasks.get('preferences:vocabulary'),"
+      ],
+      "classification": "LEGIT_HISTORY",
+      "reason": "preferences:vocabulary row — settings, not evidence",
+      "migrationNode": "W2-PL1"
+    },
+    {
+      "id": "components-library-material-library.sessions",
+      "file": "src/components/library/material-library.tsx",
+      "source": "sessions",
+      "anchor": "see reason",
+      "occurrences": ["times.set(s.contentId, Math.max(times.get(s.contentId) || 0, s.endTime || s.startTime));"],
+      "classification": "LEGIT_PRESENTATION",
+      "reason": "sessions → lessonProgress per-unit completion",
+      "migrationNode": "W2-CS1"
+    },
+    {
+      "id": "components-pronunciation-pronunciation-studio.weakSpots",
+      "file": "src/components/pronunciation/pronunciation-studio.tsx",
+      "source": "weakSpots",
+      "anchor": "see reason",
+      "occurrences": [
+        "import { resolveWeakSpot, upsertWeakSpot } from '@/lib/weak-spots';",
+        "weakSpotType: 'listening-segment',",
+        "weakSpotType: 'listening-segment',",
+        "weakSpotType: 'pronunciation-phrase',"
+      ],
+      "classification": "LEGIT_CANDIDATE_SIGNAL",
+      "reason": "writes weakSpot rows from mispronounced sounds",
+      "migrationNode": "W2-WS2"
+    },
+    {
+      "id": "components-pronunciation-pronunciation-studio.pronunciationProgress",
+      "file": "src/components/pronunciation/pronunciation-studio.tsx",
+      "source": "pronunciationProgress",
+      "anchor": "see reason",
+      "occurrences": [
+        ".transaction('rw', database.pronunciationProgress, async () => {",
+        "await database.pronunciationProgress.add({",
+        "await database.pronunciationProgress.add({",
+        "await database.pronunciationProgress.add({ id, soundId, kind: 'legacy', updatedAt: Date.now() });",
+        "const progress = useLiveQuery(() => database.pronunciationProgress.toArray(), [database]) ?? [];",
+        "if (!(await database.pronunciationProgress.get(id)))",
+        "void database.pronunciationProgress"
+      ],
+      "classification": "LEGIT_PRESENTATION",
+      "reason": "N/48 practiced display + progress-row writes",
+      "migrationNode": "W2-PR1"
+    },
+    {
+      "id": "components-review-rating-buttons.fsrs",
+      "file": "src/components/review/rating-buttons.tsx",
+      "source": "fsrs",
+      "anchor": "see reason",
+      "occurrences": [
+        ": rating === Rating.Easy",
+        ": rating === Rating.Easy",
+        ": rating === Rating.Good",
+        ": rating === Rating.Hard",
+        ": rating === Rating.Hard",
+        "? rating === Rating.Good",
+        "const preview = useMemo(() => previewRatings(fsrsCard), [fsrsCard]);",
+        "export function RatingButtons({ fsrsCard, onRate, disabled }: RatingButtonsProps) {",
+        "fsrsCard?: FSRSCardData;",
+        "import type { FSRSCardData } from '@/types/content';",
+        "import { previewRatings, Rating } from '@/lib/fsrs';",
+        "nativeHaptic(rating === Rating.Again ? 'warning' : rating === Rating.Easy ? 'success' : 'light');",
+        "variant={rating === Rating.Good ? 'default' : variant}",
+        "{ rating: Rating.Again, label: messages.rating.again, variant: 'destructive' as const },",
+        "{ rating: Rating.Easy, label: messages.rating.easy, variant: 'outline' as const },",
+        "{ rating: Rating.Good, label: messages.rating.good, variant: 'outline' as const },",
+        "{ rating: Rating.Hard, label: messages.rating.hard, variant: 'outline' as const },",
+        "{isIOSNativeHost ? <span className={IOS_PILL_CLASS}>FSRS rating</span> : null}"
+      ],
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "previewRatings → grade write path",
+      "migrationNode": "W2-MB1"
+    },
+    {
+      "id": "components-settings-data-backup.records",
+      "file": "src/components/settings/data-backup.tsx",
+      "source": "records",
+      "anchor": "see reason",
+      "occurrences": [
+        "await database.transaction('r', [database.records, database.sessions, database.learningAttempts], async () => {"
+      ],
+      "classification": "LEGIT_HISTORY",
+      "reason": "export/backup transport",
+      "migrationNode": "W2-SY1"
+    },
+    {
+      "id": "components-settings-data-backup.sessions",
+      "file": "src/components/settings/data-backup.tsx",
+      "source": "sessions",
+      "anchor": "see reason",
+      "occurrences": [
+        "await database.transaction('r', [database.records, database.sessions, database.learningAttempts], async () => {"
+      ],
+      "classification": "LEGIT_HISTORY",
+      "reason": "export/backup transport",
+      "migrationNode": "W2-SY1"
+    },
+    {
+      "id": "components-settings-data-backup.learningAttempts",
+      "file": "src/components/settings/data-backup.tsx",
+      "source": "learningAttempts",
+      "anchor": "see reason",
+      "occurrences": [
+        "await database.transaction('r', [database.records, database.sessions, database.learningAttempts], async () => {",
+        "for (const name of ['records', 'sessions', 'learningAttempts'])"
+      ],
+      "classification": "LEGIT_HISTORY",
+      "reason": "export/backup transport",
+      "migrationNode": "W2-SY1"
+    },
+    {
+      "id": "components-shared-content-list.sessions",
+      "file": "src/components/shared/content-list.tsx",
+      "source": "sessions",
+      "anchor": "see reason",
+      "occurrences": ["const request = db.sessions"],
+      "classification": "LEGIT_PRESENTATION",
+      "reason": "per-content completion badge",
+      "migrationNode": "W2-CS1"
+    },
+    {
+      "id": "components-shared-word-book-practice.records",
+      "file": "src/components/shared/word-book-practice.tsx",
+      "source": "records",
+      "anchor": "see reason",
+      "occurrences": [
+        "limit > 0 ? new Set((await db.records.toArray()).map((record) => record.contentId)) : undefined;",
+        "practicedIds: limit > 0 ? new Set((await db.records.toArray()).map((record) => record.contentId)) : undefined,"
+      ],
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "records → practiced set / due selection",
+      "migrationNode": "W2-MB1"
+    },
+    {
+      "id": "components-shared-word-book-practice.dailyPlan",
+      "file": "src/components/shared/word-book-practice.tsx",
+      "source": "dailyPlan",
+      "anchor": "see reason",
+      "occurrences": [
+        "const isDailyPlanPractice = useDailyPlanStore((s) =>",
+        "import { useDailyPlanStore } from '@/stores/daily-plan-store';",
+        "isDailyPlanPractice,",
+        "isDailyPlanPractice: boolean;",
+        "isDailyPlanPractice={isDailyPlanPractice}",
+        "{isDailyPlanPractice && <PracticeCompleteBanner module={module as 'listen' | 'speak' | 'read' | 'write'} />}"
+      ],
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "isDailyPlanPractice → task completion wiring",
+      "migrationNode": "W2-PL1"
+    },
+    {
+      "id": "components-speak-pronunciation-feedback.records",
+      "file": "src/components/speak/pronunciation-feedback.tsx",
+      "source": "records",
+      "anchor": "feedback:word-match-styles",
+      "occurrences": [
+        "const count = results.filter((r) => r.accuracy === key).length;",
+        "const problemWords = results.filter((r) => r.accuracy !== 'correct' && r.accuracy !== 'extra');",
+        "const style = accuracyStyle[r.accuracy];"
+      ],
+      "classification": "LEGIT_PRESENTATION",
+      "reason": "results r.accuracy categorical word-match display — NOT the records table",
+      "migrationNode": "W2-PR1"
+    },
+    {
+      "id": "components-weak-spots-weak-spot-list.weakSpots",
+      "file": "src/components/weak-spots/weak-spot-list.tsx",
+      "source": "weakSpots",
+      "anchor": "see reason",
+      "occurrences": [
+        "data-testid={`weak-spots-filter-${value}`}",
+        "filter: 'all' | WeakSpot['module'];",
+        "import type { WeakSpot } from '@/types/weak-spot';",
+        "items: WeakSpot[];",
+        "onFilterChange: (value: 'all' | WeakSpot['module']) => void;",
+        "{item.weakSpotType}"
+      ],
+      "classification": "LEGIT_PRESENTATION",
+      "reason": "spot list + accuracy display; no claim beyond the row itself",
+      "migrationNode": "W2-WS2"
+    },
+    {
+      "id": "components-weak-spots-weak-spot-summary.weakSpots",
+      "file": "src/components/weak-spots/weak-spot-summary.tsx",
+      "source": "weakSpots",
+      "anchor": "see reason",
+      "occurrences": [
+        "export function WeakSpotSummary({ items }: { items: WeakSpot[] }) {",
+        "import type { WeakSpot } from '@/types/weak-spot';"
+      ],
+      "classification": "LEGIT_PRESENTATION",
+      "reason": "open count badge",
+      "migrationNode": "W2-WS2"
+    },
+    {
+      "id": "hooks-use-learning-workspace.records",
+      "file": "src/hooks/use-learning-workspace.ts",
+      "source": "records",
+      "anchor": "see reason",
+      "occurrences": ["records: await database.records.toArray(),"],
+      "classification": "LEGIT_ANALYTICS",
+      "reason": "workspace aggregate reads",
+      "migrationNode": "W2-CS1"
+    },
+    {
+      "id": "hooks-use-learning-workspace.sessions",
+      "file": "src/hooks/use-learning-workspace.ts",
+      "source": "sessions",
+      "anchor": "see reason",
+      "occurrences": ["sessions: await database.sessions.toArray(),"],
+      "classification": "LEGIT_ANALYTICS",
+      "reason": "workspace aggregate reads",
+      "migrationNode": "W2-CS1"
+    },
+    {
+      "id": "hooks-use-learning-workspace.weakSpots",
+      "file": "src/hooks/use-learning-workspace.ts",
+      "source": "weakSpots",
+      "anchor": "see reason",
+      "occurrences": ["weakSpots: (await database.weakSpots.toArray())"],
+      "classification": "LEGIT_CANDIDATE_SIGNAL",
+      "reason": "unresolved spots feed workspace remediation data",
+      "migrationNode": "W2-WS2"
+    },
+    {
+      "id": "hooks-use-recommendations.assessment-currentLevel",
+      "file": "src/hooks/use-recommendations.ts",
+      "source": "assessment.currentLevel",
+      "anchor": "see reason",
+      "occurrences": [
+        "[activeProviderId, providers, activeApiKey, activeHeaderKey, recommendationsCount, currentLevel],",
+        "const currentLevel = useAssessmentStore((s) => s.currentLevel);",
+        "import { useAssessmentStore } from '@/stores/assessment-store';",
+        "userLevel: currentLevel,"
+      ],
+      "classification": "LEGIT_CANDIDATE_SIGNAL",
+      "reason": "userLevel → recommendation request; advisory",
+      "migrationNode": "W2-AS1"
+    },
+    {
+      "id": "hooks-use-review-summary.records",
+      "file": "src/hooks/use-review-summary.ts",
+      "source": "records",
+      "anchor": "see reason",
+      "occurrences": [
+        "const contents = await database.contents.bulkGet([...new Set(records.map((record) => record.contentId))]);",
+        "const records = (await database.records.toArray()).filter("
+      ],
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "records due filter for review counts",
+      "migrationNode": "W2-MB1"
+    },
+    {
+      "id": "hooks-use-review-summary.fsrs",
+      "file": "src/hooks/use-review-summary.ts",
+      "source": "fsrs",
+      "anchor": "see reason",
+      "occurrences": ["(record) => (record.fsrsCard?.due ?? record.nextReview ?? Infinity) <= now,"],
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "fsrsCard.due/nextReview due filter",
+      "migrationNode": "W2-MB1"
+    },
+    {
+      "id": "hooks-use-review-summary.weakSpots",
+      "file": "src/hooks/use-review-summary.ts",
+      "source": "weakSpots",
+      "anchor": "see reason",
+      "occurrences": [
+        "const [favorites, weakSpots] = await Promise.all([database.favorites.toArray(), database.weakSpots.toArray()]);",
+        "weakSpots,"
+      ],
+      "classification": "LEGIT_PRESENTATION",
+      "reason": "open weak-spot count in summary",
+      "migrationNode": "W2-WS2"
+    },
+    {
+      "id": "lib-analytics.records",
+      "file": "src/lib/analytics.ts",
+      "source": "records",
+      "anchor": "see reason",
+      "occurrences": [
+        "const key = dateKey(r.lastPracticed);",
+        "const records = await db.records.toArray();",
+        "const records = await db.records.toArray();",
+        "const sorted = [...records].sort((a, b) => a.lastPracticed - b.lastPracticed);",
+        "if (records.length === 0) return [];",
+        "import type { LearningRecord, TypingSession } from '@/types/content';",
+        "records: LearningRecord[],"
+      ],
+      "classification": "LEGIT_ANALYTICS",
+      "reason": "record aggregates for stats",
+      "migrationNode": "W2-CS1"
+    },
+    {
+      "id": "lib-analytics.fsrs",
+      "file": "src/lib/analytics.ts",
+      "source": "fsrs",
+      "anchor": "see reason",
+      "occurrences": [
+        "const key = dateKey(r.nextReview);",
+        "export function buildReviewForecast(",
+        "if (r.nextReview && r.nextReview >= now && r.nextReview <= endTs) {",
+        "return buildReviewForecast(records, days);"
+      ],
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "buildReviewForecast over nextReview",
+      "migrationNode": "W2-MB1"
+    },
+    {
+      "id": "lib-analytics.sessions",
+      "file": "src/lib/analytics.ts",
+      "source": "sessions",
+      "anchor": "see reason",
+      "occurrences": [
+        "const completed = sessions.filter((s) => s.completed && (!module || s.module === module));",
+        "const completed = sessions.filter((s) => s.completed && s.startTime >= cutoff);",
+        "const completed = sessions.filter((s) => s.completed);",
+        "const completed = sessions.filter((s) => s.completed);",
+        "const completed = sessions.filter((s) => s.completed);",
+        "const key = dateKey(s.startTime);",
+        "const key = dateKey(s.startTime);",
+        "const key = dateKey(s.startTime);",
+        "const key = dateKey(s.startTime);",
+        "const mod = (s.module || 'write') as 'listen' | 'speak' | 'read' | 'write';",
+        "const mod = s.module || 'write';",
+        "const sessions = await db.sessions.toArray();",
+        "const sessions = await db.sessions.toArray();",
+        "const sessions = await db.sessions.where('startTime').aboveOrEqual(cutoff).toArray();",
+        "const sessions = await db.sessions.where('startTime').aboveOrEqual(cutoff).toArray();",
+        "const sessions = await db.sessions.where('startTime').aboveOrEqual(cutoff).toArray();",
+        "const sessions = await db.sessions.where('startTime').aboveOrEqual(cutoff).toArray();",
+        "const writes = sessions.filter((s) => s.completed && s.module === 'write');",
+        "entry.time += s.endTime - s.startTime;",
+        "export function buildStreakData(sessions: TypingSession[]): { current: number; longest: number; dates: string[] } {",
+        "grouped.get(key)!.push(s.accuracy);",
+        "if (s.endTime && s.startTime) {",
+        "import type { LearningRecord, TypingSession } from '@/types/content';",
+        "practiceDates.add(dateKey(s.startTime));",
+        "sessions: TypingSession[],",
+        "sessions: data.sessions,"
+      ],
+      "classification": "LEGIT_ANALYTICS",
+      "reason": "session aggregates for stats",
+      "migrationNode": "W2-CS1"
+    },
+    {
+      "id": "lib-backup.weakSpots",
+      "file": "src/lib/backup.ts",
+      "source": "weakSpots",
+      "anchor": "see reason",
+      "occurrences": ["'weakSpots',"],
+      "classification": "LEGIT_HISTORY",
+      "reason": "backup export transport",
+      "migrationNode": "W2-SY1"
+    },
+    {
+      "id": "lib-backup.pronunciationProgress",
+      "file": "src/lib/backup.ts",
+      "source": "pronunciationProgress",
+      "anchor": "see reason",
+      "occurrences": ["'pronunciationProgress',"],
+      "classification": "LEGIT_HISTORY",
+      "reason": "backup export transport",
+      "migrationNode": "W2-SY1"
+    },
+    {
+      "id": "lib-backup.learningAttempts",
+      "file": "src/lib/backup.ts",
+      "source": "learningAttempts",
+      "anchor": "see reason",
+      "occurrences": ["'learningAttempts',"],
+      "classification": "LEGIT_HISTORY",
+      "reason": "backup export transport",
+      "migrationNode": "W2-SY1"
+    },
+    {
+      "id": "lib-backup.dailyTasks",
+      "file": "src/lib/backup.ts",
+      "source": "dailyTasks",
+      "anchor": "see reason",
+      "occurrences": ["'dailyTasks',"],
+      "classification": "LEGIT_HISTORY",
+      "reason": "backup export transport",
+      "migrationNode": "W2-SY1"
+    },
+    {
+      "id": "lib-chat-analytics.records-weakness-claim",
+      "file": "src/lib/chat-analytics.ts",
+      "source": "records",
+      "anchor": "collectLearningSnapshot:lowAccuracyContent",
+      "occurrences": [
+        ".filter((r) => r.accuracy < 70 && r.attempts >= 1)",
+        ".sort((a, b) => a.accuracy - b.accuracy)",
+        "accuracy: Math.round(r.accuracy),",
+        "db.records.toArray(),"
+      ],
+      "classification": "CAPABILITY_CLAIM",
+      "reason": "records accuracy<70 → \"weaknesses\" injected into AI tutor context — capability-shaped claim from raw accuracy",
+      "migrationNode": "W2-CS1"
+    },
+    {
+      "id": "lib-chat-analytics.sessions",
+      "file": "src/lib/chat-analytics.ts",
+      "source": "sessions",
+      "anchor": "see reason",
+      "occurrences": [
+        "? Math.round(periodScored.reduce((sum, s) => sum + s.accuracy, 0) / periodScored.length)",
+        "const completed = sessions.filter((s) => s.completed);",
+        "const lastPracticed = modSessions.length > 0 ? Math.max(...modSessions.map((s) => s.endTime ?? s.startTime)) : null;",
+        "const modSessions = completed.filter((s) => (s.module || 'write') === mod);",
+        "const periodScored = periodSessions.filter((s) => (s.module || 'write') !== 'listen');",
+        "const periodSessions = completed.filter((s) => (s.endTime ?? s.startTime) >= since);",
+        "const periodWords = periodSessions.reduce((sum, s) => sum + (s.totalWords || 0), 0);",
+        "const scored = completed.filter((s) => (s.module || 'write') !== 'listen');",
+        "const totalWords = completed.reduce((sum, s) => sum + (s.totalWords || 0), 0);",
+        "const writes = completed.filter((s) => (s.module || 'write') === 'write');",
+        "db.sessions.toArray(),",
+        "modScored.length > 0 ? Math.round(modScored.reduce((sum, s) => sum + s.accuracy, 0) / modScored.length) : 0;",
+        "scored.length > 0 ? Math.round(scored.reduce((sum, s) => sum + s.accuracy, 0) / scored.length) : 0;"
+      ],
+      "classification": "LEGIT_ANALYTICS",
+      "reason": "session aggregates for tutor context",
+      "migrationNode": "W2-CS1"
+    },
+    {
+      "id": "lib-chat-analytics.assessment-currentLevel",
+      "file": "src/lib/chat-analytics.ts",
+      "source": "assessment.currentLevel",
+      "anchor": "see reason",
+      "occurrences": [
+        "cefrLevel = parsed.state?.currentLevel || null;",
+        "const assessmentData = localStorage.getItem('echotype_assessment');"
+      ],
+      "classification": "LEGIT_CANDIDATE_SIGNAL",
+      "reason": "cefrLevel → tutor context; advisory",
+      "migrationNode": "W2-AS1"
+    },
+    {
+      "id": "lib-chat-tool-executor.sessions",
+      "file": "src/lib/chat-tool-executor.ts",
+      "source": "sessions",
+      "anchor": "see reason",
+      "occurrences": [
+        ".filter((session) => session.completed)",
+        "? Math.round(scoredSessions.reduce((sum, session) => sum + session.accuracy, 0) / scoredSessions.length)",
+        "accuracy: session.accuracy,",
+        "const scoredSessions = sessions.filter((session) => session.module !== 'listen');",
+        "const words = sessions.reduce((sum, session) => sum + session.totalWords, 0);",
+        "endedAt: session.endTime ?? session.startTime,",
+        "return db.sessions",
+        "return ok(`Collected ${sessions.length} completed session(s) from today.`, { sessions });",
+        "sessions: sessions.length,"
+      ],
+      "classification": "LEGIT_ANALYTICS",
+      "reason": "stats tool reads sessions",
+      "migrationNode": "W2-CS1"
+    },
+    {
+      "id": "lib-chat-ui.sessions",
+      "file": "src/lib/chat-ui.ts",
+      "source": "sessions",
+      "anchor": "see reason",
+      "occurrences": [
+        "if ('sessions' in data && Array.isArray(data.sessions)) {",
+        "if ('sessions' in data && typeof data.sessions === 'number' && 'words' in data && typeof data.words === 'number') {",
+        "return [`Today Sessions: ${data.sessions}`, `Words: ${data.words}`, `Accuracy: ${avgAccuracy}%`].join('\\n');",
+        "return data.sessions"
+      ],
+      "classification": "LEGIT_PRESENTATION",
+      "reason": "formats tool payload into chat text",
+      "migrationNode": "W2-CS1"
+    },
+    {
+      "id": "lib-daily-plan-links.dailyPlan",
+      "file": "src/lib/daily-plan-links.ts",
+      "source": "dailyPlan",
+      "anchor": "see reason",
+      "occurrences": [
+        "export function getReviewItemHref(item: { module: PlanTask['module']; contentId?: string; bookId?: string }): string {",
+        "export function getTaskHref(task: PlanTask): string {",
+        "import type { PlanTask } from '@/stores/daily-plan-store';"
+      ],
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "PlanTask→route linking helper",
+      "migrationNode": "W2-PL1"
+    },
+    {
+      "id": "lib-daily-plan-progress.records",
+      "file": "src/lib/daily-plan-progress.ts",
+      "source": "records",
+      "anchor": "see reason",
+      "occurrences": [
+        "await database.records.put({",
+        "await database.transaction('rw', [database.contents, database.sessions, database.records], async () => {",
+        "await db.records.update(recordId, { fsrsCard: cardData, nextReview });",
+        "const attempts = (existingRecord?.attempts ?? 0) + 1;",
+        "const existingRecord = existingRecords.find(",
+        "const existingRecords = await database.records.where('contentId').equals(session.contentId).toArray();",
+        "const record = await db.records.get(recordId);",
+        "const sameDayRecords = records.filter((record) => isPracticedOnDay(record.lastPracticed, dayKey));",
+        "const { cardData, nextReview } = gradeCard(existingRecord?.fsrsCard, rating, new Date(practicedAt));",
+        "correctCount: (existingRecord?.correctCount ?? 0) + correctCount,",
+        "db.records.toArray(),",
+        "id: existingRecord?.id ?? nanoid(),",
+        "import type { ContentItem, LearningRecord, TypingSession } from '@/types/content';",
+        "mistakes: options?.mistakes ?? existingRecord?.mistakes ?? [],",
+        "options?: { mistakes?: LearningRecord['mistakes']; content?: ContentItem },",
+        "records: LearningRecord[],",
+        "records: LearningRecord[];",
+        "wpm: session.module === 'write' ? session.wpm : existingRecord?.wpm,"
+      ],
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "writer: session.accuracy → accuracyToRating → record+fsrsCard write (fact-preserving write path)",
+      "migrationNode": "W2-AT1"
+    },
+    {
+      "id": "lib-daily-plan-progress.fsrs",
+      "file": "src/lib/daily-plan-progress.ts",
+      "source": "fsrs",
+      "anchor": "see reason",
+      "occurrences": [
+        "* Update a learning record's FSRS card with a manual rating override.",
+        "// Use FSRS for scheduling",
+        "await db.records.update(recordId, { fsrsCard: cardData, nextReview });",
+        "const rating = accuracyToRating(effectiveAccuracy);",
+        "const { cardData, nextReview } = gradeCard(existingRecord?.fsrsCard, rating, new Date(practicedAt));",
+        "const { cardData, nextReview } = gradeCard(record.fsrsCard, rating, now);",
+        "fsrsCard: cardData,",
+        "import { accuracyToRating, gradeCard } from '@/lib/fsrs';",
+        "nextReview,"
+      ],
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "writer: gradeCard → fsrsCard/nextReview",
+      "migrationNode": "W2-MB1"
+    },
+    {
+      "id": "lib-daily-plan-progress.sessions",
+      "file": "src/lib/daily-plan-progress.ts",
+      "source": "sessions",
+      "anchor": "see reason",
+      "occurrences": [
+        "await database.sessions.add(session);",
+        "await database.transaction('rw', [database.contents, database.sessions, database.records], async () => {",
+        "const practicedAt = session.endTime ?? session.startTime;",
+        "const sameDaySessions = sessions.filter((session) => isPracticedOnDay(session.endTime ?? session.startTime, dayKey));",
+        "db.sessions.toArray(),",
+        "import type { ContentItem, LearningRecord, TypingSession } from '@/types/content';",
+        "session.module === 'listen' && session.correctChars === 0 && session.wrongChars === 0 ? 100 : session.accuracy;",
+        "session: TypingSession,",
+        "sessions: TypingSession[],",
+        "sessions: TypingSession[];"
+      ],
+      "classification": "LEGIT_HISTORY",
+      "reason": "writer: session row persistence",
+      "migrationNode": "W2-AT1"
+    },
+    {
+      "id": "lib-daily-plan-progress.dailyPlan",
+      "file": "src/lib/daily-plan-progress.ts",
+      "source": "dailyPlan",
+      "anchor": "see reason",
+      "occurrences": [
+        "export async function syncPlanTasksWithActivity(tasks: PlanTask[]): Promise<PlanTask[]> {",
+        "export function syncPlanTasks(tasks: PlanTask[], context: SyncContext): PlanTask[] {",
+        "import type { PlanTask } from '@/stores/daily-plan-store';",
+        "return syncPlanTasks(tasks, { contents, records, sessions });",
+        "task: PlanTask,"
+      ],
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "syncPlanTasks → task completion propagation",
+      "migrationNode": "W2-PL1"
+    },
+    {
+      "id": "lib-daily-plan.records-io",
+      "file": "src/lib/daily-plan.ts",
+      "source": "records",
+      "anchor": "generateDailyPlan:load+types",
+      "occurrences": [
+        "...moduleRecords.map((record) => record.lastPracticed),",
+        "const practicedContentIds = new Set(records.map((record) => record.contentId));",
+        "const records = await db.records.toArray();",
+        "db.records.toArray(),",
+        "if (typeof record.lastPracticed === 'number' && record.lastPracticed >= windowStart) {",
+        "import type { ContentItem, Difficulty, LearningRecord, TypingSession } from '@/types/content';",
+        "records: LearningRecord[],",
+        "records: LearningRecord[],"
+      ],
+      "classification": "LEGIT_HISTORY",
+      "reason": "type/import plumbing + db.records load + recency/practiced-set inputs",
+      "migrationNode": "W2-PL1"
+    },
+    {
+      "id": "lib-daily-plan.records-weakness-heuristic",
+      "file": "src/lib/daily-plan.ts",
+      "source": "records",
+      "anchor": "buildModulePriority:avgAccuracy-weakness",
+      "occurrences": [
+        "? moduleRecords.reduce((sum, record) => sum + record.accuracy, 0) / moduleRecords.length",
+        "const moduleRecords = records.filter((record) => record.module === module);"
+      ],
+      "classification": "CAPABILITY_CLAIM",
+      "reason": "moduleRecords avg accuracy → weakness score drives module priority — capability-shaped claim from raw accuracy",
+      "migrationNode": "W2-PL1"
+    },
+    {
+      "id": "lib-daily-plan.sessions",
+      "file": "src/lib/daily-plan.ts",
+      "source": "sessions",
+      "anchor": "see reason",
+      "occurrences": [
+        "const moduleSessions = sessions.filter((session) => session.module === module);",
+        "const practiceCount = sessions.filter(",
+        "const practiceCount = sessions.filter((session) => session.contentId === article.id).length;",
+        "db.sessions.toArray(),",
+        "function getSessionTimestamp(session: TypingSession): number {",
+        "import type { ContentItem, Difficulty, LearningRecord, TypingSession } from '@/types/content';",
+        "return session.endTime ?? session.startTime;",
+        "sessions: TypingSession[],",
+        "sessions: TypingSession[],",
+        "sessions: TypingSession[],",
+        "sessions: TypingSession[],",
+        "sessions: TypingSession[],"
+      ],
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "sessions as plan-task completion evidence",
+      "migrationNode": "W2-PL1"
+    },
+    {
+      "id": "lib-daily-plan.assessment-currentLevel-advisory-difficulty",
+      "file": "src/lib/daily-plan.ts",
+      "source": "assessment.currentLevel",
+      "anchor": "generateDailyPlan:levelToDifficulty",
+      "occurrences": [
+        "const targetDifficulty = levelToDifficulty(options.currentLevel);",
+        "currentLevel?: CEFRLevel | null;",
+        "function levelToDifficulty(level?: CEFRLevel | null): Difficulty | undefined {",
+        "import type { CEFRLevel } from '@/stores/assessment-store';"
+      ],
+      "classification": "LEGIT_CANDIDATE_SIGNAL",
+      "reason": "TRANSITIONAL advisory candidate: currentLevel → levelToDifficulty feeds ongoing daily-plan difficulty targeting. Permitted today as placement-advisory input; does NOT survive final planner authority (W2-PL1) unless the W2-00R2 placement boundary explicitly justifies it. Not a capability truth source.",
+      "migrationNode": "W2-AS1",
+      "transitional": true
+    },
+    {
+      "id": "lib-daily-plan.dailyPlan",
+      "file": "src/lib/daily-plan.ts",
+      "source": "dailyPlan",
+      "anchor": "see reason",
+      "occurrences": [
+        "): Record<PlanTask['module'], number> {",
+        "): Set<PlanTask['module']> {",
+        "const MODULE_BASE_BONUS: Record<PlanTask['module'], number> = {",
+        "const MODULE_ORDER: PlanTask['module'][] = ['write', 'read', 'speak', 'listen'];",
+        "const modules = new Set<PlanTask['module']>();",
+        "const stats = MODULE_ORDER.reduce<Record<PlanTask['module'], ModuleStats>>(",
+        "existingModules: Set<PlanTask['module']>,",
+        "export async function generateDailyPlan(goal: DailyGoal, options: DailyPlanOptions = {}): Promise<PlanTask[]> {",
+        "export async function getDailyPlanSignature(): Promise<string> {",
+        "function compareTasksForDate(a: PlanTask, b: PlanTask, dateKey: string): number {",
+        "function getTaskKey(task: PlanTask): string {",
+        "import type { DailyGoal, PlanTask } from '@/stores/daily-plan-store';",
+        "new Set<PlanTask['module']>(),",
+        "return MODULE_ORDER.reduce<Record<PlanTask['module'], number>>(",
+        "task: PlanTask;",
+        "weeklyMissingModules: Set<PlanTask['module']>,"
+      ],
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "generateDailyPlan produces PlanTask[]",
+      "migrationNode": "W2-PL1"
+    },
+    {
+      "id": "lib-daily-task-planner.fsrs",
+      "file": "src/lib/daily-task-planner.ts",
+      "source": "fsrs",
+      "anchor": "see reason",
+      "occurrences": [
+        "const time = evidence.favorites?.find((item) => item.id === task.sourceId)?.fsrsCard?.last_review;",
+        "const time = record?.fsrsCard?.last_review;",
+        "const time = record?.fsrsCard?.last_review;",
+        "favorites?: { id: string; updatedAt?: number; fsrsCard?: { last_review?: number } }[];",
+        "records?: { id: string; contentId: string; module: string; fsrsCard?: { last_review?: number } }[];"
+      ],
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "fsrsCard.last_review → task-completion detection",
+      "migrationNode": "W2-PL1"
+    },
+    {
+      "id": "lib-daily-task-planner.sessions",
+      "file": "src/lib/daily-task-planner.ts",
+      "source": "sessions",
+      "anchor": "see reason",
+      "occurrences": [
+        "const time = session.endTime ?? session.startTime;",
+        "const time = session.endTime ?? session.startTime;",
+        "if (session.completed && task.contentIds?.includes(session.contentId) && fresh(time))",
+        "session.completed &&"
+      ],
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "sessions as task-completion evidence",
+      "migrationNode": "W2-PL1"
+    },
+    {
+      "id": "lib-daily-task-planner.weakSpots",
+      "file": "src/lib/daily-task-planner.ts",
+      "source": "weakSpots",
+      "anchor": "see reason",
+      "occurrences": [
+        "attempt.sourceWeakSpotId === task.sourceId &&",
+        "weakSpots?: { id: string; resolved: boolean; lastSeenAt: number }[];"
+      ],
+      "classification": "LEGIT_CANDIDATE_SIGNAL",
+      "reason": "weak-spot task generation + resolution evidence",
+      "migrationNode": "W2-WS2"
+    },
+    {
+      "id": "lib-daily-task-planner.pronunciationProgress",
+      "file": "src/lib/daily-task-planner.ts",
+      "source": "pronunciationProgress",
+      "anchor": "see reason",
+      "occurrences": ["for (const item of evidence.pronunciation ?? []) {"],
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "pronunciation task-completion evidence",
+      "migrationNode": "W2-PR1"
+    },
+    {
+      "id": "lib-daily-task-planner.learningAttempts",
+      "file": "src/lib/daily-task-planner.ts",
+      "source": "learningAttempts",
+      "anchor": "see reason",
+      "occurrences": [
+        "!!attempt.feedback &&",
+        "(attempt): attempt is LearningAttempt =>",
+        "? attempt.cycle?.referenceAttemptId",
+        "? attempt.parentAttemptId",
+        "Partial<Omit<LearningAttempt, 'status'>> & { status: string })[];",
+        "['submitted', 'revised'].includes(attempt.status) &&",
+        "['submitted', 'revised'].includes(attempt.status) &&",
+        "['submitted', 'revised'].includes(attempt.status),",
+        "attempt.answer.trim() &&",
+        "attempt.answer.trim() &&",
+        "attempt.createdAt,",
+        "attempt.lessonId === task.lessonId &&",
+        "attempt.lessonId === task.lessonId &&",
+        "attempt.sourceWeakSpotId === task.sourceId &&",
+        "attempts.filter((item) => item.id !== attempt.id),",
+        "attempts?: (Pick<LearningAttempt, 'id' | 'lessonId' | 'createdAt' | 'answer'> &",
+        "const attempts = (evidence.attempts ?? []).filter(",
+        "const cycle = deriveTextCycle(task.lessonId, task.sourceText, attempts, attempt.createdAt);",
+        "deriveTextCycle(",
+        "for (const attempt of evidence.attempts ?? []) {",
+        "for (const attempt of evidence.attempts ?? []) {",
+        "fresh(attempt.createdAt)",
+        "fresh(attempt.createdAt)",
+        "if (!fresh(attempt.createdAt) || (task.dueAt !== undefined && attempt.createdAt < task.dueAt)) continue;",
+        "if (evidenceId === attempt.id && reference === task.referenceAttemptId)",
+        "import type { LearningAttempt } from '@/types/learning-activity';",
+        "import { deriveTextCycle } from './text-learning-cycle';",
+        "options.push({ id: `attempt:${attempt.id}`, time: attempt.createdAt });",
+        "options.push({ id: `attempt:${attempt.id}`, time: attempt.createdAt });",
+        "options.push({ id: `attempt:${attempt.id}`, time: attempt.createdAt });"
+      ],
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "attempts as task-completion evidence",
+      "migrationNode": "W2-PL1"
+    },
+    {
+      "id": "lib-daily-task-planner.dailyTasks",
+      "file": "src/lib/daily-task-planner.ts",
+      "source": "dailyTasks",
+      "anchor": "see reason",
+      "occurrences": [
+        "(task) => task.stage === 'recall' || (!task.vocabularyMode && (task.kind === 'review' || task.kind === 'favorite')),",
+        "(task): task is DailyTask => !!task,",
+        "): DailyTask {",
+        "): DailyTask[] {",
+        ".filter((task) => task.kind !== 'settings' && task.dateKey >= dateKey)",
+        "candidates: DailyTask[],",
+        "const add = (candidates: DailyTask[], allowance: number) => {",
+        "const result: DailyTask[] = [];",
+        "const result: DailyTask[] = [];",
+        "const review = tasks.find((task) => task.kind === 'review' || task.kind === 'favorite');",
+        "export function applyDailyEvidence(tasks: DailyTask[], evidence: DailyEvidence, now: number): DailyTask[] {",
+        "export function reconcileDailyTasks(",
+        "export function remainingDailyMinutes(tasks: DailyTask[], date: string, budget: number) {",
+        "export function selectBudgetTasks(tasks: DailyTask[], minutes: number, now = Date.now()): DailyTask[] {",
+        "export function transitionDailyTask(",
+        "function selectBalancedBudgetTasks(tasks: DailyTask[], budget: number): DailyTask[] {",
+        "function taskTargetKey(task: DailyTask) {",
+        "if (task.kind === 'course' && !task.stage && !task.vocabularyMode) {",
+        "if (task.kind === 'course' && task.stage && task.lessonId && task.sourceText) {",
+        "if (task.kind === 'favorite') {",
+        "if (task.kind === 'pronunciation') {",
+        "if (task.kind === 'review' && !task.vocabularyMode) {",
+        "if (task.kind === 'settings' || task.dateKey > dateKey || task.status === 'completed' || task.status === 'skipped')",
+        "if (task.kind === 'settings' || task.superseded || ['completed', 'skipped', 'deferred'].includes(task.status))",
+        "if (task.kind === 'weak-spot') {",
+        "if (task.status === 'completed' || task.kind === 'settings' || task.superseded) return task;",
+        "import type { DailyTask } from '@/types/daily-task';",
+        "return JSON.stringify([task.kind, task.sourceId, task.stage, task.sourceText, task.referenceAttemptId, task.dueAt]);",
+        "saved: DailyTask[],",
+        "task.kind !== 'settings' &&",
+        "task.kind === 'course' &&",
+        "task: DailyTask,",
+        "tasks.find((task) => task.kind === 'course' && !task.vocabularyMode) ??",
+        "tasks.find((task) => task.kind === 'course');"
+      ],
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "dailyTasks planner engine (executable cache)",
+      "migrationNode": "W2-PL1"
+    },
+    {
+      "id": "lib-daily-workspace-progress.sessions",
+      "file": "src/lib/daily-workspace-progress.ts",
+      "source": "sessions",
+      "anchor": "see reason",
+      "occurrences": [
+        "(session) => session.completed && toLocalDateKey(session.endTime ?? session.startTime) === day,",
+        "const completed = sessions.filter(",
+        "export function dailyWorkspaceProgress(sessions: TypingSession[], contents: ContentItem[], now = Date.now()) {",
+        "import type { ContentItem, TypingSession } from '@/types/content';"
+      ],
+      "classification": "LEGIT_ANALYTICS",
+      "reason": "completed-today → words/minutes progress",
+      "migrationNode": "W2-CS1"
+    },
+    {
+      "id": "lib-db.records",
+      "file": "src/lib/db.ts",
+      "source": "records",
+      "anchor": "see reason",
+      "occurrences": [
+        "import type { BookItem, CollectionItem, ContentItem, LearningRecord, TypingSession } from '@/types/content';",
+        "record.fsrsCard = migrateToFSRS(record.nextReview, record.lastPracticed, record.attempts);",
+        "record.updatedAt = record.lastPracticed ?? Date.now();",
+        "records!: Table<LearningRecord>;",
+        "this.records.hook('creating', (_primKey, obj) => {",
+        "this.records.hook('updating', (modifications) => {"
+      ],
+      "classification": "LEGIT_HISTORY",
+      "reason": "Dexie schema + migrations",
+      "migrationNode": null
+    },
+    {
+      "id": "lib-db.fsrs",
+      "file": "src/lib/db.ts",
+      "source": "fsrs",
+      "anchor": "see reason",
+      "occurrences": [
+        "'id, normalizedText, type, folderId, sourceContentId, targetLang, nextReview, autoCollected, createdAt, updatedAt',",
+        "'id, normalizedText, type, folderId, sourceContentId, targetLang, nextReview, autoCollected, createdAt, updatedAt',",
+        "'id, normalizedText, type, folderId, sourceContentId, targetLang, nextReview, autoCollected, createdAt, updatedAt',",
+        "'id, normalizedText, type, folderId, sourceContentId, targetLang, nextReview, autoCollected, createdAt, updatedAt',",
+        "'id, normalizedText, type, folderId, sourceContentId, targetLang, nextReview, autoCollected, createdAt, updatedAt',",
+        "'id, normalizedText, type, folderId, sourceContentId, targetLang, nextReview, autoCollected, createdAt, updatedAt',",
+        "'id, normalizedText, type, folderId, sourceContentId, targetLang, nextReview, autoCollected, createdAt, updatedAt',",
+        "'id, normalizedText, type, folderId, sourceContentId, targetLang, nextReview, autoCollected, createdAt, updatedAt',",
+        "if (!record.fsrsCard) {",
+        "record.fsrsCard = migrateToFSRS(record.nextReview, record.lastPracticed, record.attempts);",
+        "records: 'id, contentId, module, lastPracticed, nextReview',",
+        "records: 'id, contentId, module, lastPracticed, nextReview',",
+        "records: 'id, contentId, module, lastPracticed, nextReview',",
+        "records: 'id, contentId, module, lastPracticed, nextReview',",
+        "records: 'id, contentId, module, lastPracticed, nextReview',",
+        "records: 'id, contentId, module, lastPracticed, nextReview',",
+        "records: 'id, contentId, module, lastPracticed, nextReview',",
+        "records: 'id, contentId, module, lastPracticed, nextReview, updatedAt',",
+        "records: 'id, contentId, module, lastPracticed, nextReview, updatedAt',",
+        "records: 'id, contentId, module, lastPracticed, nextReview, updatedAt',",
+        "records: 'id, contentId, module, lastPracticed, nextReview, updatedAt',",
+        "records: 'id, contentId, module, lastPracticed, nextReview, updatedAt',",
+        "records: 'id, contentId, module, lastPracticed, nextReview, updatedAt',",
+        "records: 'id, contentId, module, lastPracticed, nextReview, updatedAt',",
+        "records: 'id, contentId, module, lastPracticed, nextReview, updatedAt',",
+        "records: 'id, contentId, module, lastPracticed, nextReview, updatedAt',"
+      ],
+      "classification": "LEGIT_HISTORY",
+      "reason": "schema index declarations",
+      "migrationNode": null
+    },
+    {
+      "id": "lib-db.sessions",
+      "file": "src/lib/db.ts",
+      "source": "sessions",
+      "anchor": "see reason",
+      "occurrences": [
+        "import type { BookItem, CollectionItem, ContentItem, LearningRecord, TypingSession } from '@/types/content';",
+        "sessions!: Table<TypingSession>;"
+      ],
+      "classification": "LEGIT_HISTORY",
+      "reason": "Dexie schema + migrations",
+      "migrationNode": null
+    },
+    {
+      "id": "lib-db.weakSpots",
+      "file": "src/lib/db.ts",
+      "source": "weakSpots",
+      "anchor": "see reason",
+      "occurrences": [
+        "for (const name of ['records', 'sessions', 'favoriteFolders', 'books', 'collections', 'weakSpots']) {",
+        "for (const name of ['records', 'sessions', 'favoriteFolders', 'books', 'collections', 'weakSpots']) {",
+        "import type { WeakSpot } from '@/types/weak-spot';",
+        "weakSpots!: Table<WeakSpot>;",
+        "weakSpots: 'id, module, weakSpotType, normalizedText, lastSeenAt, resolved, [module+weakSpotType+normalizedText]',",
+        "weakSpots: 'id, module, weakSpotType, normalizedText, lastSeenAt, resolved, [module+weakSpotType+normalizedText]',",
+        "weakSpots: 'id, module, weakSpotType, normalizedText, lastSeenAt, resolved, [module+weakSpotType+normalizedText]',",
+        "weakSpots: 'id, module, weakSpotType, normalizedText, lastSeenAt, resolved, [module+weakSpotType+normalizedText]',"
+      ],
+      "classification": "LEGIT_HISTORY",
+      "reason": "Dexie schema + migrations",
+      "migrationNode": null
+    },
+    {
+      "id": "lib-db.pronunciationProgress",
+      "file": "src/lib/db.ts",
+      "source": "pronunciationProgress",
+      "anchor": "see reason",
+      "occurrences": [
+        "import type { PronunciationProgress } from '@/types/pronunciation';",
+        "pronunciationProgress!: Table<PronunciationProgress>;",
+        "pronunciationProgress: 'id, updatedAt',"
+      ],
+      "classification": "LEGIT_HISTORY",
+      "reason": "Dexie schema + migrations",
+      "migrationNode": null
+    },
+    {
+      "id": "lib-db.learningAttempts",
+      "file": "src/lib/db.ts",
+      "source": "learningAttempts",
+      "anchor": "see reason",
+      "occurrences": [
+        "import type { LearningAttempt } from '@/types/learning-activity';",
+        "learningAttempts!: Table<LearningAttempt>;",
+        "learningAttempts: 'id, lessonId, unitId, activity, createdAt, updatedAt, parentAttemptId',"
+      ],
+      "classification": "LEGIT_HISTORY",
+      "reason": "Dexie schema + migrations",
+      "migrationNode": null
+    },
+    {
+      "id": "lib-db.dailyTasks",
+      "file": "src/lib/db.ts",
+      "source": "dailyTasks",
+      "anchor": "see reason",
+      "occurrences": [
+        "dailyTasks!: Table<DailyTask>;",
+        "dailyTasks: 'id, dateKey, kind, status, updatedAt',",
+        "import type { DailyTask } from '@/types/daily-task';"
+      ],
+      "classification": "LEGIT_HISTORY",
+      "reason": "Dexie schema + migrations",
+      "migrationNode": null
+    },
+    {
+      "id": "lib-fsrs.fsrs",
+      "file": "src/lib/fsrs.ts",
+      "source": "fsrs",
+      "anchor": "see reason",
+      "occurrences": [
+        "): Record<Rating, { nextReview: number; interval: string }> {",
+        "): { cardData: FSRSCardData; nextReview: number } {",
+        "* Build an FSRSCardData for an existing record that was created before FSRS.",
+        "/** Create a brand-new FSRS card (New state). */",
+        "/** Map an accuracy percentage (0-100) to an FSRS Rating. */",
+        "// ─── FSRS Scheduler Singleton ────────────────────────────────────────────────",
+        "cardData: FSRSCardData | undefined,",
+        "cardData: FSRSCardData | undefined,",
+        "const card = cardData ? dataToCard(cardData) : createNewCard(now);",
+        "const card = cardData ? dataToCard(cardData) : createNewCard(now);",
+        "const preview = {} as Record<Rating, { nextReview: number; interval: string }>;",
+        "const updated = cardToData(next.card);",
+        "due: nextReview ?? now,",
+        "export function accuracyToRating(accuracy: number): Rating {",
+        "export function cardToData(card: Card): FSRSCardData {",
+        "export function createNewCard(now: Date = new Date()): Card {",
+        "export function dataToCard(data: FSRSCardData): Card {",
+        "export function gradeCard(",
+        "export function migrateToFSRS(nextReview: number | undefined, lastPracticed: number, attempts: number): FSRSCardData {",
+        "export function previewRatings(",
+        "export interface FSRSCardData {",
+        "for (const r of [Rating.Again, Rating.Hard, Rating.Good, Rating.Easy]) {",
+        "if (accuracy < 50) return Rating.Again;",
+        "if (accuracy < 70) return Rating.Hard;",
+        "if (accuracy < 90) return Rating.Good;",
+        "last_review: card.last_review ? new Date(card.last_review).getTime() : Date.now(),",
+        "last_review: new Date(data.last_review),",
+        "last_review: now,",
+        "last_review: number; // timestamp ms",
+        "nextReview && lastPracticed ? Math.max(1, (nextReview - lastPracticed) / (24 * 60 * 60 * 1000)) : 1;",
+        "nextReview: due,",
+        "return Rating.Easy;",
+        "return { cardData: updated, nextReview: updated.due };"
+      ],
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "FSRS algorithm implementation — scheduling authority",
+      "migrationNode": "W2-MB1"
+    },
+    {
+      "id": "lib-import-schedule.records",
+      "file": "src/lib/import-schedule.ts",
+      "source": "records",
+      "anchor": "see reason",
+      "occurrences": [
+        "? buildVocabularyTasks(contents, await owner.records.toArray(), attempts, 100000, Date.now())[0]",
+        "[owner.contents, owner.dailyTasks, owner.learningAttempts, owner.records],"
+      ],
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "owner.records → import-task scheduling inputs",
+      "migrationNode": "W2-PL1"
+    },
+    {
+      "id": "lib-import-schedule.learningAttempts",
+      "file": "src/lib/import-schedule.ts",
+      "source": "learningAttempts",
+      "anchor": "see reason",
+      "occurrences": [
+        "[owner.contents, owner.dailyTasks, owner.learningAttempts, owner.records],",
+        "const attempts = await owner.learningAttempts.toArray();"
+      ],
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "attempts → import-task generation",
+      "migrationNode": "W2-PL1"
+    },
+    {
+      "id": "lib-import-schedule.dailyTasks",
+      "file": "src/lib/import-schedule.ts",
+      "source": "dailyTasks",
+      "anchor": "see reason",
+      "occurrences": [
+        "[owner.contents, owner.dailyTasks, owner.learningAttempts, owner.records],",
+        "await owner.dailyTasks.add(task);",
+        "const existing = (await owner.dailyTasks.toArray()).find("
+      ],
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "writes import dailyTasks rows",
+      "migrationNode": "W2-PL1"
+    },
+    {
+      "id": "lib-ios-native-qa.records",
+      "file": "src/lib/ios-native-qa.ts",
+      "source": "records",
+      "anchor": "see reason",
+      "occurrences": [
+        "await db.records.clear();",
+        "await db.records.put(record);",
+        "const record: LearningRecord = {",
+        "import type { BookItem, CollectionItem, ContentItem, LearningRecord, TypingSession } from '@/types/content';"
+      ],
+      "classification": "LEGIT_HISTORY",
+      "reason": "QA fixture seeding (test-only data)",
+      "migrationNode": null
+    },
+    {
+      "id": "lib-ios-native-qa.fsrs",
+      "file": "src/lib/ios-native-qa.ts",
+      "source": "fsrs",
+      "anchor": "see reason",
+      "occurrences": [
+        "const fsrsCard = cardToData(createNewCard(new Date(due)));",
+        "const fsrsCard = cardToData(createNewCard(new Date(due)));",
+        "fsrsCard,",
+        "fsrsCard,",
+        "fsrsCard.due = due;",
+        "fsrsCard.due = due;",
+        "import { cardToData, createNewCard } from '@/lib/fsrs';",
+        "nextReview: due,",
+        "nextReview: due,"
+      ],
+      "classification": "LEGIT_HISTORY",
+      "reason": "QA fixture seeding (test-only data)",
+      "migrationNode": null
+    },
+    {
+      "id": "lib-ios-native-qa.sessions",
+      "file": "src/lib/ios-native-qa.ts",
+      "source": "sessions",
+      "anchor": "see reason",
+      "occurrences": [
+        "await db.sessions.bulkPut(sessions);",
+        "await db.sessions.clear();",
+        "const sessions: TypingSession[] = [",
+        "import type { BookItem, CollectionItem, ContentItem, LearningRecord, TypingSession } from '@/types/content';"
+      ],
+      "classification": "LEGIT_HISTORY",
+      "reason": "QA fixture seeding (test-only data)",
+      "migrationNode": null
+    },
+    {
+      "id": "lib-ios-native-qa.weakSpots",
+      "file": "src/lib/ios-native-qa.ts",
+      "source": "weakSpots",
+      "anchor": "see reason",
+      "occurrences": [
+        "await db.weakSpots.bulkPut([",
+        "await db.weakSpots.clear();",
+        "case 'weak-spots-rich':",
+        "case 'weak-spots-rich':",
+        "weakSpotType: 'dictation-sentence',",
+        "weakSpotType: 'pronunciation-phrase',",
+        "| 'weak-spots-rich'"
+      ],
+      "classification": "LEGIT_HISTORY",
+      "reason": "QA fixture seeding (test-only data)",
+      "migrationNode": null
+    },
+    {
+      "id": "lib-learning-activity-persistence.learningAttempts",
+      "file": "src/lib/learning-activity-persistence.ts",
+      "source": "learningAttempts",
+      "anchor": "see reason",
+      "occurrences": [
+        "attempt: LearningAttempt,",
+        "await database.learningAttempts.add(attempt);",
+        "await database.transaction('rw', database.learningAttempts, database.mediaBlobs, async () => {",
+        "const attempts = await database.learningAttempts.toArray();",
+        "const error = validateTextCycleAttempt(attempt, attempts);",
+        "createdAt: attempt.createdAt,",
+        "database: Dexie & { learningAttempts: Table<LearningAttempt>; mediaBlobs: Table<MediaBlobEntry> },",
+        "export async function persistLearningAttempt(",
+        "if (attempt.cycle) {",
+        "import type { LearningAttempt } from '@/types/learning-activity';",
+        "import { validateTextCycleAttempt } from './text-learning-cycle';"
+      ],
+      "classification": "LEGIT_HISTORY",
+      "reason": "writer: atomic learningAttempts + mediaBlobs commit",
+      "migrationNode": "W2-AT1"
+    },
+    {
+      "id": "lib-learning-activity.weakSpots",
+      "file": "src/lib/learning-activity.ts",
+      "source": "weakSpots",
+      "anchor": "see reason",
+      "occurrences": [
+        "const own = attempts.filter((item) => item.sourceWeakSpotId === weakSpotId && item.createdAt > lastSeenAt);",
+        "export function canResolveTransfer(weakSpotId: string, lastSeenAt: number, attempts: LearningAttempt[]): boolean {",
+        "sourceWeakSpotId: input.sourceWeakSpotId,",
+        "| 'sourceWeakSpotId'"
+      ],
+      "classification": "LEGIT_HISTORY",
+      "reason": "WeakSpot linkage types in attempt model",
+      "migrationNode": "W2-WS2"
+    },
+    {
+      "id": "lib-learning-activity.learningAttempts",
+      "file": "src/lib/learning-activity.ts",
+      "source": "learningAttempts",
+      "anchor": "see reason",
+      "occurrences": [
+        ": parent?.answer !== attempt.answer;",
+        "LearningAttempt,",
+        "LearningAttempt,",
+        "const own = attempts.filter((item) => item.lessonId === lessonId);",
+        "const own = attempts.filter((item) => item.sourceWeakSpotId === weakSpotId && item.createdAt > lastSeenAt);",
+        "const parent = attempts.find((item) => item.id === attempt.parentAttemptId);",
+        "export function canResolveTransfer(weakSpotId: string, lastSeenAt: number, attempts: LearningAttempt[]): boolean {",
+        "export function createLearningAttempt(input: AttemptInput, now = Date.now()): LearningAttempt {",
+        "export function workshopProgress(lessonId: string, attempts: LearningAttempt[]) {",
+        "function isGenuineRevision(attempt: LearningAttempt, attempts: LearningAttempt[]): boolean {",
+        "import type { LearningActivity, LearningAttempt } from '@/types/learning-activity';",
+        "parent.createdAt <= attempt.createdAt &&",
+        "parent.lessonId === attempt.lessonId &&"
+      ],
+      "classification": "LEGIT_HISTORY",
+      "reason": "createLearningAttempt factory",
+      "migrationNode": "W2-AT1"
+    },
+    {
+      "id": "lib-learning-goals.assessment-currentLevel",
+      "file": "src/lib/learning-goals.ts",
+      "source": "assessment.currentLevel",
+      "anchor": "see reason",
+      "occurrences": [
+        "export function buildDailyPlanGoalExplanation(goal: LearningGoal | null | undefined, level?: CEFRLevel | null) {",
+        "import type { CEFRLevel } from '@/stores/assessment-store';"
+      ],
+      "classification": "LEGIT_HISTORY",
+      "reason": "CEFRLevel type import only",
+      "migrationNode": "W2-AS1"
+    },
+    {
+      "id": "lib-learning-navigation.weakSpots",
+      "file": "src/lib/learning-navigation.ts",
+      "source": "weakSpots",
+      "anchor": "see reason",
+      "occurrences": [
+        "if (['/review', '/favorites/review', '/weak-spots'].some((root) => withinRoute(path, root))) return 'review';"
+      ],
+      "classification": "LEGIT_PRESENTATION",
+      "reason": "navigation hrefs/labels to weak-spots",
+      "migrationNode": "W2-WS2"
+    },
+    {
+      "id": "lib-learning-units.sessions",
+      "file": "src/lib/learning-units.ts",
+      "source": "sessions",
+      "anchor": "see reason",
+      "occurrences": [
+        "completed: steps.filter((s) => s.completed).length,",
+        "const evidence = new Set(sessions.filter((s) => s.completed).map((s) => `${s.contentId}:${s.module}`));",
+        "export function lessonProgress(lesson: Lesson, sessions: TypingSession[]) {",
+        "import type { BookItem, CollectionItem, ContentItem, Module, TypingSession } from '@/types/content';",
+        "next: steps.find((s) => !s.completed),"
+      ],
+      "classification": "LEGIT_PRESENTATION",
+      "reason": "lessonProgress — sessions.completed → step completion",
+      "migrationNode": "W2-CS1"
+    },
+    {
+      "id": "lib-levenshtein.records",
+      "file": "src/lib/levenshtein.ts",
+      "source": "records",
+      "anchor": "levenshtein:word-match-counts",
+      "occurrences": [
+        "const close = results.filter((r) => r.accuracy === 'close').length;",
+        "const correct = results.filter((r) => r.accuracy === 'correct').length;",
+        "const extra = results.filter((r) => r.accuracy === 'extra').length;",
+        "const missing = results.filter((r) => r.accuracy === 'missing').length;",
+        "const total = results.filter((r) => r.accuracy !== 'extra').length;",
+        "const wrong = results.filter((r) => r.accuracy === 'wrong').length;"
+      ],
+      "classification": "LEGIT_PRESENTATION",
+      "reason": "word-match categorical counts (correct/close/wrong/missing/extra) — NOT the records table",
+      "migrationNode": null
+    },
+    {
+      "id": "lib-pronunciation-ai-fallback.records",
+      "file": "src/lib/pronunciation/ai-fallback.ts",
+      "source": "records",
+      "anchor": "ai-fallback:word-match-scoring",
+      "occurrences": [
+        ".filter((r) => r.accuracy !== 'extra')",
+        ": r.accuracy === 'close'",
+        ": r.accuracy === 'missing'",
+        "const close = wordResults.filter((r) => r.accuracy === 'close').length;",
+        "const correct = wordResults.filter((r) => r.accuracy === 'correct').length;",
+        "const missing = wordResults.filter((r) => r.accuracy === 'missing');",
+        "const total = wordResults.filter((r) => r.accuracy !== 'extra').length;",
+        "const wrong = wordResults.filter((r) => r.accuracy === 'wrong');",
+        "r.accuracy === 'correct'"
+      ],
+      "classification": "LEGIT_PRESENTATION",
+      "reason": "wordResults r.accuracy categorical scoring — NOT the records table",
+      "migrationNode": "W2-PR1"
+    },
+    {
+      "id": "lib-pronunciation-progression.records",
+      "file": "src/lib/pronunciation-progression.ts",
+      "source": "records",
+      "anchor": "see reason",
+      "occurrences": [
+        ": records.length",
+        ": records.some((p) => p.kind === 'listening')",
+        ": records.some((p) => p.kind === 'recognition')",
+        "const practice = records.filter((p) => p.kind === 'recording' || p.kind === 'speechsuper');",
+        "const status: SoundEvidenceStatus = records.some((p) => p.kind === 'speechsuper')",
+        "recent: records.slice(0, 3),"
+      ],
+      "classification": "LEGIT_PRESENTATION",
+      "reason": "local `records` var holds PronunciationProgress rows — not the records table",
+      "migrationNode": "W2-PR1"
+    },
+    {
+      "id": "lib-pronunciation-progression.pronunciationProgress",
+      "file": "src/lib/pronunciation-progression.ts",
+      "source": "pronunciationProgress",
+      "anchor": "see reason",
+      "occurrences": [
+        "export function getPronunciationProgression(progress: PronunciationProgress[], selectedId: string) {",
+        "import type { PronunciationProgress } from '@/types/pronunciation';"
+      ],
+      "classification": "LEGIT_PRESENTATION",
+      "reason": "progress rows → SoundEvidenceStatus derivation",
+      "migrationNode": "W2-PR1"
+    },
+    {
+      "id": "lib-review-summary.records",
+      "file": "src/lib/review-summary.ts",
+      "source": "records",
+      "anchor": "see reason",
+      "occurrences": [
+        "import type { ContentItem, LearningRecord } from '@/types/content';",
+        "records: LearningRecord[],"
+      ],
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "records due filter for review counts",
+      "migrationNode": "W2-MB1"
+    },
+    {
+      "id": "lib-review-summary.fsrs",
+      "file": "src/lib/review-summary.ts",
+      "source": "fsrs",
+      "anchor": "see reason",
+      "occurrences": ["notes: favorites.filter((f) => f.nextReview != null && f.nextReview <= now).length,"],
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "fsrsCard.due/nextReview due filter",
+      "migrationNode": "W2-MB1"
+    },
+    {
+      "id": "lib-review-summary.weakSpots",
+      "file": "src/lib/review-summary.ts",
+      "source": "weakSpots",
+      "anchor": "see reason",
+      "occurrences": ["weakSpots: weakSpots.filter((w) => !w.resolved).length,", "weakSpots: { resolved: boolean }[],"],
+      "classification": "LEGIT_PRESENTATION",
+      "reason": "open weak-spot count",
+      "migrationNode": "W2-WS2"
+    },
+    {
+      "id": "lib-sync-engine.weakSpots",
+      "file": "src/lib/sync/engine.ts",
+      "source": "weakSpots",
+      "anchor": "see reason",
+      "occurrences": ["'weakSpots',"],
+      "classification": "LEGIT_HISTORY",
+      "reason": "raw-mirror sync transport",
+      "migrationNode": "W2-SY1"
+    },
+    {
+      "id": "lib-sync-engine.pronunciationProgress",
+      "file": "src/lib/sync/engine.ts",
+      "source": "pronunciationProgress",
+      "anchor": "see reason",
+      "occurrences": ["'pronunciationProgress',"],
+      "classification": "LEGIT_HISTORY",
+      "reason": "raw-mirror sync transport",
+      "migrationNode": "W2-SY1"
+    },
+    {
+      "id": "lib-sync-engine.learningAttempts",
+      "file": "src/lib/sync/engine.ts",
+      "source": "learningAttempts",
+      "anchor": "see reason",
+      "occurrences": ["'learningAttempts',"],
+      "classification": "LEGIT_HISTORY",
+      "reason": "raw-mirror sync transport",
+      "migrationNode": "W2-SY1"
+    },
+    {
+      "id": "lib-sync-engine.dailyTasks",
+      "file": "src/lib/sync/engine.ts",
+      "source": "dailyTasks",
+      "anchor": "see reason",
+      "occurrences": ["'dailyTasks',"],
+      "classification": "LEGIT_HISTORY",
+      "reason": "raw-mirror sync transport",
+      "migrationNode": "W2-SY1"
+    },
+    {
+      "id": "lib-sync-mapper.records",
+      "file": "src/lib/sync/mapper.ts",
+      "source": "records",
+      "anchor": "see reason",
+      "occurrences": [
+        "accuracy: record.accuracy,",
+        "attempts: record.attempts,",
+        "export function fromSupabaseRecord(row: Record<string, unknown>): LearningRecord {",
+        "export function toSupabaseRecord(record: LearningRecord, userId: string): Record<string, unknown> {",
+        "fsrsCard: (row.fsrs_card as LearningRecord['fsrsCard']) ?? undefined,",
+        "import type { ContentItem, LearningRecord, TypingSession } from '@/types/content';",
+        "last_practiced: new Date(record.lastPracticed).toISOString(),",
+        "mistakes: (row.mistakes as LearningRecord['mistakes']) ?? [],",
+        "mistakes: record.mistakes ?? [],",
+        "module: row.module as LearningRecord['module'],",
+        "updated_at: new Date(record.updatedAt ?? record.lastPracticed).toISOString(),"
+      ],
+      "classification": "LEGIT_HISTORY",
+      "reason": "mapped sync transport",
+      "migrationNode": "W2-SY1"
+    },
+    {
+      "id": "lib-sync-mapper.fsrs",
+      "file": "src/lib/sync/mapper.ts",
+      "source": "fsrs",
+      "anchor": "see reason",
+      "occurrences": [
+        "fsrsCard: (row.fsrs_card as FavoriteItem['fsrsCard']) ?? undefined,",
+        "fsrsCard: (row.fsrs_card as LearningRecord['fsrsCard']) ?? undefined,",
+        "fsrs_card: item.fsrsCard ?? null,",
+        "fsrs_card: record.fsrsCard ?? null,",
+        "nextReview: row.next_review != null ? new Date(row.next_review as string).getTime() : undefined,",
+        "nextReview: row.next_review != null ? new Date(row.next_review as string).getTime() : undefined,",
+        "next_review: item.nextReview != null ? new Date(item.nextReview).toISOString() : null,",
+        "next_review: record.nextReview != null ? new Date(record.nextReview).toISOString() : null,"
+      ],
+      "classification": "LEGIT_HISTORY",
+      "reason": "mapped sync transport of scheduling fields",
+      "migrationNode": "W2-SY1"
+    },
+    {
+      "id": "lib-sync-mapper.sessions",
+      "file": "src/lib/sync/mapper.ts",
+      "source": "sessions",
+      "anchor": "see reason",
+      "occurrences": [
+        "accuracy: session.accuracy,",
+        "completed: session.completed,",
+        "end_time: session.endTime != null ? new Date(session.endTime).toISOString() : null,",
+        "export function fromSupabaseSession(row: Record<string, unknown>): TypingSession {",
+        "export function toSupabaseSession(session: TypingSession, userId: string): Record<string, unknown> {",
+        "import type { ContentItem, LearningRecord, TypingSession } from '@/types/content';",
+        "module: row.module as TypingSession['module'],",
+        "start_time: new Date(session.startTime).toISOString(),",
+        "updated_at: new Date(session.updatedAt ?? session.endTime ?? session.startTime).toISOString(),"
+      ],
+      "classification": "LEGIT_HISTORY",
+      "reason": "mapped sync transport",
+      "migrationNode": "W2-SY1"
+    },
+    {
+      "id": "lib-text-daily-tasks.learningAttempts",
+      "file": "src/lib/text-daily-tasks.ts",
+      "source": "learningAttempts",
+      "anchor": "see reason",
+      "occurrences": [
+        "const cycle = deriveTextCycle(lesson.id, sourceText, attempts, now);",
+        "export function buildTextCourseTasks(lessons: Lesson[], attempts: LearningAttempt[], now: number): DailyTask[] {",
+        "import type { LearningAttempt } from '@/types/learning-activity';",
+        "import { deriveTextCycle } from './text-learning-cycle';"
+      ],
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "attempts → text-course task generation",
+      "migrationNode": "W2-PL1"
+    },
+    {
+      "id": "lib-text-daily-tasks.dailyTasks",
+      "file": "src/lib/text-daily-tasks.ts",
+      "source": "dailyTasks",
+      "anchor": "see reason",
+      "occurrences": [
+        "export function buildTextCourseTasks(lessons: Lesson[], attempts: LearningAttempt[], now: number): DailyTask[] {",
+        "import type { DailyTask } from '@/types/daily-task';"
+      ],
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "emits DailyTask rows",
+      "migrationNode": "W2-PL1"
+    },
+    {
+      "id": "lib-text-learning-cycle.learningAttempts",
+      "file": "src/lib/text-learning-cycle.ts",
+      "source": "learningAttempts",
+      "anchor": "see reason",
+      "occurrences": [
+        "!normalize(attempt.answer)",
+        "!validateTextCorrection(a, own) &&",
+        "attempt.createdAt <= correction.createdAt ||",
+        "attempt.createdAt > successfulRecallAt &&",
+        "attempt.createdAt >= dueAt",
+        "attempt.createdAt,",
+        "attempt.cycle ||",
+        "attempt.lessonId,",
+        "attempts.filter((a) => a.id !== attempt.id),",
+        "attempts: LearningAttempt[],",
+        "const answer = comparable(attempt.answer);",
+        "const context = comparable(attempt.cycle?.context ?? '');",
+        "const cycle = attempt.cycle;",
+        "const expression = comparable(attempt.cycle?.expression ?? '');",
+        "const parent = attempts.find((a) => a.id === parentId);",
+        "const parent = attempts.find((item) => item.id === attempt.parentAttemptId);",
+        "const recalled = attempts.find((item) => item.id === state.evidence.recall);",
+        "const state = deriveTextCycle(",
+        "dueAt = attempt.createdAt + (recallSucceeded ? interval : RETRY_DELAY);",
+        "evidence.apply = attempt.id;",
+        "evidence.recall = attempt.id;",
+        "export function deriveTextCycle(",
+        "export function validateTextCorrection(attempt: LearningAttempt, attempts: LearningAttempt[]): string | null {",
+        "export function validateTextCycleAttempt(attempt: LearningAttempt, attempts: LearningAttempt[]): string | null {",
+        "function reachesOutput(attempt: LearningAttempt, outputId: string, attempts: LearningAttempt[]): boolean {",
+        "function transferError(attempt: LearningAttempt): string | null {",
+        "if (!attempt.cycle) return 'cycle';",
+        "if (!attempt.cycle.rating || !ratings.includes(attempt.cycle.rating)) return 'rating';",
+        "if (!attempt.feedback.notes.trim()) return 'improvement';",
+        "if (!normalize(attempt.answer)) return 'answer';",
+        "if (!normalize(attempt.answer)) return 'answer';",
+        "if (!state.referenceAttemptId || state.referenceAttemptId !== attempt.cycle.referenceAttemptId) return 'reference';",
+        "if (!state.stages.recall || !recalled || attempt.createdAt <= recalled.createdAt) return 'recall-first';",
+        "if (attempt.cycle.stage !== 'apply') return 'stage';",
+        "if (attempt.cycle.stage === 'recall') {",
+        "if (normalize(parent.answer) === normalize(attempt.answer)) return 'unchanged';",
+        "if (state.dueAt === undefined || attempt.createdAt < state.dueAt) return 'not-due';",
+        "if (validateTextCorrection(current, attempts)) return false;",
+        "import type { LearningAttempt, RecallRating, TextCycleStage } from '@/types/learning-activity';",
+        "lastRecallAttemptId = attempt.id;",
+        "parent.createdAt > attempt.createdAt",
+        "parent.lessonId !== attempt.lessonId ||",
+        "successfulRecallAt = attempt.createdAt;"
+      ],
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "deriveTextCycle — attempt history → next cycle step",
+      "migrationNode": "W2-AT1"
+    },
+    {
+      "id": "lib-today-review.records-io",
+      "file": "src/lib/today-review.ts",
+      "source": "records",
+      "anchor": "buildTodayReviewItems:load+types",
+      "occurrences": [
+        "const dueRecords = records.filter((record) => {",
+        "const records = await db.records.toArray();",
+        "function labelForModule(module: LearningRecord['module']): string {",
+        "import type { ContentItem, FSRSCardData, LearningRecord } from '@/types/content';",
+        "module: LearningRecord['module'];",
+        "records: LearningRecord[],",
+        "subtitle: `${labelForModule(record.module)} review · ${record.accuracy}% accuracy · ${record.attempts} attempts`,"
+      ],
+      "classification": "LEGIT_HISTORY",
+      "reason": "type/import plumbing + db.records load for due-queue input",
+      "migrationNode": "W2-MB1"
+    },
+    {
+      "id": "lib-today-review.records-display",
+      "file": "src/lib/today-review.ts",
+      "source": "records",
+      "anchor": "buildTodayReviewItems:item-fields",
+      "occurrences": ["accuracy: record.accuracy,", "attempts: record.attempts,"],
+      "classification": "LEGIT_PRESENTATION",
+      "reason": "record.accuracy/attempts rendered in review-item subtitle",
+      "migrationNode": "W2-MB1"
+    },
+    {
+      "id": "lib-today-review.records-sort",
+      "file": "src/lib/today-review.ts",
+      "source": "records",
+      "anchor": "buildTodayReviewItems:weakest-first-sort",
+      "occurrences": ["if (a.accuracy !== b.accuracy) return a.accuracy - b.accuracy;"],
+      "classification": "LEGIT_CANDIDATE_SIGNAL",
+      "reason": "weakest-first ordering over records.accuracy is a review-surface consumer heuristic, not a planner decision — consolidated under consumer migration at W2-CS1 (FSRS due/nextReview stays with W2-MB1)",
+      "migrationNode": "W2-CS1"
+    },
+    {
+      "id": "lib-today-review.fsrs",
+      "file": "src/lib/today-review.ts",
+      "source": "fsrs",
+      "anchor": "see reason",
+      "occurrences": [
+        "// Use fsrsCard.due if available, fall back to nextReview",
+        "const dueTime = record.fsrsCard?.due ?? record.nextReview;",
+        "const dueTime = record.fsrsCard?.due ?? record.nextReview;",
+        "fsrsCard: record.fsrsCard,",
+        "fsrsCard?: FSRSCardData;",
+        "import type { ContentItem, FSRSCardData, LearningRecord } from '@/types/content';",
+        "nextReview: record.nextReview,",
+        "nextReview?: number;",
+        "return (a.nextReview ?? 0) - (b.nextReview ?? 0);"
+      ],
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "fsrsCard.due/nextReview → due-queue filter",
+      "migrationNode": "W2-MB1"
+    },
+    {
+      "id": "lib-vocabulary-repository.records",
+      "file": "src/lib/vocabulary-repository.ts",
+      "source": "records",
+      "anchor": "see reason",
+      "occurrences": [
+        "[database.contents, database.records, database.sessions, database.learningAttempts, database.dailyTasks],",
+        "await database.records.put({",
+        "const previous = await database.records.get(id);"
+      ],
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "writer + due/budget reads inside one atomic submission commit",
+      "migrationNode": "W2-AT1"
+    },
+    {
+      "id": "lib-vocabulary-repository.fsrs",
+      "file": "src/lib/vocabulary-repository.ts",
+      "source": "fsrs",
+      "anchor": "see reason",
+      "occurrences": [
+        "const accuracy = rating === Rating.Again ? 0 : rating === Rating.Hard ? 60 : rating === Rating.Good ? 85 : 100;",
+        "const rating = correct ? (submission.rating as Rating) : Rating.Again;",
+        "const { cardData, nextReview } = gradeCard(previous?.fsrsCard, rating, new Date(now));",
+        "correctChars: rating > Rating.Again ? answer.length : 0,",
+        "fsrsCard: cardData,",
+        "if (previous && (previous.fsrsCard?.due ?? previous.nextReview ?? Infinity) > now)",
+        "import { gradeCard, Rating } from './fsrs';",
+        "nextReview,",
+        "wrongChars: rating > Rating.Again ? 0 : answer.length,"
+      ],
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "fsrsCard persistence in records",
+      "migrationNode": "W2-MB1"
+    },
+    {
+      "id": "lib-vocabulary-repository.sessions",
+      "file": "src/lib/vocabulary-repository.ts",
+      "source": "sessions",
+      "anchor": "see reason",
+      "occurrences": [
+        "[database.contents, database.records, database.sessions, database.learningAttempts, database.dailyTasks],",
+        "await database.sessions.add({"
+      ],
+      "classification": "LEGIT_HISTORY",
+      "reason": "session rows written in submission commit",
+      "migrationNode": "W2-AT1"
+    },
+    {
+      "id": "lib-vocabulary-repository.learningAttempts",
+      "file": "src/lib/vocabulary-repository.ts",
+      "source": "learningAttempts",
+      "anchor": "see reason",
+      "occurrences": [
+        "[database.contents, database.records, database.sessions, database.learningAttempts, database.dailyTasks],",
+        "await database.learningAttempts.add({",
+        "const introduced = introducedVocabularyToday(await database.learningAttempts.toArray(), mode, now);",
+        "if (await database.learningAttempts.get(submission.id)) return;",
+        "introducedVocabularyToday,"
+      ],
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "attempt writes + introducedVocabularyToday budget",
+      "migrationNode": "W2-PL1"
+    },
+    {
+      "id": "lib-vocabulary-repository.dailyTasks",
+      "file": "src/lib/vocabulary-repository.ts",
+      "source": "dailyTasks",
+      "anchor": "see reason",
+      "occurrences": [
+        "[database.contents, database.records, database.sessions, database.learningAttempts, database.dailyTasks],",
+        "const limit = (await database.dailyTasks.get('preferences:vocabulary'))?.newWordsPerDay ?? 10;"
+      ],
+      "classification": "LEGIT_HISTORY",
+      "reason": "preferences:vocabulary settings row",
+      "migrationNode": "W2-PL1"
+    },
+    {
+      "id": "lib-vocabulary.records",
+      "file": "src/lib/vocabulary.ts",
+      "source": "records",
+      "anchor": "see reason",
+      "occurrences": [
+        "const byId = new Map(records.map((r) => [r.id, r]));",
+        "const record = records.find((r) => r.id === sourceId);",
+        "import type { ContentItem, LearningRecord } from '@/types/content';",
+        "records: LearningRecord[],",
+        "records: LearningRecord[],",
+        "return r?.attempts === 1 && toLocalDateKey(r.lastPracticed) === toLocalDateKey(now);"
+      ],
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "records → due/learned vocab queries",
+      "migrationNode": "W2-MB1"
+    },
+    {
+      "id": "lib-vocabulary.fsrs",
+      "file": "src/lib/vocabulary.ts",
+      "source": "fsrs",
+      "anchor": "see reason",
+      "occurrences": [
+        "(byId.get(vocabularyRecordId(a.id, mode))?.nextReview ?? 0) -",
+        "(byId.get(vocabularyRecordId(b.id, mode))?.nextReview ?? 0),",
+        "dueAt: record ? (record.fsrsCard?.due ?? record.nextReview) : undefined,",
+        "return r && (r.fsrsCard?.due ?? r.nextReview ?? Infinity) <= now;"
+      ],
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "fsrsCard/nextReview due ordering",
+      "migrationNode": "W2-MB1"
+    },
+    {
+      "id": "lib-vocabulary.learningAttempts",
+      "file": "src/lib/vocabulary.ts",
+      "source": "learningAttempts",
+      "anchor": "see reason",
+      "occurrences": [
+        "attempts: LearningAttempt[],",
+        "export function introducedVocabularyToday(attempts: LearningAttempt[], mode: VocabularyMode, now: number) {",
+        "import type { LearningAttempt } from '@/types/learning-activity';",
+        "introducedVocabularyToday(attempts, mode, now),"
+      ],
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "introducedVocabularyToday daily budget",
+      "migrationNode": "W2-PL1"
+    },
+    {
+      "id": "lib-vocabulary.dailyTasks",
+      "file": "src/lib/vocabulary.ts",
+      "source": "dailyTasks",
+      "anchor": "see reason",
+      "occurrences": [
+        "): DailyTask[] {",
+        "const result: DailyTask[] = [];",
+        "import type { DailyTask } from '@/types/daily-task';"
+      ],
+      "classification": "LEGIT_HISTORY",
+      "reason": "preferences:vocabulary settings row",
+      "migrationNode": "W2-PL1"
+    },
+    {
+      "id": "lib-weak-spots.weakSpots",
+      "file": "src/lib/weak-spots.ts",
+      "source": "weakSpots",
+      "anchor": "see reason",
+      "occurrences": [
+        ".equals([input.module, input.weakSpotType, normalizedText])",
+        ".equals([input.module, input.weakSpotType, normalizedText])",
+        ".where('[module+weakSpotType+normalizedText]')",
+        ".where('[module+weakSpotType+normalizedText]')",
+        "await database.weakSpots.add({",
+        "await database.weakSpots.update(existing.id, {",
+        "await database.weakSpots.update(existing.id, {",
+        "const existing = await database.weakSpots",
+        "const existing = await database.weakSpots",
+        "const items = await db.weakSpots.toArray();",
+        "import type { WeakSpot, WeakSpotType } from '@/types/weak-spot';",
+        "module: WeakSpot['module'];",
+        "module: WeakSpot['module'];",
+        "sourceType: WeakSpot['sourceType'];",
+        "weakSpotType: WeakSpotType;",
+        "weakSpotType: WeakSpotType;"
+      ],
+      "classification": "LEGIT_HISTORY",
+      "reason": "weakSpot upsert + open-list domain helpers",
+      "migrationNode": "W2-WS2"
+    },
+    {
+      "id": "lib-workshop-draft.weakSpots",
+      "file": "src/lib/workshop-draft.ts",
+      "source": "weakSpots",
+      "anchor": "see reason",
+      "occurrences": [
+        "`workshop-draft:${scope.databaseName}:${scope.lessonId}:${scope.activity}:${scope.sourceWeakSpotId ?? ''}`,",
+        "return `workshop-draft:v1:${JSON.stringify([scope.databaseName, scope.lessonId, scope.activity, scope.sourceWeakSpotId ?? '', scope.stage ?? '', `${scope.source.length}-${hash >>> 0}`])}`;",
+        "sourceWeakSpotId?: string;"
+      ],
+      "classification": "LEGIT_HISTORY",
+      "reason": "sourceWeakSpotId used in draft persistence key",
+      "migrationNode": "W2-WS2"
+    },
+    {
+      "id": "stores-assessment-store.assessment-currentLevel",
+      "file": "src/stores/assessment-store.ts",
+      "source": "assessment.currentLevel",
+      "anchor": "see reason",
+      "occurrences": [
+        "const STORAGE_KEY = 'echotype_assessment';",
+        "currentLevel: CEFRLevel | null;",
+        "currentLevel: level,",
+        "currentLevel: null,",
+        "currentLevel: result.level,",
+        "currentLevel: state.currentLevel,",
+        "currentLevel: state.currentLevel,",
+        "export const CEFR_DESCRIPTIONS: Record<CEFRLevel, { summary: string; canDo: string; tip: string }> = {",
+        "export const CEFR_LABELS: Record<CEFRLevel, string> = {",
+        "export const CEFR_ORDER: CEFRLevel[] = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];",
+        "export const useAssessmentStore = create<AssessmentStore>((set, get) => ({",
+        "export function levelComparison(prev: CEFRLevel, current: CEFRLevel): 'improved' | 'same' | 'declined' {",
+        "export function scoreToLevel(score: number): CEFRLevel {",
+        "export type CEFRLevel = 'A1' | 'A2' | 'B1' | 'B2' | 'C1' | 'C2';",
+        "level: CEFRLevel;",
+        "set({ currentLevel: level });",
+        "setCurrentLevel: (level: CEFRLevel) => void;"
+      ],
+      "classification": "LEGIT_HISTORY",
+      "reason": "store definition + persistence; advisory placement state",
+      "migrationNode": "W2-AS1"
+    },
+    {
+      "id": "stores-daily-plan-store.dailyPlan",
+      "file": "src/stores/daily-plan-store.ts",
+      "source": "dailyPlan",
+      "anchor": "see reason",
+      "occurrences": [
+        "export const useDailyPlanStore = create<DailyPlanStore>((set, get) => ({",
+        "export function getPlanTaskCompletionKey(task: Pick<PlanTask, 'module' | 'contentId' | 'bookId' | 'type'>): string {",
+        "export interface PlanTask {",
+        "setTasks: (tasks: PlanTask[], dataSignature?: string, levelKey?: string) => void;",
+        "tasks: PlanTask[];"
+      ],
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "planner-cache store definition",
+      "migrationNode": "W2-PL1"
+    },
+    {
+      "id": "stores-favorite-store.fsrs",
+      "file": "src/stores/favorite-store.ts",
+      "source": "fsrs",
+      "anchor": "see reason",
+      "occurrences": [
+        "'id' | 'normalizedText' | 'createdAt' | 'updatedAt' | 'autoCollected' | 'fsrsCard' | 'nextReview'",
+        "// FSRS",
+        "// FSRS",
+        "const count = await database.favorites.update(id, { fsrsCard: cardData, nextReview, updatedAt });",
+        "const fsrsCard = cardToData(newCard);",
+        "const newCard = createNewCard(new Date(now));",
+        "const { cardData, nextReview } = gradeCard(fav.fsrsCard, rating);",
+        "favorites: state.favorites.map((f) => (f.id === id ? { ...f, fsrsCard: cardData, nextReview, updatedAt } : f)),",
+        "fsrsCard,",
+        "import { cardToData, createNewCard, gradeCard } from '@/lib/fsrs';",
+        "nextReview: fsrsCard.due,",
+        "return get().favorites.filter((f) => f.nextReview != null && f.nextReview <= now);"
+      ],
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "writer: gradeCard on favorites",
+      "migrationNode": "W2-MB1"
+    },
+    {
+      "id": "stores-journal-store.fsrs",
+      "file": "src/stores/journal-store.ts",
+      "source": "fsrs",
+      "anchor": "journal-store:comment",
+      "occurrences": ["// Highlight: push into Favorites so it enters the FSRS review queue."],
+      "classification": "LEGIT_HISTORY",
+      "reason": "comment mentions FSRS review queue — no runtime read",
+      "migrationNode": null
+    },
+    {
+      "id": "stores-weak-spots-store.weakSpots",
+      "file": "src/stores/weak-spots-store.ts",
+      "source": "weakSpots",
+      "anchor": "see reason",
+      "occurrences": [
+        "await db.weakSpots.update(id, { resolved: true });",
+        "const items = await db.weakSpots.orderBy('lastSeenAt').reverse().toArray();",
+        "export const useWeakSpotsStore = create<WeakSpotsStore>((set, get) => ({",
+        "import type { WeakSpot } from '@/types/weak-spot';",
+        "items: WeakSpot[];",
+        "type WeakSpotModuleFilter = 'all' | WeakSpot['module'];"
+      ],
+      "classification": "LEGIT_PRESENTATION",
+      "reason": "store hydrates spot list for UI",
+      "migrationNode": "W2-WS2"
+    },
+    {
+      "id": "types-content.records",
+      "file": "src/types/content.ts",
+      "source": "records",
+      "anchor": "see reason",
+      "occurrences": ["export interface LearningRecord {", "export type Module = LearningRecord['module'];"],
+      "classification": "LEGIT_HISTORY",
+      "reason": "LearningRecord/typing-session type declarations",
+      "migrationNode": null
+    },
+    {
+      "id": "types-content.fsrs",
+      "file": "src/types/content.ts",
+      "source": "fsrs",
+      "anchor": "see reason",
+      "occurrences": [
+        "export interface FSRSCardData {",
+        "fsrsCard?: FSRSCardData;",
+        "last_review: number;",
+        "nextReview?: number;"
+      ],
+      "classification": "LEGIT_HISTORY",
+      "reason": "FSRS field declarations on record/favorite types",
+      "migrationNode": null
+    },
+    {
+      "id": "types-content.sessions",
+      "file": "src/types/content.ts",
+      "source": "sessions",
+      "anchor": "see reason",
+      "occurrences": ["export interface TypingSession {"],
+      "classification": "LEGIT_HISTORY",
+      "reason": "TypingSession type declaration",
+      "migrationNode": null
+    },
+    {
+      "id": "types-daily-task.dailyTasks",
+      "file": "src/types/daily-task.ts",
+      "source": "dailyTasks",
+      "anchor": "see reason",
+      "occurrences": ["export interface DailyTask {"],
+      "classification": "LEGIT_HISTORY",
+      "reason": "DailyTask type declaration",
+      "migrationNode": null
+    },
+    {
+      "id": "types-favorite.fsrs",
+      "file": "src/types/favorite.ts",
+      "source": "fsrs",
+      "anchor": "see reason",
+      "occurrences": [
+        "fsrsCard?: FSRSCardData;",
+        "import type { FSRSCardData } from '@/types/content';",
+        "nextReview?: number;"
+      ],
+      "classification": "LEGIT_HISTORY",
+      "reason": "FSRS field declarations",
+      "migrationNode": null
+    },
+    {
+      "id": "types-learning-activity.weakSpots",
+      "file": "src/types/learning-activity.ts",
+      "source": "weakSpots",
+      "anchor": "see reason",
+      "occurrences": ["sourceWeakSpotId?: string;"],
+      "classification": "LEGIT_HISTORY",
+      "reason": "WeakSpot linkage types",
+      "migrationNode": null
+    },
+    {
+      "id": "types-learning-activity.learningAttempts",
+      "file": "src/types/learning-activity.ts",
+      "source": "learningAttempts",
+      "anchor": "see reason",
+      "occurrences": ["export interface LearningAttempt {"],
+      "classification": "LEGIT_HISTORY",
+      "reason": "LearningAttempt type declaration",
+      "migrationNode": null
+    },
+    {
+      "id": "types-pronunciation.pronunciationProgress",
+      "file": "src/types/pronunciation.ts",
+      "source": "pronunciationProgress",
+      "anchor": "see reason",
+      "occurrences": ["export interface PronunciationProgress {"],
+      "classification": "LEGIT_HISTORY",
+      "reason": "PronunciationProgress type declaration",
+      "migrationNode": null
+    },
+    {
+      "id": "types-weak-spot.weakSpots",
+      "file": "src/types/weak-spot.ts",
+      "source": "weakSpots",
+      "anchor": "see reason",
+      "occurrences": ["export interface WeakSpot {", "weakSpotType: WeakSpotType;"],
+      "classification": "LEGIT_HISTORY",
+      "reason": "WeakSpot type declaration",
+      "migrationNode": null
+    }
+  ]
+}
