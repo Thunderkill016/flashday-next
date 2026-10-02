@@ -2,13 +2,13 @@ import { getWordBook } from '@/lib/wordbooks';
 import type { BookItem, CollectionItem, ContentItem, MaterialType } from '@/types/content';
 
 export const MATERIAL_TYPES: MaterialType[] = ['wordbook', 'video', 'reading', 'dialogue', 'sentences', 'scenario'];
-export const MATERIAL_LABELS: Record<MaterialType, [string, string]> = {
-  wordbook: ['Word books', '词书'],
-  video: ['Videos', '视频'],
-  reading: ['Reading · Books', '阅读 · 英文书籍'],
-  dialogue: ['Dialogues', '对话'],
-  sentences: ['Sentences', '句集'],
-  scenario: ['Scenarios', '场景'],
+export const MATERIAL_LABELS: Record<MaterialType, { en: string; zh: string; vi: string }> = {
+  wordbook: { en: 'Word books', zh: '词书', vi: 'Sổ từ' },
+  video: { en: 'Videos', zh: '视频', vi: 'Video' },
+  reading: { en: 'Reading · Books', zh: '阅读 · 英文书籍', vi: 'Đọc · Sách tiếng Anh' },
+  dialogue: { en: 'Dialogues', zh: '对话', vi: 'Hội thoại' },
+  sentences: { en: 'Sentences', zh: '句集', vi: 'Bộ câu' },
+  scenario: { en: 'Scenarios', zh: '场景', vi: 'Tình huống' },
 };
 
 export function classifyMaterial(sources: ContentItem[], book?: BookItem, collection?: CollectionItem): MaterialType {

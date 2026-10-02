@@ -20,6 +20,7 @@ import { formatKeyCombo } from '@/hooks/use-shortcuts';
 import { navigateApp } from '@/lib/app-navigation';
 import { db } from '@/lib/db';
 import enCommandPalette from '@/lib/i18n/messages/command-palette/en.json';
+import viCommandPalette from '@/lib/i18n/messages/command-palette/vi.json';
 import zhCommandPalette from '@/lib/i18n/messages/command-palette/zh.json';
 import { PRIMARY_LEARNING_LINKS } from '@/lib/learning-navigation';
 import { isMac } from '@/lib/utils';
@@ -27,7 +28,7 @@ import { useChatStore } from '@/stores/chat-store';
 import { useLanguageStore } from '@/stores/language-store';
 import { useShortcutStore } from '@/stores/shortcut-store';
 
-const CP_LOCALES = { en: enCommandPalette, zh: zhCommandPalette } as const;
+const CP_LOCALES = { en: enCommandPalette, vi: viCommandPalette, zh: zhCommandPalette } as const;
 
 interface CommandPaletteProps {
   open: boolean;

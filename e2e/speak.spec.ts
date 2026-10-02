@@ -1,66 +1,59 @@
 import { test, expect } from '@playwright/test';
 
-// Helper: wait for DB seed to complete, then reload so ContentList picks up the data
-async function waitForSeedAndReload(page: import('@playwright/test').Page, url: string) {
+// The /speak surface is a scenario picker: a free-conversation entry plus a
+// grid of guided scenarios linking to /speak/<scenarioId> conversation pages.
+async function gotoSpeak(page: import('@playwright/test').Page, url = '/speak') {
   await page.goto(url);
-  await page.waitForSelector('main[data-seeded="true"]', { timeout: 15000 });
-  await page.reload();
-  await page.waitForSelector('main[data-seeded="true"]', { timeout: 15000 });
+  await page.waitForSelector('main[data-seeded="true"]', { timeout: 30000 });
 }
 
 test.describe('Speak / Read Module', () => {
   test('speak list page loads with content', async ({ page }) => {
-    await waitForSeedAndReload(page, '/speak');
+    await gotoSpeak(page);
     await expect(page.getByRole('heading', { level: 1 })).toContainText('Speak');
-    await expect(page.getByText('Read English content aloud and get pronunciation feedback')).toBeVisible();
-
-    const items = page.locator('[class*="grid gap"] a');
-    await expect(items.first()).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText('Practice English through conversation with AI')).toBeVisible();
+    await expect(page.getByTestId('speak-free-conversation-entry')).toBeVisible();
+    await expect(page.getByRole('link').filter({ hasText: 'Ordering Coffee' })).toBeVisible();
   });
 
-  test('speak list has search and type filters', async ({ page }) => {
-    await page.goto('/speak');
-    await expect(page.getByPlaceholder('Search content...')).toBeVisible();
-    await expect(page.getByRole('button', { name: 'All', exact: true })).toBeVisible();
+  test('speak list has category filters', async ({ page }) => {
+    await gotoSpeak(page);
+    for (const label of ['All', 'Daily', 'Work', 'Travel', 'Social']) {
+      await expect(page.getByText(label, { exact: true })).toBeVisible();
+    }
+    await page.getByText('Travel', { exact: true }).click();
+    await expect(page.getByRole('link').filter({ hasText: 'Hotel Check-in' })).toBeVisible();
+    await expect(page.getByRole('link').filter({ hasText: 'Ordering Coffee' })).toHaveCount(0);
   });
 
-  test('clicking content navigates to speak detail', async ({ page }) => {
-    await waitForSeedAndReload(page, '/speak');
-    await page.locator('[class*="grid gap"] a').first().click();
+  test('clicking a scenario navigates to its conversation page', async ({ page }) => {
+    await gotoSpeak(page);
+    await page.getByRole('link').filter({ hasText: 'Ordering Coffee' }).first().click();
     await expect(page).toHaveURL(/\/speak\/.+/);
+    await expect(page.getByRole('heading', { name: 'Ordering Coffee', level: 1 })).toBeVisible();
   });
 
-  test('speak detail page has mic and controls', async ({ page }) => {
-    await waitForSeedAndReload(page, '/speak');
-    await page.locator('[class*="grid gap"] a').first().click();
+  test('speak detail page has voice input and controls', async ({ page }) => {
+    await gotoSpeak(page);
+    await page.getByRole('link').filter({ hasText: 'Ordering Coffee' }).first().click();
     await expect(page).toHaveURL(/\/speak\/.+/);
-
-    // Should show reference text
-    await expect(page.getByText('Reference Text')).toBeVisible();
-    // Should have Listen button for TTS
-    await expect(page.getByRole('button', { name: 'Listen' })).toBeVisible();
-    // Should have mic button (green, round)
-    const micButton = page.locator('button.rounded-full.bg-green-500');
-    await expect(micButton).toBeVisible();
-    // Should have Reset button
-    await expect(page.getByText('Reset')).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Back to scenarios' })).toBeVisible();
+    await expect(page.getByRole('textbox', { name: 'Speak scenario input' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Send speak scenario message' })).toBeVisible();
   });
 
   test('speak detail back button returns to list', async ({ page }) => {
-    await waitForSeedAndReload(page, '/speak');
-    await page.locator('[class*="grid gap"] a').first().click();
+    await gotoSpeak(page);
+    await page.getByRole('link').filter({ hasText: 'Ordering Coffee' }).first().click();
     await expect(page).toHaveURL(/\/speak\/.+/);
-
-    await page.locator('a[href="/speak"]').first().click();
+    await page.getByRole('button', { name: 'Back to scenarios' }).click();
     await expect(page).toHaveURL(/\/speak$/);
   });
 
-  test('speak detail shows content title and type', async ({ page }) => {
-    await waitForSeedAndReload(page, '/speak');
-    await page.locator('[class*="grid gap"] a').first().click();
-    await expect(page).toHaveURL(/\/speak\/.+/);
-
-    // Should show module indicator
-    await expect(page.getByText('Speak / Read Mode')).toBeVisible();
+  test('speak detail shows scenario title and difficulty', async ({ page }) => {
+    await gotoSpeak(page);
+    await page.getByRole('link').filter({ hasText: 'Ordering Coffee' }).first().click();
+    await expect(page.getByRole('heading', { name: 'Ordering Coffee', level: 1 })).toBeVisible();
+    await expect(page.getByText('beginner', { exact: true })).toBeVisible();
   });
 });

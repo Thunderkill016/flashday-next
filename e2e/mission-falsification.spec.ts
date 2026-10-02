@@ -235,9 +235,15 @@ test('double-submit mints one attempt; corrupted rows earn nothing', async ({ pa
   // most one attempt event exists for a1.
   const taskId = (await page.getByTestId('mission-task-id').innerText()).split(' · ')[0].trim();
   await page.getByTestId('mission-response-input').fill(SCRIPT[taskId].text ?? '');
+  // Both clicks fire inside one synchronous evaluate so the second lands
+  // before React flushes the phase change that unmounts the button —
+  // two awaited dispatchEvent calls race that unmount and hang on the
+  // detached-element wait instead of exercising the double-submit path.
   const commitBtn = page.getByTestId('mission-commit');
-  await commitBtn.dispatchEvent('click');
-  await commitBtn.dispatchEvent('click');
+  await commitBtn.evaluate((el) => {
+    el.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    el.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+  });
   await expect(page.getByTestId('mission-feedback')).toBeVisible({ timeout: SCREEN_TIMEOUT });
   let events = await allEvents(page);
   expect(

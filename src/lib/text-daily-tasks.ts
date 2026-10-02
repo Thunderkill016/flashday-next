@@ -9,36 +9,46 @@ const labels = {
   understand: [
     'Understand the source',
     '理解原文',
+    'Hiểu nội dung bài',
     'Explain the main idea with a quote from the source.',
     '用原文证据说明主旨。',
+    'Giải thích ý chính bằng một trích dẫn từ bài.',
     4,
   ],
   output: [
     'Write in your own words',
     '用自己的话表达',
+    'Viết bằng lời của bạn',
     'You understood the source. Write an original response.',
     '已经理解原文，下一步写出自己的回答。',
+    'Bạn đã hiểu bài. Viết câu trả lời của riêng mình.',
     5,
   ],
   correct: [
     'Improve your draft',
     '修改初稿',
+    'Cải thiện bản nháp',
     'Compare your draft with a revision and explain one improvement.',
     '对照初稿完成修改，并说明一处改进。',
+    'So sánh bản nháp với bản sửa và giải thích một cải tiến.',
     4,
   ],
   recall: [
     'Recall without the source',
     '脱离原文回忆',
+    'Nhớ lại không xem bài',
     'Your delayed recall is due. Retrieve the corrected idea, then rate honestly.',
     '延迟回忆已到期，先回忆修改后的内容，再如实自评。',
+    'Đến hạn nhớ lại. Gợi lại ý đã sửa rồi tự chấm thật lòng.',
     3,
   ],
   apply: [
     'Use it in a new context',
     '迁移到新情境',
+    'Dùng trong ngữ cảnh mới',
     'Recall succeeded. Use a source expression in a different situation.',
     '回忆成功，将原文表达用于一个不同的情境。',
+    'Nhớ lại thành công. Dùng một cụm từ trong bài ở tình huống khác.',
     4,
   ],
 } as const;
@@ -60,7 +70,7 @@ export function buildTextCourseTasks(lessons: Lesson[], attempts: LearningAttemp
             : undefined;
     const dueAt = stage === 'recall' ? cycle.dueAt : undefined;
     const supported = stage === 'recall' && (cycle.lastRecallAssisted || cycle.lastRecallRating === 'again');
-    const [label, labelZh, reason, reasonZh, duration] = labels[stage];
+    const [label, labelZh, labelVi, reason, reasonZh, reasonVi, duration] = labels[stage];
     const inputModule = lesson.modules.find((module) => module === 'listen' || module === 'read') ?? lesson.modules[0];
     const outputModule = lesson.modules.find((module) => module === 'speak' || module === 'write') ?? lesson.modules[0];
     return {
@@ -78,6 +88,7 @@ export function buildTextCourseTasks(lessons: Lesson[], attempts: LearningAttemp
       dueAt,
       title: `${lesson.title} · ${label}`,
       titleZh: `${lesson.title} · ${labelZh}`,
+      titleVi: `${lesson.title} · ${labelVi}`,
       reason: supported
         ? 'Last recall needed support or another try. Start with one sentence; use a hint if needed and record the assistance.'
         : dueAt && dueAt > now
@@ -88,6 +99,11 @@ export function buildTextCourseTasks(lessons: Lesson[], attempts: LearningAttemp
         : dueAt && dueAt > now
           ? '让修改后的内容沉淀一下，间隔结束后再回忆。'
           : reasonZh,
+      reasonVi: supported
+        ? 'Lần nhớ trước cần hỗ trợ hoặc thử lại. Bắt đầu với một câu; dùng gợi ý nếu cần và ghi lại việc đã hỗ trợ.'
+        : dueAt && dueAt > now
+          ? 'Để bản sửa lắng lại. Lần nhớ này mở sau khoảng chờ.'
+          : reasonVi,
       href: `/learn/${encodeURIComponent(lesson.unitId)}?lesson=${encodeURIComponent(lesson.id)}&stage=${stage}`,
       minutes: supported ? 2 : Math.max(1, Math.min(duration, lesson.estimatedMinutes)),
       status: 'pending',

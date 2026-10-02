@@ -1,0 +1,22 @@
+{
+  "title": "Bảng lệnh",
+  "description": "Tìm và chạy các thao tác điều hướng và workspace.",
+  "searchPlaceholder": "Tìm thao tác...",
+  "openSearchWith": "Mở tìm kiếm bằng",
+  "default": "mặc định:",
+  "noMatch": "Không có thao tác phù hợp.",
+  "heading": "Thao tác",
+  "actions": {
+    "openSettings": "Mở Cài đặt",
+    "toggleChat": "Bật/tắt Chat",
+    "goToReview": "Đến trung tâm ôn tập",
+    "goToLibrary": "Đến tài liệu học",
+    "goToListen": "Đến phần Nghe",
+    "goToSpeak": "Đến trò chuyện AI",
+    "goToRead": "Luyện đọc to",
+    "goToWrite": "Luyện chính tả",
+    "goToFavorites": "Đến ghi chú của tôi",
+    "startFavoritesReview": "Bắt đầu ôn mục đã lưu",
+    "continueLastPractice": "Tiếp tục bài luyện gần nhất"
+  }
+}

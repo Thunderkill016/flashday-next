@@ -10,6 +10,7 @@ import { TranslationBar } from '@/components/translation/translation-bar';
 import { Button } from '@/components/ui/button';
 import { useConversation } from '@/hooks/use-conversation';
 import enSpeakFree from '@/lib/i18n/messages/speak-free/en.json';
+import viSpeakFree from '@/lib/i18n/messages/speak-free/vi.json';
 import zhSpeakFree from '@/lib/i18n/messages/speak-free/zh.json';
 import { useI18n } from '@/lib/i18n/use-i18n';
 import { detectIOSNativeHost, reportNativeQAState } from '@/lib/tauri';
@@ -17,7 +18,7 @@ import { useLanguageStore } from '@/stores/language-store';
 import { useSpeakStore } from '@/stores/speak-store';
 import { useTTSStore } from '@/stores/tts-store';
 
-const SF_LOCALES = { en: enSpeakFree, zh: zhSpeakFree } as const;
+const SF_LOCALES = { en: enSpeakFree, vi: viSpeakFree, zh: zhSpeakFree } as const;
 
 const TOPIC_EMOJIS = ['🏠', '✈️', '🍕', '🎨', '🎬', '💼', '💻', '🌍'];
 const TOPIC_KEYS = [

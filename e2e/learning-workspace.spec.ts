@@ -32,6 +32,9 @@ test('additive migration, course completion evidence, resume and mobile layout',
   await page.goto('/learn');
   await page.getByRole('link').filter({has:page.getByRole('heading',{name:'A coffee conversation'})}).click();
   await expect(page.getByRole('heading',{name:'Course outline'})).toBeVisible();
+  // The lesson opens on the text learning cycle; the per-module practice
+  // buttons live behind the classic cycle toggle.
+  await page.getByRole('button',{name:'Listen · Read aloud · Speak · Type',exact:true}).click();
   await page.getByRole('button',{name:'Listen',exact:true}).click();
   await expect(page.getByRole('button',{name:'Continue',exact:true})).toBeDisabled();
   await page.getByTestId('read-aloud-inline-controls').getByRole('button',{name:'Play',exact:true}).click();
@@ -56,7 +59,10 @@ test('additive migration, course completion evidence, resume and mobile layout',
   await expect(page.getByRole('heading',{name:'Making an order',exact:true}).first()).toBeVisible();
   await expect(page.getByRole('button',{name:'Read aloud',exact:true})).toHaveAttribute('aria-pressed','true');
   await page.reload();
-  await page.getByRole('button',{name:'A coffee conversation',exact:true}).click();
+  await page.getByRole('button',{name:'01 A coffee conversation',exact:true}).click();
+  // Reload restores the default text learning cycle; switch back to the
+  // per-module practice view before picking the Type step.
+  await page.getByRole('button',{name:'Listen · Read aloud · Speak · Type',exact:true}).click();
   await page.getByRole('button',{name:'Type',exact:true}).click();
   await expect(page.getByRole('button',{name:'Continue',exact:true})).toBeEnabled();
   const state=await page.evaluate(async()=>{

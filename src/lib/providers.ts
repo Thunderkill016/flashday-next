@@ -1,6 +1,7 @@
 // Provider registry — sourced from models.dev (https://github.com/sst/models.dev)
 
 import enProviderMessages from '@/lib/i18n/messages/providers/en.json';
+import viProviderMessages from '@/lib/i18n/messages/providers/vi.json';
 import zhProviderMessages from '@/lib/i18n/messages/providers/zh.json';
 import type { InterfaceLanguage } from '@/stores/language-store';
 
@@ -112,6 +113,7 @@ export interface ProviderConfig {
 
 const PROVIDER_UI_MESSAGES = {
   en: enProviderMessages,
+  vi: viProviderMessages,
   zh: zhProviderMessages,
 } as const satisfies Record<InterfaceLanguage, typeof enProviderMessages>;
 

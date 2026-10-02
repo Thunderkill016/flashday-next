@@ -68,7 +68,7 @@ export function AboutSection() {
   const { messages } = useI18n('settings');
   const platformLabel = IS_TAURI ? 'Tauri v2' : IS_IOS_NATIVE_HOST ? 'Native iOS Host' : 'Web';
   const infoRows = [
-    { label: messages.about.application, value: 'EchoType' },
+    { label: messages.about.application, value: 'FlashDay' },
     { label: messages.about.version, value: `v${APP_VERSION}` },
     { label: messages.about.techStack, value: 'Next.js + React + TypeScript' },
     { label: messages.about.dataStorage, value: messages.about.localIndexedDbAndCloudSync },
@@ -88,7 +88,7 @@ export function AboutSection() {
             <div className="min-w-0 flex-1">
               {IS_IOS_NATIVE_HOST ? <p className={IOS_EYEBROW_CLASS}>App profile</p> : null}
               <div className="mt-1 flex items-center gap-2">
-                <h3 className="text-lg font-bold text-slate-900">EchoType</h3>
+                <h3 className="text-lg font-bold text-slate-900">FlashDay</h3>
                 <span className={IOS_PILL_CLASS}>v{APP_VERSION}</span>
               </div>
               <p className="mt-2 max-w-md text-sm leading-6 text-slate-500">{messages.about.appDescription}</p>

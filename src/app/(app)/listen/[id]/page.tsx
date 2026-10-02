@@ -31,6 +31,7 @@ import { getAlignmentCache, setAlignmentCache } from '@/lib/alignment-cache';
 import { savePracticeSession } from '@/lib/daily-plan-progress';
 import { db } from '@/lib/db';
 import enListenDetail from '@/lib/i18n/messages/listen-detail/en.json';
+import viListenDetail from '@/lib/i18n/messages/listen-detail/vi.json';
 import zhListenDetail from '@/lib/i18n/messages/listen-detail/zh.json';
 import { getIOSNativeQAMode } from '@/lib/ios-native-qa';
 import { scoreDictationAttempt } from '@/lib/listen-dictation';
@@ -55,7 +56,7 @@ import { useShadowReadingStore } from '@/stores/shadow-reading-store';
 import { useTTSStore } from '@/stores/tts-store';
 import type { ContentItem } from '@/types/content';
 
-const LISTEN_DETAIL_LOCALES = { en: enListenDetail, zh: zhListenDetail } as const;
+const LISTEN_DETAIL_LOCALES = { en: enListenDetail, vi: viListenDetail, zh: zhListenDetail } as const;
 const LISTEN_MODES = ['normal', 'repeat', 'hide-text', 'dictation'] as const;
 
 type ListenMode = (typeof LISTEN_MODES)[number];

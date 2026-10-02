@@ -12,6 +12,7 @@ import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 import { shouldUseDirectBrowserTranscription, transcribeInBrowser } from '@/lib/browser-transcription';
 import { db, LOCAL_DATABASE_CHANGED_EVENT } from '@/lib/db';
+import { useL } from '@/lib/i18n/locale';
 import { includedImportBlocks, parseSubtitles, shiftSubtitleBlocks, textSourceBlocks } from '@/lib/import-job';
 import { captureImportScope, createImportJob, publishImportJob } from '@/lib/import-job-repository';
 import { SUBTITLE_MAX_BYTES } from '@/lib/import-limits';
@@ -27,13 +28,17 @@ import { useProviderStore } from '@/stores/provider-store';
 import type { ImportJob, ImportSourceBlock } from '@/types/import-job';
 
 const formats = '.txt,.md,.text,.pdf,.docx,.epub,.srt,.vtt,.mp3,.wav,.m4a,.ogg,.flac,.mp4,.webm,.avi';
-const statusLabels: Record<ImportJob['status'], [string, string]> = {
-  queued: ['Ready to process', '等待处理'],
-  processing: ['Processing / resume if interrupted', '处理中 / 中断后可继续'],
-  needsReview: ['Review before learning', '待校对'],
-  ready: ['In your library', '已加入资料库'],
-  failed: ['Needs retry', '需要重试'],
-  cancelled: ['Paused — original retained', '已取消，保留原文件'],
+const statusLabels: Record<ImportJob['status'], [string, string, string]> = {
+  queued: ['Ready to process', '等待处理', 'Sẵn sàng xử lý'],
+  processing: [
+    'Processing / resume if interrupted',
+    '处理中 / 中断后可继续',
+    'Đang xử lý / có thể tiếp tục sau gián đoạn',
+  ],
+  needsReview: ['Review before learning', '待校对', 'Cần rà soát trước khi học'],
+  ready: ['In your library', '已加入资料库', 'Đã vào thư viện'],
+  failed: ['Needs retry', '需要重试', 'Cần thử lại'],
+  cancelled: ['Paused — original retained', '已取消，保留原文件', 'Đã tạm dừng — giữ nguyên bản gốc'],
 };
 
 export function DurableImport({
@@ -47,8 +52,9 @@ export function DurableImport({
   entryMode?: 'file' | 'url' | 'media';
   onVocabularyFile?: (file: File) => void;
 } = {}) {
-  const zh = useLanguageStore((state) => state.interfaceLanguage) === 'zh';
-  const t = (en: string, cn: string) => (zh ? cn : en);
+  const language = useLanguageStore((s) => s.interfaceLanguage);
+  const pick = useL();
+  const t = (en: string, cn: string, vi: string) => (language === 'zh' ? cn : language === 'vi' ? vi : en);
   const ownerId = useAuthStore((state) => state.user?.id || 'guest');
   const [database, setDatabase] = useState(db);
   const jobs = useLiveQuery(() => database.importJobs.orderBy('createdAt').reverse().toArray(), [database], []);
@@ -124,13 +130,14 @@ export function DurableImport({
               t(
                 'Not enough device storage. Free space or choose a smaller file.',
                 '本机空间不足，请释放空间或选择较小文件。',
+                'Thiết bị không đủ chỗ. Hãy giải phóng dung lượng hoặc chọn tệp nhỏ hơn.',
               ),
             );
         }
       }
       const scope = captureImportScope();
       if (selected?.status === 'needsReview') await persistSelected(selected);
-      setStage(t('Saving original on this device', '正在保存原文件到本机'));
+      setStage(t('Saving original on this device', '正在保存原文件到本机', 'Đang lưu bản gốc trên thiết bị này'));
       const next = await createImportJob({ file, url: file ? undefined : url, ownerId });
       scope.assertActive();
       setSelected(next);
@@ -259,10 +266,10 @@ export function DurableImport({
       await persistSelected({ ...job, status: 'processing', runId, error: undefined });
       setStage(
         job.kind === 'media'
-          ? t('Transcribing speech', '正在转写语音')
+          ? t('Transcribing speech', '正在转写语音', 'Đang phiên âm giọng nói')
           : job.kind === 'url'
-            ? t('Fetching source text', '正在获取原文')
-            : t('Extracting text', '正在提取正文'),
+            ? t('Fetching source text', '正在获取原文', 'Đang lấy văn bản gốc')
+            : t('Extracting text', '正在提取正文', 'Đang trích xuất văn bản'),
       );
       try {
         let text = '';
@@ -312,7 +319,11 @@ export function DurableImport({
         } else {
           if (!job.originalFile)
             throw new Error(
-              t('Original file missing. Reselect the same file to restore it.', '原文件缺失，请重新选择同一个文件。'),
+              t(
+                'Original file missing. Reselect the same file to restore it.',
+                '原文件缺失，请重新选择同一个文件。',
+                'Thiếu tệp gốc. Chọn lại đúng tệp đó để khôi phục.',
+              ),
             );
           const file = new File([job.originalFile], job.filename!, { type: job.mimeType });
           if (/\.(csv|tsv)$/i.test(job.filename || '')) {
@@ -388,7 +399,7 @@ export function DurableImport({
         if (!text?.trim() || !blocks.length)
           throw new Error('No readable text found. Try another source or OCR using the existing tools.');
         scope.assertActive();
-        setStage(t('Preparing editable sections', '正在整理可校对内容'));
+        setStage(t('Preparing editable sections', '正在整理可校对内容', 'Đang chuẩn bị các đoạn có thể sửa'));
         await scope.database.transaction('rw', scope.database.importJobs, async () => {
           const current = await scope.database.importJobs.get(job.id);
           if (current?.runId !== runId || current.status !== 'processing') return;
@@ -551,21 +562,23 @@ export function DurableImport({
           ? 'flex flex-col gap-4 text-slate-800'
           : 'flex flex-col gap-5 rounded-xl bg-white p-4 text-slate-800 shadow-sm sm:p-6'
       }
-      aria-label={t('Resumable import', '可恢复导入')}
+      aria-label={t('Resumable import', '可恢复导入', 'Nhập có thể tiếp tục')}
     >
       <div>
         <h2 hidden={embedded} className="font-[var(--font-poppins)] text-xl font-semibold">
-          {t('Prepare your material', '准备学习材料')}
+          {t('Prepare your material', '准备学习材料', 'Chuẩn bị tài liệu của bạn')}
         </h2>
         <p hidden={embedded} className="mt-1 text-sm text-slate-600">
           {embedded
             ? t(
                 'Original files and drafts are kept on this device. Transcription may use your provider quota.',
                 '原文件和校对稿保存在本机。音视频转写可能使用服务商额度。',
+                'Tệp gốc và bản nháp giữ trên thiết bị này. Phiên âm có thể trừ quota của nhà cung cấp.',
               )
             : t(
                 'Original files and review drafts stay on this device. Keep this page open while processing; after interruption, resume here. Media transcription may use your configured provider and quota.',
                 '原文件与校对稿保存在本机。处理时请保持页面打开；中断后可在这里继续。媒体转写可能使用已配置的服务商与额度。',
+                'Tệp gốc và bản rà soát giữ trên thiết bị này. Giữ trang mở trong lúc xử lý; nếu gián đoạn, tiếp tục tại đây. Phiên âm media có thể dùng nhà cung cấp và quota bạn đã cấu hình.',
               )}
         </p>
       </div>
@@ -573,18 +586,20 @@ export function DurableImport({
         <div className="space-y-1">
           <h3 className="text-lg font-semibold text-slate-900">
             {entryMode === 'url'
-              ? t('Learn from a link', '从链接开始学习')
-              : t('Bring your own material', '导入你自己的材料')}
+              ? t('Learn from a link', '从链接开始学习', 'Học từ một liên kết')
+              : t('Bring your own material', '导入你自己的材料', 'Mang tài liệu của riêng bạn')}
           </h3>
           <p className="text-sm leading-6 text-slate-500">
             {entryMode === 'url'
               ? t(
                   'A web article or a supported video link. Review the extracted text before saving.',
                   '粘贴网页文章或支持的视频链接，提取后先校对再保存。',
+                  'Một bài viết web hoặc link video được hỗ trợ. Rà soát văn bản trích xuất trước khi lưu.',
                 )
               : t(
                   'English books, word lists, documents or video. We will help you prepare them.',
                   '英文书籍、词表、文档或视频，导入后再确认内容。',
+                  'Sách, danh sách từ, tài liệu hoặc video tiếng Anh. Chúng tôi sẽ giúp bạn chuẩn bị.',
                 )}
           </p>
         </div>
@@ -593,7 +608,6 @@ export function DurableImport({
         <MaterialFilePicker
           accept={onVocabularyFile ? `${formats},.csv,.tsv` : formats}
           disabled={busy}
-          zh={zh}
           source={
             selected ? { name: selected.filename || selected.title, size: selected.originalFile?.size } : undefined
           }
@@ -618,13 +632,14 @@ export function DurableImport({
             {t(
               'Keep this page open. Duration depends on the material and your provider; the original is retained if processing fails.',
               '请保持页面打开。耗时取决于材料和服务商，处理失败时仍保留原文件。',
+              'Giữ trang này mở. Thời gian tuỳ tài liệu và nhà cung cấp của bạn; nếu xử lý lỗi, bản gốc vẫn được giữ.',
             )}
           </p>
         </div>
       )}
       <div hidden={entryMode === 'file'} className={entryMode === 'file' ? 'hidden' : 'flex flex-wrap gap-2'}>
         <Input
-          aria-label={t('Source URL', '来源网址')}
+          aria-label={t('Source URL', '来源网址', 'URL nguồn')}
           value={url}
           onChange={(event) => setUrl(event.target.value)}
           placeholder="https://…"
@@ -633,13 +648,13 @@ export function DurableImport({
         {!selected && entryMode !== 'file' && (
           <ImportActions>
             <Button className="bg-indigo-600 text-white" disabled={busy || !url.trim()} onClick={() => void add()}>
-              {t('Add URL', '添加网址')}
+              {t('Add URL', '添加网址', 'Thêm URL')}
             </Button>
           </ImportActions>
         )}
         {selected && entryMode !== 'file' && (
           <Button variant="outline" disabled={busy || !url.trim()} onClick={() => void add()}>
-            {t('Add URL', '添加网址')}
+            {t('Add URL', '添加网址', 'Thêm URL')}
           </Button>
         )}
       </div>
@@ -649,17 +664,20 @@ export function DurableImport({
             {t(
               'Audio is transcribed, then organized into sentences or a scenario. It does not create a separate audio material.',
               '音频先转写，再整理为句集或场景，不单独生成音频类型材料。',
+              'Audio được phiên âm rồi sắp xếp thành câu hoặc tình huống. Không tạo tài liệu audio riêng.',
             )}
           </p>
           <ImportActions>
-            <span className="text-xs text-slate-500">{t('Choose a file above to continue', '选择上方文件后继续')}</span>
+            <span className="text-xs text-slate-500">
+              {t('Choose a file above to continue', '选择上方文件后继续', 'Chọn một tệp ở trên để tiếp tục')}
+            </span>
           </ImportActions>
         </>
       )}
       {!!jobs.length && (
         <details className="order-last" open={!!selected?.batchId}>
           <summary className="cursor-pointer py-2 text-sm font-medium">
-            {t('Saved import tasks', '已保存的导入任务')} ({jobs.length})
+            {t('Saved import tasks', '已保存的导入任务', 'Tác vụ nhập đã lưu')} ({jobs.length})
           </summary>
           <ul className="max-h-60 divide-y divide-slate-100 overflow-auto">
             {jobs.map((job) => (
@@ -682,7 +700,7 @@ export function DurableImport({
                     })
                   }
                 >
-                  {t('Open', '打开')}
+                  {t('Open', '打开', 'Mở')}
                 </Button>
               </li>
             ))}
@@ -705,14 +723,24 @@ export function DurableImport({
               const latest = await scope.database.importJobs.get(selected.id);
               scope.assertActive();
               if (!latest)
-                throw new Error(t('This task was removed. Choose your source again.', '任务已移除，请重新选择来源。'));
+                throw new Error(
+                  t(
+                    'This task was removed. Choose your source again.',
+                    '任务已移除，请重新选择来源。',
+                    'Tác vụ này đã bị xoá. Chọn lại nguồn.',
+                  ),
+                );
               localRevisions.current.delete(selected.id);
               setSelected(latest);
               setDraftStatus('saved');
             })
           }
         >
-          {t('Reload saved version (discard unsaved edits)', '重新载入已保存版本（放弃未保存修改）')}
+          {t(
+            'Reload saved version (discard unsaved edits)',
+            '重新载入已保存版本（放弃未保存修改）',
+            'Nạp lại bản đã lưu (bỏ phần sửa chưa lưu)',
+          )}
         </Button>
       )}
       {selected && (
@@ -721,7 +749,8 @@ export function DurableImport({
           {selected.status === 'needsReview' && (
             <p className="flex items-center gap-2 text-xs text-emerald-700">
               <CheckCircle2 className="h-4 w-4" />
-              {t('Ready to review', '已准备好校对')} · {selected.blocks.length} {t('sections', '段内容')}
+              {t('Ready to review', '已准备好校对', 'Sẵn sàng đối chiếu')} · {selected.blocks.length}{' '}
+              {t('sections', '段内容', 'đoạn')}
             </p>
           )}
           {selected.error && !error && <p className="text-sm text-amber-800">{selected.error}</p>}
@@ -732,6 +761,7 @@ export function DurableImport({
                   {t(
                     'Processing. If this was interrupted, retry restarts extraction safely; it does not create duplicate material.',
                     '处理中。如果任务已中断，可安全重试，不会重复创建资料。',
+                    'Đang xử lý. Nếu bị gián đoạn, thử lại sẽ chạy lại trích xuất an toàn, không tạo tài liệu trùng.',
                   )}
                 </p>
               )}
@@ -753,17 +783,17 @@ export function DurableImport({
                       })
                     }
                   >
-                    {t('Continue review', '继续校对')}
+                    {t('Continue review', '继续校对', 'Tiếp tục đối chiếu')}
                   </Button>
                 ) : (
                   <Button data-testid="import-process" disabled={busy} onClick={() => void process()}>
                     {busy
-                      ? t('Processing…', '处理中…')
+                      ? t('Processing…', '处理中…', 'Đang xử lý…')
                       : selected.kind === 'media'
-                        ? t('Transcribe with AI', '使用 AI 转写')
+                        ? t('Transcribe with AI', '使用 AI 转写', 'Phiên âm bằng AI')
                         : selected.status === 'queued'
-                          ? t('Prepare material', '整理材料')
-                          : t('Try again', '重试')}
+                          ? t('Prepare material', '整理材料', 'Chuẩn bị tài liệu')
+                          : t('Try again', '重试', 'Thử lại')}
                   </Button>
                 )}
               </ImportActions>
@@ -776,6 +806,7 @@ export function DurableImport({
                   {t(
                     'Transcription sends this file to a speech provider and may use paid quota. Start only when you are ready. Cancelling stops this page’s request; provider processing or charges may already have started.',
                     '转写会将文件发送至语音服务商，可能使用付费额度。确认后再开始；取消会中断本页请求，但服务商可能已开始处理或计费。',
+                    'Phiên âm gửi tệp này tới nhà cung cấp speech và có thể trừ quota trả phí. Chỉ bắt đầu khi bạn sẵn sàng. Huỷ sẽ dừng yêu cầu trên trang này; phía nhà cung cấp có thể đã bắt đầu xử lý hoặc tính phí.',
                   )}
                 </p>
               )}
@@ -791,11 +822,15 @@ export function DurableImport({
                         useProviderStore.getState().providers,
                       ).error
                     }{' '}
-                    <Link href="/settings">{t('Open settings', '打开设置')}</Link>
+                    <Link href="/settings">{t('Open settings', '打开设置', 'Mở cài đặt')}</Link>
                   </p>
                 )}
               <label className="block space-y-2 text-sm">
-                {t('Use an SRT/VTT transcript instead of transcribing', '使用 SRT/VTT 字幕，无需转写')}
+                {t(
+                  'Use an SRT/VTT transcript instead of transcribing',
+                  '使用 SRT/VTT 字幕，无需转写',
+                  'Dùng transcript SRT/VTT thay vì phiên âm',
+                )}
                 <input
                   type="file"
                   accept=".srt,.vtt"
@@ -810,22 +845,25 @@ export function DurableImport({
           )}
           {selected.status === 'failed' && (
             <div className="space-y-3 rounded-xl bg-amber-50 p-4">
-              <h4 className="font-medium">{t('Continue with your own text', '补充正文，继续这次导入')}</h4>
+              <h4 className="font-medium">
+                {t('Continue with your own text', '补充正文，继续这次导入', 'Bổ sung văn bản của bạn để tiếp tục')}
+              </h4>
               <p className="text-sm text-amber-900">
                 {t(
                   'Your source is retained. Paste the transcript or article text below.',
                   '来源已保留，可以粘贴转录文本或文章正文继续校对。',
+                  'Nguồn của bạn đã được giữ. Dán transcript hoặc văn bản bài viết vào bên dưới.',
                 )}
               </p>
               <textarea
-                aria-label={t('Supplemental text', '补充正文')}
+                aria-label={t('Supplemental text', '补充正文', 'Văn bản bổ sung')}
                 value={supplement}
                 onChange={(e) => setSupplement(e.target.value)}
                 disabled={busy}
                 className="min-h-32 w-full rounded-lg bg-white p-3"
               />
               <Button variant="outline" disabled={busy || !supplement.trim()} onClick={() => void attachText()}>
-                {t('Use this text', '使用这段正文')}
+                {t('Use this text', '使用这段正文', 'Dùng văn bản này')}
               </Button>
             </div>
           )}
@@ -833,10 +871,10 @@ export function DurableImport({
             <div className="grid min-w-0 items-start gap-5 lg:grid-cols-[minmax(0,1fr)_240px]">
               <div className="order-last space-y-4 rounded-xl bg-slate-100 p-4 lg:order-none lg:col-start-2 lg:row-start-1">
                 <div className="flex flex-wrap items-center justify-between gap-2 text-sm">
-                  <h4 className="font-semibold">{t('Review your material', '校对你的材料')}</h4>
+                  <h4 className="font-semibold">{t('Review your material', '校对你的材料', 'Rà tài liệu của bạn')}</h4>
                   <span className="text-xs tabular-nums text-slate-500">
-                    {selected.blocks.length} {t('sections', '段内容')} ·{' '}
-                    {MATERIAL_LABELS[selected.materialType || 'reading'][zh ? 1 : 0]}
+                    {selected.blocks.length} {t('sections', '段内容', 'đoạn')} ·{' '}
+                    {pick(MATERIAL_LABELS[selected.materialType || 'reading'])}
                   </span>
                 </div>
                 {selected.requiresAudioStructure && (
@@ -845,12 +883,13 @@ export function DurableImport({
                       {t(
                         'Audio is a source, not a library type. Use AI to prepare sentences or a scenario, then review before publishing. This uses your configured AI provider.',
                         '音频仅作为来源。使用已配置的 AI 生成句集或场景，校对后再加入资料库。',
+                        'Audio là nguồn, không phải loại thư viện. Dùng AI chuẩn bị câu hoặc tình huống, rà soát rồi mới đưa vào. Sẽ dùng nhà cung cấp AI bạn đã cấu hình.',
                       )}
                     </p>
                     <label className="block text-sm">
-                      {t('Audio result', '音频生成结果')}
+                      {t('Audio result', '音频生成结果', 'Kết quả audio')}
                       <select
-                        aria-label={t('Audio result', '音频生成结果')}
+                        aria-label={t('Audio result', '音频生成结果', 'Kết quả audio')}
                         disabled={busy}
                         value={selected.materialType === 'scenario' ? 'scenario' : 'sentences'}
                         onChange={(e) =>
@@ -862,24 +901,28 @@ export function DurableImport({
                         }
                         className="ml-2 min-h-11 rounded-lg bg-white px-3"
                       >
-                        <option value="sentences">{t('Sentences', '句集')}</option>
-                        <option value="scenario">{t('Scenario', '场景')}</option>
+                        <option value="sentences">{t('Sentences', '句集', 'Các câu')}</option>
+                        <option value="scenario">{t('Scenario', '场景', 'Tình huống')}</option>
                       </select>
                     </label>
                     <Button disabled={busy} onClick={() => void organizeAudio()}>
                       {selected.audioStructured
-                        ? t('Regenerate with AI', '重新生成')
-                        : t('Organize with AI', '使用 AI 整理')}
+                        ? t('Regenerate with AI', '重新生成', 'Tạo lại bằng AI')
+                        : t('Organize with AI', '使用 AI 整理', 'Sắp xếp bằng AI')}
                     </Button>
                     {selected.audioStructured && (
                       <p role="status">
-                        {t('AI draft ready. Review the text below.', 'AI 草稿已生成，请校对下方内容。')}
+                        {t(
+                          'AI draft ready. Review the text below.',
+                          'AI 草稿已生成，请校对下方内容。',
+                          'AI đã tạo bản nháp. Kiểm tra văn bản bên dưới.',
+                        )}
                       </p>
                     )}
                   </div>
                 )}
                 <label className="block space-y-1 text-sm">
-                  {t('Material title', '资料标题')}
+                  {t('Material title', '资料标题', 'Tên tài liệu')}
                   <Input
                     value={selected.title}
                     onChange={(event) => {
@@ -892,7 +935,7 @@ export function DurableImport({
                   selected.materialType !== 'video' &&
                   selected.materialType !== 'wordbook' && (
                     <label className="block space-y-1 text-sm">
-                      {t('Material type', '材料类型')}
+                      {t('Material type', '材料类型', 'Kiểu tài liệu')}
                       <select
                         aria-label="Material type"
                         disabled={busy}
@@ -913,7 +956,7 @@ export function DurableImport({
                       >
                         {(['reading', 'dialogue', 'sentences', 'scenario'] as const).map((kind) => (
                           <option key={kind} value={kind}>
-                            {MATERIAL_LABELS[kind][zh ? 1 : 0]}
+                            {pick(MATERIAL_LABELS[kind])}
                           </option>
                         ))}
                       </select>
@@ -922,7 +965,7 @@ export function DurableImport({
                 {selected.materialType === 'scenario' && selected.scenario && (
                   <div className="grid gap-3 sm:grid-cols-2">
                     <label className="block text-sm sm:col-span-2">
-                      {t('Situation', '场景背景')}
+                      {t('Situation', '场景背景', 'Tình huống')}
                       <textarea
                         aria-label="Situation"
                         disabled={busy}
@@ -938,7 +981,7 @@ export function DurableImport({
                       />
                     </label>
                     <label className="block text-sm">
-                      {t('Your role', '你的角色')}
+                      {t('Your role', '你的角色', 'Vai của bạn')}
                       <Input
                         aria-label="Your role"
                         disabled={busy}
@@ -950,7 +993,7 @@ export function DurableImport({
                       />
                     </label>
                     <label className="block text-sm">
-                      {t('Communication goal', '沟通目标')}
+                      {t('Communication goal', '沟通目标', 'Mục tiêu giao tiếp')}
                       <Input
                         aria-label="Communication goal"
                         disabled={busy}
@@ -964,7 +1007,7 @@ export function DurableImport({
                   </div>
                 )}
                 <label className="block space-y-1 text-sm">
-                  {t('Difficulty', '难度')}
+                  {t('Difficulty', '难度', 'Độ khó')}
                   <select
                     className="min-h-10 rounded-lg bg-slate-100 p-2"
                     value={selected.difficulty || 'intermediate'}
@@ -972,27 +1015,27 @@ export function DurableImport({
                       setSelected({ ...selected, difficulty: event.target.value as ImportJob['difficulty'] })
                     }
                   >
-                    <option value="beginner">{t('Beginner', '初级')}</option>
-                    <option value="intermediate">{t('Intermediate', '中级')}</option>
-                    <option value="advanced">{t('Advanced', '高级')}</option>
+                    <option value="beginner">{t('Beginner', '初级', 'Cơ bản')}</option>
+                    <option value="intermediate">{t('Intermediate', '中级', 'Trung bình')}</option>
+                    <option value="advanced">{t('Advanced', '高级', 'Nâng cao')}</option>
                   </select>
                 </label>
                 <label className="block space-y-1 text-sm">
-                  {t('Tags', '标签')}
+                  {t('Tags', '标签', 'Thẻ')}
                   <TagSelector
                     value={selected.tagsText ?? (selected.tags ?? []).join(', ')}
                     onChange={(value) => {
                       setSelected({ ...selected, tagsText: value, tags: normalizeTags(value) });
                       setSaved(false);
                     }}
-                    ariaLabel={t('Tags', '标签')}
-                    placeholder={t('e.g. work, interview', '例如：职场，面试')}
+                    ariaLabel={t('Tags', '标签', 'Thẻ')}
+                    placeholder={t('e.g. work, interview', '例如：职场，面试', 'vd: công việc, phỏng vấn')}
                     className="bg-slate-100"
                   />
                 </label>
                 {selected.blocks.some((block) => block.timeStart !== undefined) && (
                   <label className="block space-y-1 text-sm">
-                    {t('Subtitle offset (seconds)', '字幕偏移（秒）')}
+                    {t('Subtitle offset (seconds)', '字幕偏移（秒）', 'Lệch phụ đề (giây)')}
                     <Input
                       type="number"
                       step="0.1"
@@ -1018,6 +1061,7 @@ export function DurableImport({
                   {t(
                     'Changes save automatically on this device. Wait for Saved before leaving. The original stays unchanged.',
                     '修改自动保存在本机，显示已保存后可离开。原始版本保持不变。',
+                    'Thay đổi tự lưu trên thiết bị này. Đợi hiện Đã lưu rồi mới rời trang. Bản gốc không đổi.',
                   )}
                 </p>
               </div>
@@ -1026,7 +1070,6 @@ export function DurableImport({
                   key={selected.id}
                   job={selected}
                   editBlock={editBlock}
-                  zh={zh}
                   disabled={busy}
                   onExclude={(id, excluded) =>
                     setSelected({
@@ -1039,10 +1082,14 @@ export function DurableImport({
                 />
                 <p data-testid="file-draft-status" role="status" className="text-xs text-slate-500">
                   {draftStatus === 'saved'
-                    ? t('Saved on this device', '已保存到本机')
+                    ? t('Saved on this device', '已保存到本机', 'Đã lưu trên thiết bị này')
                     : draftStatus === 'error'
-                      ? t('Not saved — keep this page open', '未保存，请保持页面打开')
-                      : t('Saving draft…', '正在保存草稿…')}
+                      ? t(
+                          'Not saved — keep this page open',
+                          '未保存，请保持页面打开',
+                          'Chưa lưu — giữ nguyên trang này',
+                        )
+                      : t('Saving draft…', '正在保存草稿…', 'Đang lưu nháp…')}
                 </p>
               </div>
               <ImportActions>
@@ -1052,7 +1099,7 @@ export function DurableImport({
                   disabled={busy}
                   onClick={() => void attempt(save)}
                 >
-                  {t('Save review', '保存校对')}
+                  {t('Save review', '保存校对', 'Lưu phần đối chiếu')}
                 </Button>
                 <Button
                   data-testid="import-publish"
@@ -1069,12 +1116,12 @@ export function DurableImport({
                   }
                   onClick={() => void publish()}
                 >
-                  {t('Add to library', '加入资料库')}
+                  {t('Add to library', '加入资料库', 'Thêm vào thư viện')}
                   <ArrowRight className="h-4 w-4" />
                 </Button>
                 {saved && (
                   <span role="status" className="text-sm text-green-700">
-                    {t('Saved on this device', '已保存到本机')}
+                    {t('Saved on this device', '已保存到本机', 'Đã lưu trên thiết bị này')}
                   </span>
                 )}
               </ImportActions>
@@ -1086,6 +1133,7 @@ export function DurableImport({
                 {t(
                   'Added to library. Original and reviewed versions are retained.',
                   '已加入资料库，原始与校对版本均已保留。',
+                  'Đã thêm vào thư viện. Bản gốc và bản đã rà soát đều được giữ.',
                 )}
               </p>
               <ImportActions>
@@ -1094,13 +1142,14 @@ export function DurableImport({
                     className="inline-flex min-h-11 items-center rounded-xl bg-indigo-600 px-4 py-2 text-sm font-semibold text-white transition-transform active:scale-95 motion-reduce:transform-none focus-visible:ring-2"
                     href={`/learn/${encodeURIComponent(unitIdForContent(publishedSource))}`}
                   >
-                    {t('Start learning', '开始学习')}
+                    {t('Start learning', '开始学习', 'Bắt đầu học')}
                   </Link>
                 ) : (
                   <p className="text-sm text-slate-500">
                     {t(
                       'Loading published material… If it was removed, return to the library.',
                       '正在读取已导入资料… 若已删除，请返回资料库。',
+                      'Đang tải tài liệu đã thêm… Nếu đã bị xoá, quay lại thư viện.',
                     )}
                   </p>
                 )}
@@ -1111,7 +1160,7 @@ export function DurableImport({
             <section
               id="source-transcript"
               className="max-h-96 space-y-4 overflow-auto"
-              aria-label={t('Source locations', '原文位置')}
+              aria-label={t('Source locations', '原文位置', 'Vị trí trong nguồn')}
               ref={(element) => {
                 if (element && new URLSearchParams(window.location.search).get('block') === 'transcript')
                   element.scrollIntoView({ block: 'nearest' });
@@ -1131,11 +1180,13 @@ export function DurableImport({
                   <p className="text-xs tabular-nums text-slate-500">
                     {block.timeStart !== undefined
                       ? `${block.timeStart.toFixed(2)}–${block.timeEnd?.toFixed(2)}s`
-                      : `${t('Original characters', '原文字符')} ${block.start}–${block.end}`}
+                      : `${t('Original characters', '原文字符', 'Ký tự gốc')} ${block.start}–${block.end}`}
                   </p>
                   <p className="mt-2 whitespace-pre-wrap text-sm">{block.text}</p>
                   <details>
-                    <summary className="cursor-pointer py-2 text-xs">{t('Original source', '原始来源')}</summary>
+                    <summary className="cursor-pointer py-2 text-xs">
+                      {t('Original source', '原始来源', 'Nguồn gốc')}
+                    </summary>
                     <p className="whitespace-pre-wrap text-sm">
                       {selected.originalBlocks?.find((original) => original.id === block.id)?.text ||
                         selected.originalText?.slice(block.start, block.end)}
@@ -1148,7 +1199,7 @@ export function DurableImport({
           {selected.originalText && (
             <details>
               <summary className="cursor-pointer py-2 text-sm">
-                {t('Original extraction (read-only)', '原始提取文本（只读）')}
+                {t('Original extraction (read-only)', '原始提取文本（只读）', 'Văn bản trích xuất gốc (chỉ đọc)')}
               </summary>
               <p className="max-h-48 overflow-auto whitespace-pre-wrap rounded-lg bg-slate-50 p-3 text-sm">
                 {selected.originalText}
@@ -1167,7 +1218,7 @@ export function DurableImport({
                 setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
               }}
             >
-              {t('Download original file', '下载原文件')}
+              {t('Download original file', '下载原文件', 'Tải tệp gốc')}
             </Button>
           )}
           {selected.status !== 'ready' && (
@@ -1183,7 +1234,7 @@ export function DurableImport({
                 })
               }
             >
-              {t('Cancel task (keep original)', '取消任务（保留原文件）')}
+              {t('Cancel task (keep original)', '取消任务（保留原文件）', 'Huỷ tác vụ (giữ tệp gốc)')}
             </Button>
           )}
         </div>

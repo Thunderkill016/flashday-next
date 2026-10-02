@@ -130,7 +130,11 @@ function normalizeNativeQATranslationText(text: string) {
 }
 
 export function getIOSNativeQAMockTranslation(text: string, targetLang: string) {
-  const prefix = targetLang.toLowerCase().startsWith('zh') ? '练习' : 'Practice';
+  const prefix = targetLang.toLowerCase().startsWith('zh')
+    ? '练习'
+    : targetLang.toLowerCase().startsWith('vi')
+      ? 'Luyện tập'
+      : 'Practice';
   return `${prefix}：${normalizeNativeQATranslationText(text)}`;
 }
 
@@ -355,7 +359,7 @@ async function seedImportedBook() {
   const book: BookItem = {
     id: IOS_NATIVE_QA_BOOK_ID,
     title: 'iOS QA Story Pack',
-    author: 'EchoType QA',
+    author: 'FlashDay QA',
     description: 'Deterministic imported book used for iOS native validation.',
     chapterCount: 3,
     totalWords: 27,

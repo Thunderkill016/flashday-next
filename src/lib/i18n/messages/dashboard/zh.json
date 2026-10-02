@@ -1,6 +1,6 @@
 {
   "header": {
-    "title": "欢迎使用 EchoType",
+    "title": "欢迎使用 FlashDay",
     "subtitle": "通过听、说、读、写掌握英语",
     "analytics": "查看分析"
   },
@@ -32,8 +32,8 @@
     }
   },
   "autoLanguageNotice": {
-    "title": "界面语言已匹配你的浏览器",
-    "description": "EchoType 当前使用 {{language}} 界面，因为这与你的浏览器语言一致。你可以随时在设置中修改。",
+    "title": "界面语言默认为越南语",
+    "description": "FlashDay 面向越南学习者，默认使用{{language}}。你可以随时在设置中更改。",
     "cta": "查看语言设置"
   },
   "aiSetup": {
@@ -54,7 +54,7 @@
   },
   "learningGoal": {
     "title": "选择你的学习目标",
-    "description": "告诉 EchoType 你更想在哪类英语能力上进步，今天的计划会向这个方向倾斜。",
+    "description": "告诉 FlashDay 你更想在哪类英语能力上进步，今天的计划会向这个方向倾斜。",
     "ctaAssessment": "开始评估",
     "currentTitle": "当前学习目标",
     "weakSpots": "查看薄弱点"

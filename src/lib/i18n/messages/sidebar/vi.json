@@ -1,0 +1,33 @@
+{
+  "groups": {
+    "overview": "Tổng quan",
+    "learning": "Học tập",
+    "resources": "Tài nguyên",
+    "system": "Hệ thống"
+  },
+  "items": {
+    "dashboard": "Tổng quan",
+    "listen": "Nghe",
+    "speak": "Nói",
+    "pronunciation": "Phát âm",
+    "read": "Đọc",
+    "write": "Viết",
+    "library": "Thư viện",
+    "wordBooks": "Sổ từ",
+    "journal": "Cụm từ hay",
+    "favorites": "Đã lưu",
+    "todayReview": "Ôn tập hôm nay",
+    "weakSpots": "Điểm yếu",
+    "settings": "Cài đặt"
+  },
+  "logo": {
+    "subtitle": "Học tiếng Anh"
+  },
+  "controls": {
+    "collapse": "Thu gọn"
+  },
+  "updater": {
+    "restartToUpdate": "Khởi động lại để cập nhật",
+    "updateAvailable": "Có bản cập nhật"
+  }
+}

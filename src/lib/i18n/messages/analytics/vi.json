@@ -1,0 +1,67 @@
+{
+  "page": {
+    "loading": "Đang tải thống kê...",
+    "error": "Không tải được thống kê: {{message}}",
+    "title": "Thống kê học tập",
+    "subtitle": "Theo dõi tiến độ và tìm ra điểm cần cải thiện",
+    "stats": {
+      "streak": "Chuỗi ngày",
+      "totalSessions": "Tổng buổi học",
+      "avgAccuracy": "Chính xác TB",
+      "avgWpm": "WPM TB",
+      "currentDays": "{{count}} {{unit}}",
+      "longest": "Dài nhất: {{count}} {{unit}}"
+    }
+  },
+  "modules": {
+    "listen": "Nghe",
+    "speak": "Nói",
+    "read": "Đọc",
+    "write": "Viết"
+  },
+  "charts": {
+    "accuracyTrend": {
+      "title": "Xu hướng độ chính xác",
+      "empty": "Chưa có dữ liệu độ chính xác",
+      "tooltipLabel": "Độ chính xác"
+    },
+    "activityHeatmap": {
+      "title": "Bản đồ hoạt động",
+      "summary": "{{sessions}} buổi học trên {{days}} ngày có học",
+      "dayLabels": ["", "T2", "", "T4", "", "T6", ""],
+      "cellTitle": "{{date}}: {{count}} {{sessionLabel}}",
+      "session": "buổi học",
+      "sessions": "buổi học",
+      "less": "Ít",
+      "more": "Nhiều"
+    },
+    "dailySessions": {
+      "title": "Buổi học theo ngày",
+      "empty": "Chưa có dữ liệu buổi học"
+    },
+    "moduleBreakdown": {
+      "title": "Phân bổ theo module",
+      "empty": "Chưa có dữ liệu buổi học",
+      "tooltipValue": "{{count}} buổi ({{time}})"
+    },
+    "reviewForecast": {
+      "title": "Dự báo ôn tập",
+      "summary": "{{count}} mục trong 7 ngày tới",
+      "empty": "Không có bài ôn sắp tới",
+      "tooltipValue": "{{count}} mục",
+      "tooltipLabel": "Ôn tập"
+    },
+    "vocabularyGrowth": {
+      "title": "Tăng trưởng từ vựng",
+      "empty": "Chưa có dữ liệu từ vựng",
+      "tooltipValue": "{{count}} mục",
+      "tooltipLabel": "Từ vựng"
+    },
+    "wpmTrend": {
+      "title": "Tiến triển WPM",
+      "empty": "Chưa có dữ liệu WPM",
+      "tooltipValue": "{{value}} WPM",
+      "tooltipLabel": "Tốc độ"
+    }
+  }
+}

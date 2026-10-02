@@ -36,7 +36,7 @@ export function preflightBackupZip(bytes: Uint8Array, maxBytes: number): void {
     expanded += size;
     if (expanded > maxBytes) fail('expanded size exceeds restore limit');
     // Do not trust declared lengths for DEFLATE. Official backups never compress.
-    if (method !== 0 || compressed !== size) fail('compressed backups are unsupported; use the original EchoType ZIP');
+    if (method !== 0 || compressed !== size) fail('compressed backups are unsupported; use the original FlashDay ZIP');
     if (flags & ~0x800) fail('encryption or streaming descriptors are unsupported');
     const nameSize = u16(position + 28),
       extraSize = u16(position + 30),

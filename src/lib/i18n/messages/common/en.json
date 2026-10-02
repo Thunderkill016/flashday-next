@@ -1,9 +1,11 @@
 {
   "languageNames": {
+    "vi": "Vietnamese",
     "en": "English",
     "zh": "Chinese"
   },
   "nativeLanguageNames": {
+    "vi": "Tiếng Việt",
     "en": "English",
     "zh": "中文"
   },

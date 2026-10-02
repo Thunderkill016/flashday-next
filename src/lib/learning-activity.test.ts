@@ -20,8 +20,8 @@ describe('learning workshop evidence', () => {
     expect(revision).not.toHaveProperty('score');
   });
   it('uses a distinct transfer task rather than transcription', () => {
-    expect(activityPrompt('personal-example', false)).toContain('your own');
-    expect(activityPrompt('comprehension', false)).toContain('evidence');
+    expect(activityPrompt('personal-example', 'en')).toContain('your own');
+    expect(activityPrompt('comprehension', 'en')).toContain('evidence');
   });
   it('only completes the core loop with comprehension and a genuinely revised writing draft', () => {
     const base = {lessonId:'l',unitId:'u',sourceText:'Original',sourceContentIds:['s']};

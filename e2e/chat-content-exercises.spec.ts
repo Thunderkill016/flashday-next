@@ -105,6 +105,10 @@ test.describe('Chat Content Exercises E2E', () => {
   // ── E1: Select Content and Start Translation Exercise ────────────────
 
   test('E1: Select Content → Translation Exercise', async ({ page }) => {
+    // The in-panel exercise pills (Translate/Fill Blank/Quiz/Dictation) were removed
+    // with ChatModeSelector. Exercises now start via chat tools, which need a live
+    // LLM provider — see chat-agent-upgrade E2E-9 for the tool-driven path.
+    test.fixme();
     await openChat(page);
 
     // Expand panel for better screenshots
@@ -175,6 +179,10 @@ test.describe('Chat Content Exercises E2E', () => {
   // ── E2: Fill Blank Exercise ──────────────────────────────────────────
 
   test('E2: Fill Blank Exercise', async ({ page }) => {
+    // The in-panel exercise pills (Translate/Fill Blank/Quiz/Dictation) were removed
+    // with ChatModeSelector. Exercises now start via chat tools, which need a live
+    // LLM provider — see chat-agent-upgrade E2E-9 for the tool-driven path.
+    test.fixme();
     await openChat(page);
     await page.locator('button[title="Expand"]').click();
     await page.waitForTimeout(300);
@@ -218,6 +226,10 @@ test.describe('Chat Content Exercises E2E', () => {
   // ── E3: Quiz Exercise ────────────────────────────────────────────────
 
   test('E3: Quiz Exercise', async ({ page }) => {
+    // The in-panel exercise pills (Translate/Fill Blank/Quiz/Dictation) were removed
+    // with ChatModeSelector. Exercises now start via chat tools, which need a live
+    // LLM provider — see chat-agent-upgrade E2E-9 for the tool-driven path.
+    test.fixme();
     await openChat(page);
     await page.locator('button[title="Expand"]').click();
     await page.waitForTimeout(300);
@@ -278,6 +290,10 @@ test.describe('Chat Content Exercises E2E', () => {
   // ── E4: Dictation Exercise ───────────────────────────────────────────
 
   test('E4: Dictation Exercise', async ({ page }) => {
+    // The in-panel exercise pills (Translate/Fill Blank/Quiz/Dictation) were removed
+    // with ChatModeSelector. Exercises now start via chat tools, which need a live
+    // LLM provider — see chat-agent-upgrade E2E-9 for the tool-driven path.
+    test.fixme();
     await openChat(page);
     await page.locator('button[title="Expand"]').click();
     await page.waitForTimeout(300);
@@ -323,9 +339,8 @@ test.describe('Chat Content Exercises E2E', () => {
     await openLibrary(page);
     await selectFirstContent(page);
 
-    // Verify content bar + exercise pills
+    // Verify content bar (exercise pills no longer render)
     await expect(page.getByText('Practicing:')).toBeVisible();
-    await expect(page.getByText('Exercise:')).toBeVisible();
 
     // Check for practice badge in header
     const badges = page.locator('span').filter({ hasText: 'practice' });
@@ -342,12 +357,8 @@ test.describe('Chat Content Exercises E2E', () => {
     await expect(page.getByText('Practicing:')).not.toBeVisible({ timeout: 3000 });
     console.log('E5: Practicing bar dismissed');
 
-    // Verify exercise pills gone
-    await expect(page.getByText('Exercise:')).not.toBeVisible({ timeout: 3000 });
-    console.log('E5: Exercise pills gone');
-
     // Verify no practice badge
-    await expect(page.locator('span').filter({ hasText: 'practice' })).not.toBeVisible({ timeout: 3000 });
+    await expect(page.getByTestId('chat-panel').locator('span').filter({ hasText: /^practice$/ })).not.toBeVisible({ timeout: 3000 });
     console.log('E5: Practice badge removed');
 
     await page.screenshot({ path: `${SCREENSHOT_DIR}/E5-dismiss-content.png`, fullPage: false });
@@ -360,40 +371,33 @@ test.describe('Chat Content Exercises E2E', () => {
     await openChat(page);
     await openLibrary(page);
 
+    const itemLoc = page.locator('.truncate.font-medium, .font-medium.truncate').filter({ hasText: /.+/ });
+    const waitForTabItems = async (label: string) => {
+      await expect
+        .poll(() => itemLoc.count(), { timeout: 15000 })
+        .toBeGreaterThan(0);
+      console.log(`E6: ${label} tab items = ${await itemLoc.count()}`);
+    };
+
     // -- Words tab (default)
     const wordsTab = page.locator('button').filter({ hasText: 'Words' });
     await expect(wordsTab).toBeVisible();
-    let items = page.locator('.truncate.font-medium, .font-medium.truncate').filter({ hasText: /.+/ });
-    let count = await items.count();
-    console.log(`E6: Words tab items = ${count}`);
-    expect(count).toBeGreaterThan(0);
+    await waitForTabItems('Words');
     await page.screenshot({ path: `${SCREENSHOT_DIR}/E6-tab-words.png`, fullPage: false });
 
     // -- Phrases tab
     await page.locator('button').filter({ hasText: 'Phrases' }).click();
-    await page.waitForTimeout(500);
-    items = page.locator('.truncate.font-medium, .font-medium.truncate').filter({ hasText: /.+/ });
-    count = await items.count();
-    console.log(`E6: Phrases tab items = ${count}`);
-    expect(count).toBeGreaterThan(0);
+    await waitForTabItems('Phrases');
     await page.screenshot({ path: `${SCREENSHOT_DIR}/E6-tab-phrases.png`, fullPage: false });
 
     // -- Sentences tab
     await page.locator('button').filter({ hasText: 'Sentences' }).click();
-    await page.waitForTimeout(500);
-    items = page.locator('.truncate.font-medium, .font-medium.truncate').filter({ hasText: /.+/ });
-    count = await items.count();
-    console.log(`E6: Sentences tab items = ${count}`);
-    expect(count).toBeGreaterThan(0);
+    await waitForTabItems('Sentences');
     await page.screenshot({ path: `${SCREENSHOT_DIR}/E6-tab-sentences.png`, fullPage: false });
 
     // -- Articles tab
     await page.locator('button').filter({ hasText: 'Articles' }).click();
-    await page.waitForTimeout(500);
-    items = page.locator('.truncate.font-medium, .font-medium.truncate').filter({ hasText: /.+/ });
-    count = await items.count();
-    console.log(`E6: Articles tab items = ${count}`);
-    expect(count).toBeGreaterThan(0);
+    await waitForTabItems('Articles');
     await page.screenshot({ path: `${SCREENSHOT_DIR}/E6-tab-articles.png`, fullPage: false });
 
     console.log('E6: PASS');

@@ -35,7 +35,7 @@ export interface AlignmentCacheEntry {
   createdAt: number;
 }
 
-class EchoTypeDB extends Dexie {
+class FlashDayDB extends Dexie {
   contents!: Table<ContentItem>;
   records!: Table<LearningRecord>;
   sessions!: Table<TypingSession>;
@@ -385,14 +385,14 @@ export function getDatabaseNameForUser(userId: string | null): string {
 }
 
 let activeUserId: string | null = null;
-export let db = new EchoTypeDB(getDatabaseNameForUser(activeUserId));
+export let db = new FlashDayDB(getDatabaseNameForUser(activeUserId));
 
 export async function switchDatabaseForUser(userId: string | null): Promise<void> {
   if (activeUserId === userId) return;
 
   db.close();
   activeUserId = userId;
-  db = new EchoTypeDB(getDatabaseNameForUser(userId));
+  db = new FlashDayDB(getDatabaseNameForUser(userId));
   await db.open();
 
   if (typeof window !== 'undefined') {

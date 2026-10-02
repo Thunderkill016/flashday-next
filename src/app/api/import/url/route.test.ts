@@ -22,6 +22,6 @@ it('preserves retry exhaustion through the client without a fallback and localiz
  const fetcher=vi.fn().mockResolvedValue(response);
  const error=await fetchUrlImportResult('https://www.w3.org/sample.pdf',fetcher).catch(error=>error);
  expect(fetcher).toHaveBeenCalledTimes(1);
- expect(describeImportError(error,true)).toContain('手动下载');
+ expect(describeImportError(error,'zh')).toContain('手动下载');
  expect(describeImportError(error)).toContain('Upload file');
 });

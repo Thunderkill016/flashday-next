@@ -1,0 +1,39 @@
+{
+  "completeBanner": {
+    "listen": {
+      "title": "Hoàn thành phần nghe!",
+      "subtitle": "Tai bạn đang nhạy hơn — quay lại ngày mai nhé!"
+    },
+    "speak": {
+      "title": "Hoàn thành phần nói!",
+      "subtitle": "Luyện phát âm tốt lắm — giữ chuỗi ngày mai nhé!"
+    },
+    "read": {
+      "title": "Hoàn thành đọc to!",
+      "subtitle": "Buổi đọc tuyệt vời — hẹn gặp ngày mai!"
+    },
+    "write": {
+      "title": "Hoàn thành phần viết!",
+      "subtitle": "Kỹ năng gõ của bạn đang lên trình — quay lại ngày mai nhé!"
+    },
+    "backToDashboard": "Về Tổng quan"
+  },
+  "crossModuleNav": {
+    "listen": "Nghe",
+    "read": "Đọc",
+    "speak": "Nói",
+    "write": "Viết",
+    "practiceIn": "Luyện ở chế độ {{label}}"
+  },
+  "readAloud": {
+    "previousSentence": "Câu trước",
+    "nextSentence": "Câu sau",
+    "play": "Phát",
+    "pause": "Tạm dừng",
+    "speedUp": "Nhanh hơn",
+    "speedDown": "Chậm hơn",
+    "immersiveMode": "Chế độ toàn màn hình",
+    "exitImmersive": "Thoát chế độ toàn màn hình",
+    "progress": "Tiến độ"
+  }
+}

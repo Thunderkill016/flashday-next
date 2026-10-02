@@ -1,0 +1,133 @@
+{
+  "header": "Trình độ tiếng Anh",
+  "loading": {
+    "steps": [
+      {
+        "label": "Đang kết nối mô hình AI...",
+        "pct": 15
+      },
+      {
+        "label": "Đang tạo câu hỏi từ vựng...",
+        "pct": 35
+      },
+      {
+        "label": "Đang tạo câu hỏi ngữ pháp...",
+        "pct": 55
+      },
+      {
+        "label": "Đang tạo câu hỏi đọc hiểu...",
+        "pct": 75
+      },
+      {
+        "label": "Đang chuẩn bị bài đánh giá...",
+        "pct": 90
+      }
+    ],
+    "tips": [
+      "Bài kiểm tra gồm từ vựng, ngữ pháp và đọc hiểu.",
+      "Câu hỏi trải qua 6 mức độ: A1 (Mới bắt đầu) đến C2 (Thành thạo).",
+      "Trả lời thật để có kết quả chính xác nhất.",
+      "Mỗi câu có 4 lựa chọn, chỉ một đáp án đúng.",
+      "Kết quả sẽ kèm gợi ý học tập cá nhân hoá."
+    ],
+    "cancel": "Huỷ"
+  },
+  "idle": {
+    "assessTitle": "Đánh giá trình độ tiếng Anh",
+    "assessDescription": "Làm bài kiểm tra nhanh (CEFR A1-C2) để nhận gợi ý học tập cá nhân hoá.",
+    "start": "Bắt đầu đánh giá",
+    "retake": "Làm lại",
+    "lastTested": "Lần cuối {{timeLabel}} · Điểm {{score}}/100",
+    "done": "Xong",
+    "currentLevel": "Trình độ hiện tại"
+  },
+  "testing": {
+    "questionProgress": "Câu {{current}} / {{total}}",
+    "category": {
+      "vocabulary": "Từ vựng",
+      "grammar": "Ngữ pháp",
+      "reading": "Đọc hiểu"
+    },
+    "cancel": "Huỷ"
+  },
+  "result": {
+    "score": "Điểm: {{value}} / 100",
+    "whatYouCanDo": "Bạn có thể làm gì",
+    "cefrScale": "Thang CEFR",
+    "previous": "Trước: {{prev}} -> Hiện tại: {{current}}{{suffix}}",
+    "previousSuffixes": {
+      "improved": " - Tiến bộ rõ!",
+      "same": " - Tiếp tục luyện nhé!",
+      "declined": " - Cố lên, bạn sẽ khá hơn!"
+    },
+    "areasToImprove": "Cần cải thiện",
+    "strengths": "Điểm mạnh",
+    "balanced": "Đều ở mọi phần. Tiếp tục luyện để vững từng kỹ năng!",
+    "nextStep": "Bước tiếp theo",
+    "category": {
+      "vocabulary": "Từ vựng",
+      "grammar": "Ngữ pháp",
+      "reading": "Đọc hiểu"
+    },
+    "weakAreaSummary": "{{category}} - đúng {{pct}}%",
+    "strongTips": {
+      "vocabulary": "Vốn từ vựng rất tốt!",
+      "grammar": "Nền ngữ pháp vững!",
+      "reading": "Đọc hiểu mạnh!"
+    },
+    "weakTips": {
+      "vocabulary": "Thử học 5-10 từ mới mỗi ngày bằng flashcard. Đọc truyện theo cấp độ và ghi chú từ lạ theo ngữ cảnh.",
+      "grammar": "Ôn lại các quy tắc ngữ pháp cốt lõi (thì, mạo từ, giới từ). Luyện bài điền từ và chú ý mẫu câu khi đọc.",
+      "reading": "Bắt đầu với văn bản ngắn (tiêu đề tin, truyện ngắn) rồi tăng dần độ dài. Luyện đọc lướt lấy ý chính và quét tìm chi tiết."
+    }
+  },
+  "levels": {
+    "A1": {
+      "label": "Mới bắt đầu",
+      "summary": "Bạn hiểu và dùng được các cụm từ đời thường cơ bản.",
+      "canDo": "Giới thiệu bản thân, hỏi câu đơn giản về thông tin cá nhân, giao tiếp đơn giản nếu người kia nói chậm.",
+      "tip": "Tập trung từ vựng cơ bản, mẫu câu đơn giản và cụm giao tiếp hằng ngày."
+    },
+    "A2": {
+      "label": "Sơ cấp",
+      "summary": "Bạn giao tiếp được trong các tình huống quen thuộc đơn giản.",
+      "canDo": "Mô tả xuất thân, môi trường xung quanh và nhu cầu trước mắt bằng lời đơn giản.",
+      "tip": "Mở rộng từ vựng theo chủ đề đời thường và luyện thì quá khứ, tương lai đơn giản."
+    },
+    "B1": {
+      "label": "Trung cấp",
+      "summary": "Bạn xử lý được hầu hết tình huống khi đi du lịch.",
+      "canDo": "Kể về trải nghiệm, sự kiện, ước mơ, tham vọng. Giải thích lý do cho ý kiến và kế hoạch.",
+      "tip": "Luyện đọc bài ngắn, xem nội dung tiếng Anh có phụ đề, viết đoạn văn."
+    },
+    "B2": {
+      "label": "Trung cao cấp",
+      "summary": "Bạn giao tiếp khá trôi chảy với người bản xứ.",
+      "canDo": "Hiểu ý chính của văn bản phức tạp về chủ đề cụ thể lẫn trừu tượng. Viết rõ ràng, chi tiết về nhiều chủ đề.",
+      "tip": "Đọc bài dài hơn, xem nội dung tiếng Anh không phụ đề, luyện trình bày quan điểm về chủ đề phức tạp."
+    },
+    "C1": {
+      "label": "Nâng cao",
+      "summary": "Bạn dùng tiếng Anh linh hoạt, hiệu quả cho mục đích xã hội, học thuật và nghề nghiệp.",
+      "canDo": "Hiểu văn bản dài, khó và nhận ra hàm ý. Diễn đạt trôi chảy, tự nhiên mà ít phải tìm từ.",
+      "tip": "Tập trung vào sắc thái, thành ngữ và kỹ năng viết học thuật/chuyên môn."
+    },
+    "C2": {
+      "label": "Thành thạo",
+      "summary": "Bạn hiểu gần như mọi thứ nghe đọc được một cách dễ dàng.",
+      "canDo": "Tóm tắt thông tin từ nhiều nguồn nói và viết khác nhau. Diễn đạt tự phát, rất trôi chảy và chính xác.",
+      "tip": "Giữ trình độ qua đọc nhiều, viết chuyên môn và tiếp xúc nội dung phức tạp."
+    }
+  },
+  "errors": {
+    "failedToGenerate": "Không tạo được câu hỏi ({{status}})",
+    "noQuestions": "AI không trả về câu hỏi nào"
+  },
+  "relativeTime": {
+    "justNow": "vừa xong",
+    "minutesAgo": "{{count}} phút trước",
+    "hoursAgo": "{{count}} giờ trước",
+    "daysAgo": "{{count}} ngày trước",
+    "monthsAgo": "{{count}} tháng trước"
+  }
+}

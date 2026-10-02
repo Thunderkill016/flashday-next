@@ -1,10 +1,14 @@
 import { defineConfig, devices } from '@playwright/test';
+import { SEEDED_STORAGE_PATH } from './e2e/global-setup';
 
 const baseURL = process.env.PLAYWRIGHT_BASE_URL ?? 'http://localhost:3000';
 const reuseExistingServer = process.env.PLAYWRIGHT_REUSE_EXISTING_SERVER !== 'false';
 
 export default defineConfig({
   testDir: './e2e',
+  /* Seeds IndexedDB once and snapshots it so each test context restores
+   * a warm database instead of waiting through the ~15-25s cold seed. */
+  globalSetup: './e2e/global-setup.ts',
   /* Dev-mode route recompiles under parallel browser load can exceed
    * the 30s default — the failure mode is a stuck loader, not a crash. */
   timeout: 120_000,
@@ -20,6 +24,10 @@ export default defineConfig({
   use: {
     baseURL,
     trace: 'on-first-retry',
+    /* Product default UI is Vietnamese (FDN-ARCH-001). Specs that assert
+     * English copy pin an explicit 'en' preference through storage state;
+     * i18n specs override this per-test with addInitScript. */
+    storageState: SEEDED_STORAGE_PATH,
   },
   projects: [
     {

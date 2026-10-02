@@ -36,8 +36,10 @@ interface GenerateCollectionBody {
 interface ParsedCollection {
   title: string;
   titleZh: string;
+  titleVi?: string;
   description: string;
   descriptionZh: string;
+  descriptionVi?: string;
   scenario: string;
   category: string;
   difficulty: string;
@@ -113,8 +115,10 @@ Return ONLY valid JSON (no markdown) in this exact shape:
   "collection":{
     "title":"short English collection title",
     "titleZh":"简短中文标题",
+    "titleVi":"tiêu đề tiếng Việt ngắn",
     "description":"1-2 English sentences describing the collection for learners",
     "descriptionZh":"1-2 句简体中文说明",
+    "descriptionVi":"1-2 câu mô tả tiếng Việt",
     "scenario":"Concise English label of the situation (derived from keyword)",
     "category":"one of: ${categoryList}",
     "difficulty":"${difficulty}",
@@ -192,10 +196,10 @@ export async function POST(req: NextRequest) {
       apiPath: req.headers.get('x-api-path')?.trim() || undefined,
     });
 
-    const system = `You are an expert English-learning curriculum writer for EchoType, an app used by Chinese speakers.
+    const system = `You are an expert English-learning curriculum writer for FlashDay, an app used by Vietnamese speakers.
 You produce practical scenario-based phrase and sentence sets: natural, realistic, immediately usable in daily life.
 Output must be STRICT JSON only (no markdown fences, no explanations).
-Mixed metadata: titles and descriptions are bilingual (English + Simplified Chinese). All learning lines ("text") are English only.
+Mixed metadata: titles and descriptions are trilingual (English + Simplified Chinese + Vietnamese). All learning lines ("text") are English only.
 Never use Japanese, Korean, or non–Chinese-character scripts besides English in zh fields (Simplified Chinese only).`;
 
     const prompt = buildCollectionPrompt(keyword, difficulty, count);
@@ -216,8 +220,10 @@ Never use Japanese, Korean, or non–Chinese-character scripts besides English i
     const coll: ParsedCollection = {
       title: typeof c.title === 'string' ? c.title.trim() : '',
       titleZh: typeof c.titleZh === 'string' ? c.titleZh.trim() : '',
+      titleVi: typeof c.titleVi === 'string' ? c.titleVi.trim() : '',
       description: typeof c.description === 'string' ? c.description.trim() : '',
       descriptionZh: typeof c.descriptionZh === 'string' ? c.descriptionZh.trim() : '',
+      descriptionVi: typeof c.descriptionVi === 'string' ? c.descriptionVi.trim() : '',
       scenario: typeof c.scenario === 'string' ? c.scenario.trim() : '',
       category: normalizeCategory(typeof c.category === 'string' ? c.category.trim() : undefined),
       difficulty: normalizeDifficulty(
@@ -248,8 +254,10 @@ Never use Japanese, Korean, or non–Chinese-character scripts besides English i
       collection: {
         title: coll.title,
         titleZh: coll.titleZh,
+        titleVi: coll.titleVi,
         description: coll.description,
         descriptionZh: coll.descriptionZh,
+        descriptionVi: coll.descriptionVi,
         scenario: coll.scenario,
         category: coll.category,
         difficulty: coll.difficulty,

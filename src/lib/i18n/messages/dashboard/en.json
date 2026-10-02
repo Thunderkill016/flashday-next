@@ -1,6 +1,6 @@
 {
   "header": {
-    "title": "Welcome to EchoType",
+    "title": "Welcome to FlashDay",
     "subtitle": "Master English through listening, speaking, reading & writing",
     "analytics": "View Analytics"
   },
@@ -32,8 +32,8 @@
     }
   },
   "autoLanguageNotice": {
-    "title": "Interface language matched your browser",
-    "description": "EchoType is currently using {{language}} because that matches your browser. You can change it any time in Settings.",
+    "title": "Interface language is Vietnamese by default",
+    "description": "FlashDay defaults to {{language}} for Vietnamese learners. You can change it any time in Settings.",
     "cta": "Review language settings"
   },
   "aiSetup": {
@@ -54,7 +54,7 @@
   },
   "learningGoal": {
     "title": "Choose your learning goal",
-    "description": "Tell EchoType what kind of English progress you want, and today's plan will lean in that direction.",
+    "description": "Tell FlashDay what kind of English progress you want, and today's plan will lean in that direction.",
     "ctaAssessment": "Take Assessment",
     "currentTitle": "Active learning goal",
     "weakSpots": "Open Weak Spots"

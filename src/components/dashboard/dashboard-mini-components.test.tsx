@@ -1,4 +1,5 @@
 import { renderToStaticMarkup } from 'react-dom/server';
+
 import { afterEach, describe, expect, it, vi } from 'vitest';
 
 vi.mock('@/lib/tauri', () => ({
@@ -17,10 +18,10 @@ describe('Dashboard mini components', () => {
         ]}
       />,
     );
-    expect(markup).toContain('Last 8 weeks');
-    expect(markup).toContain('Active days: 2');
-    expect(markup).toContain('Jun 1');
-    expect(markup).toContain('Jun 3');
+    expect(markup).toContain('8 tuần gần đây');
+    expect(markup).toContain('Số ngày học: 2');
+    expect(markup).toContain('1 thg 6');
+    expect(markup).toContain('3 thg 6');
     expect(markup).toContain('aspect-square');
     expect(markup).not.toContain('w-[10px]');
   });

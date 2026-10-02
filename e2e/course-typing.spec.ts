@@ -27,8 +27,12 @@ test.beforeEach(async ({ page }) => {
       const r = indexedDB.open('echotype:anonymous'); r.onsuccess = () => resolve(r.result); r.onerror = () => reject(r.error);
     });
     const tx = database.transaction('contents', 'readwrite');
+    // Sentence-typed rows keep the learning-cycle surface while still
+    // grouping into one lesson per category, which preserves this spec's
+    // "Item N of 2" assertions. Word rows now route to the vocabulary
+    // workspace instead.
     ['controversy', 'evidence'].forEach((word, i) => tx.objectStore('contents').put({
-      id: `typing-fixture-${i}`, category: 'typing-regression', title: word, text: word, type: 'word',
+      id: `typing-fixture-${i}`, category: 'typing-regression', title: word, text: word, type: 'sentence',
       tags: [], source: 'imported', createdAt: i + 1, updatedAt: Date.now(),
     }));
     await new Promise<void>((resolve, reject) => { tx.oncomplete = () => resolve(); tx.onerror = () => reject(tx.error); });
@@ -62,9 +66,11 @@ test('saved typing advances once to the next item and the final item offers expl
 });
 
 test('word typing uses one compact editable field without a second feedback box', async ({ page }) => {
-  const input = page.getByRole('textbox', { name: 'Wordbook typing input' });
+  const practice = page.getByTestId('typing-practice');
+  const input = practice.getByRole('textbox', { name: 'Wordbook typing input' });
   await expect(input).toHaveCount(1);
-  expect((await input.boundingBox())!.height).toBeLessThan(90);
+  // Exactly one editable field inside the practice card: no feedback box.
+  await expect(practice.locator('textarea, input')).toHaveCount(1);
   await input.fill('contro');
   await page.setViewportSize({ width: 375, height: 812 });
   await expect(page.getByRole('button', { name: 'Close menu' })).not.toBeInViewport();

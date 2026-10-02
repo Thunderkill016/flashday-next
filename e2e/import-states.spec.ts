@@ -17,7 +17,7 @@ test('wordbook template is available from the single file entry', async ({ page 
   await page.goto('/library?import=file');
   const download = page.waitForEvent('download');
   await page.getByRole('link', { name: 'Download word book template', exact: true }).click();
-  expect((await download).suggestedFilename()).toBe('echotype-wordbook-template.csv');
+  expect((await download).suggestedFilename()).toBe('flashday-wordbook-template.csv');
 });
 
 test('cancelling an active import aborts the request and retains the original', async ({ page }) => {

@@ -10,6 +10,7 @@ import { VOCABULARY_MAX_BYTES } from '@/lib/import-limits';
 import { vocabularyCsv } from '@/lib/material-review';
 import { parseVocabulary } from '@/lib/vocabulary';
 import { importVocabulary } from '@/lib/vocabulary-repository';
+import { useLanguageStore } from '@/stores/language-store';
 import type { Difficulty } from '@/types/content';
 
 export function VocabularyImport({
@@ -25,7 +26,8 @@ export function VocabularyImport({
   embedded?: boolean;
   initialFile?: File;
 }) {
-  const t = (en: string, cn: string) => (zh ? cn : en);
+  const language = useLanguageStore((st) => st.interfaceLanguage);
+  const t = (en: string, cn: string, vi: string) => (language === 'zh' ? cn : language === 'vi' ? vi : en);
   const draft = useImportDraft('vocabulary', {
     title: '',
     text: '',
@@ -81,7 +83,13 @@ export function VocabularyImport({
         parsed: {
           rows: [],
           duplicates: 0,
-          errors: [t('Could not parse this wordbook. Try a smaller file.', '无法解析词书，请尝试较小的文件。')],
+          errors: [
+            t(
+              'Could not parse this wordbook. Try a smaller file.',
+              '无法解析词书，请尝试较小的文件。',
+              'Không đọc được sổ từ này. Thử tệp nhỏ hơn.',
+            ),
+          ],
         },
         sourceHasErrors: true,
       });
@@ -108,6 +116,7 @@ export function VocabularyImport({
         t(
           'Use UTF-8 CSV / TSV, up to 20 MB and 100,000 words. Export Excel as CSV first.',
           '请使用 20 MB 内、最多 10 万词条的 UTF-8 CSV / TSV；Excel 请先导出 CSV。',
+          'Dùng UTF-8 CSV / TSV, tối đa 20 MB và 100.000 từ. Excel xuất ra CSV trước.',
         ),
       );
       return;
@@ -129,7 +138,7 @@ export function VocabularyImport({
       });
     } catch {
       setDone(false);
-      setError(t('Could not read the file.', '无法读取文件。'));
+      setError(t('Could not read the file.', '无法读取文件。', 'Không đọc được tệp.'));
     } finally {
       if (run === request.current) setBusy(false);
     }
@@ -160,7 +169,7 @@ export function VocabularyImport({
   if (done)
     return (
       <div className="flex flex-wrap items-center gap-4">
-        <p role="status">{t('Word book imported.', '词书已导入。')}</p>
+        <p role="status">{t('Word book imported.', '词书已导入。', 'Đã nhập sổ từ.')}</p>
         <ImportActions>
           <button
             type="button"
@@ -182,14 +191,14 @@ export function VocabularyImport({
               setDone(false);
             }}
           >
-            {t('Import another word book', '继续导入词书')}
+            {t('Import another word book', '继续导入词书', 'Nhập sổ từ khác')}
           </button>
           {bookId && (
             <Link
               href={`/learn/${encodeURIComponent(`unit:category:${bookId}`)}`}
               className="inline-flex min-h-11 items-center rounded-xl bg-indigo-600 px-4 text-sm font-semibold text-white transition-transform active:scale-95 motion-reduce:transform-none focus-visible:ring-2"
             >
-              {t('Start learning', '开始学习')}
+              {t('Start learning', '开始学习', 'Bắt đầu học')}
             </Link>
           )}
         </ImportActions>
@@ -211,7 +220,7 @@ export function VocabularyImport({
         }
       >
         <Plus className="h-4 w-4 text-indigo-600" />
-        <span>{t('Import your word book', '导入自己的词书')}</span>
+        <span>{t('Import your word book', '导入自己的词书', 'Nhập sổ từ của bạn')}</span>
         <span className="ml-auto hidden text-xs text-slate-500 sm:block">CSV / TSV</span>
         <ChevronDown className="ml-auto h-4 w-4 group-open:rotate-180 sm:ml-2" />
       </summary>
@@ -226,23 +235,26 @@ export function VocabularyImport({
         >
           {draft.error ||
             (draft.status === 'saved'
-              ? t('Saved on this device', '已保存到本机')
+              ? t('Saved on this device', '已保存到本机', 'Đã lưu trên thiết bị này')
               : draft.status === 'saving'
-                ? t('Saving draft…', '正在保存草稿…')
-                : t('Drafts save automatically on this device', '草稿自动保存在本机'))}
+                ? t('Saving draft…', '正在保存草稿…', 'Đang lưu nháp…')
+                : t('Drafts save automatically on this device', '草稿自动保存在本机', 'Nháp tự lưu trên thiết bị này'))}
         </p>
         {embedded && (
-          <h3 className="text-lg font-semibold text-slate-900">{t('Review your word book', '校对你的词书')}</h3>
+          <h3 className="text-lg font-semibold text-slate-900">
+            {t('Review your word book', '校对你的词书', 'Rà sổ từ của bạn')}
+          </h3>
         )}
         <p hidden={!!text} className="text-sm text-slate-600">
           {t(
             'Upload a CSV / TSV file or paste your list. Word and meaning are required; example and pronunciation are optional.',
             '上传 CSV / TSV 或粘贴词表。单词、释义必填；例句和音标选填。',
+            'Tải lên CSV / TSV hoặc dán danh sách. Bắt buộc có từ và nghĩa; ví dụ và phiên âm tuỳ chọn.',
           )}
         </p>
         {embedded && initialFile && text && (
           <p className="rounded-lg bg-slate-100 px-3 py-2 text-xs text-slate-500">
-            {filename} · {t('Original retained', '保留原文件')}
+            {filename} · {t('Original retained', '保留原文件', 'Đã giữ bản gốc')}
           </p>
         )}
         <label
@@ -255,10 +267,15 @@ export function VocabularyImport({
           <FileUp className="h-6 w-6 shrink-0 text-indigo-600" />
           <span className="min-w-0 flex-1">
             <span className="block text-sm font-semibold text-indigo-900">
-              {t('Upload CSV / TSV', '上传 CSV / TSV')}
+              {t('Upload CSV / TSV', '上传 CSV / TSV', 'Tải lên CSV / TSV')}
             </span>
             <span className="mt-1 block break-all text-xs text-slate-500">
-              {filename || t('Choose a file · UTF-8 · Up to 20 MB', '选择文件 · UTF-8 · 最大 20 MB')}
+              {filename ||
+                t(
+                  'Choose a file · UTF-8 · Up to 20 MB',
+                  '选择文件 · UTF-8 · 最大 20 MB',
+                  'Chọn tệp · UTF-8 · Tối đa 20 MB',
+                )}
             </span>
           </span>
           <input
@@ -266,38 +283,42 @@ export function VocabularyImport({
             accept=".csv,.tsv,.txt"
             disabled={busy}
             onChange={(e) => void upload(e.target.files?.[0])}
-            aria-label={t('Upload CSV / TSV', '上传 CSV / TSV')}
+            aria-label={t('Upload CSV / TSV', '上传 CSV / TSV', 'Tải lên CSV / TSV')}
             className="absolute inset-0 h-full w-full cursor-pointer opacity-0 disabled:cursor-not-allowed"
           />
         </label>
         <label className="block text-sm font-medium">
-          {t('Book title', '词书名')}
+          {t('Book title', '词书名', 'Tên sách')}
           <input
             value={title}
             disabled={busy}
             onChange={(e) => setTitle(e.target.value)}
             maxLength={150}
-            placeholder={t('e.g. Words from my daily reading', '例如：每日阅读生词')}
+            placeholder={t(
+              'e.g. Words from my daily reading',
+              '例如：每日阅读生词',
+              'vd: Từ trong bài đọc hằng ngày của tôi',
+            )}
             className="mt-2 block min-h-11 w-full rounded-lg border border-slate-200 bg-white px-3 py-2 text-sm focus-visible:ring-2 focus-visible:ring-indigo-500"
           />
         </label>
         <div className="grid gap-4 rounded-xl bg-slate-100 p-4 sm:grid-cols-2">
           <label className="text-sm font-medium">
-            {t('Difficulty', '难度')}
+            {t('Difficulty', '难度', 'Độ khó')}
             <select
-              aria-label={t('Difficulty', '难度')}
+              aria-label={t('Difficulty', '难度', 'Độ khó')}
               value={difficulty}
               onChange={(e) => setDifficulty(e.target.value as Difficulty)}
               className="mt-2 min-h-11 w-full rounded-lg bg-white px-3"
             >
-              <option value="beginner">{t('Beginner', '初级')}</option>
-              <option value="intermediate">{t('Intermediate', '中级')}</option>
-              <option value="advanced">{t('Advanced', '高级')}</option>
+              <option value="beginner">{t('Beginner', '初级', 'Cơ bản')}</option>
+              <option value="intermediate">{t('Intermediate', '中级', 'Trung bình')}</option>
+              <option value="advanced">{t('Advanced', '高级', 'Nâng cao')}</option>
             </select>
           </label>
           <div>
-            <p className="mb-2 text-sm font-medium">{t('Tags', '标签')}</p>
-            <TagSelector ariaLabel={t('Tags', '标签')} value={tags} onChange={setTags} />
+            <p className="mb-2 text-sm font-medium">{t('Tags', '标签', 'Thẻ')}</p>
+            <TagSelector ariaLabel={t('Tags', '标签', 'Thẻ')} value={tags} onChange={setTags} />
           </div>
         </div>
         <section className="order-2 rounded-lg bg-slate-50 p-3">
@@ -307,13 +328,13 @@ export function VocabularyImport({
             className="min-h-8 text-sm text-slate-500 focus-visible:ring-2 focus-visible:ring-indigo-500"
             onClick={() => setSourceOpen(true)}
           >
-            {t('Source CSV / TSV', '原始 CSV / TSV')}
+            {t('Source CSV / TSV', '原始 CSV / TSV', 'CSV / TSV gốc')}
           </button>
           {sourceOpen && (
             <label className="mt-2 block text-sm font-medium">
-              {t('CSV or TSV text', 'CSV 或 TSV 文本')}
+              {t('CSV or TSV text', 'CSV 或 TSV 文本', 'Văn bản CSV hoặc TSV')}
               <textarea
-                aria-label={t('CSV or TSV text', 'CSV 或 TSV 文本')}
+                aria-label={t('CSV or TSV text', 'CSV 或 TSV 文本', 'Văn bản CSV hoặc TSV')}
                 value={text}
                 disabled={busy}
                 onChange={(e) => {
@@ -332,18 +353,24 @@ export function VocabularyImport({
         </section>
         {parsing && (
           <p role="status" className="text-sm text-indigo-700">
-            {t('Checking words in the background…', '正在后台检查词条…')}
+            {t('Checking words in the background…', '正在后台检查词条…', 'Đang kiểm tra từ trong nền…')}
           </p>
         )}
         {busy && (
           <p role="status" className="text-sm text-indigo-700">
-            {t('Reading or saving your wordbook… Keep this page open.', '正在读取或保存词书，请保持页面打开。')}
+            {t(
+              'Reading or saving your wordbook… Keep this page open.',
+              '正在读取或保存词书，请保持页面打开。',
+              'Đang đọc hoặc lưu sổ từ… Giữ nguyên trang này.',
+            )}
           </p>
         )}
         <p className="text-sm">
-          {zh
-            ? `${parsed.rows.length} 个词条 · ${parsed.duplicates} 个重复项`
-            : `${parsed.rows.length} words · ${parsed.duplicates} duplicates`}
+          {t(
+            `${parsed.rows.length} words · ${parsed.duplicates} duplicates`,
+            `${parsed.rows.length} 个词条 · ${parsed.duplicates} 个重复项`,
+            `${parsed.rows.length} từ · ${parsed.duplicates} mục trùng`,
+          )}
         </p>
         {parsed.errors.length > 0 && (
           <div role="alert" className="text-sm text-red-700">
@@ -358,10 +385,10 @@ export function VocabularyImport({
               <table className="w-full text-left text-sm [&_th]:bg-slate-100 [&_th]:p-3 [&_td]:px-3 [&_tr]:border-b [&_tr]:border-slate-100">
                 <thead>
                   <tr>
-                    <th>{t('Word', '单词')}</th>
-                    <th>{t('Meaning', '释义')}</th>
-                    <th>{t('Pronunciation', '音标')}</th>
-                    <th>{t('Example', '例句')}</th>
+                    <th>{t('Word', '单词', 'Từ')}</th>
+                    <th>{t('Meaning', '释义', 'Nghĩa')}</th>
+                    <th>{t('Pronunciation', '音标', 'Phát âm')}</th>
+                    <th>{t('Example', '例句', 'Ví dụ')}</th>
                   </tr>
                 </thead>
                 <tbody>
@@ -396,7 +423,7 @@ export function VocabularyImport({
                 className="min-h-11 px-3 disabled:opacity-40"
                 onClick={() => setPage(page - 1)}
               >
-                {t('Previous', '上一页')}
+                {t('Previous', '上一页', 'Trước')}
               </button>
               <span>
                 {page + 1} / {Math.max(1, Math.ceil(rows.length / 20))}
@@ -407,7 +434,7 @@ export function VocabularyImport({
                 className="min-h-11 px-3 disabled:opacity-40"
                 onClick={() => setPage(page + 1)}
               >
-                {t('Next', '下一页')}
+                {t('Next', '下一页', 'Tiếp')}
               </button>
             </div>
           </div>
@@ -419,7 +446,7 @@ export function VocabularyImport({
             onClick={() => void save()}
             className="min-h-11 rounded-xl bg-indigo-600 px-4 py-2 text-white disabled:opacity-50 focus-visible:ring-2 active:scale-95 motion-reduce:transform-none"
           >
-            {t('Import word book', '导入词书')}
+            {t('Import word book', '导入词书', 'Nhập sổ từ')}
           </button>
         </ImportActions>
         {error && (

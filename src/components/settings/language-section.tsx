@@ -17,6 +17,11 @@ export function LanguageSection() {
 
   const options: Array<{ id: InterfaceLanguage; label: string; native: string }> = [
     {
+      id: 'vi',
+      label: common.languageNames.vi,
+      native: common.nativeLanguageNames.vi,
+    },
+    {
       id: 'en',
       label: common.languageNames.en,
       native: common.nativeLanguageNames.en,
@@ -33,7 +38,7 @@ export function LanguageSection() {
       <div className="space-y-4">
         <div>
           <p className="mb-2 text-sm font-medium text-slate-700">{settings.language.interfaceLanguage}</p>
-          <div className="grid grid-cols-2 gap-2">
+          <div className="grid grid-cols-3 gap-2">
             {options.map(({ id, label, native }) => (
               <button
                 key={id}

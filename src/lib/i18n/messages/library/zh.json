@@ -84,7 +84,7 @@
     "importContent": "导入内容"
   },
   "aiGenerate": {
-    "description": "通过提示词、话题或网页 URL 生成英语学习内容，也可以用中文或英文添加说明。",
+    "description": "通过提示词、主题或网页链接生成英语学习内容，也可以使用越南语或英语编写说明。",
     "labelPrompt": "提示词",
     "placeholderPrompt": "例如：为初学者解释这篇文章：https://example.com/article",
     "difficulty": "难度",

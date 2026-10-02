@@ -59,9 +59,11 @@ test('course-led sidebar keeps legacy features reachable through their parent se
   await expect(page.getByRole('heading', { name: 'Review center', exact: true })).toBeVisible();
   await page.getByRole('navigation', { name: 'Section navigation' }).getByRole('link', { name: 'Weak spots', exact: true }).click();
   await expect(sidebar.getByRole('link', { name: 'Review center', exact: true })).toHaveAttribute('aria-current', 'page');
-  await sidebar.getByRole('link', { name: 'Learning materials', exact: true }).click();
-  await page.getByRole('navigation', { name: 'Section navigation' }).getByRole('link', { name: 'Word books', exact: true }).click();
-  await expect(page.getByTestId('wordbooks-tab-vocabulary')).toBeVisible();
+  // The materials section nav was removed; word books now live under the
+  // Review center section as 'Vocabulary review' (/library/vocabulary).
+  await sidebar.getByRole('link', { name: 'Review center', exact: true }).click();
+  await page.getByRole('navigation', { name: 'Section navigation' }).getByRole('link', { name: 'Vocabulary review', exact: true }).click();
+  await expect(page.getByRole('heading', { name: 'Vocabulary practice', exact: true })).toBeVisible();
   await sidebar.getByRole('link', { name: 'My courses', exact: true }).click();
   await page.locator('summary').filter({ hasText: 'Practice one skill' }).click();
   await page.getByRole('link', { name: 'Spelling practice', exact: true }).click();

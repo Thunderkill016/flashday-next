@@ -2,6 +2,7 @@
 
 import { FileCheck2, Upload } from 'lucide-react';
 import { useRef, useState } from 'react';
+import { useLanguageStore } from '@/stores/language-store';
 
 export function MaterialFilePicker({
   accept,
@@ -9,24 +10,23 @@ export function MaterialFilePicker({
   source,
   onFile,
   onFiles,
-  zh,
 }: {
   accept: string;
   disabled: boolean;
   source?: { name: string; size?: number };
   onFile: (file: File) => void;
   onFiles?: (files: File[]) => void;
-  zh: boolean;
 }) {
   const input = useRef<HTMLInputElement>(null);
   const [dragging, setDragging] = useState(false);
   const [error, setError] = useState('');
-  const t = (en: string, cn: string) => (zh ? cn : en);
+  const language = useLanguageStore((st) => st.interfaceLanguage);
+  const t = (en: string, cn: string, vi: string) => (language === 'zh' ? cn : language === 'vi' ? vi : en);
   const receive = (files: FileList | null) => {
     setDragging(false);
     if (disabled || !files?.length) return;
     if (files.length !== 1 && !onFiles) {
-      setError(t('Choose one material at a time.', '每次请选择一份资料。'));
+      setError(t('Choose one material at a time.', '每次请选择一份资料。', 'Mỗi lần chọn một tài liệu.'));
       return;
     }
     setError('');
@@ -65,12 +65,16 @@ export function MaterialFilePicker({
               source ? 'truncate text-sm font-medium text-slate-800' : 'text-base font-semibold text-slate-900'
             }
           >
-            {source?.name ?? t('Drop your learning material here', '将学习资料拖到这里')}
+            {source?.name ?? t('Drop your learning material here', '将学习资料拖到这里', 'Thả tài liệu học vào đây')}
           </p>
           <p className="mt-1 text-xs leading-5 text-slate-500">
             {source
-              ? `${source.size === undefined ? '' : `${(source.size / 1024 / 1024).toFixed(1)} MB · `}${t('Original kept on this device', '原文件保留在本机')}`
-              : t('Books, vocabulary, documents, video and subtitles', '英文书籍、词书、文档、视频与字幕')}
+              ? `${source.size === undefined ? '' : `${(source.size / 1024 / 1024).toFixed(1)} MB · `}${t('Original kept on this device', '原文件保留在本机', 'Tệp gốc giữ trên thiết bị này')}`
+              : t(
+                  'Books, vocabulary, documents, video and subtitles',
+                  '英文书籍、词书、文档、视频与字幕',
+                  'Sách, từ vựng, tài liệu, video và phụ đề tiếng Anh',
+                )}
           </p>
         </div>
         <button
@@ -79,7 +83,7 @@ export function MaterialFilePicker({
           onClick={() => input.current?.click()}
           className={`${source ? 'shrink-0 text-indigo-700 hover:bg-white' : 'mt-5 bg-indigo-600 text-white hover:bg-indigo-700'} min-h-11 rounded-xl px-4 text-sm font-medium transition-transform active:scale-95 motion-reduce:transform-none disabled:opacity-50 focus-visible:ring-2 focus-visible:ring-indigo-500`}
         >
-          {source ? t('Change file', '更换文件') : t('Choose file', '选择文件')}
+          {source ? t('Change file', '更换文件', 'Đổi tệp') : t('Choose file', '选择文件', 'Chọn tệp')}
         </button>
         <input
           ref={input}
@@ -88,7 +92,7 @@ export function MaterialFilePicker({
           multiple={!!onFiles}
           accept={accept}
           disabled={disabled}
-          aria-label={t('Choose material file', '选择资料文件')}
+          aria-label={t('Choose material file', '选择资料文件', 'Chọn tệp tài liệu')}
           className="sr-only"
           onChange={(event) => {
             receive(event.target.files);
@@ -99,14 +103,14 @@ export function MaterialFilePicker({
       {!source && (
         <dl className="grid grid-cols-2 gap-x-5 gap-y-3 px-1 text-xs text-slate-500">
           {[
-            ['CSV / TSV', '20 MB · 100,000 words', '20 MB · 10 万词条'],
-            ['PDF / EPUB / DOCX / TXT', '20 MB', '20 MB'],
-            ['MP4 / WebM / MP3 / WAV', '25 MB · transcription', '25 MB · 转写'],
-            ['SRT / VTT', '10 MB', '10 MB'],
-          ].map(([format, en, cn]) => (
+            ['CSV / TSV', '20 MB · 100,000 words', '20 MB · 10 万词条', '20 MB · 100.000 từ'],
+            ['PDF / EPUB / DOCX / TXT', '20 MB', '20 MB', '20 MB'],
+            ['MP4 / WebM / MP3 / WAV', '25 MB · transcription', '25 MB · 转写', '25 MB · trích ghi'],
+            ['SRT / VTT', '10 MB', '10 MB', '10 MB'],
+          ].map(([format, en, cn, vi]) => (
             <div key={format}>
               <dt className="font-medium text-slate-700">{format}</dt>
-              <dd className="mt-1">{zh ? cn : en}</dd>
+              <dd className="mt-1">{t(en, cn, vi)}</dd>
             </div>
           ))}
         </dl>

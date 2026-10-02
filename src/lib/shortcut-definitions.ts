@@ -1,8 +1,12 @@
 import enShortcutMessages from '@/lib/i18n/messages/shortcuts/en.json';
+import viShortcutMessages from '@/lib/i18n/messages/shortcuts/vi.json';
 import zhShortcutMessages from '@/lib/i18n/messages/shortcuts/zh.json';
 
 export type ShortcutScope = 'global' | 'listen' | 'speak' | 'read' | 'write';
-export type ShortcutLocale = 'en' | 'zh';
+
+import type { InterfaceLanguage } from '@/stores/language-store';
+
+export type ShortcutLocale = InterfaceLanguage;
 
 export interface ShortcutDefinition {
   id: string;
@@ -76,6 +80,7 @@ function interpolate(template: string, values: Record<string, string | number>) 
 
 const SHORTCUT_TEXT = {
   en: enShortcutMessages,
+  vi: viShortcutMessages,
   zh: zhShortcutMessages,
 } as const satisfies Record<ShortcutLocale, RawShortcutLocaleMessages>;
 

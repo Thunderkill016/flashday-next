@@ -1,69 +1,173 @@
-import { expect, test } from '@playwright/test';
+import { expect, type Page, test } from '@playwright/test';
 
-test.describe('i18n phase 1', () => {
-  test('uses browser language for first load and shows dashboard/sidebar in Chinese', async ({ page }) => {
-    // Only clear saved preference and mock language on the very first load.
-    // Subsequent navigations/reloads preserve whatever is in localStorage.
-    await page.addInitScript(`
-      if (!sessionStorage.getItem('__i18nTestInit')) {
-        sessionStorage.setItem('__i18nTestInit', '1');
-        localStorage.removeItem('echotype_language_settings');
-      }
-      Object.defineProperty(window.navigator, 'language', {
-        configurable: true,
-        get: () => 'zh-CN',
-      });
-    `);
-    await page.goto('/dashboard');
+// Vietnam-first policy (FDN-ARCH-001): fresh installs always land on
+// Vietnamese regardless of browser locale; only an explicitly saved
+// preference can keep en/zh. The init scripts below clear the saved
+// preference once per test (sessionStorage flag) so reloads preserve it.
 
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('欢迎使用 EchoType');
-    await expect(page.getByText('界面语言已匹配你的浏览器')).toBeVisible();
-    await expect(page.getByText('总览', { exact: true })).toBeVisible();
-    await expect(page.getByText('今日复习', { exact: true })).toBeVisible();
+const clearOnce = (browserLanguage: string) => `
+  if (!sessionStorage.getItem('__i18nTestInit')) {
+    sessionStorage.setItem('__i18nTestInit', '1');
+    localStorage.removeItem('echotype_language_settings');
+  }
+  Object.defineProperty(window.navigator, 'language', {
+    configurable: true,
+    get: () => '${browserLanguage}',
+  });
+`;
+
+
+// First visit on a fresh profile must outlast cold IndexedDB seeding
+// (~15s observed) plus dev-server compile; the layout gates children on it.
+const SEED_TIMEOUT_MS = 120_000;
+const gotoSeeded = async (page: Page, url: string) => {
+  await page.goto(url);
+  await expect(page.locator('main[data-seeded]')).toHaveAttribute('data-seeded', 'true', { timeout: SEED_TIMEOUT_MS });
+};
+
+const reloadSeeded = async (page: Page) => {
+  await page.reload();
+  await expect(page.locator('main[data-seeded]')).toHaveAttribute('data-seeded', 'true', { timeout: SEED_TIMEOUT_MS });
+};
+
+test.describe('vietnam-first i18n', () => {
+  test('fresh install under en-US browser renders Vietnamese dashboard and <html lang="vi">', async ({
+    page,
+  }) => {
+    await page.addInitScript(clearOnce('en-US'));
+    await gotoSeeded(page, '/dashboard');
+
+    await expect(page.locator('html')).toHaveAttribute('lang', 'vi');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Chào mừng đến FlashDay');
+    await expect(page.getByText('Giao diện đang dùng tiếng Việt')).toBeVisible();
+    await expect(page.getByText('Bắt đầu học').first()).toBeVisible();
   });
 
-  test('switches to English in settings and persists after reload', async ({ page }) => {
-    await page.addInitScript(`
-      if (!sessionStorage.getItem('__i18nTestInit')) {
-        sessionStorage.setItem('__i18nTestInit', '1');
-        localStorage.removeItem('echotype_language_settings');
-      }
-      Object.defineProperty(window.navigator, 'language', {
-        configurable: true,
-        get: () => 'zh-CN',
-      });
-    `);
-    await page.goto('/settings');
+  test('fresh install under zh-CN browser renders Vietnamese, not Chinese', async ({ page }) => {
+    await page.addInitScript(clearOnce('zh-CN'));
+    await gotoSeeded(page, '/dashboard');
 
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('设置');
-    await expect(page.getByRole('heading', { name: '语言' })).toBeVisible();
-
-    await page.getByRole('button', { name: /English/ }).first().click();
-
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Settings');
-    await expect(page.getByRole('heading', { name: 'Appearance' })).toBeVisible();
-    await expect(page.getByRole('heading', { name: 'About' })).toBeVisible();
-
-    // reload: initScript runs again but sessionStorage still has the flag,
-    // so localStorage is NOT cleared, and the explicit English pref persists.
-    await page.reload();
-
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Settings');
-    await expect(page.getByRole('heading', { name: 'Appearance' })).toBeVisible();
-
-    await page.goto('/dashboard');
-
-    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Welcome to EchoType');
-    await expect(page.getByText(/Today's Review|Today's Review/)).toBeVisible();
-    await expect(page.getByText('Interface language matched your browser')).toHaveCount(0);
+    await expect(page.locator('html')).toHaveAttribute('lang', 'vi');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Chào mừng đến FlashDay');
+    await expect(page.getByText('欢迎使用 FlashDay')).toHaveCount(0);
   });
 
-  test('URL import fallback error localization', async ({ page }) => {
+  test('fresh install under vi-VN browser renders Vietnamese', async ({ page }) => {
+    await page.addInitScript(clearOnce('vi-VN'));
+    await gotoSeeded(page, '/dashboard');
+
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Chào mừng đến FlashDay');
+  });
+
+  test('explicit saved English preference is preserved', async ({ page }) => {
+    await page.addInitScript(`
+      localStorage.setItem('echotype_language_settings', JSON.stringify({
+        interfaceLanguage: 'en',
+        hasExplicitPreference: true,
+      }));
+      Object.defineProperty(window.navigator, 'language', {
+        configurable: true,
+        get: () => 'vi-VN',
+      });
+    `);
+    await gotoSeeded(page, '/dashboard');
+
+    await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Welcome to FlashDay');
+  });
+
+  test('explicit saved Chinese preference is preserved', async ({ page }) => {
     await page.addInitScript(`
       localStorage.setItem('echotype_language_settings', JSON.stringify({
         interfaceLanguage: 'zh',
         hasExplicitPreference: true,
       }));
+      Object.defineProperty(window.navigator, 'language', {
+        configurable: true,
+        get: () => 'vi-VN',
+      });
+    `);
+    await gotoSeeded(page, '/dashboard');
+
+    await expect(page.locator('html')).toHaveAttribute('lang', 'zh');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('欢迎使用 FlashDay');
+  });
+
+  test('corrupt saved language falls back to Vietnamese', async ({ page }) => {
+    await page.addInitScript(`
+      localStorage.setItem('echotype_language_settings', '{bad json');
+    `);
+    await gotoSeeded(page, '/dashboard');
+
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Chào mừng đến FlashDay');
+  });
+
+  test('unknown saved language value falls back to Vietnamese', async ({ page }) => {
+    await page.addInitScript(`
+      localStorage.setItem('echotype_language_settings', JSON.stringify({
+        interfaceLanguage: 'xx',
+        hasExplicitPreference: true,
+      }));
+    `);
+    await gotoSeeded(page, '/dashboard');
+
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Chào mừng đến FlashDay');
+  });
+
+  test('switching Vietnamese → English updates immediately and persists across reload and navigation', async ({
+    page,
+  }) => {
+    await page.addInitScript(clearOnce('vi-VN'));
+    await gotoSeeded(page, '/settings');
+
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Cài đặt');
+    await expect(page.getByRole('heading', { name: 'Ngôn ngữ' })).toBeVisible();
+
+    await page.getByTestId('settings-language-en').click();
+
+    await expect(page.locator('html')).toHaveAttribute('lang', 'en');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Settings');
+
+    await reloadSeeded(page);
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Settings');
+
+    await gotoSeeded(page, '/dashboard');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Welcome to FlashDay');
+    await expect(page.getByText('Giao diện đang dùng tiếng Việt')).toHaveCount(0);
+  });
+
+  test('switching Chinese → Vietnamese persists across reload', async ({ page }) => {
+    await page.addInitScript(`
+      if (!sessionStorage.getItem('__i18nTestInit')) {
+        sessionStorage.setItem('__i18nTestInit', '1');
+        localStorage.setItem('echotype_language_settings', JSON.stringify({
+          interfaceLanguage: 'zh',
+          hasExplicitPreference: true,
+        }));
+      }
+    `);
+    await gotoSeeded(page, '/settings');
+
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('设置');
+
+    await page.getByTestId('settings-language-vi').click();
+
+    await expect(page.locator('html')).toHaveAttribute('lang', 'vi');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Cài đặt');
+
+    await reloadSeeded(page);
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Cài đặt');
+  });
+
+  test('URL import surface localizes under Chinese preference', async ({ page }) => {
+    await page.addInitScript(`
+      if (!sessionStorage.getItem('__i18nTestInit')) {
+        sessionStorage.setItem('__i18nTestInit', '1');
+        localStorage.setItem('echotype_language_settings', JSON.stringify({
+          interfaceLanguage: 'zh',
+          hasExplicitPreference: true,
+        }));
+      }
     `);
 
     await page.route('**/api/import/url', async (route) => {
@@ -74,62 +178,160 @@ test.describe('i18n phase 1', () => {
       });
     });
 
-    await page.goto('/library/import');
-    await page.getByRole('button', { name: 'URL 导入' }).click();
-    await page.getByLabel('网页 URL').fill('https://example.com/article');
-    await page.getByRole('button', { name: '获取' }).click();
-    await expect(page.getByText('获取内容失败')).toBeVisible();
+    await gotoSeeded(page, '/library?import=url');
+    await page.getByRole('button', { name: '粘贴链接' }).click();
+    await expect(page.getByText('从链接导入材料')).toBeVisible();
+    await page.getByLabel('来源网址').fill('https://example.com/article');
+    await page.getByRole('button', { name: '开始处理' }).click();
+    await expect(page.getByRole('alert')).toBeVisible();
 
-    await page.goto('/settings');
+    await gotoSeeded(page, '/settings');
     await page.getByRole('button', { name: /English/ }).first().click();
 
-    await page.goto('/library/import');
-    await page.getByRole('button', { name: 'URL Import' }).click();
-    await page.getByLabel('Webpage URL').fill('https://example.com/article');
-    await page.getByRole('button', { name: 'Fetch' }).click();
-    await expect(page.getByText('Failed to fetch content')).toBeVisible();
+    await gotoSeeded(page, '/library?import=url');
+    await page.getByRole('button', { name: 'Paste link' }).click();
+    await expect(page.getByText('Learn from a link')).toBeVisible();
+    await expect(page.getByLabel('Source URL')).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Start processing' })).toBeVisible();
   });
 
-  test('URL import language switch', async ({ page }) => {
-    await page.addInitScript(`
-      localStorage.setItem('echotype_language_settings', JSON.stringify({
-        interfaceLanguage: 'zh',
-        hasExplicitPreference: true,
-      }));
-    `);
+  test('URL import surface renders Vietnamese by default', async ({ page }) => {
+    await page.addInitScript(clearOnce('en-US'));
 
     await page.route('**/api/import/url', async (route) => {
       await route.fulfill({
-        status: 200,
+        status: 500,
         contentType: 'application/json',
-        body: JSON.stringify({
-          title: 'Example Article',
-          text: 'This is example imported text.',
-          url: 'https://example.com/article',
-          wordCount: 5,
-        }),
+        body: JSON.stringify({}),
       });
     });
 
-    await page.goto('/library/import');
-    await page.getByRole('button', { name: 'URL 导入' }).click();
-    await expect(page.getByLabel('网页 URL')).toBeVisible();
-    await page.getByLabel('网页 URL').fill('https://example.com/article');
-    await page.getByRole('button', { name: '获取' }).click();
-    await expect(page.getByText('文章预览')).toBeVisible();
-    await expect(page.getByPlaceholder('例如：博客, 技术, 导入')).toBeVisible();
-    await expect(page.getByRole('button', { name: '保存文章到内容库' })).toBeVisible();
+    await gotoSeeded(page, '/library?import=url');
+    await page.getByRole('button', { name: 'Dán liên kết' }).click();
+    await expect(page.getByText('Học từ một liên kết')).toBeVisible();
+    await page.getByLabel('URL nguồn').fill('https://example.com/article');
+    await page.getByRole('button', { name: 'Bắt đầu xử lý' }).click();
+    await expect(page.getByRole('alert')).toBeVisible();
+  });
 
-    await page.goto('/settings');
-    await page.getByRole('button', { name: /English/ }).first().click();
+  test('all learning surfaces render Vietnamese on fresh install', async ({ page }) => {
+    await page.addInitScript(clearOnce('en-US'));
 
-    await page.goto('/library/import');
-    await page.getByRole('button', { name: 'URL Import' }).click();
-    await expect(page.getByLabel('Webpage URL')).toBeVisible();
-    await page.getByLabel('Webpage URL').fill('https://example.com/article');
-    await page.getByRole('button', { name: 'Fetch' }).click();
-    await expect(page.getByText('Article Preview')).toBeVisible();
-    await expect(page.getByPlaceholder('e.g. blog, tech, imported')).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Save article to library' })).toBeVisible();
+    const surfaces: Array<{ path: string; text: string }> = [
+      { path: '/learn', text: 'Kệ học tập của bạn' },
+      { path: '/library', text: 'Tài liệu học' },
+      { path: '/listen', text: 'Nghe' },
+      { path: '/read', text: 'Đọc' },
+      { path: '/write', text: 'Viết' },
+      { path: '/speak', text: 'Nói' },
+      { path: '/review', text: 'Trung tâm ôn tập' },
+      { path: '/settings', text: 'Cài đặt' },
+      { path: '/login', text: 'Đăng nhập FlashDay' },
+    ];
+
+    for (const { path, text } of surfaces) {
+      await gotoSeeded(page, path);
+      await expect(page.locator('html')).toHaveAttribute('lang', 'vi');
+      await expect(page.getByText(text, { exact: false }).first()).toBeVisible();
+    }
+  });
+
+  test('fresh install defaults translation target to Vietnamese', async ({ page }) => {
+    await page.addInitScript(clearOnce('vi-VN'));
+    await gotoSeeded(page, '/settings');
+
+    await expect(page.getByRole('heading', { name: 'Dịch thuật' })).toBeVisible();
+    await expect(page.locator('main').getByText('Tiếng Việt (Vietnamese)').first()).toBeVisible();
+  });
+
+  test('explicit saved translation target is preserved', async ({ page }) => {
+    // vi UI + an explicit non-vi target: the select must show the saved
+    // choice, proving the default is a default and not an overwrite.
+    await page.addInitScript(`
+      localStorage.setItem('echotype_language_settings', JSON.stringify({
+        interfaceLanguage: 'vi', hasExplicitPreference: true,
+      }));
+      localStorage.setItem('echotype_tts_settings', JSON.stringify({ targetLang: 'en' }));
+    `);
+    await gotoSeeded(page, '/settings');
+
+    const targetSection = page.getByText('Ngôn ngữ đích').locator('..');
+    const trigger = targetSection.getByRole('combobox');
+    await expect(trigger).toHaveText('English');
+  });
+
+  test('stored language without explicit preference falls back to Vietnamese', async ({ page }) => {
+    await page.addInitScript(`
+      localStorage.setItem('echotype_language_settings', JSON.stringify({
+        interfaceLanguage: 'en',
+        hasExplicitPreference: false,
+      }));
+    `);
+    await gotoSeeded(page, '/dashboard');
+
+    await expect(page.locator('html')).toHaveAttribute('lang', 'vi');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Chào mừng đến FlashDay');
+  });
+
+  test('stored language with missing explicit flag falls back to Vietnamese', async ({ page }) => {
+    await page.addInitScript(`
+      localStorage.setItem('echotype_language_settings', JSON.stringify({
+        interfaceLanguage: 'zh',
+      }));
+    `);
+    await gotoSeeded(page, '/dashboard');
+
+    await expect(page.locator('html')).toHaveAttribute('lang', 'vi');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Chào mừng đến FlashDay');
+  });
+
+  test('favorites surface renders Vietnamese folder chrome on fresh install', async ({ page }) => {
+    await page.addInitScript(clearOnce('en-US'));
+    await gotoSeeded(page, '/favorites');
+
+    await expect(page.locator('html')).toHaveAttribute('lang', 'vi');
+    await expect(page.getByTestId('favorites-folder-all')).toHaveText('Tất cả');
+    await expect(page.getByTestId('favorites-folder-default')).toContainText('Mặc định');
+    await expect(page.getByTestId('favorites-folder-auto')).toContainText('Thông minh');
+    await expect(page.getByTestId('favorites-folder-manage')).toContainText('Quản lý');
+    await expect(page.getByText('默认收藏')).toHaveCount(0);
+
+    await page.getByTestId('favorites-folder-manage').click();
+    await expect(page.getByRole('dialog')).toContainText('Quản lý thư mục');
+    await expect(page.getByTestId('favorites-folder-name-input')).toHaveAttribute('placeholder', 'Tên thư mục');
+    await expect(page.getByTestId('favorites-folder-create')).toHaveText('Tạo');
+    await expect(page.getByTestId('favorites-folder-row-default')).toContainText('Mặc định');
+    await expect(page.getByRole('dialog')).not.toContainText('管理收藏夹');
+  });
+
+  test('favorites surface localizes under explicit en and zh preferences', async ({ page }) => {
+    await page.addInitScript(`
+      if (!sessionStorage.getItem('__i18nTestInit')) {
+        sessionStorage.setItem('__i18nTestInit', '1');
+        localStorage.setItem('echotype_language_settings', JSON.stringify({
+          interfaceLanguage: 'en', hasExplicitPreference: true,
+        }));
+      }
+    `);
+    await gotoSeeded(page, '/favorites');
+
+    await expect(page.getByTestId('favorites-folder-all')).toHaveText('All');
+    await expect(page.getByTestId('favorites-folder-default')).toContainText('Default');
+    await expect(page.getByTestId('favorites-folder-auto')).toContainText('Smart');
+    await expect(page.getByTestId('favorites-folder-manage')).toContainText('Manage');
+
+    await page.evaluate(() =>
+      localStorage.setItem(
+        'echotype_language_settings',
+        JSON.stringify({ interfaceLanguage: 'zh', hasExplicitPreference: true }),
+      ),
+    );
+    await reloadSeeded(page);
+
+    await expect(page.locator('html')).toHaveAttribute('lang', 'zh');
+    await expect(page.getByTestId('favorites-folder-all')).toHaveText('全部');
+    await expect(page.getByTestId('favorites-folder-default')).toContainText('默认收藏');
+    await expect(page.getByTestId('favorites-folder-auto')).toContainText('智能收藏');
+    await expect(page.getByTestId('favorites-folder-manage')).toContainText('管理');
   });
 });

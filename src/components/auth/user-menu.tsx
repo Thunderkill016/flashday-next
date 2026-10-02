@@ -28,7 +28,7 @@ function getDisplayName(
   user: { user_metadata?: Record<string, unknown>; email?: string } | null,
   fallbackUser: string,
 ): string {
-  if (!user) return 'EchoType';
+  if (!user) return 'FlashDay';
   const meta = user.user_metadata;
   if (meta?.full_name && typeof meta.full_name === 'string') return meta.full_name;
   if (meta?.name && typeof meta.name === 'string') return meta.name;

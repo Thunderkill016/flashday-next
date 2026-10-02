@@ -36,7 +36,7 @@ describe('Useful Phrases page', () => {
 
   it('renders legacy turns as flat phrase rows and removes notebook controls', () => {
     const markup = renderToStaticMarkup(<JournalList />);
-    expect(markup).toContain('Useful Phrases');
+    expect(markup).toContain('Cụm từ hay');
     expect(markup).toContain('It&#x27;s taken.');
     expect(markup).toContain('有人了。');
     expect(markup).toContain('#cafe');
@@ -46,19 +46,19 @@ describe('Useful Phrases page', () => {
 
   it('keeps the composer compact while exposing searchable phrase controls', () => {
     const markup = renderToStaticMarkup(<JournalList />);
-    expect(markup).toContain('aria-label="English phrase"');
-    expect(markup).toContain('Add details');
-    expect(markup).toContain('aria-label="Search phrases"');
-    expect(markup).toContain('aria-label="Filter by tag"');
+    expect(markup).toContain('aria-label="Cụm từ tiếng Anh"');
+    expect(markup).toContain('Thêm chi tiết');
+    expect(markup).toContain('aria-label="Tìm cụm từ"');
+    expect(markup).toContain('aria-label="Lọc theo thẻ"');
     expect(markup).not.toContain('aria-label="Translation"');
   });
 
   it('provides accessible phrase and practice actions', () => {
     const markup = renderToStaticMarkup(<JournalList />);
-    expect(markup).toContain('aria-label="Play It&#x27;s taken."');
-    expect(markup).toContain('aria-label="Add It&#x27;s taken. to favorites"');
-    expect(markup).toContain('aria-label="Edit It&#x27;s taken."');
-    expect(markup).toContain('aria-label="Delete It&#x27;s taken."');
-    for (const module of ['Listen', 'Speak', 'Read', 'Write']) expect(markup).toContain(`>${module}</button>`);
+    expect(markup).toContain('aria-label="Phát It&#x27;s taken."');
+    expect(markup).toContain('aria-label="Thêm It&#x27;s taken. vào đã lưu"');
+    expect(markup).toContain('aria-label="Sửa It&#x27;s taken."');
+    expect(markup).toContain('aria-label="Xoá It&#x27;s taken."');
+    for (const module of ['Nghe', 'Nói', 'Đọc', 'Viết']) expect(markup).toContain(`>${module}</button>`);
   });
 });

@@ -9,7 +9,7 @@ test('a published EPUB keeps its course available after saving comprehension', a
   await page.getByLabel('Material title').fill('The Little Prince course continuity');
   await page.getByRole('button', { name: 'Add to library', exact: true }).click();
   await page.getByRole('link', { name: 'Start first lesson', exact: true }).click();
-  await expect(page.getByRole('heading', { name: 'The Little Prince course continuity', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { level: 1, name: 'The Little Prince course continuity', exact: true })).toBeVisible();
 
   await page.getByRole('textbox', { name: 'Your response', exact: true }).fill(
     'The source explains that automatic scanning can introduce errors into a book.',
@@ -20,7 +20,7 @@ test('a published EPUB keeps its course available after saving comprehension', a
   await page.getByRole('button', { name: 'Save response', exact: true }).click();
 
   await expect(page.getByRole('status')).toContainText('Saved.');
-  await expect(page.getByRole('heading', { name: 'The Little Prince course continuity', exact: true })).toBeVisible();
+  await expect(page.getByRole('heading', { level: 1, name: 'The Little Prince course continuity', exact: true })).toBeVisible();
   await expect(page.getByText('This course is unavailable. Its sources may have been moved to the recycle bin.')).toHaveCount(0);
 
   await page.getByRole('button', { name: '2. Output', exact: true }).click();

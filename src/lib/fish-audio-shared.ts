@@ -1,4 +1,5 @@
 import enFishAudioMessages from '@/lib/i18n/messages/fish-audio/en.json';
+import viFishAudioMessages from '@/lib/i18n/messages/fish-audio/vi.json';
 import zhFishAudioMessages from '@/lib/i18n/messages/fish-audio/zh.json';
 import type { InterfaceLanguage } from '@/stores/language-store';
 import type { TTSSource } from '@/stores/tts-store';
@@ -9,6 +10,7 @@ const FISH_AUDIO_MODEL_IDS: FishAudioModelId[] = ['s2-pro', 's2', 's1', 's1-mini
 
 const FISH_AUDIO_MESSAGES = {
   en: enFishAudioMessages,
+  vi: viFishAudioMessages,
   zh: zhFishAudioMessages,
 } as const satisfies Record<InterfaceLanguage, typeof enFishAudioMessages>;
 

@@ -80,7 +80,7 @@ export const CHAT_TOOL_INPUT_SCHEMAS = {
 export const CHAT_TOOL_NAMES = Object.keys(CHAT_TOOL_INPUT_SCHEMAS) as Array<keyof typeof CHAT_TOOL_INPUT_SCHEMAS>;
 
 const CHAT_TOOL_DESCRIPTIONS: Record<keyof typeof CHAT_TOOL_INPUT_SCHEMAS, string> = {
-  navigate: 'Navigate to an app page when the user asks to go somewhere inside EchoType.',
+  navigate: 'Navigate to an app page when the user asks to go somewhere inside FlashDay.',
   importYouTube: 'Import a YouTube video transcript into the learning library when the user shares a YouTube URL.',
   importUrl: 'Import article text from a normal webpage URL into the learning library.',
   addTextContent: 'Save user-provided text directly into the learning library.',

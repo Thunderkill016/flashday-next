@@ -1974,6 +1974,7 @@ function SettingsContent() {
   const [showSpeechSuperSecret, setShowSpeechSuperSecret] = useState(false);
   const fishAudioModels = getLocalizedFishAudioModels(interfaceLanguage);
   const languageOptions = [
+    { value: 'vi', label: translationMessages.languageOptions.vi },
     { value: 'en', label: translationMessages.languageOptions.en },
     { value: 'zh-CN', label: translationMessages.languageOptions.zhCN },
     { value: 'ja', label: translationMessages.languageOptions.ja },

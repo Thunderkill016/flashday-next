@@ -77,7 +77,7 @@ export async function readBackupArchive(bytes: Uint8Array, targetDatabase?: stri
   const manifest = zip ? await zip.file('manifest.json')?.async('string') : new TextDecoder().decode(bytes);
   if (!manifest) throw new Error('Missing backup manifest.');
   const data = JSON.parse(manifest);
-  if (data._version > 3) throw new Error('This backup requires a newer EchoType version.');
+  if (data._version > 3) throw new Error('This backup requires a newer FlashDay version.');
   let totalBytes = 0;
   async function deserialize(value: unknown): Promise<unknown> {
     if (Array.isArray(value)) return Promise.all(value.map(deserialize));

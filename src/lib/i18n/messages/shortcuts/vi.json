@@ -1,0 +1,201 @@
+{
+  "scopeLabels": {
+    "global": "Toàn cục",
+    "listen": "Chế độ Nghe",
+    "speak": "Chế độ Nói",
+    "read": "Chế độ Đọc",
+    "write": "Chế độ Viết"
+  },
+  "scopeAvailabilityDescriptions": {
+    "global": "Dùng được trên mọi trang, kể cả tìm kiếm.",
+    "listen": "Chỉ dùng khi đang ở trang luyện Nghe cụ thể.",
+    "speak": "Chỉ dùng khi đang ở trang luyện Nói cụ thể.",
+    "read": "Chỉ dùng khi đang ở trang luyện Đọc cụ thể.",
+    "write": "Chỉ dùng khi đang ở trang luyện Viết cụ thể."
+  },
+  "ui": {
+    "summary": {
+      "title": "Phím tắt",
+      "description": "Tìm kiếm mở bằng {{defaultSearchKeyLabel}} mặc định trên thiết bị này. Mở trình sửa để tuỳ chỉnh phím và xem scope nào đang hoạt động trên trang hiện tại.",
+      "configureButton": "Cấu hình phím tắt",
+      "search": "Tìm kiếm",
+      "editing": "Đang sửa",
+      "editAnyRow": "Nhấn vào hàng bất kỳ",
+      "resetAll": "Đặt lại tất cả"
+    },
+    "availability": {
+      "available": "Dùng được ở trang này",
+      "unavailable": "Không dùng được ở trang này"
+    },
+    "row": {
+      "editing": "Đang sửa",
+      "custom": "Tuỳ chỉnh",
+      "default": "Mặc định",
+      "saved": "Đã lưu",
+      "capturingTitle": "Đang bắt phím",
+      "pressKeys": "Nhấn phím",
+      "current": "Hiện tại",
+      "cancelEditing": "Huỷ sửa",
+      "editShortcut": "Sửa phím tắt",
+      "resetToDefault": "Về mặc định",
+      "requiresModifier": "Cần {{modifierLabel}} làm phím bổ trợ.",
+      "conflict": "Phím này trùng với phím tắt khác.",
+      "capturingHint": "Đang bắt phím tắt mới. Nhấn Esc để huỷ."
+    },
+    "banner": {
+      "prompt": "Nhấn tổ hợp phím mới ngay bây giờ.",
+      "requiresModifier": "Thao tác này cần có {{modifierLabel}}.",
+      "cancelHint": "Nhấn Esc để huỷ.",
+      "currentBinding": "Phím hiện tại",
+      "cancel": "Huỷ",
+      "conflictWith": "Trùng với \"{{shortcutLabel}}\" trong {{scopeLabel}}."
+    },
+    "modal": {
+      "title": "Phím tắt",
+      "description": "Tìm kiếm mở bằng {{defaultSearchKeyLabel}} mặc định trên thiết bị này. Phím hiện tại: {{currentBinding}}"
+    },
+    "footerNote": "Phím tắt toàn cục có thể trùng với phím module tương ứng, nhưng phím trùng trong cùng một scope đang hoạt động sẽ bị chặn."
+  },
+  "definitions": {
+    "global:command-palette": {
+      "label": "Bảng lệnh",
+      "description": "Mở bảng lệnh"
+    },
+    "global:open-settings": {
+      "label": "Mở Cài đặt",
+      "description": "Đi tới trang cài đặt"
+    },
+    "global:toggle-chat": {
+      "label": "Bật/tắt Chat",
+      "description": "Mở hoặc đóng panel chat"
+    },
+    "global:nav-listen": {
+      "label": "Đến phần Nghe",
+      "description": "Đi tới module Nghe"
+    },
+    "global:nav-speak": {
+      "label": "Đến phần Nói",
+      "description": "Đi tới module Nói"
+    },
+    "global:nav-read": {
+      "label": "Đến phần Đọc",
+      "description": "Đi tới module Đọc"
+    },
+    "global:nav-write": {
+      "label": "Đến phần Viết",
+      "description": "Đi tới module Viết"
+    },
+    "global:speed-down": {
+      "label": "Giảm tốc độ",
+      "description": "Giảm tốc độ TTS"
+    },
+    "global:speed-up": {
+      "label": "Tăng tốc độ",
+      "description": "Tăng tốc độ TTS"
+    },
+    "global:pitch-down": {
+      "label": "Giảm cao độ",
+      "description": "Giảm cao độ TTS"
+    },
+    "global:pitch-up": {
+      "label": "Tăng cao độ",
+      "description": "Tăng cao độ TTS"
+    },
+    "global:volume-down": {
+      "label": "Giảm âm lượng",
+      "description": "Giảm âm lượng TTS"
+    },
+    "global:volume-up": {
+      "label": "Tăng âm lượng",
+      "description": "Tăng âm lượng TTS"
+    },
+    "global:stop-tts": {
+      "label": "Dừng TTS",
+      "description": "Dừng phát text-to-speech hiện tại"
+    },
+    "global:nav-favorites": {
+      "label": "Đến Đã lưu",
+      "description": "Đi tới trang Đã lưu"
+    },
+    "global:toggle-selection-translate": {
+      "label": "Bật/tắt dịch khi bôi đen",
+      "description": "Bật hoặc tắt popup dịch khi bôi đen"
+    },
+    "listen:play-pause": {
+      "label": "Phát / Tạm dừng",
+      "description": "Bật/tắt phát TTS"
+    },
+    "listen:speed-down": {
+      "label": "Giảm tốc độ",
+      "description": "Giảm tốc độ phát"
+    },
+    "listen:speed-up": {
+      "label": "Tăng tốc độ",
+      "description": "Tăng tốc độ phát"
+    },
+    "listen:restart": {
+      "label": "Phát lại từ đầu",
+      "description": "Phát lại từ đầu"
+    },
+    "listen:toggle-translation": {
+      "label": "Bật/tắt bản dịch",
+      "description": "Hiện hoặc ẩn bản dịch"
+    },
+    "listen:toggle-immersive": {
+      "label": "Chế độ toàn màn hình",
+      "description": "Bật/tắt overlay đọc toàn màn hình"
+    },
+    "speak:toggle-recording": {
+      "label": "Bật/tắt ghi âm",
+      "description": "Bắt đầu hoặc dừng ghi âm giọng"
+    },
+    "speak:toggle-translation": {
+      "label": "Bật/tắt bản dịch",
+      "description": "Hiện hoặc ẩn bản dịch"
+    },
+    "speak:replay-last-assistant": {
+      "label": "Phát lại câu trả lời cuối",
+      "description": "Phát lại tin nhắn mới nhất của trợ lý"
+    },
+    "speak:reset-conversation": {
+      "label": "Đặt lại hội thoại",
+      "description": "Đưa hội thoại về câu mở đầu"
+    },
+    "read:toggle-recording": {
+      "label": "Bắt đầu / Dừng ghi âm",
+      "description": "Bật/tắt nhận dạng giọng nói"
+    },
+    "read:toggle-translation": {
+      "label": "Bật/tắt bản dịch",
+      "description": "Hiện hoặc ẩn bản dịch"
+    },
+    "read:toggle-immersive": {
+      "label": "Chế độ toàn màn hình",
+      "description": "Bật/tắt overlay đọc toàn màn hình"
+    },
+    "read:listen": {
+      "label": "Nghe văn bản",
+      "description": "Phát văn bản gốc bằng TTS"
+    },
+    "read:reset": {
+      "label": "Làm lại",
+      "description": "Xoá transcript và kết quả"
+    },
+    "write:toggle-translation": {
+      "label": "Bật/tắt bản dịch",
+      "description": "Hiện hoặc ẩn bản dịch"
+    },
+    "write:reset": {
+      "label": "Làm lại",
+      "description": "Bắt đầu lại bài luyện gõ"
+    },
+    "global:shadow-next-module": {
+      "label": "Đọc theo: Module tiếp",
+      "description": "Nhảy tới module đọc theo chưa hoàn thành kế tiếp"
+    },
+    "global:shadow-end-session": {
+      "label": "Đọc theo: Kết thúc",
+      "description": "Kết thúc buổi đọc theo hiện tại"
+    }
+  }
+}

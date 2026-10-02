@@ -1,0 +1,22 @@
+{
+  "tabs": {
+    "wordbook": "Sổ từ",
+    "phrase": "Cụm từ",
+    "sentence": "Câu",
+    "article": "Bài đọc",
+    "scenario": "Tình huống"
+  },
+  "search": "Tìm nội dung...",
+  "empty": {
+    "title": "Chưa có nội dung nào",
+    "description": "Thêm nội dung để bắt đầu luyện tập. Xem các sổ từ có sẵn hoặc tự nhập nội dung.",
+    "wordBooks": "Sổ từ",
+    "importContent": "Nhập nội dung",
+    "noWordBooks": "Chưa nhập sổ từ nào",
+    "noScenarios": "Chưa nhập tình huống nào",
+    "importWordBooksHint": "Nhập sách từ vựng từ trang Sổ từ để bắt đầu luyện tập.",
+    "importScenariosHint": "Nhập gói tình huống từ trang Sổ từ để bắt đầu luyện tập.",
+    "browseWordBooks": "Xem sổ từ"
+  },
+  "items": "mục"
+}

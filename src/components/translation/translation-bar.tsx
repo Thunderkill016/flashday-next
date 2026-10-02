@@ -25,7 +25,7 @@ export function TranslationBar({ module }: TranslationBarProps) {
       <Button
         variant="ghost"
         size="icon"
-        aria-label={language === 'zh' ? '翻译' : 'Translation'}
+        aria-label={language === 'zh' ? '翻译' : language === 'vi' ? 'Dịch' : 'Translation'}
         aria-pressed={showTranslation}
         className={`h-8 w-8 cursor-pointer ${showTranslation ? 'text-indigo-600 bg-indigo-50' : 'text-indigo-400'}`}
         onClick={() => toggleTranslation(module)}

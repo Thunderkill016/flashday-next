@@ -1,0 +1,63 @@
+{
+  "modules": {
+    "listen": "Nghe",
+    "speak": "Nói",
+    "read": "Đọc",
+    "write": "Viết"
+  },
+  "listen": {
+    "pause": "Tạm dừng",
+    "play": "Phát"
+  },
+  "write": {
+    "placeholder": "Gõ lại văn bản trên...",
+    "correct": "Đúng rồi! Sang câu tiếp...",
+    "wrong": "Chưa đúng. Thử lại nhé!",
+    "clear": "Xoá",
+    "check": "Kiểm tra"
+  },
+  "speak": {
+    "listen": "Nghe",
+    "micHint": "Nhấn micro và đọc to câu này",
+    "listening": "Đang nghe... nói đi",
+    "processing": "Đang xử lý giọng nói...",
+    "noSpeech": "Không nghe thấy gì. Nhấn micro để thử lại.",
+    "hearingYou": "Đang nghe bạn...",
+    "yourPronunciation": "Phát âm của bạn:",
+    "words": "từ",
+    "tryAgain": "Thử lại"
+  },
+  "encourage": {
+    "perfect": "Hoàn hảo! Phát âm không lỗi!",
+    "excellent": "Xuất sắc! Gần như hoàn hảo!",
+    "great": "Tốt lắm! Giữ vững nhé!",
+    "good": "Cố gắng tốt! Thử lại để điểm cao hơn.",
+    "keep": "Tiếp tục luyện nhé, bạn đang tiến bộ!",
+    "dontGiveUp": "Đừng bỏ cuộc! Nghe rồi thử lại."
+  },
+  "tooltips": {
+    "playSentence": "Phát câu",
+    "playWord": "Phát từ",
+    "youSaid": "Bạn nói: \"{{spoken}}\"",
+    "correct": "Đúng",
+    "notYetSpoken": "Chưa nói"
+  },
+  "completion": {
+    "title": "Hoàn thành buổi học!",
+    "totalItems": "Tổng số mục",
+    "completed": "Đã xong",
+    "practiceAgain": "Luyện lại",
+    "backToDashboard": "Về Tổng quan"
+  },
+  "empty": {
+    "noItems": "Sổ từ này chưa có mục nào.",
+    "importHint": "Nhập sổ từ này từ trang Sổ từ trước nhé.",
+    "backTo": "Về {{label}}"
+  },
+  "nav": {
+    "previous": "Trước",
+    "next": "Tiếp",
+    "finish": "Kết thúc",
+    "mode": "Chế độ {{label}}"
+  }
+}

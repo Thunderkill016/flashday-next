@@ -469,15 +469,16 @@ test.describe('Chat Agent Upgrade', () => {
       .toBe('Hello, how are you today?');
   });
 
-  test('E2E-17 toolbar cleanup leaves only mic and expand controls', async ({ page }) => {
+  test('E2E-17 toolbar exposes the current control set only', async ({ page }) => {
     await openChat(page);
 
-    await expect(page.getByLabel('Mic')).toBeVisible();
-    await expect(page.getByLabel('Expand')).toBeVisible();
-    await expect(page.getByLabel('Library')).toHaveCount(0);
-    await expect(page.getByLabel('Search')).toHaveCount(0);
-    await expect(page.getByLabel('Analytics')).toHaveCount(0);
-    await expect(page.getByLabel('Settings')).toHaveCount(0);
+    // Current toolbar contract: content picker, search, voice, expand.
+    const panel = page.getByTestId('chat-panel');
+    for (const label of ['Library', 'Search', 'Mic', 'Expand']) {
+      await expect(panel.getByLabel(label)).toBeVisible();
+    }
+    await expect(panel.getByLabel('Analytics')).toHaveCount(0);
+    await expect(panel.getByLabel('Settings')).toHaveCount(0);
   });
 
   test('E2E-18 UI polish keeps the panel responsive, scrollable, and free of console errors', async ({ page }) => {
@@ -503,12 +504,11 @@ test.describe('Chat Agent Upgrade', () => {
     await expect(page.getByText('Imported YouTube transcript into your library.').first()).toBeVisible();
     await expect(page.getByTestId('chat-streaming-indicator')).toHaveCount(0);
 
-    await sendChat(page, 'Hello scroll test 1');
-    await expect(page.getByText('Hello scroll test 1').first()).toBeVisible();
-    await sendChat(page, 'Hello scroll test 2');
-    await expect(page.getByText('Hello scroll test 2').first()).toBeVisible();
-    await sendChat(page, 'Hello scroll test 3');
-    await expect(page.getByText('Hello scroll test 3').first()).toBeVisible();
+    // Enough messages to make the 70vh panel actually overflow.
+    for (let i = 1; i <= 8; i++) {
+      await sendChat(page, `Hello scroll test ${i}`);
+      await expect(page.getByText(`Hello scroll test ${i}`).first()).toBeVisible();
+    }
 
     const messageScroller = page.locator('div.flex-1.overflow-y-auto.p-4.scrollbar-thin');
     await expect

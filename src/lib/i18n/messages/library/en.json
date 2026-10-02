@@ -84,7 +84,7 @@
     "importContent": "Import Content"
   },
   "aiGenerate": {
-    "description": "Generate English learning content with a prompt, topic, or webpage URL. You can also add instructions in Chinese or English.",
+    "description": "Generate English learning content with a prompt, topic, or webpage URL. You can also write instructions in Vietnamese or English.",
     "labelPrompt": "Prompt",
     "placeholderPrompt": "e.g. Explain this article for beginners: https://example.com/article",
     "difficulty": "Difficulty",

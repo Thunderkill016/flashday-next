@@ -90,7 +90,7 @@ describe('kokoro helpers', () => {
     const result = await synthesizeKokoroSpeech({
       serverUrl: 'http://54.166.253.41:8880/',
       apiKey: 'kokoro-key',
-      text: 'Hello from EchoType',
+      text: 'Hello from FlashDay',
       voice: 'af_heart',
       speed: 1.2,
     });
@@ -105,7 +105,7 @@ describe('kokoro helpers', () => {
         }),
         body: JSON.stringify({
           model: 'kokoro',
-          input: 'Hello from EchoType',
+          input: 'Hello from FlashDay',
           voice: 'af_heart',
           response_format: 'mp3',
           speed: 1.2,

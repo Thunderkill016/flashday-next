@@ -5,6 +5,7 @@ import Link from 'next/link';
 import { useEffect, useMemo, useState } from 'react';
 import { useLearningWorkspace } from '@/hooks/use-learning-workspace';
 import { db, LOCAL_DATABASE_CHANGED_EVENT } from '@/lib/db';
+import { useL } from '@/lib/i18n/locale';
 import { MATERIAL_LABELS, MATERIAL_TYPES } from '@/lib/material-types';
 import { repairYouTubeHistory } from '@/lib/youtube-timeline-repair';
 import { useContentStore } from '@/stores/content-store';
@@ -52,8 +53,9 @@ export default function MaterialLibrary() {
     return () => window.removeEventListener(LOCAL_DATABASE_CHANGED_EVENT, changed);
   }, []);
   const { data, error, retry } = useLearningWorkspace();
-  const zh = useLanguageStore((s) => s.interfaceLanguage) === 'zh';
-  const t = (en: string, cn: string) => (zh ? cn : en);
+  const language = useLanguageStore((s) => s.interfaceLanguage);
+  const pick = useL();
+  const t = (en: string, cn: string, vi: string) => (language === 'zh' ? cn : language === 'vi' ? vi : en);
   const [search, setSearch] = useState('');
   const [filter, setFilter] = useState<MaterialType | 'all'>('all');
   const [open, setOpen] = useState(false);
@@ -126,10 +128,14 @@ export default function MaterialLibrary() {
       <header className="flex flex-wrap items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-semibold tracking-tight text-slate-900">
-            {t('Learning materials', '学习材料')}
+            {t('Learning materials', '学习材料', 'Tài liệu học')}
           </h1>
           <p className="mt-2 text-sm text-slate-500">
-            {t('One material. Listen, speak, read and write.', '一份材料，完成听、说、读、写。')}
+            {t(
+              'One material. Listen, speak, read and write.',
+              '一份材料，完成听、说、读、写。',
+              'Một tài liệu. Luyện đủ nghe, nói, đọc, viết.',
+            )}
           </p>
         </div>
         <button
@@ -141,7 +147,7 @@ export default function MaterialLibrary() {
           className="flex min-h-11 items-center gap-2 rounded-xl bg-indigo-600 px-4 text-sm font-medium text-white active:scale-95 motion-reduce:transform-none"
         >
           <Plus className="h-4 w-4" />
-          {t('Import material', '导入资料')}
+          {t('Import material', '导入资料', 'Nhập tài liệu')}
         </button>
       </header>
       {timelineRepair && (timelineRepair.repaired > 0 || timelineRepair.pending > 0) && (
@@ -151,6 +157,7 @@ export default function MaterialLibrary() {
               {t(
                 'YouTube timing repaired; original timings are backed up.',
                 'YouTube 时间轴已修复，原时间数据已备份。',
+                'Đã sửa mốc thời gian YouTube; mốc gốc đã được sao lưu.',
               )}
             </p>
           )}
@@ -159,9 +166,10 @@ export default function MaterialLibrary() {
               {t(
                 'Some legacy YouTube timings could not be verified. Originals are unchanged.',
                 '部分历史 YouTube 时间轴暂未能核实，原数据未改动。',
+                'Một số mốc thời gian YouTube cũ chưa kiểm chứng được. Dữ liệu gốc giữ nguyên.',
               )}{' '}
               <button type="button" className="underline" onClick={() => setRepairRun((n) => n + 1)}>
-                {t('Retry verification', '重新校验')}
+                {t('Retry verification', '重新校验', 'Kiểm tra lại')}
               </button>
             </p>
           )}
@@ -178,25 +186,28 @@ export default function MaterialLibrary() {
           }}
         />
       )}
-      <section aria-label={t('Filter materials', '筛选资料')} className="space-y-4 rounded-2xl bg-white p-4 shadow-sm">
+      <section
+        aria-label={t('Filter materials', '筛选资料', 'Lọc tài liệu')}
+        className="space-y-4 rounded-2xl bg-white p-4 shadow-sm"
+      >
         <div className="flex gap-3">
           <div className="relative min-w-0 flex-1">
             <Search className="absolute left-3 top-3 h-5 w-5 text-slate-400" />
             <input
-              aria-label={t('Search materials', '搜索材料')}
-              placeholder={t('Search materials…', '搜索材料…')}
+              aria-label={t('Search materials', '搜索材料', 'Tìm tài liệu')}
+              placeholder={t('Search materials…', '搜索材料…', 'Tìm tài liệu…')}
               value={search}
               onChange={(e) => setSearch(e.target.value)}
               className="min-h-11 w-full rounded-xl bg-slate-100 pl-10 pr-3 text-sm"
             />
           </div>
           <select
-            aria-label={t('Difficulty', '难度')}
+            aria-label={t('Difficulty', '难度', 'Độ khó')}
             value={difficulty}
             onChange={(e) => setDifficulty(e.target.value)}
             className="max-w-28 rounded-xl bg-slate-100 px-2 text-sm"
           >
-            <option value="">{t('All levels', '所有难度')}</option>
+            <option value="">{t('All levels', '所有难度', 'Mọi cấp độ')}</option>
             {['beginner', 'intermediate', 'advanced'].map((d) => (
               <option key={d}>{d}</option>
             ))}
@@ -209,7 +220,7 @@ export default function MaterialLibrary() {
             onClick={() => setFilter('all')}
             className={`min-h-11 shrink-0 rounded-xl px-3 text-sm ${filter === 'all' ? 'bg-indigo-50 text-indigo-700' : ''}`}
           >
-            {t('All', '全部')}
+            {t('All', '全部', 'Tất cả')}
           </button>
           {MATERIAL_TYPES.map((kind) => {
             const Icon = icons[kind];
@@ -222,24 +233,25 @@ export default function MaterialLibrary() {
                 className={`flex min-h-11 shrink-0 items-center gap-2 rounded-xl px-3 text-sm ${filter === kind ? 'bg-indigo-50 text-indigo-700' : 'text-slate-600'}`}
               >
                 <Icon className="h-4 w-4" />
-                {MATERIAL_LABELS[kind][zh ? 1 : 0]}
+                {pick(MATERIAL_LABELS[kind])}
               </button>
             );
           })}
         </div>
         <p className="text-xs text-slate-500">
-          {units.filter((u) => filter === 'all' || u.materialType === filter).length} {t('materials', '份材料')}
+          {units.filter((u) => filter === 'all' || u.materialType === filter).length}{' '}
+          {t('materials', '份材料', 'tài liệu')}
         </p>
       </section>
       {error && (
         <p role="alert">
           {error}{' '}
           <button type="button" onClick={retry}>
-            {t('Retry', '重试')}
+            {t('Retry', '重试', 'Thử lại')}
           </button>
         </p>
       )}
-      {!data && !error && <p role="status">{t('Preparing materials…', '正在整理材料…')}</p>}
+      {!data && !error && <p role="status">{t('Preparing materials…', '正在整理材料…', 'Đang chuẩn bị tài liệu…')}</p>}
       {MATERIAL_TYPES.filter((kind) => filter === 'all' || filter === kind).map((kind) => {
         const group = units.filter((u) => u.materialType === kind);
         if (!group.length) return null;
@@ -254,7 +266,7 @@ export default function MaterialLibrary() {
               className="flex min-h-16 w-full items-center gap-3 px-5 py-3 text-left"
             >
               <Icon className="h-5 w-5 text-indigo-600" />
-              <h2 className="font-semibold">{MATERIAL_LABELS[kind][zh ? 1 : 0]}</h2>
+              <h2 className="font-semibold">{pick(MATERIAL_LABELS[kind])}</h2>
               <span className="text-sm tabular-nums text-slate-400">{group.length}</span>
               <ChevronDown className={`ml-auto h-4 w-4 ${expanded ? '' : '-rotate-90'}`} />
             </button>
@@ -265,16 +277,19 @@ export default function MaterialLibrary() {
                     <div className="min-w-0">
                       <h3 className="break-words text-sm font-semibold text-slate-800">{unit.title}</h3>
                       <p className="mt-1 text-xs text-slate-500">
-                        {unit.lessonIds.length} {t('lessons', '课')} · {unit.difficulty || t('Unrated', '未分级')}{' '}
-                        {kind === 'reading' && unit.kind === 'book' ? ` · ${t('English book', '英文书籍')}` : ''}
+                        {unit.lessonIds.length} {t('lessons', '课', 'bài học')} ·{' '}
+                        {unit.difficulty || t('Unrated', '未分级', 'Chưa đánh giá')}{' '}
+                        {kind === 'reading' && unit.kind === 'book'
+                          ? ` · ${t('English book', '英文书籍', 'Sách tiếng Anh')}`
+                          : ''}
                       </p>
                     </div>
                     <Link
                       href={`/learn/${encodeURIComponent(unit.id)}`}
-                      aria-label={`${t('Study', '学习')} ${unit.title}`}
+                      aria-label={`${t('Study', '学习', 'Học')} ${unit.title}`}
                       className="inline-flex min-h-11 shrink-0 items-center rounded-xl bg-indigo-50 px-3 text-sm font-medium text-indigo-700"
                     >
-                      {recent.get(unit.id) ? t('Continue', '继续学习') : t('Start', '开始学习')}
+                      {recent.get(unit.id) ? t('Continue', '继续学习', 'Tiếp tục') : t('Start', '开始学习', 'Bắt đầu')}
                     </Link>
                   </li>
                 ))}
@@ -288,6 +303,7 @@ export default function MaterialLibrary() {
           {t(
             'No matching materials. Import a source or change the filters.',
             '没有匹配的材料。可以导入资料或调整筛选。',
+            'Không có tài liệu phù hợp. Hãy nhập nguồn mới hoặc đổi bộ lọc.',
           )}
         </p>
       )}

@@ -1,8 +1,10 @@
 'use client';
 import { useEffect, useRef, useState } from 'react';
+import { useLT } from '@/lib/i18n/locale';
 import { includedImportBlocks } from '@/lib/import-job';
 import { vocabularyCsv } from '@/lib/material-review';
 import { parseVocabulary } from '@/lib/vocabulary';
+import { useLanguageStore } from '@/stores/language-store';
 import type { ImportJob, ImportSourceBlock } from '@/types/import-job';
 import s from './material-import-v2.module.css';
 
@@ -10,14 +12,13 @@ export function MaterialReviewV2({
   job,
   onChange,
   disabled,
-  zh,
 }: {
   job: ImportJob;
   onChange: (job: ImportJob) => void;
   disabled: boolean;
-  zh: boolean;
 }) {
-  const t = (en: string, cn: string) => (zh ? cn : en);
+  const language = useLanguageStore((st) => st.interfaceLanguage);
+  const t = (en: string, cn: string, vi: string) => (language === 'zh' ? cn : language === 'vi' ? vi : en);
   const [index, setIndex] = useState(0),
     [compare, setCompare] = useState(false),
     [media, setMedia] = useState('');
@@ -46,6 +47,7 @@ export function MaterialReviewV2({
         t(
           'Unable to play. Try the audio controls or reselect the original file.',
           '播放失败，请使用播放器重试或重新选择原文件。',
+          'Không phát được. Thử điều khiển audio hoặc chọn lại tệp gốc.',
         ),
       );
     });
@@ -57,7 +59,13 @@ export function MaterialReviewV2({
       element.currentTime = range.current.start;
       void element.play().catch((error: unknown) => {
         if (error instanceof DOMException && error.name === 'AbortError') return;
-        setMediaError(t('Playback stopped. Press replay to continue.', '播放已停止，请点击重播继续。'));
+        setMediaError(
+          t(
+            'Playback stopped. Press replay to continue.',
+            '播放已停止，请点击重播继续。',
+            'Đã dừng phát. Nhấn phát lại để tiếp tục.',
+          ),
+        );
       });
     } else {
       element.pause();
@@ -91,7 +99,7 @@ export function MaterialReviewV2({
     <>
       <aside className={s.chapters}>
         <span className={`${s.small} ${s.muted}`}>
-          {timed ? t('Subtitles', '字幕目录') : t('Contents', '章节目录')} · {job.blocks.length}
+          {timed ? t('Subtitles', '字幕目录', 'Phụ đề') : t('Contents', '章节目录', 'Mục lục')} · {job.blocks.length}
         </span>
         {job.blocks.map((b, i) => (
           <button
@@ -109,9 +117,9 @@ export function MaterialReviewV2({
           </button>
         ))}
         <p className={`${s.small} ${s.muted}`}>
-          {t('Edits stay when switching chapters', '切换章节保留编辑')}
+          {t('Edits stay when switching chapters', '切换章节保留编辑', 'Chuyển chương vẫn giữ phần đã sửa')}
           <br />
-          {t('Selected', '发布范围')}：{includedImportBlocks(job).length} / {job.blocks.length}
+          {t('Selected', '发布范围', 'Đã chọn')}：{includedImportBlocks(job).length} / {job.blocks.length}
         </p>
       </aside>
       <article className={s.editor}>
@@ -119,7 +127,7 @@ export function MaterialReviewV2({
           <div>
             <h3>{block.title}</h3>
             <span className={`${s.small} ${s.muted}`}>
-              {t('Original retained · edit directly', '原始版本已保留 · 可直接编辑')}
+              {t('Original retained · edit directly', '原始版本已保留 · 可直接编辑', 'Đã giữ bản gốc · sửa trực tiếp')}
             </span>
           </div>
           <span className={s.pill}>
@@ -135,7 +143,7 @@ export function MaterialReviewV2({
                 src={media}
                 controls
                 preload="metadata"
-                aria-label={video ? t('Source video', '原视频') : t('Source audio', '原音频')}
+                aria-label={video ? t('Source video', '原视频', 'Video gốc') : t('Source audio', '原音频', 'Audio gốc')}
                 onLoadedMetadata={() => {
                   if (player.current) player.current.playbackRate = speed;
                 }}
@@ -146,6 +154,7 @@ export function MaterialReviewV2({
                     t(
                       'This recording cannot be played. Check the original file or try another audio format.',
                       '无法播放这份录音，请检查原文件或换一种音频格式。',
+                      'Không phát được bản thu này. Kiểm tra tệp gốc hoặc đổi định dạng audio khác.',
                     ),
                   )
                 }
@@ -154,9 +163,9 @@ export function MaterialReviewV2({
               </Media>
               <div className={s.mediaControls}>
                 <label>
-                  {t('Playback speed', '播放速度')}
+                  {t('Playback speed', '播放速度', 'Tốc độ phát')}
                   <select
-                    aria-label={t('Playback speed', '播放速度')}
+                    aria-label={t('Playback speed', '播放速度', 'Tốc độ phát')}
                     value={speed}
                     onChange={(event) => {
                       const rate = Number(event.target.value);
@@ -177,7 +186,7 @@ export function MaterialReviewV2({
                   disabled={!canReplay(block)}
                   onClick={() => playSection(block)}
                 >
-                  {t('Replay this section', '重播当前片段')}
+                  {t('Replay this section', '重播当前片段', 'Phát lại đoạn này')}
                 </button>
                 <label>
                   <input
@@ -186,15 +195,20 @@ export function MaterialReviewV2({
                     disabled={!canReplay(block)}
                     onChange={(event) => setLoop(event.target.checked)}
                   />
-                  {t('Loop this section', '循环当前片段')}
+                  {t('Loop this section', '循环当前片段', 'Lặp đoạn này')}
                 </label>
               </div>
               <p className={`${s.small} ${s.muted}`}>
                 {canReplay(block)
-                  ? t('Choose a section to hear it while you correct the text.', '选择片段即可回听，边听边校对文字。')
+                  ? t(
+                      'Choose a section to hear it while you correct the text.',
+                      '选择片段即可回听，边听边校对文字。',
+                      'Chọn một đoạn để nghe lại trong lúc sửa văn bản.',
+                    )
                   : t(
                       'This section has no timestamps. Use the player to listen and correct the text.',
                       '当前片段没有时间点，请用播放器回听并校对文字。',
+                      'Đoạn này không có mốc thời gian. Dùng trình phát để nghe và sửa văn bản.',
                     )}
               </p>
               {mediaError && (
@@ -205,11 +219,11 @@ export function MaterialReviewV2({
             </div>
           )}
           {kind === 'wordbook' ? (
-            <VocabularyEditor key={`${job.id}-${block.id}`} text={block.text} onChange={edit} zh={zh} />
+            <VocabularyEditor key={`${job.id}-${block.id}`} text={block.text} onChange={edit} />
           ) : kind === 'scenario' ? (
             <div className={s.stack} style={{ marginTop: 22 }}>
               <label>
-                {t('Situation', '场景背景')}
+                {t('Situation', '场景背景', 'Tình huống')}
                 <textarea
                   rows={5}
                   value={block.text}
@@ -224,7 +238,7 @@ export function MaterialReviewV2({
                 />
               </label>
               <label>
-                {t('Your role', '你的角色')}
+                {t('Your role', '你的角色', 'Vai của bạn')}
                 <input
                   value={job.scenario?.role || ''}
                   onChange={(e) =>
@@ -236,7 +250,7 @@ export function MaterialReviewV2({
                 />
               </label>
               <label>
-                {t('Communication goal', '沟通目标')}
+                {t('Communication goal', '沟通目标', 'Mục tiêu giao tiếp')}
                 <input
                   value={job.scenario?.goal || ''}
                   onChange={(e) =>
@@ -251,7 +265,11 @@ export function MaterialReviewV2({
           ) : kind === 'dialogue' || kind === 'sentences' ? (
             <div style={{ marginTop: 18 }}>
               <p className={`${s.small} ${s.muted}`}>
-                {t('Review each line. Keep the speakers and original order.', '逐句校对，保留说话人与原始顺序。')}
+                {t(
+                  'Review each line. Keep the speakers and original order.',
+                  '逐句校对，保留说话人与原始顺序。',
+                  'Rà từng dòng. Giữ nguyên vai nói và thứ tự gốc.',
+                )}
               </p>
               {block.text.split('\n').map((line, i) => {
                 const match = kind === 'dialogue' ? line.match(/^([^:]{1,40}):\s?(.*)$/) : null;
@@ -302,10 +320,10 @@ export function MaterialReviewV2({
           )}
           <div className={`${s.row} ${s.between}`} style={{ marginTop: 18 }}>
             <span className={`${s.small} ${s.muted}`}>
-              {t('Paragraphs and punctuation preserved', '保留段落、引号与标点')}
+              {t('Paragraphs and punctuation preserved', '保留段落、引号与标点', 'Giữ nguyên đoạn văn và dấu câu')}
             </span>
             <button className={s.ghost} onClick={() => setCompare(!compare)}>
-              {t('Compare original', '对照原文')}
+              {t('Compare original', '对照原文', 'Đối chiếu bản gốc')}
             </button>
           </div>
           {compare && (
@@ -326,7 +344,7 @@ export function MaterialReviewV2({
                   })
                 }
               />
-              {t('Include this chapter', '导入本章')}
+              {t('Include this chapter', '导入本章', 'Nhập chương này')}
             </label>
           )}
         </fieldset>
@@ -335,7 +353,8 @@ export function MaterialReviewV2({
   );
 }
 
-function VocabularyEditor({ text, onChange, zh }: { text: string; onChange: (text: string) => void; zh: boolean }) {
+function VocabularyEditor({ text, onChange }: { text: string; onChange: (text: string) => void }) {
+  const t = useLT();
   const [rows, setRows] = useState(() => parseVocabulary(text, true).rows),
     [page, setPage] = useState(0);
   const parsed = parseVocabulary(text);
@@ -343,16 +362,20 @@ function VocabularyEditor({ text, onChange, zh }: { text: string; onChange: (tex
   return (
     <>
       <p className={`${s.small} ${s.muted}`} style={{ marginTop: 15 }}>
-        {zh
-          ? '单词与释义必填，例句与音标选填。'
-          : 'Word and meaning are required. Examples and pronunciation are optional.'}
+        {t(
+          'Word and meaning are required. Examples and pronunciation are optional.',
+          '单词与释义必填，例句与音标选填。',
+          'Bắt buộc có từ và nghĩa; ví dụ và phiên âm tuỳ chọn.',
+        )}
       </p>
       <div className={s.tableWrap}>
         <table>
           <thead>
             <tr>
               {fields.map((field, i) => (
-                <th key={field}>{zh ? ['单词', '释义', '例句', '音标'][i] : field}</th>
+                <th key={field}>
+                  {t(field, ['单词', '释义', '例句', '音标'][i], ['Từ', 'Nghĩa', 'Ví dụ', 'Phiên âm'][i])}
+                </th>
               ))}
             </tr>
           </thead>
@@ -398,7 +421,11 @@ function VocabularyEditor({ text, onChange, zh }: { text: string; onChange: (tex
       {parsed.duplicates > 0 && (
         <p className={s.notice}>
           {parsed.duplicates}{' '}
-          {zh ? '条完全重复，默认跳过；不同释义保留。' : 'exact duplicates skipped; different meanings are retained.'}
+          {t(
+            'exact duplicates skipped; different meanings are retained.',
+            '条完全重复，默认跳过；不同释义保留。',
+            'mục trùng hẳn sẽ bỏ qua; nghĩa khác được giữ lại.',
+          )}
         </p>
       )}
     </>

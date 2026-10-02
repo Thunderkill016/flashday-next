@@ -1,0 +1,7 @@
+{
+  "description": "Quản lý thẻ có sẵn để chọn nhanh khi nhập nội dung. Tối đa 20 thẻ.",
+  "empty": "Chưa có thẻ nào. Thêm ở bên dưới.",
+  "placeholder": "Nhập tên thẻ...",
+  "add": "Thêm thẻ",
+  "limitReached": "Đã đạt tối đa 20 thẻ. Xoá bớt để thêm thẻ mới."
+}

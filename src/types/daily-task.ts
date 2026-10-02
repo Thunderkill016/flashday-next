@@ -10,8 +10,10 @@ export interface DailyTask {
   sourceId: string;
   title: string;
   titleZh: string;
+  titleVi?: string;
   reason: string;
   reasonZh: string;
+  reasonVi?: string;
   href: string;
   minutes: number;
   status: DailyTaskStatus;

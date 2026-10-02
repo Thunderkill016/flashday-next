@@ -36,8 +36,8 @@ const allDays = [0, 1, 2, 3, 4, 5, 6];
 export function DailyTaskQueue({ reviewOnly = false }: { reviewOnly?: boolean }) {
   const router = useRouter();
   const { data, error, retry } = useLearningWorkspace();
-  const zh = useLanguageStore((state) => state.interfaceLanguage) === 'zh';
-  const t = (en: string, cn: string) => (zh ? cn : en);
+  const language = useLanguageStore((s) => s.interfaceLanguage);
+  const t = (en: string, cn: string, vi: string) => (language === 'zh' ? cn : language === 'vi' ? vi : en);
   const [clockNow, setNow] = useState(Date.now());
   const [failure, setFailure] = useState('');
   const [busy, setBusy] = useState(false);
@@ -84,6 +84,7 @@ export function DailyTaskQueue({ reviewOnly = false }: { reviewOnly?: boolean })
       sourceId,
       title,
       titleZh: title,
+      titleVi: title,
       reason,
       reasonZh,
       href,
@@ -145,7 +146,7 @@ export function DailyTaskQueue({ reviewOnly = false }: { reviewOnly?: boolean })
           '录制一个音标并回听',
           '/pronunciation',
           3,
-          { titleZh: '练习一个音标', module: 'speak' },
+          { titleZh: '练习一个音标', titleVi: 'Luyện một âm', module: 'speak' },
         ),
       );
     void database
@@ -197,6 +198,7 @@ export function DailyTaskQueue({ reviewOnly = false }: { reviewOnly?: boolean })
           originDateKey: dateKey,
           title: 'Daily preferences',
           titleZh: '每日偏好',
+          titleVi: 'Tuỳ chọn hằng ngày',
           reason: '',
           reasonZh: '',
           href: '/dashboard',
@@ -247,11 +249,12 @@ export function DailyTaskQueue({ reviewOnly = false }: { reviewOnly?: boolean })
       <div role="alert">
         {error}
         <button className={control} type="button" onClick={retry}>
-          {t('Retry', '重试')}
+          {t('Retry', '重试', 'Thử lại')}
         </button>
       </div>
     );
-  if (!data || !state) return <output>{t('Preparing your daily queue…', '正在准备每日任务…')}</output>;
+  if (!data || !state)
+    return <output>{t('Preparing your daily queue…', '正在准备每日任务…', 'Đang chuẩn bị hàng đợi hôm nay…')}</output>;
   const eligible = state.tasks.filter(
     (task) =>
       !task.superseded &&
@@ -273,24 +276,24 @@ export function DailyTaskQueue({ reviewOnly = false }: { reviewOnly?: boolean })
   const progress = dailyWorkspaceProgress(data.sessions, data.contents);
   const statusLabel = (status: DailyTask['status']) =>
     ({
-      pending: t('Ready', '待开始'),
-      'in-progress': t('In progress', '进行中'),
-      paused: t('Paused', '已暂停'),
-      completed: t('Completed', '已完成'),
-      skipped: t('Skipped', '已跳过'),
-      deferred: t('Deferred', '已推迟'),
+      pending: t('Ready', '待开始', 'Sẵn sàng'),
+      'in-progress': t('In progress', '进行中', 'Đang làm'),
+      paused: t('Paused', '已暂停', 'Đã tạm dừng'),
+      completed: t('Completed', '已完成', 'Hoàn thành'),
+      skipped: t('Skipped', '已跳过', 'Đã bỏ qua'),
+      deferred: t('Deferred', '已推迟', 'Đã hoãn'),
     })[status];
   const practiceLabel = (task: DailyTask) => {
-    if (task.vocabularyMode) return t('Vocabulary', '词汇');
-    if (task.kind === 'favorite') return t('Saved phrases', '收藏表达');
-    if (task.kind === 'weak-spot') return t('Weak spots', '薄弱项');
-    if (task.kind === 'pronunciation') return t('Pronunciation', '发音');
-    if (!task.module) return t('Review', '复习');
+    if (task.vocabularyMode) return t('Vocabulary', '词汇', 'Từ vựng');
+    if (task.kind === 'favorite') return t('Saved phrases', '收藏表达', 'Cụm từ đã lưu');
+    if (task.kind === 'weak-spot') return t('Weak spots', '薄弱项', 'Điểm yếu');
+    if (task.kind === 'pronunciation') return t('Pronunciation', '发音', 'Phát âm');
+    if (!task.module) return t('Review', '复习', 'Ôn tập');
     return {
-      listen: t('Listening', '听力'),
-      read: t('Reading', '阅读'),
-      speak: t('Speaking', '口语'),
-      write: t('Writing', '写作'),
+      listen: t('Listening', '听力', 'Nghe'),
+      read: t('Reading', '阅读', 'Đọc'),
+      speak: t('Speaking', '口语', 'Nói'),
+      write: t('Writing', '写作', 'Viết'),
     }[task.module];
   };
   const focusLabels = [...new Set(visible.map(practiceLabel))];
@@ -308,10 +311,13 @@ export function DailyTaskQueue({ reviewOnly = false }: { reviewOnly?: boolean })
         <div className="flex items-start justify-between gap-4">
           <div className="min-w-0">
             <h2 className="font-[var(--font-poppins)] text-2xl font-semibold text-indigo-950">
-              {reviewOnly ? t('Your review plan', '今日复习计划') : t('Today', '今天')}
+              {reviewOnly
+                ? t('Your review plan', '今日复习计划', 'Kế hoạch ôn tập của bạn')
+                : t('Today', '今天', 'Hôm nay')}
             </h2>
             <p className="mt-1 text-sm text-slate-600">
-              {visible.length} {t('activities', '项练习')} · {remaining} {t('min left', '分钟剩余')}
+              {visible.length} {t('activities', '项练习', 'hoạt động')} · {remaining}{' '}
+              {t('min left', '分钟剩余', 'phút nữa')}
             </p>
             {focusLabels.length > 0 && (
               <p className="mt-1 truncate text-xs font-medium text-indigo-600">{focusLabels.join(' · ')}</p>
@@ -320,7 +326,7 @@ export function DailyTaskQueue({ reviewOnly = false }: { reviewOnly?: boolean })
           <div className="relative shrink-0">
             <button
               type="button"
-              aria-label={t('Change practice time', '调整练习时间')}
+              aria-label={t('Change practice time', '调整练习时间', 'Đổi giờ luyện tập')}
               aria-expanded={timePickerOpen}
               disabled={busy}
               onClick={() => setTimePickerOpen((open) => !open)}
@@ -331,7 +337,7 @@ export function DailyTaskQueue({ reviewOnly = false }: { reviewOnly?: boolean })
             {timePickerOpen && (
               <div
                 role="group"
-                aria-label={t('Daily time budget', '每日时间预算')}
+                aria-label={t('Daily time budget', '每日时间预算', 'Ngân sách thời gian mỗi ngày')}
                 className="absolute right-0 z-10 mt-2 flex w-52 flex-wrap gap-2 rounded-xl border border-slate-200 bg-white p-2 shadow-lg"
               >
                 {[5, 10, 20, 30, 45].map((value) => (
@@ -365,8 +371,13 @@ export function DailyTaskQueue({ reviewOnly = false }: { reviewOnly?: boolean })
                 ? t(
                     'No tasks ready in this queue. You can still open your courses.',
                     '此队列暂无待开始任务，仍可打开课程学习。',
+                    'Hàng đợi này chưa có tác vụ sẵn sàng. Bạn vẫn có thể mở khoá học.',
                   )
-                : t('A rest day. Your unfinished work is retained.', '今天是休息日，未完成任务已保留。')}
+                : t(
+                    'A rest day. Your unfinished work is retained.',
+                    '今天是休息日，未完成任务已保留。',
+                    'Hôm nay nghỉ. Phần việc chưa xong vẫn được giữ lại.',
+                  )}
             </p>
             {!isLearningDay && (
               <button
@@ -377,7 +388,7 @@ export function DailyTaskQueue({ reviewOnly = false }: { reviewOnly?: boolean })
                 }
                 className="mt-3 min-h-11 font-medium text-indigo-700 hover:text-indigo-900 disabled:opacity-50"
               >
-                {t('Practice today anyway', '今天也要练习')}
+                {t('Practice today anyway', '今天也要练习', 'Hôm nay vẫn luyện')}
               </button>
             )}
           </div>
@@ -391,13 +402,13 @@ export function DailyTaskQueue({ reviewOnly = false }: { reviewOnly?: boolean })
           >
             <Play className="h-4 w-4 fill-current" />
             {firstTask.status === 'pending'
-              ? t('Start today’s practice', '开始今天的练习')
-              : t('Continue today’s practice', '继续今天的练习')}
+              ? t('Start today’s practice', '开始今天的练习', 'Bắt đầu bài luyện hôm nay')
+              : t('Continue today’s practice', '继续今天的练习', 'Tiếp tục bài luyện hôm nay')}
           </button>
         )}
         {queue.length > 0 && (
           <h3 className="pt-1 text-xs font-semibold uppercase tracking-[0.12em] text-slate-500">
-            {t('Up next', '接下来')}
+            {t('Up next', '接下来', 'Tiếp theo')}
           </h3>
         )}
         <ol className="divide-y divide-slate-100">
@@ -406,18 +417,20 @@ export function DailyTaskQueue({ reviewOnly = false }: { reviewOnly?: boolean })
               <Clock3 className="h-4 w-4 shrink-0 text-indigo-400" aria-hidden="true" />
               <div className="min-w-0 flex-1">
                 <div className="flex items-center gap-2">
-                  <p className="truncate text-sm font-medium text-slate-900">{zh ? task.titleZh : task.title}</p>
+                  <p className="truncate text-sm font-medium text-slate-900">
+                    {t(task.title, task.titleZh, task.titleVi ?? task.title)}
+                  </p>
                   <span className="shrink-0 text-xs text-slate-500">{task.minutes} min</span>
                 </div>
                 <p className="truncate text-xs text-slate-500">
-                  {practiceLabel(task)} · {zh ? task.reasonZh : task.reason}
+                  {practiceLabel(task)} · {t(task.reason, task.reasonZh, task.reasonVi ?? task.reason)}
                 </p>
               </div>
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <button
                     type="button"
-                    aria-label={`${t('More options for', '更多操作：')} ${zh ? task.titleZh : task.title}`}
+                    aria-label={`${t('More options for', '更多操作：', 'Thêm tuỳ chọn cho')} ${t(task.title, task.titleZh, task.titleVi ?? task.title)}`}
                     disabled={busy}
                     className="inline-flex h-9 w-9 shrink-0 items-center justify-center rounded-lg text-slate-400 transition-colors hover:bg-slate-100 hover:text-slate-700 focus-visible:ring-2 focus-visible:ring-indigo-500 disabled:opacity-50"
                   >
@@ -426,13 +439,19 @@ export function DailyTaskQueue({ reviewOnly = false }: { reviewOnly?: boolean })
                 </DropdownMenuTrigger>
                 <DropdownMenuContent align="end">
                   <DropdownMenuItem onClick={() => void act(task, 'start')}>
-                    {task.status === 'pending' ? t('Start', '开始') : t('Continue', '继续')}
+                    {task.status === 'pending' ? t('Start', '开始', 'Bắt đầu') : t('Continue', '继续', 'Tiếp tục')}
                   </DropdownMenuItem>
                   {task.status === 'in-progress' && (
-                    <DropdownMenuItem onClick={() => void act(task, 'pause')}>{t('Pause', '暂停')}</DropdownMenuItem>
+                    <DropdownMenuItem onClick={() => void act(task, 'pause')}>
+                      {t('Pause', '暂停', 'Tạm dừng')}
+                    </DropdownMenuItem>
                   )}
-                  <DropdownMenuItem onClick={() => void act(task, 'defer')}>{t('Tomorrow', '明天')}</DropdownMenuItem>
-                  <DropdownMenuItem onClick={() => void act(task, 'skip')}>{t('Skip', '跳过')}</DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => void act(task, 'defer')}>
+                    {t('Tomorrow', '明天', 'Ngày mai')}
+                  </DropdownMenuItem>
+                  <DropdownMenuItem onClick={() => void act(task, 'skip')}>
+                    {t('Skip', '跳过', 'Bỏ qua')}
+                  </DropdownMenuItem>
                 </DropdownMenuContent>
               </DropdownMenu>
             </li>
@@ -444,16 +463,22 @@ export function DailyTaskQueue({ reviewOnly = false }: { reviewOnly?: boolean })
             className="min-h-11 text-sm font-medium text-indigo-700 hover:text-indigo-900"
             onClick={() => setShowAll(true)}
           >
-            {t(`View ${visible.length - queue.length} more`, `查看另外 ${visible.length - queue.length} 项`)}
+            {t(
+              `View ${visible.length - queue.length} more`,
+              `查看另外 ${visible.length - queue.length} 项`,
+              `Xem thêm ${visible.length - queue.length} mục`,
+            )}
           </button>
         )}
         {!!history.length && (
           <div className="space-y-3 rounded-xl bg-slate-50 p-4">
-            <h3 className="text-sm font-semibold">{t('Saved task status', '已保存的任务状态')}</h3>
+            <h3 className="text-sm font-semibold">
+              {t('Saved task status', '已保存的任务状态', 'Trạng thái tác vụ đã lưu')}
+            </h3>
             {history.map((task) => (
               <div key={task.id} className="flex items-start justify-between gap-2 text-sm">
                 <div className="min-w-0">
-                  <p className="break-words">{zh ? task.titleZh : task.title}</p>
+                  <p className="break-words">{t(task.title, task.titleZh, task.titleVi ?? task.title)}</p>
                   <p className="mt-1 text-xs text-slate-500">
                     <span>{statusLabel(task.status)}</span> · {task.dateKey}
                   </p>
@@ -465,7 +490,7 @@ export function DailyTaskQueue({ reviewOnly = false }: { reviewOnly?: boolean })
                     className={`${control} text-indigo-700`}
                     onClick={() => void act(task, 'restore')}
                   >
-                    {t('Restore', '恢复')}
+                    {t('Restore', '恢复', 'Khôi phục')}
                   </button>
                 )}
               </div>
@@ -473,12 +498,13 @@ export function DailyTaskQueue({ reviewOnly = false }: { reviewOnly?: boolean })
           </div>
         )}
         <Link href="/learn" className="ml-4 inline-flex min-h-11 items-center text-sm font-medium text-indigo-700">
-          {t('All courses', '全部课程')}
+          {t('All courses', '全部课程', 'Tất cả khoá học')}
         </Link>
         <p className="text-xs leading-5 text-slate-500">
           {t(
             'Times are estimates for a short practice block. Opening a task never marks it complete.',
             '时间为短练习的估算。仅打开任务不会标记完成。',
+            'Thời gian là ước lượng cho một buổi luyện ngắn. Mở tác vụ không tính là hoàn thành.',
           )}
         </p>
       </div>

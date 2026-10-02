@@ -2,6 +2,7 @@
 
 import { useRef } from 'react';
 import { dialogueRows, joinDialogue, mergeRow, splitRow } from '@/lib/material-review';
+import { useLanguageStore } from '@/stores/language-store';
 import type { MaterialType } from '@/types/content';
 
 const field =
@@ -13,7 +14,6 @@ export function MaterialTextEditor({
   text,
   onChange,
   type,
-  zh,
   disabled = false,
   label = 'Import text content',
   testId,
@@ -21,13 +21,13 @@ export function MaterialTextEditor({
   text: string;
   onChange: (text: string) => void;
   type: MaterialType;
-  zh: boolean;
   disabled?: boolean;
   label?: string;
   testId?: string;
 }) {
   const cursor = useRef<Record<number, number>>({});
-  const t = (en: string, cn: string) => (zh ? cn : en);
+  const language = useLanguageStore((st) => st.interfaceLanguage);
+  const t = (en: string, cn: string, vi: string) => (language === 'zh' ? cn : language === 'vi' ? vi : en);
   if (type !== 'dialogue' && type !== 'sentences')
     return (
       <textarea
@@ -44,7 +44,9 @@ export function MaterialTextEditor({
   return (
     <fieldset disabled={disabled} className="min-w-0 space-y-3">
       <legend className="mb-3 text-sm font-medium text-slate-700">
-        {type === 'dialogue' ? t('Conversation turns', '对话轮次') : t('Sentence list', '句子列表')}{' '}
+        {type === 'dialogue'
+          ? t('Conversation turns', '对话轮次', 'Lượt hội thoại')
+          : t('Sentence list', '句子列表', 'Danh sách câu')}{' '}
         <span className="ml-2 text-xs tabular-nums text-slate-500">{rows.length}</span>
       </legend>
       {type === 'sentences' && (
@@ -52,6 +54,7 @@ export function MaterialTextEditor({
           {t(
             'Place the cursor in a sentence to split it. Merge combines it with the next row.',
             '在句子中放置光标后拆分；合并会连接下一行。',
+            'Đặt con trỏ vào câu để tách. Gộp sẽ nối với dòng tiếp theo.',
           )}
         </p>
       )}
@@ -66,7 +69,7 @@ export function MaterialTextEditor({
                 <input
                   aria-label={`Speaker ${index + 1}`}
                   className={`${field} max-w-48 font-medium`}
-                  placeholder={t('Speaker (optional)', '角色（可选）')}
+                  placeholder={t('Speaker (optional)', '角色（可选）', 'Vai nói (tuỳ chọn)')}
                   value={turns[index].speaker}
                   onChange={(e) =>
                     onChange(
@@ -99,7 +102,7 @@ export function MaterialTextEditor({
                     className={action}
                     onClick={() => onChange(splitRow(rows, index, cursor.current[index] ?? 0).join('\n'))}
                   >
-                    {t('Split at cursor', '在光标处拆分')}
+                    {t('Split at cursor', '在光标处拆分', 'Tách tại con trỏ')}
                   </button>
                   <button
                     type="button"
@@ -107,7 +110,7 @@ export function MaterialTextEditor({
                     disabled={index === rows.length - 1}
                     onClick={() => onChange(mergeRow(rows, index).join('\n'))}
                   >
-                    {t('Merge with next', '合并下一行')}
+                    {t('Merge with next', '合并下一行', 'Gộp với dòng sau')}
                   </button>
                 </div>
               )}

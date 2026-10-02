@@ -21,6 +21,7 @@ import { getDefaultModelId, PROVIDER_REGISTRY } from '@/lib/providers';
 import { detectIOSNativeHost, reportNativeQAState } from '@/lib/tauri';
 import { cn } from '@/lib/utils';
 import { useCollectionStore } from '@/stores/collection-store';
+import { useLanguageStore } from '@/stores/language-store';
 import { useProviderStore } from '@/stores/provider-store';
 import type { CollectionItem, ContentItem, Difficulty } from '@/types/content';
 
@@ -41,8 +42,10 @@ interface GeneratedResult {
   collection: {
     title: string;
     titleZh: string;
+    titleVi?: string;
     description: string;
     descriptionZh: string;
+    descriptionVi?: string;
     scenario: string;
     category: string;
     difficulty: string;
@@ -56,6 +59,7 @@ const IOS_NATIVE_QA_GENERATED_RESULT: GeneratedResult = {
   collection: {
     title: 'Airport Check-in',
     titleZh: '机场值机',
+    titleVi: 'Làm thủ tục sân bay',
     description: 'Useful English for check-in counters, baggage, and boarding questions.',
     descriptionZh: '适合机场值机、托运行李和登机问询的实用英语。',
     scenario: 'Airport check-in and boarding',
@@ -79,6 +83,7 @@ const IOS_NATIVE_QA_GENERATED_RESULT: GeneratedResult = {
 };
 
 export default function GenerateCollectionPage() {
+  const language = useLanguageStore((s) => s.interfaceLanguage);
   const isIOSNativeHost = detectIOSNativeHost();
   const router = useRouter();
   const { addCollection } = useCollectionStore();
@@ -197,8 +202,10 @@ export default function GenerateCollectionPage() {
         id: collectionId,
         title: result.collection.title,
         titleZh: result.collection.titleZh,
+        titleVi: result.collection.titleVi,
         description: result.collection.description,
         descriptionZh: result.collection.descriptionZh,
+        descriptionVi: result.collection.descriptionVi,
         scenario: result.collection.scenario,
         category: result.collection.category,
         difficulty: (result.collection.difficulty as Difficulty) || difficulty,
@@ -363,9 +370,17 @@ export default function GenerateCollectionPage() {
                 <span className="text-3xl">{result.collection.icon}</span>
                 <div className="flex-1 min-w-0">
                   <h2 className="text-lg font-bold text-indigo-900">{result.collection.title}</h2>
-                  <p className="text-indigo-500 text-sm">{result.collection.titleZh}</p>
+                  <p className="text-indigo-500 text-sm">
+                    {language === 'vi'
+                      ? (result.collection.titleVi ?? result.collection.titleZh)
+                      : result.collection.titleZh}
+                  </p>
                   <p className="text-sm text-slate-500 mt-2">{result.collection.description}</p>
-                  <p className="text-sm text-slate-400">{result.collection.descriptionZh}</p>
+                  <p className="text-sm text-slate-400">
+                    {language === 'vi'
+                      ? (result.collection.descriptionVi ?? result.collection.descriptionZh)
+                      : result.collection.descriptionZh}
+                  </p>
                   <div className="flex items-center gap-2 mt-3 flex-wrap">
                     <Badge variant="secondary" className="bg-indigo-100 text-indigo-600 capitalize">
                       {result.collection.difficulty}

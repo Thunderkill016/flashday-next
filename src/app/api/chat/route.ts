@@ -45,7 +45,7 @@ CRITICAL LANGUAGE RULES:
 
 const TOOL_USAGE_PROMPT = `
 
-You can take actions inside EchoType by calling tools.
+You can take actions inside FlashDay by calling tools.
 Use tools instead of merely describing steps whenever the user asks for an action.
 
 Action rules:
@@ -68,7 +68,7 @@ After each successful tool call, briefly confirm the result and tell the user wh
 
 const MOBILE_TOOL_USAGE_PROMPT = `
 
-You are assisting from the EchoType mobile app host. The student can trigger these tools (executed on the device):
+You are assisting from the FlashDay mobile app host. The student can trigger these tools (executed on the device):
 - searchLibrary: find saved items by keywords in title, text, or tags.
 - suggestContent: recommend library items for a topic and content type.
 - translateText: translate arbitrary text to the user’s configured target language.

@@ -37,6 +37,7 @@ import { getAlignmentCache, setAlignmentCache } from '@/lib/alignment-cache';
 import { savePracticeSession } from '@/lib/daily-plan-progress';
 import { db } from '@/lib/db';
 import enReadDetail from '@/lib/i18n/messages/read-detail/en.json';
+import viReadDetail from '@/lib/i18n/messages/read-detail/vi.json';
 import zhReadDetail from '@/lib/i18n/messages/read-detail/zh.json';
 import { getIOSNativeQAMode, getIOSNativeQAReadTranscript } from '@/lib/ios-native-qa';
 import {
@@ -63,7 +64,7 @@ import { useShortcutStore } from '@/stores/shortcut-store';
 import { useTTSStore } from '@/stores/tts-store';
 import type { ContentItem } from '@/types/content';
 
-const READ_DETAIL_LOCALES = { en: enReadDetail, zh: zhReadDetail } as const;
+const READ_DETAIL_LOCALES = { en: enReadDetail, vi: viReadDetail, zh: zhReadDetail } as const;
 const MAX_SPEECH_RECOGNITION_RESTARTS = 20;
 
 type ReadPracticePhase = 'idle' | 'listening' | 'processing' | 'completed';

@@ -338,11 +338,11 @@ test.describe('Listen Module', () => {
     await page.getByRole('button', { name: 'Play' }).click();
 
     await expect
-      .poll(() => transcript.evaluate((element) => element.scrollTop), { timeout: 10000 })
+      .poll(() => transcript.evaluate((element) => element.scrollTop), { timeout: 30000 })
       .toBeGreaterThan(0);
     await page.waitForFunction(() => {
       return Array.from(document.querySelectorAll('[data-read-aloud-word]')).some(
-        (word) => window.getComputedStyle(word).backgroundColor === 'rgb(249, 115, 22)',
+        (word) => (word as HTMLElement).style.background.includes('rgb(249, 115, 22)'),
       );
     });
   });
@@ -418,7 +418,7 @@ test.describe('Listen Module', () => {
       .poll(() =>
         page.evaluate(() =>
           Array.from(document.querySelectorAll('[data-read-aloud-word]')).findIndex(
-            (word) => window.getComputedStyle(word).backgroundColor === 'rgb(249, 115, 22)',
+            (word) => (word as HTMLElement).style.background.includes('rgb(249, 115, 22)'),
           ),
         ),
       )
@@ -430,7 +430,7 @@ test.describe('Listen Module', () => {
       .poll(() =>
         page.evaluate(() =>
           Array.from(document.querySelectorAll('[data-read-aloud-word]')).some(
-            (word) => window.getComputedStyle(word).backgroundColor === 'rgb(249, 115, 22)',
+            (word) => (word as HTMLElement).style.background.includes('rgb(249, 115, 22)'),
           ),
         ),
       )

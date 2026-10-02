@@ -1,4 +1,5 @@
 import { create } from 'zustand';
+import { DEFAULT_TRANSLATION_TARGET, isTranslationTarget } from '@/lib/i18n/locale';
 
 const STORAGE_KEY = 'echotype_tts_settings';
 export const DEFAULT_EDGE_VOICE_ID = 'en-US-JennyNeural';
@@ -144,6 +145,12 @@ function normalizeSavedSettings(
     delete normalized.kokoroServerUrl;
   }
 
+  if (normalized.targetLang === 'zh') {
+    normalized.targetLang = 'zh-CN';
+  } else if ('targetLang' in normalized && !isTranslationTarget(normalized.targetLang)) {
+    delete normalized.targetLang;
+  }
+
   return normalized;
 }
 
@@ -180,7 +187,7 @@ const defaults: TTSSettings = {
   kokoroVoiceName: '',
   edgeVoiceId: DEFAULT_EDGE_VOICE_ID,
   edgeVoiceName: DEFAULT_EDGE_VOICE_NAME,
-  targetLang: 'zh-CN',
+  targetLang: DEFAULT_TRANSLATION_TARGET,
   recommendationsEnabled: true,
   recommendationsCount: 5,
   groqApiKey: '',

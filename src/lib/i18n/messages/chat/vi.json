@@ -1,0 +1,68 @@
+{
+  "header": {
+    "title": "Gia sư tiếng Anh AI",
+    "closeChat": "Đóng chat"
+  },
+  "content": {
+    "practicing": "Đang luyện:",
+    "clearContent": "Bỏ nội dung đang chọn"
+  },
+  "status": {
+    "thinking": "Đang suy nghĩ..."
+  },
+  "input": {
+    "placeholderContent": "Hỏi về nội dung này...",
+    "placeholderGeneral": "Hỏi gì cũng được..."
+  },
+  "emptyState": {
+    "greeting": "Chào bạn! Mình là gia sư tiếng Anh của bạn.",
+    "hint": "Nói mình biết bạn muốn làm gì, mình sẽ xử lý."
+  },
+  "quickActions": {
+    "dailyChat": "Trò chuyện hằng ngày",
+    "dailyChatPrompt": "Trò chuyện tiếng Anh đời thường nhé. Bạn mở đầu một chủ đề, mình luyện cùng.",
+    "grammarCheck": "Kiểm tra ngữ pháp",
+    "grammarCheckPrompt": "Kiểm tra ngữ pháp của mình và giải thích lỗi sửa kèm ví dụ ngắn.",
+    "librarySearch": "Tìm trong thư viện",
+    "librarySearchPrompt": "Tìm trong thư viện của mình nội dung về du lịch và gợi ý một bài luyện.",
+    "translate": "Dịch",
+    "translatePrompt": "Bắt đầu một bài luyện dịch cho nội dung mình đang học.",
+    "importUrl": "Nhập URL",
+    "importUrlPrompt": "Nếu mình dán URL bài viết, hãy nhập vào thư viện và tóm tắt nên luyện gì trước.",
+    "myProgress": "Tiến độ của tôi",
+    "myProgressPrompt": "Cho mình xem tiến độ học và gợi ý cụ thể."
+  },
+  "errors": {
+    "fallback": "Có lỗi xảy ra. Vui lòng thử lại.",
+    "tokenLimit": {
+      "title": "Vượt giới hạn token",
+      "descriptionDetailed": "Yêu cầu {{requested}} token nhưng chỉ còn {{available}}. Giảm \"Max Output Tokens\" trong Cài đặt hoặc nạp thêm.",
+      "descriptionGeneral": "Yêu cầu vượt giới hạn token. Giảm \"Max Output Tokens\" trong Cài đặt hoặc nâng gói."
+    },
+    "rateLimit": {
+      "title": "Bị giới hạn tốc độ",
+      "description": "Quá nhiều yêu cầu. Đợi một lát rồi gửi tin nhắn tiếp."
+    },
+    "invalidKey": {
+      "title": "API key không hợp lệ",
+      "description": "API key có thể đã hết hạn hoặc sai. Kiểm tra lại key trong Cài đặt."
+    },
+    "insufficientBalance": {
+      "title": "Số dư không đủ",
+      "description": "Số dư tài khoản quá thấp. Nạp thêm hoặc đổi nhà cung cấp khác."
+    },
+    "modelNotFound": {
+      "title": "Mô hình không khả dụng",
+      "description": "Mô hình đã chọn không khả dụng. Chọn mô hình khác trong Cài đặt."
+    },
+    "contextLength": {
+      "title": "Tin nhắn quá dài",
+      "description": "Cuộc hội thoại quá dài cho mô hình này. Bắt đầu cuộc mới hoặc dùng mô hình có context window lớn hơn."
+    },
+    "timeout": {
+      "title": "Hết thời gian chờ",
+      "description": "Nhà cung cấp AI phản hồi quá lâu. Thử lại nhé."
+    },
+    "openSettings": "Mở Cài đặt"
+  }
+}

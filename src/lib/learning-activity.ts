@@ -8,30 +8,35 @@ export const LEARNING_ACTIVITIES: LearningActivity[] = [
   'personal-example',
   'sentence-pronunciation',
 ];
-const prompts: Record<LearningActivity, [string, string]> = {
+const prompts: Record<LearningActivity, [string, string, string]> = {
   comprehension: [
     'Explain the main idea in your own words. Identify one important detail and quote the exact evidence supporting it.',
     '用自己的话解释主旨，指出一个重要细节，并引用支持它的原文依据。',
+    'Dùng lời của bạn giải thích ý chính. Chỉ ra một chi tiết quan trọng và trích dẫn bằng chứng trong bài.',
   ],
   writing: [
     'Write your own short update or summary inspired by this material. Include a clear main point, supporting detail and conclusion. Do not copy the source.',
     '围绕本课材料自主写一段更新或摘要，包含主旨、细节与结论，不要抄写原文。',
+    'Viết một đoạn cập nhật hoặc tóm tắt ngắn theo cảm hứng từ tài liệu. Có luận điểm rõ, chi tiết hỗ trợ và kết luận. Đừng chép nguyên văn.',
   ],
   retelling: [
     'Hide the source, then retell its main idea and two details aloud. Record yourself and add a short summary of what you said.',
     '隐藏原文后，口头复述主旨与两个细节。录音后简述自己说了什么。',
+    'Ẩn bài gốc, kể lại bằng lời nói ý chính và hai chi tiết. Ghi âm lại rồi tóm tắt ngắn điều bạn đã nói.',
   ],
   'personal-example': [
     'Choose an expression from the source and use it in your own new situation. Explain the context.',
     '选择原文中的一个表达，在自己的新情境中造句，并说明语境。',
+    'Chọn một cụm từ trong bài và dùng nó trong tình huống mới của bạn. Giải thích ngữ cảnh.',
   ],
   'sentence-pronunciation': [
     'Choose one sentence. Mark stressed words and thought groups, record it, then listen for stress, rhythm and linking. Retry after noting one change.',
     '选择一句，标记重读词与意群，录音并回听重音、节奏和连读。记录一个改进点后重录。',
+    'Chọn một câu. Đánh dấu từ nhấn mạnh và cụm nghĩa, ghi âm rồi nghe lại trọng âm, nhịp và nối âm. Ghi chú một điểm cần đổi rồi thu lại.',
   ],
 };
-export function activityPrompt(activity: LearningActivity, zh = false) {
-  return prompts[activity][zh ? 1 : 0];
+export function activityPrompt(activity: LearningActivity, lang = 'en') {
+  return prompts[activity][lang === 'zh' ? 1 : lang === 'vi' ? 2 : 0];
 }
 export function validateLearningResponse(
   activity: LearningActivity,

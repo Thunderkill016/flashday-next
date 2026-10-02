@@ -2,7 +2,7 @@ import { create } from 'zustand';
 
 const STORAGE_KEY = 'echotype_language_settings';
 
-export type InterfaceLanguage = 'en' | 'zh';
+export type InterfaceLanguage = 'vi' | 'en' | 'zh';
 
 interface LanguageSettings {
   interfaceLanguage: InterfaceLanguage;
@@ -17,12 +17,18 @@ interface LanguageStore extends LanguageSettings {
 }
 
 function isInterfaceLanguage(value: unknown): value is InterfaceLanguage {
-  return value === 'en' || value === 'zh';
+  return value === 'vi' || value === 'en' || value === 'zh';
 }
 
-export function detectInterfaceLanguage(browserLanguage?: string | null): InterfaceLanguage {
-  if (!browserLanguage) return 'en';
-  return browserLanguage.toLowerCase().startsWith('zh') ? 'zh' : 'en';
+/**
+ * FlashDay is Vietnam-first: the fresh-install UI language is a product
+ * policy decision, NOT browser detection. Any browser locale resolves to
+ * Vietnamese unless the learner explicitly saved another language.
+ */
+export const DEFAULT_INTERFACE_LANGUAGE: InterfaceLanguage = 'vi';
+
+export function detectInterfaceLanguage(_browserLanguage?: string | null): InterfaceLanguage {
+  return DEFAULT_INTERFACE_LANGUAGE;
 }
 
 function loadSettings(): Partial<LanguageSettings> {
@@ -52,7 +58,7 @@ function saveSettings(settings: LanguageSettings): void {
 }
 
 export const useLanguageStore = create<LanguageStore>((set) => ({
-  interfaceLanguage: 'en',
+  interfaceLanguage: DEFAULT_INTERFACE_LANGUAGE,
   hasExplicitPreference: false,
   initialized: false,
 
@@ -73,12 +79,12 @@ export const useLanguageStore = create<LanguageStore>((set) => ({
       return;
     }
 
-    const detectedLanguage =
-      typeof navigator !== 'undefined' ? detectInterfaceLanguage(navigator.language) : detectInterfaceLanguage();
-
+    /* Vietnam-first: only an explicitly saved preference survives. A stored
+     * language without the explicit flag (never persisted, flag lost, or
+     * legacy write) is not a learner choice — fall back to Vietnamese. */
     set({
-      interfaceLanguage: saved.interfaceLanguage ?? detectedLanguage,
-      hasExplicitPreference: false,
+      interfaceLanguage: DEFAULT_INTERFACE_LANGUAGE,
+      hasExplicitPreference: saved.hasExplicitPreference ?? false,
       initialized: true,
     });
   },

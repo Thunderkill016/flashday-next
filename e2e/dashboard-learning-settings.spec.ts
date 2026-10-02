@@ -26,7 +26,7 @@ test('one daily plan with usable, persistent learning settings at narrow and zoo
   await page.setViewportSize({width:1440,height:1100});
   await page.reload();
   await page.getByTestId('learning-settings').locator('summary').click();
-  await expect(page.getByRole('link',{name:'Dashboard',exact:true})).toBeInViewport();
+  await expect(page.getByRole('link',{name:'Today',exact:true})).toBeInViewport();
   await page.evaluate(()=>document.querySelectorAll('*').forEach(el=>{if(el.scrollTop)el.scrollTop=0;}));
   await page.screenshot({path:'docs/design/today-settings-desktop.png'});
   await page.setViewportSize({width:375,height:1000});

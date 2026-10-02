@@ -1,0 +1,52 @@
+{
+  "progressBar": {
+    "listen": "Nghe",
+    "read": "Đọc",
+    "write": "Viết",
+    "speakOptional": "Nói",
+    "optional": "tuỳ chọn",
+    "pending": "Chưa bắt đầu",
+    "inProgress": "Đang làm",
+    "completed": "Xong",
+    "practiceIn": "Luyện trong {{module}}",
+    "moduleCompleted": "Hoàn thành {{module}}!",
+    "continueToNext": "Tiếp tục {{module}}"
+  },
+  "statusBar": {
+    "title": "Đọc theo",
+    "progress": "{{completed}}/3 hoàn thành",
+    "nextModule": "Tiếp: {{module}}",
+    "endSession": "Kết thúc buổi học",
+    "endSessionConfirmTitle": "Kết thúc buổi đọc theo?",
+    "endSessionConfirmDesc": "Tiến độ các module đã xong được lưu. Module chưa xong sẽ không được ghi lại.",
+    "endSessionConfirmAction": "Kết thúc",
+    "endSessionCancel": "Huỷ",
+    "switchSessionTitle": "Đổi nội dung?",
+    "switchSessionDesc": "Bạn đang có buổi học cho \"{{current}}\". Bắt đầu buổi mới sẽ bỏ tiến độ hiện tại.",
+    "switchSessionConfirm": "Đổi",
+    "switchSessionCancel": "Giữ nguyên"
+  },
+  "completion": {
+    "title": "Hoàn thành đọc theo!",
+    "subtitle": "Bạn đã luyện nội dung này qua cả ba module.",
+    "contentLabel": "Nội dung:",
+    "timeSpent": "Thời gian: {{duration}}",
+    "startAnother": "Bắt đầu nội dung khác",
+    "backToLibrary": "Về thư viện",
+    "repeatPractice": "Luyện lại",
+    "trySpeaking": "Thử nói",
+    "moduleSummary": "Tóm tắt module",
+    "listenDone": "Đã nghe",
+    "readDone": "Đã đọc to",
+    "writeDone": "Đã gõ",
+    "durationSeconds": "{{count}}s",
+    "durationMinsSecs": "{{mins}}m {{secs}}s",
+    "durationMins": "{{mins}}m",
+    "durationHoursMins": "{{hours}}h {{mins}}m",
+    "durationHours": "{{hours}}h"
+  },
+  "contentList": {
+    "practicing": "Đang luyện",
+    "progressBadge": "{{completed}}/3"
+  }
+}

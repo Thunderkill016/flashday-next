@@ -29,6 +29,7 @@ import { getChatDockClasses } from '@/lib/chat-dock-layout';
 import { executeTool } from '@/lib/chat-tool-executor';
 import { toRenderableChatMessage } from '@/lib/chat-ui';
 import enChat from '@/lib/i18n/messages/chat/en.json';
+import viChat from '@/lib/i18n/messages/chat/vi.json';
 import zhChat from '@/lib/i18n/messages/chat/zh.json';
 import { parseProviderTokenBudget } from '@/lib/provider-token-budget';
 import { PROVIDER_REGISTRY, type ProviderId } from '@/lib/providers';
@@ -39,7 +40,7 @@ import { useContentStore } from '@/stores/content-store';
 import { useLanguageStore } from '@/stores/language-store';
 import { useProviderStore } from '@/stores/provider-store';
 
-const CHAT_LOCALES = { en: enChat, zh: zhChat } as const;
+const CHAT_LOCALES = { en: enChat, vi: viChat, zh: zhChat } as const;
 type ChatLocale = (typeof CHAT_LOCALES)[keyof typeof CHAT_LOCALES];
 
 import { ChatContentPicker } from './chat-content-picker';
@@ -398,6 +399,12 @@ export function ChatPanel({ onClose }: ChatPanelProps) {
   const renderedMessages = uiMessages
     .map(toRenderableChatMessage)
     .filter((message): message is NonNullable<typeof message> => message !== null);
+
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [uiMessages]);
 
   const sendChatText = useCallback(
     async (text: string, overrides?: { chatMode?: typeof chatMode }) => {

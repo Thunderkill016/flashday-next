@@ -427,7 +427,7 @@ export default function DashboardPage() {
       </Link>
       {isIOSNativeHost ? (
         <IOSPageHeader
-          badge="EchoType"
+          badge="FlashDay"
           tone="indigo"
           title={dashboard.header.title}
           description={dashboard.header.subtitle}

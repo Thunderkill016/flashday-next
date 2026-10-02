@@ -63,7 +63,7 @@ export function WeakSpotList({
               : 'rounded-xl border border-slate-100 bg-white px-5 py-8 text-center text-sm text-indigo-400 shadow-sm'
           }
         >
-          No weak spots here yet. Finish a practice session and EchoType will start surfacing what needs work.
+          No weak spots here yet. Finish a practice session and FlashDay will start surfacing what needs work.
         </div>
       ) : (
         <div className="space-y-3">

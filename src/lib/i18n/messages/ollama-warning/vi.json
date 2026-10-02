@@ -1,0 +1,5 @@
+{
+  "title": "Hiệu năng mô hình cục bộ",
+  "description": "Mô hình Ollama phản hồi chậm hơn API đám mây (5-60s so với 2-5s). Phù hợp khi dùng offline hoặc cần riêng tư.",
+  "dismiss": "Ẩn cảnh báo"
+}

@@ -11,9 +11,11 @@ import {
 import { Button } from '@/components/ui/button';
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from '@/components/ui/dialog';
 import { Input } from '@/components/ui/input';
+import { useI18n } from '@/lib/i18n/use-i18n';
 import { detectIOSNativeHost } from '@/lib/tauri';
 import { cn } from '@/lib/utils';
 import { useFavoriteStore } from '@/stores/favorite-store';
+import { favoriteFolderDisplayName, isReservedFolderId } from '@/types/favorite';
 
 interface Props {
   open: boolean;
@@ -24,6 +26,7 @@ const EMOJI_OPTIONS = ['📚', '🎯', '💼', '🌍', '🔬', '🎨', '🏠', '
 
 export function FolderManageDialog({ open, onOpenChange }: Props) {
   const isIOSNativeHost = detectIOSNativeHost();
+  const { messages: t } = useI18n('favorites');
   const folders = useFavoriteStore((s) => s.folders);
   const addFolder = useFavoriteStore((s) => s.addFolder);
   const updateFolder = useFavoriteStore((s) => s.updateFolder);
@@ -48,7 +51,7 @@ export function FolderManageDialog({ open, onOpenChange }: Props) {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm('删除后，该收藏夹中的内容将移至默认收藏。确定删除？')) return;
+    if (!confirm(t.deleteFolderConfirm)) return;
     await removeFolder(id);
   };
 
@@ -65,7 +68,7 @@ export function FolderManageDialog({ open, onOpenChange }: Props) {
           <DialogTitle
             className={isIOSNativeHost ? 'text-xl font-semibold tracking-[-0.03em] text-slate-950' : undefined}
           >
-            管理收藏夹
+            {t.manageFolders}
           </DialogTitle>
         </DialogHeader>
 
@@ -92,7 +95,7 @@ export function FolderManageDialog({ open, onOpenChange }: Props) {
             ))}
           </select>
           <Input
-            placeholder="收藏夹名称"
+            placeholder={t.folderNamePlaceholder}
             data-testid="favorites-folder-name-input"
             value={newName}
             onChange={(e) => setNewName(e.target.value)}
@@ -108,14 +111,14 @@ export function FolderManageDialog({ open, onOpenChange }: Props) {
               isIOSNativeHost ? 'h-10 rounded-full bg-indigo-600 px-4 text-white hover:bg-indigo-700' : undefined
             }
           >
-            创建
+            {t.create}
           </Button>
         </div>
 
         {/* Existing folders */}
         <div className={cn('mt-2 space-y-1', isIOSNativeHost && `${IOS_SECTION_CARD_CLASS} space-y-2 p-3`)}>
           {folders.map((f) => {
-            const isReserved = f.id === 'default' || f.id === 'auto';
+            const isReserved = isReservedFolderId(f.id);
             return (
               <div
                 key={f.id}
@@ -136,7 +139,7 @@ export function FolderManageDialog({ open, onOpenChange }: Props) {
                     autoFocus
                   />
                 ) : (
-                  <span className="flex-1 text-sm text-slate-700">{f.name}</span>
+                  <span className="flex-1 text-sm text-slate-700">{favoriteFolderDisplayName(f, t)}</span>
                 )}
                 {!isReserved && (
                   <>
