@@ -547,7 +547,6 @@ export async function POST(req: NextRequest) {
     messages,
     provider = 'groq',
     context,
-    userLevel,
     providerConfigs = {},
     maxTokens: requestedMaxTokens,
     toolSuite,
@@ -563,7 +562,6 @@ export async function POST(req: NextRequest) {
       exerciseType?: string;
       analyticsData?: Record<string, unknown>;
     };
-    userLevel?: string;
     providerConfigs?: Partial<Record<ProviderId, Partial<ProviderConfig>>>;
     maxTokens?: number;
     /** When \`mobile\`, only mobile-safe client tools are registered. */
@@ -676,10 +674,6 @@ export async function POST(req: NextRequest) {
 
   if (context?.analyticsData) {
     contextNote += `\n\nStudent learning data:\n${JSON.stringify(context.analyticsData)}`;
-  }
-
-  if (userLevel) {
-    contextNote += `\nThe user's English proficiency is ${userLevel} (CEFR). Adjust vocabulary complexity, sentence structure, and explanations to match this level.`;
   }
 
   systemPrompt += contextNote;

@@ -106,6 +106,38 @@ describe('authority surface scan', () => {
     expect(offenders).toEqual([]);
   });
 
+  it('recurring planner, recommendations, chat tutor, and generated-content paths never read placement', () => {
+    const root = join(__dirname, '..', '..');
+    const files = [
+      'lib/daily-plan.ts',
+      'stores/daily-plan-store.ts',
+      'components/dashboard/today-plan.tsx',
+      'lib/learning-goals.ts',
+      'hooks/use-recommendations.ts',
+      'app/api/recommendations/route.ts',
+      'app/api/chat/route.ts',
+      'lib/chat-analytics.ts',
+      'lib/chat-tool-executor.ts',
+    ];
+    const offenders: string[] = [];
+    for (const rel of files) {
+      const text = readFileSync(join(root, rel), 'utf8');
+      for (const line of extractOccurrences(text, 'assessment.currentLevel')) offenders.push(`${rel}: ${line}`);
+      if (/\buserLevel\b|\bcefrLevel\b/.test(text)) offenders.push(`${rel}: userLevel/cefrLevel channel`);
+    }
+    expect(offenders).toEqual([]);
+  });
+
+  it('ChatPanel touches the assessment store only through the claim writer', () => {
+    const root = join(__dirname, '..', '..');
+    const text = readFileSync(join(root, 'components/chat/chat-panel.tsx'), 'utf8');
+    const storeAccesses = [...text.matchAll(/useAssessmentStore\(\s*\(\s*\w+\s*\)\s*=>\s*([^)]*)\)/g)].map((m) =>
+      m[1].trim(),
+    );
+    expect(storeAccesses).toEqual(['s.setPlacementEstimate']);
+    expect(text).not.toMatch(/\blevelEstimate\b|\bplacement\b|\bcurrentLevel\b|\bcefrToDifficulty\b/);
+  });
+
   it('no file outside evidence-bridge can call the evidence mint seam', () => {
     const root = join(__dirname, '..', '..');
     const offenders: string[] = [];

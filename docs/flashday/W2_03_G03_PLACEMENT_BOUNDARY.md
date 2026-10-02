@@ -28,12 +28,19 @@ demonstrated ability:
   proficiency level" into every AI recommendation prompt — recurring
   personalization, not initial-content recommendation (cut in R2).
 - `chat-panel.tsx` exposed an `updateUserLevel` tool letting the chatbot
-  *write* the level with no provenance.
+  *write* the level with no provenance, sent the level as `userLevel` to
+  `/api/chat` (which told the tutor to match that CEFR level across
+  practice, search, exercise generation and tool calls), and fell back to
+  `cefrToDifficulty(level)` for the `generateContent` tool's difficulty.
+  The reads were cut in R3; the claim writer stays.
 - `app/api/assessment/route.ts` used it to tune the next quiz's question
   distribution (producer-side input to the placement flow itself).
 - `chat-analytics.ts` read `parsed.state?.currentLevel` — a path that
-  never existed in the flat persisted payload, so the analytics level was
-  silently always `null` (latent broken read, fixed).
+  never existed in the flat persisted payload, so the snapshot's
+  `cefrLevel` was always `null`. The first G03 pass "fixed" that read,
+  which turned a dead path into a live edge: `showAnalytics` hands the
+  snapshot to the tutor, which can suggest exercises from it. R3 removed
+  `cefrLevel` from the machine-consumed snapshot entirely.
 
 None of these are capability authority — but nothing in the type system
 or storage schema said so, and the daily-plan edge crossed into planner
@@ -96,8 +103,9 @@ Every consumer of the store was inventoried and classified:
 | `app/api/recommendations/route.ts` | **none** — `userLevel` no longer read or injected into the prompt | cut (see §3a) |
 | `assessment/assessment-section.tsx` | display + seeds next quiz | advisory |
 | `app/api/assessment/route.ts` | question-distribution tuning | advisory producer |
-| `chat/chat-panel.tsx` | context + `updateUserLevel` tool | advisory (write path → `setPlacementEstimate`) |
-| `lib/chat-analytics.ts` | persisted-payload level for analytics | advisory analytics (read path fixed) |
+| `chat/chat-panel.tsx` | **write only** — `updateUserLevel` → `setPlacementEstimate(level)`; no `userLevel`, no difficulty fallback | writer (see §3a) |
+| `app/api/chat/route.ts` | **none** — `userLevel` no longer read or injected into the system prompt | cut (see §3a) |
+| `lib/chat-analytics.ts` | **none** — `cefrLevel` removed from `LearningSnapshot` | cut (see §3a) |
 | `(app)/layout.tsx` | `hydrate()` call only | plumbing |
 
 ### 3a. The recurring-planner edge is cut, not reclassified
@@ -123,6 +131,21 @@ is removed structurally:
   no longer accepts `userLevel`, so placement cannot shape generated
   recommendation content. Using placement as a long-term personalization
   signal would need its own ADR.
+- R3 (reviewer ruling: cut): the chat tutor gets no placement input.
+  `ChatPanel` no longer sends `userLevel`; `/api/chat` no longer accepts it;
+  `generateContent` uses only the active content's own difficulty metadata
+  (`activeContentItem?.difficulty`, a content property, not a learner
+  claim); `LearningSnapshot` carries no `cefrLevel`.
+
+Final boundary:
+
+- **Placement readers:** dashboard orientation/reminder; the assessment
+  flow itself (display + next-quiz seeding).
+- **Placement writers:** placement test (`setResult`); explicit chat claim
+  (`setPlacementEstimate`).
+- **Zero placement input:** recurring planner, AI recommendations, chat
+  tutor, generated content, analytics snapshot, kernel/projection, mission
+  gating, evidence bridge, sync.
 
 Verified negatives (repo-wide):
 
@@ -150,7 +173,7 @@ Verified negatives (repo-wide):
   set; G03 acceptance reworded so verbatim estimate-copy relabeling stays
   W2-AS1's scope (G03 owns the structural boundary only).
 
-## 5. Regressions landed — `placement-boundary.test.ts` (14/14)
+## 5. Regressions landed — `placement-boundary.test.ts` (16/16) + route/analytics pins
 
 - legacy `{ currentLevel }` payload hydrates to an advisory estimate;
   `history` preserved verbatim — and a colliding history level does NOT
@@ -173,6 +196,15 @@ Verified negatives (repo-wide):
   claiming a known timestamp
 - `/api/recommendations` builds an identical system/user prompt with and
   without a client-supplied `userLevel` (`route.test.ts`)
+- `/api/chat` passes identical `system` + `messages` to `streamText` with
+  and without `userLevel: 'C2'`, with no "CEFR" in the system prompt
+  (`api/chat/route.test.ts`, drives the real `POST`)
+- `collectLearningSnapshot` never reads `echotype_assessment` and its
+  output contains no level/placement/CEFR (`chat-analytics.test.ts`)
+- source scan: planner, recommendations, chat route, chat analytics and
+  chat tool executor contain no placement tokens and no
+  `userLevel`/`cefrLevel` channel; `ChatPanel`'s only assessment-store
+  access is the `setPlacementEstimate` selector
 - sensitive-read inventory unchanged by authority: scanning
   `evidence-bridge/**` + `vnext/**` for the placement token family
   detects nothing
@@ -183,7 +215,7 @@ Verified negatives (repo-wide):
 
 ## 6. Verification gates
 
-- `pnpm vitest run src/lib/evidence-bridge/placement-boundary.test.ts` — 14/14
+- `pnpm vitest run src/lib/evidence-bridge/placement-boundary.test.ts` — 16/16
 - `pnpm vitest run src/lib/authority-guardrails/` — 15/15
 - `pnpm vitest run src/lib/evidence-bridge/` — full seam suite
 - `pnpm test` — full Vitest suite
@@ -200,11 +232,7 @@ evidence for merge readiness.
 - Audited placement evidence is **not** implemented — per reviewer
   decision it would require a separate ADR (separate placement/history
   domain or non-capability ledger), not an `EvidenceEvent` extension.
-- **Open for reviewer ruling:** `chat-panel.tsx` sends `levelEstimate` as
-  `userLevel` to `/api/chat`, which tells the tutor to adjust vocabulary
-  and explanation complexity to that CEFR level
-  (`src/app/api/chat/route.ts:681`). It doesn't select tasks, gate anything,
-  or mint evidence, but it is recurring AI personalization shaped by
-  placement. Left unchanged in R2 pending an explicit ruling.
+- The chat-tutor `userLevel` question raised in R2 was ruled **cut** and
+  is done in R3 (§3a).
 
 `PLACEMENT BOUNDARY CONFIRMED — ESTIMATE IS NOT CAPABILITY TRUTH`

@@ -58,13 +58,6 @@ interface ChatPanelProps {
   onClose: () => void;
 }
 
-function cefrToDifficulty(level: CEFRLevel | null): 'beginner' | 'intermediate' | 'advanced' {
-  if (!level) return 'intermediate';
-  if (level === 'A1' || level === 'A2') return 'beginner';
-  if (level === 'B1' || level === 'B2') return 'intermediate';
-  return 'advanced';
-}
-
 interface ParsedError {
   title: string;
   description: string;
@@ -186,7 +179,6 @@ export function ChatPanel({ onClose }: ChatPanelProps) {
 
   useOllamaPreload(true);
 
-  const levelEstimate = useAssessmentStore((s) => s.placement?.levelEstimate ?? null);
   const setPlacementEstimate = useAssessmentStore((s) => s.setPlacementEstimate);
 
   const contentItems = useContentStore((s) => s.items);
@@ -287,22 +279,12 @@ export function ChatPanel({ onClose }: ChatPanelProps) {
           provider: activeProviderId,
           providerConfigs: providers,
           context,
-          userLevel: levelEstimate,
           maxTokens: effectiveMaxTokens,
           toolSuite: getNativeChatToolSuite(isIOSNativeHost),
         },
       };
     },
-    [
-      activeContentItem,
-      activeProviderId,
-      buildApiHeaders,
-      chatMode,
-      levelEstimate,
-      effectiveMaxTokens,
-      isIOSNativeHost,
-      providers,
-    ],
+    [activeContentItem, activeProviderId, buildApiHeaders, chatMode, effectiveMaxTokens, isIOSNativeHost, providers],
   );
 
   const updateProviderConfig = useCallback(
@@ -357,7 +339,7 @@ export function ChatPanel({ onClose }: ChatPanelProps) {
         buildApiHeaders,
         providerId: activeProviderId,
         providerConfigs: providers as Record<string, unknown>,
-        currentDifficulty: activeContentItem?.difficulty ?? cefrToDifficulty(levelEstimate),
+        currentDifficulty: activeContentItem?.difficulty,
       });
 
       queueMicrotask(() => {

@@ -339,8 +339,8 @@
       "source": "sessions",
       "anchor": "see reason",
       "occurrences": [
-        "`Here is what you practiced today:\\n${formatList(sessions.map((session) => `${session.title} (${session.module})`))}`,",
-        "if (sessions.length === 0) {"
+        "if (sessions.length === 0) {",
+        "`Here is what you practiced today:\\n${formatList(sessions.map((session) => `${session.title} (${session.module})`))}`,"
       ],
       "classification": "LEGIT_PRESENTATION",
       "reason": "formats stats tool output for the chat tutor",
@@ -394,16 +394,11 @@
       "anchor": "see reason",
       "occurrences": [
         "import { type CEFRLevel, useAssessmentStore } from '@/stores/assessment-store';",
-        "function cefrToDifficulty(level: CEFRLevel | null): 'beginner' | 'intermediate' | 'advanced' {",
-        "const levelEstimate = useAssessmentStore((s) => s.placement?.levelEstimate ?? null);",
         "const setPlacementEstimate = useAssessmentStore((s) => s.setPlacementEstimate);",
-        "userLevel: levelEstimate,",
-        "levelEstimate,",
-        "updateUserLevel: (level) => setPlacementEstimate(level as CEFRLevel),",
-        "currentDifficulty: activeContentItem?.difficulty ?? cefrToDifficulty(levelEstimate),"
+        "updateUserLevel: (level) => setPlacementEstimate(level as CEFRLevel),"
       ],
       "classification": "LEGIT_CANDIDATE_SIGNAL",
-      "reason": "userLevel \u2192 difficulty context for tutor; advisory",
+      "reason": "updateUserLevel chat tool \u2192 setPlacementEstimate(level) advisory claim writer only; no placement read (W2-G03 R3 cut userLevel + difficulty fallback)",
       "migrationNode": "W2-AS1"
     },
     {
@@ -1286,36 +1281,20 @@
       "migrationNode": "W2-CS1"
     },
     {
-      "id": "lib-chat-analytics.assessment-currentLevel",
-      "file": "src/lib/chat-analytics.ts",
-      "source": "assessment.currentLevel",
-      "anchor": "see reason",
-      "occurrences": [
-        "// The persisted payload is flat: { placement, currentLevel, history, ... }.",
-        "// `currentLevel` is the legacy mirror of placement.levelEstimate; older",
-        "// payloads carry only `currentLevel`.",
-        "const assessmentData = localStorage.getItem('echotype_assessment');",
-        "cefrLevel = parsed.placement?.levelEstimate ?? parsed.currentLevel ?? null;"
-      ],
-      "classification": "LEGIT_CANDIDATE_SIGNAL",
-      "reason": "cefrLevel \u2192 tutor context; advisory",
-      "migrationNode": "W2-AS1"
-    },
-    {
       "id": "lib-chat-tool-executor.sessions",
       "file": "src/lib/chat-tool-executor.ts",
       "source": "sessions",
       "anchor": "see reason",
       "occurrences": [
-        ".filter((session) => session.completed)",
-        "? Math.round(scoredSessions.reduce((sum, session) => sum + session.accuracy, 0) / scoredSessions.length)",
-        "accuracy: session.accuracy,",
-        "const scoredSessions = sessions.filter((session) => session.module !== 'listen');",
-        "const words = sessions.reduce((sum, session) => sum + session.totalWords, 0);",
-        "endedAt: session.endTime ?? session.startTime,",
         "return db.sessions",
-        "return ok(`Collected ${sessions.length} completed session(s) from today.`, { sessions });",
-        "sessions: sessions.length,"
+        ".filter((session) => session.completed)",
+        "accuracy: session.accuracy,",
+        "endedAt: session.endTime ?? session.startTime,",
+        "const words = sessions.reduce((sum, session) => sum + session.totalWords, 0);",
+        "const scoredSessions = sessions.filter((session) => session.module !== 'listen');",
+        "? Math.round(scoredSessions.reduce((sum, session) => sum + session.accuracy, 0) / scoredSessions.length)",
+        "sessions: sessions.length,",
+        "return ok(`Collected ${sessions.length} completed session(s) from today.`, { sessions });"
       ],
       "classification": "LEGIT_ANALYTICS",
       "reason": "stats tool reads sessions",
