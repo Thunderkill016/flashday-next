@@ -1,7 +1,7 @@
 import { nanoid } from 'nanoid';
 import type { Difficulty } from '@/types/content';
 import { currentLearnerId, db } from './db';
-import { commitMappedAttempt, mapLegacyAttempt } from './evidence-bridge/adapter';
+import { mapLegacyAttempt, runSemanticCommit } from './evidence-bridge/adapter';
 import { gradeCard, Rating } from './fsrs';
 import { findMorphology } from './morphology';
 import { normalizeTags } from './utils';
@@ -136,112 +136,122 @@ export async function saveVocabularySubmission(
     response: answer,
     support: { revealed: true, context: context ?? null },
   });
-  await database.transaction(
-    'rw',
-    [
-      database.contents,
-      database.records,
-      database.sessions,
-      database.learningAttempts,
-      database.dailyTasks,
-      ...(mapped ? [database.evidenceEvents] : []),
-    ],
-    async () => {
-      if (database !== db) throw new Error('Account changed / 账号已切换');
-      if (await database.learningAttempts.get(submission.id)) return;
-      const content = await database.contents.get(contentId);
-      if (!content || content.deletedAt || content.type !== 'word') throw new Error('Word unavailable / 词条已不可用');
-      const id = vocabularyRecordId(contentId, mode);
-      const previous = await database.records.get(id);
-      if (previous?.lastPracticed !== submission.expectedReview)
-        throw new Error('This card changed in another window. Reload / 此卡片已更新，请刷新');
-      if (previous && (previous.fsrsCard?.due ?? previous.nextReview ?? Infinity) > now)
-        throw new Error('Card not due yet / 尚未到复习时间');
-      if (!previous) {
-        const limit = (await database.dailyTasks.get('preferences:vocabulary'))?.newWordsPerDay ?? 10;
-        const introduced = introducedVocabularyToday(await database.learningAttempts.toArray(), mode, now);
-        if (introduced >= limit) throw new Error('Daily new-word limit reached / 已达到每日新词上限');
-      }
-      const morphology = findMorphology(content.title);
-      if (mode === 'construction' && !morphology) throw new Error('No verified construction / 暂无核对过的构词资料');
-      if (mode === 'spelling' && !content.metadata?.vocabulary?.meaning)
-        throw new Error('Definition required / 需要释义');
-      const usageIssue =
-        mode === 'application'
-          ? validateVocabularyApplication(
-              content.title,
-              answer,
-              context ?? '',
-              content.metadata?.vocabulary?.example ?? content.text,
-            )
-          : null;
-      if (usageIssue) throw new Error(usageIssue);
-      const correct =
-        mode === 'construction'
-          ? normalizeSpelling(answer).replace(/\s/g, '') === morphology!.parts.map((p) => p.form).join('+')
-          : ['spelling', 'dictation'].includes(mode)
-            ? spellingMatches(answer, content.title)
-            : answer !== '[not recalled]';
-      const rating = correct ? (submission.rating as Rating) : Rating.Again;
-      const { cardData, nextReview } = gradeCard(previous?.fsrsCard, rating, new Date(now));
-      const module = mode === 'meaning' || mode === 'construction' ? 'read' : mode === 'dictation' ? 'listen' : 'write';
-      const accuracy = rating === Rating.Again ? 0 : rating === Rating.Hard ? 60 : rating === Rating.Good ? 85 : 100;
-      await database.records.put({
-        id,
-        contentId,
-        module,
-        attempts: (previous?.attempts ?? 0) + 1,
-        correctCount: (previous?.correctCount ?? 0) + (rating > 1 ? 1 : 0),
-        accuracy,
-        lastPracticed: now,
-        nextReview,
-        fsrsCard: cardData,
-        mistakes: correct
-          ? []
-          : [
-              {
-                position: 0,
-                expected: mode === 'construction' ? morphology!.parts.map((p) => p.form).join('+') : content.title,
-                actual: answer,
-                timestamp: now,
-              },
-            ],
-        updatedAt: now,
-      });
-      await database.learningAttempts.add({
-        id: submission.id,
-        lessonId: id,
-        unitId: content.category ?? contentId,
-        activity: mode === 'application' ? 'personal-example' : 'writing',
-        sourceContentIds: [contentId],
-        sourceText: JSON.stringify({ word: content.title, reference: content.metadata?.vocabulary ?? content.text }),
-        prompt: mode,
-        answer,
-        feedback: { source: 'self', notes: context ?? '', checklist: [`rating:${rating}`] },
-        status: 'submitted',
-        createdAt: now,
-        updatedAt: now,
-      });
-      await database.sessions.add({
-        id: submission.id,
-        contentId,
-        module,
-        startTime: now,
-        endTime: now,
-        totalChars: answer.length,
-        correctChars: rating > Rating.Again ? answer.length : 0,
-        wrongChars: rating > Rating.Again ? 0 : answer.length,
-        totalWords: 1,
-        wpm: 0,
-        accuracy,
-        completed: true,
-        updatedAt: now,
-      });
-      // The semantic event commits inside this same transaction — an event
-      // failure rolls back the history rows above, and the account guard
-      // below can still roll the event back too (no cross-account evidence).
-      if (mapped) await commitMappedAttempt(database, mapped, currentLearnerId());
-      if (database !== db) throw new Error('Account changed / 账号已切换');
-    },
-  );
+  const historyTables = [
+    database.contents,
+    database.records,
+    database.sessions,
+    database.learningAttempts,
+    database.dailyTasks,
+  ];
+  const writeHistory = async (): Promise<boolean> => {
+    if (database !== db) throw new Error('Account changed / 账号已切换');
+    if (await database.learningAttempts.get(submission.id)) return false;
+    const content = await database.contents.get(contentId);
+    if (!content || content.deletedAt || content.type !== 'word') throw new Error('Word unavailable / 词条已不可用');
+    const id = vocabularyRecordId(contentId, mode);
+    const previous = await database.records.get(id);
+    if (previous?.lastPracticed !== submission.expectedReview)
+      throw new Error('This card changed in another window. Reload / 此卡片已更新，请刷新');
+    if (previous && (previous.fsrsCard?.due ?? previous.nextReview ?? Infinity) > now)
+      throw new Error('Card not due yet / 尚未到复习时间');
+    if (!previous) {
+      const limit = (await database.dailyTasks.get('preferences:vocabulary'))?.newWordsPerDay ?? 10;
+      const introduced = introducedVocabularyToday(await database.learningAttempts.toArray(), mode, now);
+      if (introduced >= limit) throw new Error('Daily new-word limit reached / 已达到每日新词上限');
+    }
+    const morphology = findMorphology(content.title);
+    if (mode === 'construction' && !morphology) throw new Error('No verified construction / 暂无核对过的构词资料');
+    if (mode === 'spelling' && !content.metadata?.vocabulary?.meaning)
+      throw new Error('Definition required / 需要释义');
+    const usageIssue =
+      mode === 'application'
+        ? validateVocabularyApplication(
+            content.title,
+            answer,
+            context ?? '',
+            content.metadata?.vocabulary?.example ?? content.text,
+          )
+        : null;
+    if (usageIssue) throw new Error(usageIssue);
+    const correct =
+      mode === 'construction'
+        ? normalizeSpelling(answer).replace(/\s/g, '') === morphology!.parts.map((p) => p.form).join('+')
+        : ['spelling', 'dictation'].includes(mode)
+          ? spellingMatches(answer, content.title)
+          : answer !== '[not recalled]';
+    const rating = correct ? (submission.rating as Rating) : Rating.Again;
+    const { cardData, nextReview } = gradeCard(previous?.fsrsCard, rating, new Date(now));
+    const module = mode === 'meaning' || mode === 'construction' ? 'read' : mode === 'dictation' ? 'listen' : 'write';
+    const accuracy = rating === Rating.Again ? 0 : rating === Rating.Hard ? 60 : rating === Rating.Good ? 85 : 100;
+    await database.records.put({
+      id,
+      contentId,
+      module,
+      attempts: (previous?.attempts ?? 0) + 1,
+      correctCount: (previous?.correctCount ?? 0) + (rating > 1 ? 1 : 0),
+      accuracy,
+      lastPracticed: now,
+      nextReview,
+      fsrsCard: cardData,
+      mistakes: correct
+        ? []
+        : [
+            {
+              position: 0,
+              expected: mode === 'construction' ? morphology!.parts.map((p) => p.form).join('+') : content.title,
+              actual: answer,
+              timestamp: now,
+            },
+          ],
+      updatedAt: now,
+    });
+    await database.learningAttempts.add({
+      id: submission.id,
+      lessonId: id,
+      unitId: content.category ?? contentId,
+      activity: mode === 'application' ? 'personal-example' : 'writing',
+      sourceContentIds: [contentId],
+      sourceText: JSON.stringify({ word: content.title, reference: content.metadata?.vocabulary ?? content.text }),
+      prompt: mode,
+      answer,
+      feedback: { source: 'self', notes: context ?? '', checklist: [`rating:${rating}`] },
+      status: 'submitted',
+      createdAt: now,
+      updatedAt: now,
+    });
+    await database.sessions.add({
+      id: submission.id,
+      contentId,
+      module,
+      startTime: now,
+      endTime: now,
+      totalChars: answer.length,
+      correctChars: rating > Rating.Again ? answer.length : 0,
+      wrongChars: rating > Rating.Again ? 0 : answer.length,
+      totalWords: 1,
+      wpm: 0,
+      accuracy,
+      completed: true,
+      updatedAt: now,
+    });
+    return true;
+  };
+  // W2-02R2: the seam owns the mapped transaction — history write and event
+  // append are structurally coupled; an event can never commit alone.
+  if (mapped) {
+    await runSemanticCommit({
+      database,
+      tables: historyTables,
+      mapped,
+      learnerId: currentLearnerId(),
+      writeHistory,
+      // Post-append guard inside the transaction — a mid-commit account
+      // switch still rolls back history AND event (no cross-account writes).
+      verify: () => {
+        if (database !== db) throw new Error('Account changed / 账号已切换');
+      },
+    });
+  } else {
+    await database.transaction('rw', historyTables, writeHistory);
+  }
 }

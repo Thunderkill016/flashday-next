@@ -3,13 +3,13 @@ import { beforeEach, describe, expect, it } from 'vitest';
 import { currentLearnerId, db, switchDatabaseForUser } from '../db';
 import { importVocabulary, saveVocabularySubmission } from '../vocabulary-repository';
 import {
-  commitMappedAttempt,
   LEGACY_CONTRACT_AUDIT,
   mapLegacyAttempt,
+  runSemanticCommit,
   type LegacyAction,
   type MappedAttempt,
 } from './adapter';
-import { projectState } from './bridge';
+import { projectState, submitAttempt } from './bridge';
 import { fixtureRegistry } from './registry';
 import { createDexieEventStore } from './store';
 
@@ -34,9 +34,31 @@ const MAPPED: MappedAttempt = {
   response: "What's your name?",
 };
 
-/** Seed an event through the seam inside a legal ambient transaction. */
+/**
+ * Seed a kernel event via the NATIVE bridge path (submitAttempt) — the
+ * legacy adapter must never be the fixture factory for event-only writes.
+ */
 const seedEvent = (mapped: MappedAttempt) =>
-  db.transaction('rw', [db.evidenceEvents], () => commitMappedAttempt(db, mapped, LEARNER));
+  submitAttempt(createDexieEventStore(db.evidenceEvents), registry, { ...mapped, learnerId: LEARNER });
+
+/**
+ * Drive the seam the only legal way: runSemanticCommit owns the transaction
+ * and requires a real history write.
+ */
+const commitViaSeam = (mapped: MappedAttempt, writeHistory?: () => Promise<boolean>) =>
+  runSemanticCommit({
+    database: db,
+    tables: [db.learningAttempts],
+    mapped,
+    learnerId: LEARNER,
+    // Mirrors the real producers: an existing row early-exits (false), so
+    // a retry never reaches the event append — pre-cutover stays clean.
+    writeHistory: writeHistory ?? (async () => {
+      if (await db.learningAttempts.get(mapped.attemptId ?? 'sub-1')) return false;
+      await db.learningAttempts.add(attemptRow(mapped.attemptId ?? 'sub-1'));
+      return true;
+    }),
+  });
 
 const legacyAction = (over: Partial<LegacyAction> = {}): LegacyAction => ({
   id: 'sub-1',
@@ -168,12 +190,9 @@ describe('MAPPED_SAFE requires an action-specific provenance mapper (W2-02R)', (
   });
 });
 
-describe('atomic commit mechanics (W2-02 §3, §13)', () => {
-  it('commits history + event in one transaction', async () => {
-    await db.transaction('rw', [db.learningAttempts, db.evidenceEvents], async () => {
-      await db.learningAttempts.add(attemptRow('sub-1'));
-      await commitMappedAttempt(db, MAPPED, LEARNER);
-    });
+describe('atomic commit mechanics (W2-02 §3, §13, W2-02R2)', () => {
+  it('commits history + event in one seam-owned transaction', async () => {
+    await commitViaSeam(MAPPED);
     expect(await db.learningAttempts.get('sub-1')).toBeTruthy();
     const events = await db.evidenceEvents.toArray();
     expect(events).toHaveLength(1);
@@ -183,13 +202,10 @@ describe('atomic commit mechanics (W2-02 §3, §13)', () => {
   });
 
   it('F1 — event conflict inside the transaction rolls back legacy history', async () => {
-    // Seed a conflicting event: same id, different content.
+    // Seed a conflicting event via the native path: same id, different content.
     await seedEvent(MAPPED);
     await expect(
-      db.transaction('rw', [db.learningAttempts, db.evidenceEvents], async () => {
-        await db.learningAttempts.add(attemptRow('sub-1'));
-        await commitMappedAttempt(db, { ...MAPPED, response: 'a different answer' }, LEARNER);
-      }),
+      commitViaSeam({ ...MAPPED, response: 'a different answer' }),
     ).rejects.toThrow(/conflict/);
     expect(await db.learningAttempts.count()).toBe(0);
     const events = await db.evidenceEvents.toArray();
@@ -199,10 +215,9 @@ describe('atomic commit mechanics (W2-02 §3, §13)', () => {
 
   it('F2 — legacy write failure inside the transaction rolls back the event', async () => {
     await expect(
-      db.transaction('rw', [db.learningAttempts, db.evidenceEvents], async () => {
-        await commitMappedAttempt(db, MAPPED, LEARNER);
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        await db.learningAttempts.add({ answer: 'no id' } as any);
+      commitViaSeam(MAPPED, async () => {
+        await db.learningAttempts.add({ answer: 'no id' } as never);
+        return true;
       }),
     ).rejects.toThrow();
     expect(await db.evidenceEvents.count()).toBe(0);
@@ -210,33 +225,41 @@ describe('atomic commit mechanics (W2-02 §3, §13)', () => {
   });
 
   it('duplicate submit dedupes — identical redelivery does not double-mint', async () => {
-    await seedEvent(MAPPED);
-    await seedEvent(MAPPED);
+    await commitViaSeam(MAPPED);
+    await commitViaSeam(MAPPED);
     const events = await db.evidenceEvents.toArray();
     expect(events).toHaveLength(1);
     expect(events[0].id).toBe('evt.sub-1');
   });
 
   it('same event id with different content is refused (fail-closed)', async () => {
-    await seedEvent(MAPPED);
+    await commitViaSeam(MAPPED);
+    // History write occurs (put overwrites), but the divergent event
+    // conflicts — the append failure rolls back the history write too.
     await expect(
-      db.transaction('rw', [db.evidenceEvents], () =>
-        commitMappedAttempt(db, { ...MAPPED, occurredAt: 2000 }, LEARNER),
-      ),
+      commitViaSeam({ ...MAPPED, occurredAt: 2000 }, async () => {
+        await db.learningAttempts.put(attemptRow('sub-1'));
+        return true;
+      }),
     ).rejects.toThrow(/conflict/);
     expect(await db.evidenceEvents.count()).toBe(1);
+    const events = await db.evidenceEvents.toArray();
+    expect(events[0].occurredAt).toBe(1000);
   });
 
-  it('a mapped commit outside any transaction is refused — no standalone minting (W2-02R)', async () => {
-    await expect(commitMappedAttempt(db, MAPPED, LEARNER)).rejects.toThrow(/ambient/);
+  it('the legacy seam has NO event-only escape hatch (W2-02R2)', async () => {
+    // The append primitive is module-private — the only export is the
+    // transaction-owning coordinator, so `commitMappedAttempt`-style
+    // standalone minting cannot be expressed by any caller.
+    const adapter = await import('./adapter');
+    expect('commitMappedAttempt' in adapter).toBe(false);
+    // An evidenceEvents-only transaction through the seam is impossible:
+    // writeHistory is required, and a no-write history returns false.
+    await commitViaSeam(MAPPED, async () => false);
     expect(await db.evidenceEvents.count()).toBe(0);
-  });
-
-  it('a mapped commit inside a transaction lacking evidenceEvents is refused', async () => {
-    await expect(
-      db.transaction('rw', [db.learningAttempts], () => commitMappedAttempt(db, MAPPED, LEARNER)),
-    ).rejects.toThrow(/evidenceEvents/);
-    expect(await db.evidenceEvents.count()).toBe(0);
+    // And history tables alone cannot smuggle an event — the seam adds
+    // evidenceEvents to the transaction itself, so history-only callers
+    // never see the append primitive at all.
   });
 });
 

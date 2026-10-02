@@ -2495,7 +2495,7 @@
         "database.learningAttempts,",
         "await database.learningAttempts.add({",
         "const introduced = introducedVocabularyToday(await database.learningAttempts.toArray(), mode, now);",
-        "if (await database.learningAttempts.get(submission.id)) return;",
+        "if (await database.learningAttempts.get(submission.id)) return false;",
         "introducedVocabularyToday,"
       ],
       "classification": "LEGIT_SCHEDULING",
@@ -2825,7 +2825,8 @@
         "...(attempt.cycle?.assisted ? { assisted: true } : {}),",
         "...(attempt.cycle?.sourceRevealed ? { sourceRevealed: true } : {}),",
         "feedback: attempt.feedback,",
-        "[database.learningAttempts, database.mediaBlobs, ...(mapped ? [database.evidenceEvents!] : [])],"
+        "tables: [database.learningAttempts, database.mediaBlobs],",
+        "await database.transaction('rw', [database.learningAttempts, database.mediaBlobs], writeHistory);"
       ],
       "classification": "LEGIT_HISTORY",
       "reason": "W2-02 adapter input: attempt fields → LegacyAction for contract-audited mapping; mints nothing without a MAPPED_SAFE contract (W2-03 gap)",

@@ -2,7 +2,7 @@ import type Dexie from 'dexie';
 import type { Table } from 'dexie';
 import type { LearningAttempt } from '@/types/learning-activity';
 import { currentLearnerId, type MediaBlobEntry } from './db';
-import { commitMappedAttempt, mapLegacyAttempt } from './evidence-bridge/adapter';
+import { mapLegacyAttempt, runSemanticCommit } from './evidence-bridge/adapter';
 import type { EvidenceEvent } from './evidence-bridge/types';
 import { recordingIdentity } from './learning-activity';
 import { validateTextCycleAttempt } from './text-learning-cycle';
@@ -40,32 +40,40 @@ export async function persistLearningAttempt(
     },
     feedback: attempt.feedback,
   });
-  await database.transaction(
-    'rw',
-    [database.learningAttempts, database.mediaBlobs, ...(mapped ? [database.evidenceEvents!] : [])],
-    async () => {
+  const writeHistory = async (): Promise<boolean> => {
+    guard();
+    if (attempt.cycle) {
+      const attempts = await database.learningAttempts.toArray();
       guard();
-      if (attempt.cycle) {
-        const attempts = await database.learningAttempts.toArray();
-        guard();
-        const error = validateTextCycleAttempt(attempt, attempts);
-        if (error) throw new Error(`Invalid cycle evidence: ${error}`);
-      }
-      const existing = attempt.recordingId ? await database.mediaBlobs.get(attempt.recordingId) : undefined;
-      guard();
-      if (attempt.recordingId && blob && !existing)
-        await database.mediaBlobs.add({
-          contentId: attempt.recordingId,
-          blob,
-          mimeType: blob.type,
-          createdAt: attempt.createdAt,
-        });
-      guard();
-      await database.learningAttempts.add(attempt);
-      // Semantic event commits atomically with the attempt row; the account
-      // guard can still roll both back.
-      if (mapped) await commitMappedAttempt(database, mapped, currentLearnerId());
-      guard();
-    },
-  );
+      const error = validateTextCycleAttempt(attempt, attempts);
+      if (error) throw new Error(`Invalid cycle evidence: ${error}`);
+    }
+    const existing = attempt.recordingId ? await database.mediaBlobs.get(attempt.recordingId) : undefined;
+    guard();
+    if (attempt.recordingId && blob && !existing)
+      await database.mediaBlobs.add({
+        contentId: attempt.recordingId,
+        blob,
+        mimeType: blob.type,
+        createdAt: attempt.createdAt,
+      });
+    guard();
+    await database.learningAttempts.add(attempt);
+    return true;
+  };
+  // W2-02R2: mapped commits go through the seam — one transaction owned by
+  // runSemanticCommit couples the history write to the event append; the
+  // post-append guard can still roll both back.
+  if (mapped) {
+    await runSemanticCommit({
+      database,
+      tables: [database.learningAttempts, database.mediaBlobs],
+      mapped,
+      learnerId: currentLearnerId(),
+      writeHistory,
+      verify: guard,
+    });
+  } else {
+    await database.transaction('rw', [database.learningAttempts, database.mediaBlobs], writeHistory);
+  }
 }

@@ -84,12 +84,18 @@ joins the ambient transaction. Unmapped actions keep the exact legacy
 transaction shape — zero behavioral change while every audit entry is
 unmapped.
 
-W2-02R hardening — the ambient transaction is **enforced**, not
-conventional: `commitMappedAttempt` refuses when `Dexie.currentTransaction`
-is null, and refuses when the ambient transaction's `storeNames` do not
-include `evidenceEvents`. A legacy adapter can therefore never mint a
-standalone event; only native mission surfaces may still call
-`submitAttempt` outside a transaction.
+W2-02R2 — the coupling is **structural**: the event append primitive
+(`appendMappedEvent`) is module-private and the only export is
+`runSemanticCommit({ database, tables, mapped, learnerId, writeHistory,
+verify })`. The seam owns the transaction — one Dexie transaction covers
+every history table plus `evidenceEvents`; `writeHistory` performs the real
+legacy writes inside it; the event appends only when a history row was
+actually committed (`writeHistory → true`); `verify` runs post-append in
+the same transaction (account-switch guard). An event-only commit is
+inexpressible through this API — there is no caller-visible primitive that
+mints without a real history write. Defense-in-depth invariants remain:
+the append still asserts `Dexie.currentTransaction` and `evidenceEvents`
+participation. Native mission surfaces keep standalone `submitAttempt`.
 
 | Path | Transaction tables (mapped case) |
 |---|---|
@@ -109,8 +115,8 @@ Remote sync is outside the semantic transaction (F3): no sync call was added;
 | Duplicate submit | `learningAttempts.get(id)` early-return → no-op; or identical event → dedupe | wired-path test |
 | Same id, different content | conflict → refusal, old rows unchanged | store-level + mechanism tests |
 | Account switch mid-tx | `database !== db` / `isCurrent()` guards roll back history AND event | guard runs after the commit call |
-| Legacy commit outside any tx | refused — `commitMappedAttempt` throws before any write | tx-required tests (W2-02R) |
-| Tx without `evidenceEvents` in scope | refused — `storeNames` check throws | tx-required tests (W2-02R) |
+| Event-only commit | inexpressible — append primitive is module-private; `runSemanticCommit` requires `writeHistory` | escape-hatch test (W2-02R2) |
+| `writeHistory` early-exits (retry/pre-cutover) | returns false → event append skipped — nothing minted | escape-hatch + pre-cutover tests |
 | `MAPPED_SAFE` w/o provenance mapper | `mapLegacyAttempt` throws | mapper-contract tests |
 | Mapper drops declared support fact | `mapLegacyAttempt` throws `dropped support provenance` | laundering-guard test |
 | Unmapped action | history persists, zero EvidenceEvents | production-path test |

@@ -4,10 +4,10 @@
  *
  *   legacy action
  *     → mapLegacyAttempt()        — audit-gated legacy→contract mapping;
- *                                   non-null ⇒ db.evidenceEvents joins the
- *                                   caller's transaction table list
- *     → commitMappedAttempt()     — bridge submitAttempt inside the caller's
- *                                   Dexie transaction (atomic with history)
+ *                                   non-null ⇒ a semantic commit is possible
+ *     → runSemanticCommit()       — the seam OWNS the transaction: legacy
+ *                                   history write + bridge event append
+ *                                   inside one Dexie transaction
  *
  * The audit is honest about coverage: every inventoried legacy action is
  * HISTORY_ONLY or BLOCKED_PENDING_W2_03 today — no registered TaskContract in
@@ -202,34 +202,64 @@ let cachedRegistry: ContractRegistry | null = null;
 const registry = () => (cachedRegistry ??= fixtureRegistry());
 
 /**
- * Append a mapped event through the canonical bridge inside the caller's
- * ambient transaction — the same Dexie transaction that writes the legacy
- * history row. Design A (W2-02 §5): the Dexie table op joins the ambient
- * transaction, so an event failure rolls back history and vice versa.
- *
- * W2-02R: the ambient transaction is MANDATORY, not conventional. A legacy
- * adapter call with no enclosing semantic/history transaction would mint a
- * standalone EvidenceEvent — the split-brain path this gate exists to
- * prevent — so it throws. (submitAttempt itself stays usable standalone
- * for native mission surfaces; only this legacy seam is restricted.)
+ * Internal primitive — NOT exported. W2-02R2: a legacy EvidenceEvent must be
+ * structurally impossible to mint independently of its history write, so the
+ * event append exists only inside runSemanticCommit's transaction. The
+ * ambient-transaction assertions are kept as defense-in-depth invariants.
  */
-export async function commitMappedAttempt(
+async function appendMappedEvent(
   database: { evidenceEvents?: Table<EvidenceEvent, string> },
   mapped: MappedAttempt,
   learnerId: string,
 ): Promise<void> {
   const tx = Dexie.currentTransaction;
-  if (!tx)
-    throw new Error(
-      'commitMappedAttempt requires an ambient Dexie transaction — legacy evidence commits atomically with history or not at all',
-    );
+  if (!tx) throw new Error('legacy semantic event append requires the ambient semantic transaction');
   if (!database.evidenceEvents) {
     throw new Error('mapped semantic commit requires the evidenceEvents table in scope');
   }
   if (!tx.storeNames.includes(database.evidenceEvents.name))
-    throw new Error('ambient transaction does not include evidenceEvents — event would not share the history commit');
+    throw new Error('ambient transaction does not include evidenceEvents');
   await submitAttempt(createDexieEventStore(database.evidenceEvents), registry(), {
     ...mapped,
     learnerId,
+  });
+}
+
+/**
+ * W2-02R2 — the ONLY legacy semantic-commit operation. The seam owns the
+ * transaction: one Dexie transaction covers every history table plus
+ * evidenceEvents; `writeHistory` performs the real legacy writes inside it;
+ * the event appends only if a history row was actually committed. Either
+ * side throwing aborts everything — and because the append primitive is
+ * module-private, no caller can mint an event without supplying a real
+ * history write.
+ *
+ * Contract semantics stay in the bridge (taskId → evaluator/binder); this
+ * coordinator owns ordering and atomicity only, never semantic fields.
+ *
+ * `writeHistory` returns false when it early-exited (e.g. an idempotent
+ * retry finding the row already present) — the event append is then
+ * skipped, so a pre-cutover history row can never gain a synthetic event.
+ */
+export async function runSemanticCommit(args: {
+  database: Dexie & { evidenceEvents?: Table<EvidenceEvent, string> };
+  /** Every table the history write touches. evidenceEvents is added by the seam. */
+  tables: Table[];
+  mapped: MappedAttempt;
+  learnerId: string;
+  writeHistory: () => Promise<boolean>;
+  /** Post-append check inside the transaction (e.g. account-switch guard). */
+  verify?: () => void;
+}): Promise<void> {
+  const { database, tables, mapped, learnerId, writeHistory, verify } = args;
+  if (!database.evidenceEvents) throw new Error('mapped semantic commit requires the evidenceEvents table in scope');
+  const storeNames = [...tables.map((t) => t.name), database.evidenceEvents.name];
+  // Plain-Dexie view keeps transaction()'s table-mapped generics cheap;
+  // the intersection-with-optional-table type otherwise explodes (TS2589).
+  const dexie: Dexie = database;
+  await dexie.transaction('rw', storeNames, async () => {
+    const wrote = await writeHistory();
+    if (wrote) await appendMappedEvent(database, mapped, learnerId);
+    verify?.();
   });
 }
