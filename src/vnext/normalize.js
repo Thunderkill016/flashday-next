@@ -1,9 +1,15 @@
 /*
- * Canonical text normalization (W2-02.5 spelling pilot).
+ * Canonical text normalization (W2-02.5).
  *
- * THE single definition shared by the legacy spelling checker and the
- * kernel's exact-match evaluator — two copies could drift apart and an
- * event could score differently than the history write claimed.
+ * THE single definition shared by the legacy spelling check and any
+ * scorer that must compare learner text to an expected form — two copies
+ * could drift apart and evidence could score differently than the check
+ * the learner experienced.
+ *
+ * This is shared TEXT NORMALIZATION only — it is not a scoring contract
+ * and registers no evaluator. W2-02.5 rejected vocabulary:spelling as
+ * capability evidence; a future deterministic scorer simply reuses this
+ * canonical form.
  *
  * Pipeline (identical to the historical normalizeSpelling):
  *   Unicode NFKC → trim → lowercase → curly apostrophes → '

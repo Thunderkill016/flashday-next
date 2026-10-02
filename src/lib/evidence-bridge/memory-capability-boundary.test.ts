@@ -45,18 +45,19 @@ const LEARNER = currentLearnerId();
 
 /* Deterministic exact-match scorer — identical semantics to the evaluator
  * considered and rejected for production registration: normalized equality
- * against a trusted target; abstains (null) without one; never invents a
- * partial. Registered into the module map ONLY for the test's lifetime. */
+ * against the target FIXED IN THE TEST TASK CONTRACT (test metadata — the
+ * falsification does not broaden production submitAttempt). Abstains
+ * (null) when the contract carries no target; never invents a partial.
+ * Registered into the module map ONLY for the test's lifetime. */
 const exactMatchEvaluator = {
   contractId: TEST_EVAL,
-  describe: 'test-only: success iff canonicalized response === canonicalized trusted target',
+  describe: 'test-only: success iff canonicalized response === canonicalized contract target',
   attributesFunctions: false,
   score: (
-    _task: unknown,
+    task: { evaluation?: { target?: string } },
     response: unknown,
-    ctx?: { scoring?: { target?: string } },
   ): { outcome: 'success' | 'fail'; missingFunctions: string[]; scoredTarget?: string } | null => {
-    const target = ctx?.scoring?.target;
+    const target = task?.evaluation?.target;
     if (typeof target !== 'string' || !target.trim()) return null;
     const scoredTarget = canonicalExactText(target);
     const raw =
@@ -83,7 +84,12 @@ const SIGNATURE = {
   responseTopology: 'single_orthographic_form',
 };
 
-const testRegistry = (): ContractRegistry =>
+const taskIdFor = (target: string) => `${TEST_TASK}.${canonicalExactText(target)}`;
+
+/* One registry per test covering the targets it needs — each target gets
+ * its own test task (the contract pins what the evaluator scores), all
+ * bound to the SAME generic capability. */
+const testRegistry = (targets: string[]): ContractRegistry =>
   createRegistry({
     capabilities: [
       {
@@ -115,44 +121,43 @@ const testRegistry = (): ContractRegistry =>
           assumedKnown: { chunks: [], vocabulary: [], constructions: [] },
           introduced: { chunks: [], vocabulary: [], constructions: [] },
         },
-        taskIds: [TEST_TASK],
+        taskIds: targets.map(taskIdFor),
       }) as never,
     ],
-    tasks: [
-      makeTask({
-        id: TEST_TASK,
-        missionId: TEST_MISSION,
-        capabilityId: TEST_CAP,
-        modality: 'writing',
-        purpose: 'retrieval',
-        promptFamily: canonicalFamilyId(TEST_CAP, SIGNATURE, 1),
-        contextSignature: SIGNATURE,
-        response: { type: 'text', requiredFunctions: [] },
-        evaluation: { authority: 'deterministic', contractId: TEST_EVAL },
-        freshness: { required: false, familyClass: 'practiced' },
-        supportPolicy: { allowed: [] },
-      }) as never,
-    ],
+    tasks: targets.map(
+      (target) =>
+        makeTask({
+          id: taskIdFor(target),
+          missionId: TEST_MISSION,
+          capabilityId: TEST_CAP,
+          modality: 'writing',
+          purpose: 'retrieval',
+          promptFamily: canonicalFamilyId(TEST_CAP, SIGNATURE, 1),
+          contextSignature: SIGNATURE,
+          response: { type: 'text', requiredFunctions: [] },
+          evaluation: { authority: 'deterministic', contractId: TEST_EVAL, target },
+          freshness: { required: false, familyClass: 'practiced' },
+          supportPolicy: { allowed: [] },
+        }) as never,
+    ),
   });
 
 const store = () => createDexieEventStore(db.evidenceEvents);
 
-/* The test plays the seam's trusted role: the scoring target arrives via
- * submitAttempt's `trusted` channel — exactly where a production
- * action-specific resolver would put authoritative data. */
 const mintLexical = (attemptId: string, target: string, text: string, occurredAt: number) =>
-  submitAttempt(
-    store(),
-    testRegistry(),
-    { learnerId: LEARNER, taskId: TEST_TASK, attemptId, occurredAt, response: { text } },
-    { scoring: { target, contentId: `item:${canonicalExactText(target)}` } },
-  );
+  submitAttempt(store(), testRegistry([target]), {
+    learnerId: LEARNER,
+    taskId: taskIdFor(target),
+    attemptId,
+    occurredAt,
+    response: { text },
+  });
 
 /* Replay over the FULL capability space — production set + the test-only
  * capability — so 'nothing else moved' is asserted against every
  * registered capability, not just the test one. */
 const projectFromStore = async (retentionDelayMs?: number) => {
-  const registry = testRegistry();
+  const registry = testRegistry(['helpful', 'portable', 'xylophone']);
   const production = fixtureRegistry();
   const events = await db.evidenceEvents.toArray();
   return projectLearnerState(
@@ -340,47 +345,42 @@ describe('post-response reveal is not attempt support (reusable finding)', () =>
   });
 
   it('an answer-bearing support flag can never mint independence (kernel invariant)', async () => {
-    await submitAttempt(
-      store(),
-      testRegistry(),
-      {
-        learnerId: LEARNER,
-        taskId: TEST_TASK,
-        attemptId: 'att-sup',
-        occurredAt: 1_000,
-        response: { text: 'helpful' },
-        support: { modelAnswer: true },
-      },
-      { scoring: { target: 'helpful', contentId: 'item:helpful' } },
-    );
+    await submitAttempt(store(), testRegistry(['helpful']), {
+      learnerId: LEARNER,
+      taskId: taskIdFor('helpful'),
+      attemptId: 'att-sup',
+      occurredAt: 1_000,
+      response: { text: 'helpful' },
+      support: { modelAnswer: true },
+    });
     const slot = (await projectFromStore()).byCapability.get(TEST_CAP);
     expect(slot?.milestones.supported).toBe(true);
     expect(slot?.milestones.independent).toBe(false);
   });
 });
 
-/* ── Trusted scoring channel stays seam-only (reusable finding) ── */
+/* ── Scoring truth is never caller-authored (design requirement, enforced) ── */
 
-describe('trusted scoring target — never caller-authored', () => {
+describe('scoring-truth forgery boundary — callers may never author it', () => {
   const submission = (evaluationCtx?: Record<string, unknown>) => ({
     learnerId: LEARNER,
-    taskId: TEST_TASK,
+    taskId: taskIdFor('helpful'),
     occurredAt: 1000,
     attemptId: 'forge-1',
     response: { text: 'wrong' },
     evaluationCtx,
   });
 
-  it('rejects a caller-supplied scoring target on the public surface', async () => {
+  it('rejects a caller-supplied scoring target', async () => {
     await expect(
-      submitAttempt(store(), testRegistry(), submission({ target: 'wrong' }) as never),
+      submitAttempt(store(), testRegistry(['helpful']), submission({ target: 'wrong' }) as never),
     ).rejects.toThrow(/target|evaluationCtx/i);
     expect(await db.evidenceEvents.count()).toBe(0);
   });
 
   it('rejects a caller-supplied scoring channel outright', async () => {
     await expect(
-      submitAttempt(store(), testRegistry(), submission({ scoring: { target: 'wrong' } }) as never),
+      submitAttempt(store(), testRegistry(['helpful']), submission({ scoring: { target: 'wrong' } }) as never),
     ).rejects.toThrow();
     expect(await db.evidenceEvents.count()).toBe(0);
   });
@@ -389,32 +389,48 @@ describe('trusted scoring target — never caller-authored', () => {
     await expect(
       submitAttempt(
         store(),
-        testRegistry(),
+        testRegistry(['helpful']),
         { ...submission(), evaluation: { scoredAgainst: { contentId: 'x' } } } as never,
       ),
     ).rejects.toThrow(/scoredAgainst/);
     expect(await db.evidenceEvents.count()).toBe(0);
   });
 
-  it('a deterministic contract with no trusted target fails closed — no mint', async () => {
-    await expect(submitAttempt(store(), testRegistry(), submission() as never)).rejects.toThrow();
+  it('a deterministic contract whose evaluator abstains fails closed — no mint', async () => {
+    // The abstaining case: a contract with no target fixed — the evaluator
+    // returns null and the bridge refuses rather than mint outcome-less
+    // evidence or fall back to a caller-claimed outcome.
+    const registry = testRegistry(['abstain']);
+    const task = registry.taskById(taskIdFor('abstain')) as { evaluation: Record<string, unknown> };
+    delete task.evaluation.target;
+    await expect(
+      submitAttempt(store(), registry, {
+        learnerId: LEARNER,
+        taskId: taskIdFor('abstain'),
+        occurredAt: 1000,
+        attemptId: 'forge-2',
+        response: { text: 'anything' },
+      }),
+    ).rejects.toThrow(/no report|refusing/i);
     expect(await db.evidenceEvents.count()).toBe(0);
   });
 
-  it('the event stamps what was actually scored — replay provenance, not caller claim', async () => {
-    await mintLexical('att-prov', '  Helpful  ', 'HELPFUL', 1_000);
+  it('deterministic scoring ignores the caller-claimed outcome — rating cannot launder a miss', async () => {
+    await mintLexical('att-miss', 'helpful', 'helpfull', 1_000);
     const [event] = await db.evidenceEvents.toArray();
-    const evaluation = event.evaluation as { scoredAgainst?: { contentId?: string; scoredTarget?: string } };
-    expect(evaluation.scoredAgainst).toEqual({ contentId: 'item:helpful', scoredTarget: 'helpful' });
+    expect(event.attempt?.outcome).toBe('fail');
+    const slot = (await projectFromStore()).byCapability.get(TEST_CAP);
+    expect(slot?.milestones.independent).toBe(false);
+    expect(slot?.milestones.exposed).toBe(true);
   });
 });
 
-/* ── Immutable attempt boundary (reusable findings: evt.<attemptId>, occurredAt) ── */
+/* ── Canonical event identity (evt.<attemptId> pin — W2-02 invariant) ── */
 
 describe('canonical event identity on the mapped path', () => {
   const AUDIT = LEGACY_CONTRACT_AUDIT as unknown as { push(e: unknown): number; pop(): unknown };
 
-  it('event id is evt.<attemptId> and occurredAt is the attempt boundary, not wall-clock', async () => {
+  it('event id is pinned to evt.<attemptId> — the seam derives it, the payload cannot', async () => {
     AUDIT.push({
       action: 'vocabulary:spelling',
       status: 'MAPPED_SAFE',
@@ -425,24 +441,14 @@ describe('canonical event identity on the mapped path', () => {
     });
     try {
       const [word] = await seedWords('word,meaning\nhelpful,有帮助的');
-      // Wall-clock at persist time is 999999; the attempt timestamp (555,
-      // captured at the Compare-answer boundary) is what must land.
       await saveVocabularySubmission(
-        {
-          id: 'sp-ts',
-          contentId: word.id,
-          mode: 'spelling',
-          answer: 'helpful',
-          revealed: true,
-          rating: 3,
-          attemptedAt: 555,
-        },
+        { id: 'sp-ts', contentId: word.id, mode: 'spelling', answer: 'helpful', revealed: true, rating: 3 },
         db,
         999999,
       );
       const [event] = await db.evidenceEvents.toArray();
       expect(event.id).toBe('evt.sp-ts');
-      expect(event.occurredAt).toBe(555);
+      expect(event.occurredAt).toBe(999999);
       expect(event.attempt?.attemptId).toBe('sp-ts');
     } finally {
       AUDIT.pop();

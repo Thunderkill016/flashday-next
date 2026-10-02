@@ -118,23 +118,31 @@ reclassified legacy action. `learning-attempt:writing` is the closest
 future candidate *by domain* if a deterministic rubric for scoped free
 production ever lands — it is not one today.
 
-## 5. Reusable findings preserved (future activation invariants)
+## 5. Reusable findings preserved (activation requirements, not shipped machinery)
 
-Mechanisms built for the rejected activation that stay because they are
-generally true, tested in `memory-capability-boundary.test.ts`:
+The R1 review ruled the first implementation shipped *speculative
+authority* — a `submitAttempt(..., trusted?)` parameter is not
+structurally trusted because `submitAttempt` is a public export, and a
+`useRef`-captured `attemptedAt` does not survive reload. Both were
+removed; what remains are the **requirements** a real capability pilot
+must satisfy, plus the cheap hardening that removes caller authority:
 
-1. **Trusted scoring channel** — evaluator truth (e.g. an exact-match
-   target) arrives only via `submitAttempt`'s `trusted` parameter,
-   resolved inside the commit transaction; `checkForgery` rejects
-   caller-authored `evaluationCtx.target` / `evaluationCtx.scoring`, and
-   `bindAttempt` rejects caller-authored `evaluation.scoredAgainst`. A
-   declared contract whose evaluator abstains fails closed.
+1. **Scoring truth must be seam-resolved, never caller-authored** —
+   `checkForgery` rejects `evaluationCtx.target` / `evaluationCtx.scoring`
+   and `evaluation.scoredAgainst` on every submission, so the future
+   channel cannot be impersonated. A declared contract whose evaluator
+   abstains fails closed rather than minting outcome-less evidence.
+   The actual trusted-resolution seam (authoritative source read inside
+   the commit transaction) is a design requirement for the real pilot —
+   NOT a generic API shipped speculatively.
 2. **Event identity** — `evt.<attemptId>` pinned at the mint point; a
-   payload-carried id can never redirect it.
-3. **Immutable `occurredAt`** — `VocabularySubmission.attemptedAt` is
-   captured at the Compare-answer boundary in `vocabulary-practice.tsx`;
-   persist wall-clock never backdates an attempt, and a changed
-   `attemptedAt` on redelivery is a divergent conflict.
+   payload-carried id can never redirect it (W2-02 invariant).
+3. **Immutable `occurredAt`** — a future semantic attempt must persist a
+   stable attempt identity object (`attemptId`, `occurredAt`, frozen
+   response identity) and retries must reuse it; wall-clock at persist
+   time must never backdate or refresh it. The durable persistence model
+   is deferred — a `useRef` timestamp is lost on reload and spelling is
+   not a semantic producer, so nothing was built for it here.
 4. **Post-response reveal is not attempt support** — the producer
    declares no `revealed` flag on the semantic action; the kernel's
    answer-bearing support kinds (`hint`, `modelAnswer`, `translation`,
@@ -142,12 +150,16 @@ generally true, tested in `memory-capability-boundary.test.ts`:
 5. **Determinism ≠ authority domain** — a deterministic evaluator scores
    truthfully and still must not mint `LearnerProjection` state for
    item-level memory evidence.
-6. **`scoredAgainst` provenance** — events minted through the trusted
-   channel stamp which authoritative artifact supplied the target and its
-   canonical scored form.
+6. **`scoredAgainst` provenance** — when a real evaluator consumer
+   exists, the event should stamp which authoritative artifact supplied
+   the target and its canonical scored form. Kept as a requirement; the
+   stamping machinery was removed with the trusted channel.
 7. **Canonical normalization** — `src/vnext/normalize.js`
-   (`canonicalExactText`) is the single definition; the legacy
-   `normalizeSpelling` delegates so scorer and UI can never diverge.
+   (`canonicalExactText`) is shared *text normalization only* — no
+   scoring contract, no registered evaluator. The legacy
+   `normalizeSpelling` delegates so UI and any future scorer cannot
+   diverge; the test-only falsification evaluator uses the same
+   definition.
 8. **`authorityDomain` audit dimension** — the classification field on
    `LEGACY_CONTRACT_AUDIT` is the permanent record of §3.
 
@@ -167,9 +179,11 @@ noted:
 - all 15 actions classified; `semantic-commit.test.ts` asserts the audit
   carries a valid domain per entry and spelling's `MEMORY_ITEM` /
   non-`MAPPED_SAFE` status ✅
-- trust-boundary rejections (caller target / scoring / scoredAgainst)
-  and fail-closed evaluator abstention ✅
-- `evt.<attemptId>` + immutable `occurredAt` on the mapped producer path ✅
+- scoring-truth forgery rejections (caller `target` / `scoring` /
+  `scoredAgainst`) and fail-closed evaluator abstention ✅
+- `evt.<attemptId>` pinned on the mapped producer path ✅
+- deterministic scorer owns the outcome — a self-rating cannot launder
+  a miss ✅
 
 ## 7. Verification gates
 

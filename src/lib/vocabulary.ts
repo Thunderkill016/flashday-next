@@ -210,10 +210,9 @@ export function vocabularyQueue(
       .slice(0, Math.max(0, Math.min(100, Math.floor(limit) || 0) - todayNew)),
   ];
 }
-/* Canonical spelling normalization lives in the vendored kernel —
- * src/vnext/normalize.js is the single definition the exact-match
- * evaluator also uses, so the scorer can never diverge from the check
- * the learner experienced. */
+/* Canonical text normalization lives in one shared definition —
+ * src/vnext/normalize.js — so a future deterministic scorer can never
+ * diverge from the check the learner experienced. */
 export function normalizeSpelling(value: string) {
   return canonicalExactText(value);
 }

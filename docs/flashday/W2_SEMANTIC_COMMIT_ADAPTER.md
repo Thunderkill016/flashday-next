@@ -226,24 +226,28 @@ but NOT sufficient for capability evidence — the authority domain is the
 gate. The honest home for item-scoped form recall is the memory domain
 (FSRS item state in `records`), which already owns it.
 
-## Reusable findings kept (mechanisms, not activation)
+## Reusable findings kept (requirements + hardening, not activation)
 
-- **Trusted scoring channel** — `submitAttempt`'s `trusted` parameter is
-  the only path for evaluator truth; `checkForgery` rejects caller-authored
-  `evaluationCtx.target` / `evaluationCtx.scoring`, and `bindAttempt`
-  rejects caller-authored `evaluation.scoredAgainst`. A declared contract
-  whose evaluator abstains (`null`) fails closed — no outcome-less mint.
-- **`scoredAgainst` provenance** — the event stamps which authoritative
-  artifact supplied the target plus its canonical form, so replay audits
-  what 'correct' meant at commit time.
+- **Scoring truth is never caller-authored** — `checkForgery` rejects
+  `evaluationCtx.target` / `evaluationCtx.scoring` and
+  `evaluation.scoredAgainst` on every submission, and a declared contract
+  whose evaluator abstains (`null`) fails closed rather than minting
+  outcome-less evidence. A speculative `submitAttempt(..., trusted?)`
+  parameter was *removed* in R1 review: a public export cannot be
+  structurally trusted. The trusted-resolution seam (authoritative data
+  resolved inside the commit transaction) remains a design requirement
+  for a future real capability pilot, not shipped machinery.
+- **`scoredAgainst` provenance** — requirement only: when a real
+  evaluator consumer exists, the event should stamp which authoritative
+  artifact supplied the target plus its canonical scored form.
 - **Canonical normalization** — `src/vnext/normalize.js`
-  (`canonicalExactText`) is the single definition; the legacy
-  `normalizeSpelling` in `vocabulary.ts` delegates to it so a future
-  deterministic scorer can never diverge from the check the learner saw.
-- **Immutable attempt timestamp** — `VocabularySubmission.attemptedAt` is
-  captured once at the Compare-answer boundary in
-  `vocabulary-practice.tsx`; `occurredAt` never backdates to wall-clock
-  and a changed `attemptedAt` on a redelivery is a divergent conflict.
+  (`canonicalExactText`) is shared *text normalization only*, not a
+  scoring contract; the legacy `normalizeSpelling` in `vocabulary.ts`
+  delegates to it.
+- **Immutable attempt timestamp** — deferred: a future semantic attempt
+  must persist a stable attempt identity (`attemptId`, `occurredAt`,
+  frozen response) reused on retries. A `useRef` timestamp does not
+  survive reload, and spelling mints no events — nothing was built here.
 - **Post-response reveal is not attempt support** — the producer declares
   no `revealed` flag on the semantic action; the kernel's answer-bearing
   support kinds are a closed set a post-hoc flag cannot enter anyway.

@@ -52,15 +52,15 @@ const checkForgery = (sub: object) => {
       throw new Error(`submission may not author '${key}' — it is derived from the TaskContract`);
     }
   }
-  // The scoring channel is trusted seam input (W2-02.5) — it may only
-  // arrive through submitAttempt's `trusted` parameter. A caller who
-  // could set evaluationCtx.target would score answer===answer.
+  // Scoring truth (exact-match targets, scored-against provenance) is
+  // reserved for seam-resolved authoritative data — no production
+  // mechanism supplies it yet, and a caller who could set
+  // evaluationCtx.target would score answer===answer. The requirement is
+  // enforced structurally: callers may never author these keys.
   const ctx = rec.evaluationCtx as Record<string, unknown> | undefined;
   for (const key of ['target', 'scoring']) {
     if (ctx?.[key] != null) {
-      throw new Error(
-        `evaluationCtx may not author '${key}' — the scoring target is trusted seam input, never caller data`,
-      );
+      throw new Error(`evaluationCtx may not author '${key}' — scoring truth is seam-resolved, never caller data`);
     }
   }
   const evaluation = rec.evaluation as Record<string, unknown> | undefined;
@@ -93,9 +93,6 @@ export interface AttemptEvalResult {
   functions?: { fn: string; met: boolean; known: boolean }[];
   missed?: string[];
   missingFunctions?: string[];
-  /** Canonical form of the target the evaluator actually scored against
-   * (exact-match family) — replay provenance, never caller-supplied. */
-  scoredTarget?: string;
 }
 
 export interface AttemptResult {
@@ -103,20 +100,10 @@ export interface AttemptResult {
   evalResult: AttemptEvalResult | null;
 }
 
-/** Trusted evaluator input only the seam may supply — resolved from
- * authoritative storage inside the commit transaction (e.g. the
- * ContentItem title a spelling task scores against). Never part of the
- * caller-visible submission: checkForgery rejects target/scoring keys on
- * evaluationCtx so this channel cannot be impersonated. */
-export interface TrustedEvaluationInput {
-  scoring?: { target?: string; contentId?: string };
-}
-
 export async function submitAttempt(
   store: EventStore,
   registry: ContractRegistry,
   sub: AttemptSubmission,
-  trusted?: TrustedEvaluationInput,
 ): Promise<AttemptResult> {
   checkForgery(sub);
   const { task, capability } = resolveTask(registry, sub.taskId);
@@ -128,14 +115,11 @@ export async function submitAttempt(
    * ai_llm evidence can never mint independent credit either.
    *
    * A declared contract whose evaluator abstains (returns null —
-   * unregistered contract, or a missing trusted target) fails CLOSED:
-   * falling back to the caller's claimed outcome would let an
-   * unscorable attempt mint evidence anyway. */
+   * unregistered contract, missing scoring truth) fails CLOSED: falling
+   * back to the caller's claimed outcome would let an unscorable
+   * attempt mint evidence anyway. */
   const evalResult = task.evaluation?.contractId
-    ? ((evaluateAttempt(task as never, sub.response, {
-        ...(sub.evaluationCtx ?? {}),
-        scoring: trusted?.scoring,
-      } as never) ?? null) as AttemptEvalResult | null)
+    ? ((evaluateAttempt(task as never, sub.response, sub.evaluationCtx as never) ?? null) as AttemptEvalResult | null)
     : null;
   if (task.evaluation?.contractId && !evalResult) {
     throw new Error(
@@ -143,46 +127,34 @@ export async function submitAttempt(
     );
   }
   const outcome = evalResult ? evalResult.outcome : (sub.outcome ?? null);
-  // What 'correct' meant at commit time: which authoritative artifact
-  // supplied the target plus its canonical form. Stamped into
-  // evaluation so replay audits provenance, not today's table contents.
-  const scoredAgainst =
-    evalResult?.scoredTarget != null
-      ? { contentId: trusted?.scoring?.contentId ?? null, scoredTarget: evalResult.scoredTarget }
-      : undefined;
 
-  const event = bindAttempt(
-    task as never,
-    capability as never,
-    {
-      id: genEventId(sub),
-      learnerId: sub.learnerId,
-      occurredAt: sub.occurredAt,
-      // The contract's purpose×response matrix picks the emitted type —
-      // e.g. retrieval+choice → recognition_attempt, diagnostic+text →
-      // recall_attempt. Callers never name it.
-      eventType:
-        sub.eventType ?? emittedEventType(task.purpose as never, task.response?.type === 'choice' ? 'choice' : 'text'),
-      attempt: {
-        observed: true,
-        outcome,
-        response: sub.response,
-        latencyMs: sub.latencyMs,
-        attemptId: sub.attemptId,
-      },
-      support: sub.support,
-      feedback: sub.feedback,
-      partnerType: sub.partnerType,
-      evaluation: {
-        evaluator: sub.evaluation?.evaluator,
-        version: sub.evaluation?.version,
-        // Demand routing reads evaluator-attributed misses — the binder
-        // still validates they stay ⊆ requiredFunctions.
-        missingFunctions: evalResult?.missingFunctions ?? sub.evaluation?.missingFunctions ?? [],
-      },
+  const event = bindAttempt(task as never, capability as never, {
+    id: genEventId(sub),
+    learnerId: sub.learnerId,
+    occurredAt: sub.occurredAt,
+    // The contract's purpose×response matrix picks the emitted type —
+    // e.g. retrieval+choice → recognition_attempt, diagnostic+text →
+    // recall_attempt. Callers never name it.
+    eventType:
+      sub.eventType ?? emittedEventType(task.purpose as never, task.response?.type === 'choice' ? 'choice' : 'text'),
+    attempt: {
+      observed: true,
+      outcome,
+      response: sub.response,
+      latencyMs: sub.latencyMs,
+      attemptId: sub.attemptId,
     },
-    scoredAgainst ? { scoredAgainst } : undefined,
-  ) as EvidenceEvent;
+    support: sub.support,
+    feedback: sub.feedback,
+    partnerType: sub.partnerType,
+    evaluation: {
+      evaluator: sub.evaluation?.evaluator,
+      version: sub.evaluation?.version,
+      // Demand routing reads evaluator-attributed misses — the binder
+      // still validates they stay ⊆ requiredFunctions.
+      missingFunctions: evalResult?.missingFunctions ?? sub.evaluation?.missingFunctions ?? [],
+    },
+  }) as EvidenceEvent;
   await store.append([event]);
   return { event, evalResult };
 }

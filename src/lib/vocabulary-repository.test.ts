@@ -60,9 +60,7 @@ it('stores reviewed vocabulary without replacing the uploaded original', async (
 });
 it('does not award recall for merely revealing, caps wrong spelling and preserves evidence',async()=>{
   await importVocabulary('Words','word,meaning\nhelpful,有帮助的'); const content=(await db.contents.toArray())[0];
-  // attemptedAt pins the immutable attempt timestamp — a retry of the same
-  // submission must carry it so the redelivery is identical, not divergent.
-  const base={id:'attempt-1',contentId:content.id,mode:'spelling' as const,answer:'helpfull',revealed:true,rating:4,attemptedAt:1000};
+  const base={id:'attempt-1',contentId:content.id,mode:'spelling' as const,answer:'helpfull',revealed:true,rating:4};
   await expect(saveVocabularySubmission({...base,answer:''})).rejects.toThrow();
   await saveVocabularySubmission(base);
   const record=await db.records.get(vocabularyRecordId(content.id,'spelling'));
