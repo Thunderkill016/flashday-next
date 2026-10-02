@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { DEFAULT_TRANSLATION_TARGET } from '@/lib/i18n/locale';
+import { enforceRouteRateLimit, rateLimitResponse } from '@/lib/platform-provider';
 
 const TRANSLATION_CONCURRENCY = 4;
 
@@ -18,6 +19,11 @@ class UpstreamTranslateError extends Error {
  * Used as the default/fallback for selection translation.
  */
 export async function POST(req: NextRequest) {
+  const rateLimit = await enforceRouteRateLimit({ headers: req.headers, bucket: 'translate-free' });
+  if (!rateLimit.ok) {
+    return rateLimitResponse(rateLimit);
+  }
+
   try {
     const body: { text?: string; sentences?: string[]; targetLang?: string } = await req.json();
     const { text, sentences, targetLang = DEFAULT_TRANSLATION_TARGET } = body;

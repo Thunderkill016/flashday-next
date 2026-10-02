@@ -1,7 +1,7 @@
 import type { ContentMetadata } from '@/types/content';
 import type { ImportJob, ImportSourceBlock } from '@/types/import-job';
 import type { db } from './db';
-import { extractYouTubeVideoId } from './youtube-transcript';
+import { extractYouTubeVideoId } from './youtube-url';
 
 type Cue = NonNullable<ContentMetadata['timestamps']>[number];
 const normalized = (text: string) => text.replace(/\s+/g, ' ').trim();

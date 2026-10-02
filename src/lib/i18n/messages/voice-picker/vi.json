@@ -18,7 +18,6 @@
     "google": "Tìm giọng Google theo tên, giọng vùng hoặc giới tính...",
     "openai": "Tìm giọng OpenAI theo tên hoặc phong cách...",
     "kokoro": "Tìm giọng theo tên, ngôn ngữ hoặc giới tính...",
-    "edge": "Tìm giọng Edge theo tên, giọng vùng hoặc giới tính...",
     "browser": "Tìm giọng theo tên, giọng vùng hoặc nhà cung cấp..."
   },
   "browserSummary": "Đang hiện {{filtered}}/{{visible}} giọng trình duyệt trong khung này. Hiện có {{english}} giọng tiếng Anh và {{total}} giọng tổng cộng trong WebView này.",
@@ -42,8 +41,7 @@
   "errors": {
     "fish": "Lỗi thư viện giọng Fish:",
     "google": "Lỗi thư viện giọng Google Cloud TTS:",
-    "kokoro": "Lỗi thư viện giọng Kokoro:",
-    "edge": "Không tải được giọng Edge. Đang dùng danh sách dự phòng."
+    "kokoro": "Lỗi thư viện giọng Kokoro:"
   },
   "actions": {
     "clearSearch": "Xoá tìm kiếm",

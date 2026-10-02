@@ -1,11 +1,14 @@
 import { NextRequest } from 'next/server';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-const { fetchMock, resolveApiKeyMock, enforcePlatformRateLimitMock } = vi.hoisted(() => ({
-  fetchMock: vi.fn(),
-  resolveApiKeyMock: vi.fn((providerId: string) => `${providerId}-test-key`),
-  enforcePlatformRateLimitMock: vi.fn(async () => ({ ok: true as const })),
-}));
+const { fetchMock, resolveApiKeyMock, enforcePlatformRateLimitMock, enforceRouteRateLimitMock } = vi.hoisted(
+  () => ({
+    fetchMock: vi.fn(),
+    resolveApiKeyMock: vi.fn((providerId: string) => `${providerId}-test-key`),
+    enforcePlatformRateLimitMock: vi.fn(async () => ({ ok: true as const })),
+    enforceRouteRateLimitMock: vi.fn(async () => ({ ok: true as const })),
+  }),
+);
 
 vi.stubGlobal('fetch', fetchMock);
 
@@ -15,6 +18,12 @@ vi.mock('@/lib/ai-model', () => ({
 
 vi.mock('@/lib/platform-provider', () => ({
   enforcePlatformRateLimit: enforcePlatformRateLimitMock,
+  enforceRouteRateLimit: enforceRouteRateLimitMock,
+  rateLimitResponse: (result: { retryAfterSeconds: number; message: string }) =>
+    new Response(JSON.stringify({ error: result.message, code: 'rate_limited' }), {
+      status: 429,
+      headers: { 'Retry-After': String(result.retryAfterSeconds) },
+    }),
 }));
 
 const { POST } = await import('./route');
@@ -46,6 +55,7 @@ describe('POST /api/stt', () => {
     fetchMock.mockReset();
     resolveApiKeyMock.mockClear();
     enforcePlatformRateLimitMock.mockClear();
+    enforceRouteRateLimitMock.mockClear();
   });
 
   it('falls back to another configured provider after a non-retryable upstream auth failure', async () => {

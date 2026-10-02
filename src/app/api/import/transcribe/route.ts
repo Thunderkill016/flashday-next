@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from 'next/server';
 import { resolveApiKey } from '@/lib/ai-model';
 import { heuristicClassifyContent } from '@/lib/classification';
 import { describeImportError } from '@/lib/import-error';
-import { enforcePlatformRateLimit } from '@/lib/platform-provider';
+import { enforcePlatformRateLimit, enforceRouteRateLimit, rateLimitResponse } from '@/lib/platform-provider';
 import { ProviderResolutionError } from '@/lib/provider-resolver';
 import { type ProviderConfig, type ProviderId } from '@/lib/providers';
 import {
@@ -19,6 +19,11 @@ export const runtime = 'nodejs';
 export const maxDuration = 60;
 
 export async function POST(req: NextRequest) {
+  const routeLimit = await enforceRouteRateLimit({ headers: req.headers, bucket: 'import' });
+  if (!routeLimit.ok) {
+    return rateLimitResponse(routeLimit);
+  }
+
   try {
     const formData = await req.formData();
     const file = formData.get('file') as File | null;

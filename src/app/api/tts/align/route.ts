@@ -1,10 +1,16 @@
 import { NextRequest } from 'next/server';
+import { enforceRouteRateLimit, rateLimitResponse } from '@/lib/platform-provider';
 import { matchTimestampsToText } from '@/lib/word-alignment';
 
 const GROQ_API_URL = 'https://api.groq.com/openai/v1/audio/transcriptions';
 const GROQ_MODEL = 'whisper-large-v3-turbo';
 
 export async function POST(req: NextRequest) {
+  const rateLimit = await enforceRouteRateLimit({ headers: req.headers, bucket: 'tts' });
+  if (!rateLimit.ok) {
+    return rateLimitResponse(rateLimit);
+  }
+
   const formData = await req.formData();
   const audioFile = formData.get('audio') as File | null;
   const text = formData.get('text') as string | null;

@@ -1,3 +1,4 @@
+import { fetchEgress } from '@/lib/egress';
 import type { KokoroSpeechInput, KokoroVoice } from '@/lib/kokoro-shared';
 import { parseKokoroVoiceId } from '@/lib/kokoro-shared';
 
@@ -13,7 +14,7 @@ export async function listKokoroVoices(serverUrl: string, apiKey?: string): Prom
 
   try {
     const url = `${serverUrl.replace(/\/+$/, '')}/v1/audio/voices`;
-    const response = await fetch(url, {
+    const response = await fetchEgress(url, {
       headers: buildHeaders(apiKey),
       signal: controller.signal,
     });
@@ -47,7 +48,7 @@ export async function synthesizeKokoroSpeech(
 
   try {
     const url = `${input.serverUrl.replace(/\/+$/, '')}/v1/audio/speech`;
-    const response = await fetch(url, {
+    const response = await fetchEgress(url, {
       method: 'POST',
       headers: buildHeaders(input.apiKey),
       body: JSON.stringify({

@@ -1,6 +1,11 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { synthesizeOpenAISpeech } from './openai-tts';
 
+// Public endpoints: egress policy resolves the hostname before the pinned fetch.
+vi.mock('node:dns/promises', () => ({
+  lookup: vi.fn(async () => [{ address: '93.184.216.34', family: 4 }]),
+}));
+
 const fetchMock = vi.fn();
 
 vi.stubGlobal('fetch', fetchMock);

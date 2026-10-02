@@ -3,6 +3,9 @@ import { generateText, Output } from 'ai';
 import { z } from 'zod';
 import { addOpenRouterProviderPreferences, resolveModel } from './ai-model';
 
+// Ollama is a local provider — the egress policy only permits it in self-host mode.
+vi.stubEnv('FLASHDAY_SELF_HOST', '1');
+
 afterEach(()=>vi.unstubAllGlobals());
 it.each([undefined,'http://127.0.0.1:11434'])('sends a JSON schema to Ollama at %s',async(baseUrl)=>{
  let body:any;

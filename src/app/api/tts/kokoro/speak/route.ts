@@ -1,7 +1,14 @@
 import { NextRequest } from 'next/server';
+import { EgressPolicyError } from '@/lib/egress';
 import { synthesizeKokoroSpeech } from '@/lib/kokoro';
+import { enforceRouteRateLimit, rateLimitResponse } from '@/lib/platform-provider';
 
 export async function POST(req: NextRequest) {
+  const rateLimit = await enforceRouteRateLimit({ headers: req.headers, bucket: 'tts' });
+  if (!rateLimit.ok) {
+    return rateLimitResponse(rateLimit);
+  }
+
   const {
     serverUrl,
     apiKey,
@@ -44,6 +51,9 @@ export async function POST(req: NextRequest) {
       },
     });
   } catch (error) {
+    if (error instanceof EgressPolicyError) {
+      return Response.json({ error: error.message, code: 'egress_blocked' }, { status: 403 });
+    }
     const message = error instanceof Error ? error.message : 'Kokoro speech synthesis failed.';
     return Response.json({ error: message }, { status: 500 });
   }

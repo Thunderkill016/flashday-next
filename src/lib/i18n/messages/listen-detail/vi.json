@@ -7,11 +7,9 @@
   "header": {
     "words": "{{count}} từ",
     "cloudPlaybackNotice": "Đang phát bằng {{source}}. Tô sáng theo câu chỉ là ước lượng nên sẽ kém chính xác hơn tô sáng theo từ của trình duyệt.",
-    "selectedPlaybackNotice": "Đã chọn: {{selected}}. Đang phát bằng: {{actual}}.",
-    "browserFallbackNotice": "Đã chọn: {{selected}}. Đang phát bằng: {{actual}} để ổn định vì Edge TTS tạm thời không khả dụng."
+    "selectedPlaybackNotice": "Đã chọn: {{selected}}. Đang phát bằng: {{actual}}."
   },
   "sources": {
-    "edge": "Edge TTS",
     "fish": "Fish Audio",
     "google": "Google Cloud TTS",
     "openai": "OpenAI TTS",

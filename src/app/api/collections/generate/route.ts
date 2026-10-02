@@ -2,6 +2,7 @@ import { generateText } from 'ai';
 import { NextRequest, NextResponse } from 'next/server';
 import { resolveApiKey, resolveModel } from '@/lib/ai-model';
 import { parseAIJson } from '@/lib/parse-ai-json';
+import { enforceRouteRateLimit, rateLimitResponse } from '@/lib/platform-provider';
 import { getDefaultModelId, PROVIDER_REGISTRY, type ProviderId } from '@/lib/providers';
 
 export const runtime = 'nodejs';
@@ -141,6 +142,11 @@ Rules:
 }
 
 export async function POST(req: NextRequest) {
+  const rateLimit = await enforceRouteRateLimit({ headers: req.headers, bucket: 'generate' });
+  if (!rateLimit.ok) {
+    return rateLimitResponse(rateLimit);
+  }
+
   try {
     const providerIdRaw = req.headers.get('x-provider-id')?.trim();
     const providerId = providerIdRaw as ProviderId | undefined;

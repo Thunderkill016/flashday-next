@@ -1,11 +1,17 @@
 import { NextResponse } from 'next/server';
 import { FORMAT_HANDLERS, getExtension } from '@/lib/extract-text';
 import { DOCUMENT_MAX_BYTES } from '@/lib/import-limits';
+import { enforceRouteRateLimit, rateLimitResponse } from '@/lib/platform-provider';
 
 export const runtime = 'nodejs';
 export const maxDuration = 30;
 
 export async function POST(req: Request) {
+  const rateLimit = await enforceRouteRateLimit({ headers: req.headers, bucket: 'import' });
+  if (!rateLimit.ok) {
+    return rateLimitResponse(rateLimit);
+  }
+
   try {
     const formData = await req.formData();
     const file = formData.get('file') as File | null;

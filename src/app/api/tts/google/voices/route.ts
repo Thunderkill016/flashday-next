@@ -1,7 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { listGoogleVoices } from '@/lib/google-tts';
+import { enforceRouteRateLimit, rateLimitResponse } from '@/lib/platform-provider';
 
 export async function POST(req: NextRequest) {
+  const rateLimit = await enforceRouteRateLimit({ headers: req.headers, bucket: 'tts' });
+  if (!rateLimit.ok) {
+    return rateLimitResponse(rateLimit);
+  }
+
   const { apiKey: requestApiKey }: { apiKey?: string } = await req.json();
   const apiKey = requestApiKey?.trim() || process.env.GOOGLE_API_KEY?.trim();
 

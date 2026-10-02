@@ -10,6 +10,7 @@ import { createOpenAICompatible } from '@ai-sdk/openai-compatible';
 import { createPerplexity } from '@ai-sdk/perplexity';
 import { createTogetherAI } from '@ai-sdk/togetherai';
 import { createXai } from '@ai-sdk/xai';
+import { egressFetch } from './egress';
 import { getPlatformGroqApiKey } from './platform-provider';
 import { getDefaultModelId, PROVIDER_REGISTRY, type ProviderAuthState, type ProviderId } from './providers';
 
@@ -76,43 +77,45 @@ export function resolveModel({ providerId, modelId, apiKey, baseUrl, apiPath }: 
   if (isCustomUrl) {
     const sdkBase = buildSdkBaseURL(effectiveBaseUrl, effectivePath);
     if (effectivePath.endsWith('/messages')) {
-      return createAnthropic({ apiKey, baseURL: sdkBase })(effectiveModelId);
+      return createAnthropic({ apiKey, baseURL: sdkBase, fetch: egressFetch })(effectiveModelId);
     }
     if (effectivePath.includes(':generateContent')) {
-      return createGoogleGenerativeAI({ apiKey, baseURL: sdkBase })(effectiveModelId);
+      return createGoogleGenerativeAI({ apiKey, baseURL: sdkBase, fetch: egressFetch })(effectiveModelId);
     }
     return createOpenAICompatible({
       name: providerId,
       apiKey,
       baseURL: sdkBase,
+      fetch: egressFetch,
       ...(providerId === 'ollama' ? { supportsStructuredOutputs: true } : {}),
     })(effectiveModelId);
   }
 
-  // Default provider routing — use native SDKs
+  // Default provider routing — use native SDKs. All egress goes through
+  // egressFetch so provider destinations follow the server egress policy.
   switch (providerId) {
     case 'openai':
-      return createOpenAI({ apiKey })(effectiveModelId);
+      return createOpenAI({ apiKey, fetch: egressFetch })(effectiveModelId);
     case 'anthropic':
-      return createAnthropic({ apiKey })(effectiveModelId);
+      return createAnthropic({ apiKey, fetch: egressFetch })(effectiveModelId);
     case 'google':
-      return createGoogleGenerativeAI({ apiKey })(effectiveModelId);
+      return createGoogleGenerativeAI({ apiKey, fetch: egressFetch })(effectiveModelId);
     case 'groq':
-      return createGroq({ apiKey })(effectiveModelId);
+      return createGroq({ apiKey, fetch: egressFetch })(effectiveModelId);
     case 'mistral':
-      return createMistral({ apiKey })(effectiveModelId);
+      return createMistral({ apiKey, fetch: egressFetch })(effectiveModelId);
     case 'xai':
-      return createXai({ apiKey })(effectiveModelId);
+      return createXai({ apiKey, fetch: egressFetch })(effectiveModelId);
     case 'cohere':
-      return createCohere({ apiKey })(effectiveModelId);
+      return createCohere({ apiKey, fetch: egressFetch })(effectiveModelId);
     case 'perplexity':
-      return createPerplexity({ apiKey })(effectiveModelId);
+      return createPerplexity({ apiKey, fetch: egressFetch })(effectiveModelId);
     case 'togetherai':
-      return createTogetherAI({ apiKey })(effectiveModelId);
+      return createTogetherAI({ apiKey, fetch: egressFetch })(effectiveModelId);
     case 'deepinfra':
-      return createDeepInfra({ apiKey })(effectiveModelId);
+      return createDeepInfra({ apiKey, fetch: egressFetch })(effectiveModelId);
     case 'cerebras':
-      return createCerebras({ apiKey })(effectiveModelId);
+      return createCerebras({ apiKey, fetch: egressFetch })(effectiveModelId);
     // OpenAI-compatible providers (deepseek, fireworks, openrouter, chinese, local)
     default: {
       const sdkBase = buildSdkBaseURL(effectiveBaseUrl, effectivePath);
@@ -121,6 +124,7 @@ export function resolveModel({ providerId, modelId, apiKey, baseUrl, apiPath }: 
         name: providerId,
         apiKey: def.noKeyRequired ? 'ollama' : apiKey,
         baseURL: sdkBase,
+        fetch: egressFetch,
         ...(providerId === 'ollama' ? { supportsStructuredOutputs: true } : {}),
         ...(providerId === 'openrouter' ? { transformRequestBody: addOpenRouterProviderPreferences } : {}),
       })(effectiveModelId);

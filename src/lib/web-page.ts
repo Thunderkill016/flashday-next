@@ -1,43 +1,8 @@
+import { EgressPolicyError, fetchEgress } from './egress';
+
 const URL_REGEX = /https?:\/\/[^\s]+/i;
 const HTTP_FALLBACK_HOSTS = new Set(['downloads.bbc.co.uk']);
-
-function isPrivateHostname(hostname: string): boolean {
-  const normalized = hostname.toLowerCase();
-
-  if (normalized === 'localhost' || normalized === '0.0.0.0' || normalized === '::1') {
-    return true;
-  }
-
-  if (normalized.endsWith('.local') || normalized.endsWith('.internal')) {
-    return true;
-  }
-
-  if (
-    /^127\./.test(normalized) ||
-    /^10\./.test(normalized) ||
-    /^192\.168\./.test(normalized) ||
-    /^169\.254\./.test(normalized)
-  ) {
-    return true;
-  }
-
-  const private172Match = normalized.match(/^172\.(\d{1,3})\./);
-  if (private172Match) {
-    const secondOctet = Number(private172Match[1]);
-    if (secondOctet >= 16 && secondOctet <= 31) {
-      return true;
-    }
-  }
-
-  if (normalized.startsWith('[') && normalized.endsWith(']')) {
-    const ipv6 = normalized.slice(1, -1);
-    if (ipv6 === '::1' || ipv6.startsWith('fc') || ipv6.startsWith('fd') || ipv6.startsWith('fe80:')) {
-      return true;
-    }
-  }
-
-  return false;
-}
+const MAX_REDIRECT_HOPS = 5;
 
 function stripTags(html: string): string {
   return (
@@ -160,35 +125,26 @@ function canRetryOverHttp(parsedUrl: URL, error: unknown): boolean {
   return /fetch failed|ECONNRESET|TLS|secure TLS connection/i.test(error.message);
 }
 
-async function fetchRemoteResponse(url: string): Promise<Response> {
-  const parsedUrl = new URL(url);
-  const deadline = Date.now() + 24_000;
-  let requestUrl = url;
-  const requestInit: RequestInit = {
-    headers: {
-      'User-Agent':
-        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36',
-      Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,text/plain;q=0.8,*/*;q=0.7',
-    },
-  };
-
+async function requestWithRetries(parsedUrl: URL, requestInit: RequestInit, deadline: number): Promise<Response> {
+  let requestUrl = parsedUrl.toString();
   for (let attempt = 0; attempt < 3; attempt++) {
     let delay = 1000 * 2 ** attempt;
     let response: Response;
     try {
-      response = await fetch(requestUrl, {
+      response = await fetchEgress(requestUrl, {
         ...requestInit,
+        redirect: 'manual',
         signal: AbortSignal.timeout(Math.max(1, Math.min(15_000, deadline - Date.now()))),
       });
     } catch (error) {
-      if (!(error instanceof Error) || error.name === 'AbortError') throw error;
+      if (error instanceof EgressPolicyError || !(error instanceof Error) || error.name === 'AbortError') throw error;
       if (!/fetch failed|network|ECONN|ENOTFOUND|TLS|timeout|timed out/i.test(`${error.name} ${error.message}`))
         throw error;
       if (attempt === 2 || Date.now() + delay + 1000 > deadline) {
         throw new Error('URL automatic retries exhausted', { cause: error });
       }
       if (canRetryOverHttp(parsedUrl, error)) {
-        const fallbackUrl = new URL(url);
+        const fallbackUrl = new URL(parsedUrl);
         fallbackUrl.protocol = 'http:';
         requestUrl = fallbackUrl.toString();
       }
@@ -212,6 +168,34 @@ async function fetchRemoteResponse(url: string): Promise<Response> {
     await new Promise((resolve) => setTimeout(resolve, delay));
   }
   throw new Error('URL automatic retries exhausted');
+}
+
+async function fetchRemoteResponse(url: string): Promise<Response> {
+  const deadline = Date.now() + 24_000;
+  const requestInit: RequestInit = {
+    headers: {
+      'User-Agent':
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36',
+      Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,text/plain;q=0.8,*/*;q=0.7',
+    },
+  };
+
+  let currentUrl = url;
+  for (let hop = 0; hop <= MAX_REDIRECT_HOPS; hop++) {
+    const parsedUrl = new URL(currentUrl);
+    // Every hop — initial URL and each redirect target — goes through the
+    // egress policy: protocol/destination validation and a DNS resolution that
+    // is pinned to the actual socket (no uncontrolled second lookup).
+    const response = await requestWithRetries(parsedUrl, requestInit, deadline);
+    if (response.status < 300 || response.status >= 400) return response;
+
+    const location = response.headers.get('location');
+    await response.body?.cancel();
+    if (!location) return response;
+
+    currentUrl = new URL(location, currentUrl).toString();
+  }
+  throw new Error('Too many redirects while fetching page');
 }
 
 async function extractPdfFromBuffer(buffer: Buffer) {
@@ -239,10 +223,6 @@ export async function fetchWebPageContent(url: string): Promise<{ title: string;
   const parsedUrl = new URL(url);
   if (!['http:', 'https:'].includes(parsedUrl.protocol)) {
     throw new Error(`Unsupported URL protocol: ${parsedUrl.protocol}`);
-  }
-
-  if (isPrivateHostname(parsedUrl.hostname)) {
-    throw new Error('Private or local URLs are not allowed');
   }
 
   const response = await fetchRemoteResponse(url);

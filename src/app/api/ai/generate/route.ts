@@ -2,7 +2,7 @@ import { generateText } from 'ai';
 import { NextRequest, NextResponse } from 'next/server';
 import { resolveApiKey, resolveModel } from '@/lib/ai-model';
 import { parseAIJson } from '@/lib/parse-ai-json';
-import { enforcePlatformRateLimit } from '@/lib/platform-provider';
+import { enforcePlatformRateLimit, enforceRouteRateLimit, rateLimitResponse } from '@/lib/platform-provider';
 import { ProviderResolutionError, resolveProviderForCapability } from '@/lib/provider-resolver';
 import { type ProviderConfig, type ProviderId } from '@/lib/providers';
 import { extractFirstUrl, fetchWebPageContent, removeUrlFromPrompt } from '@/lib/web-page';
@@ -11,6 +11,11 @@ export const runtime = 'nodejs';
 export const maxDuration = 60;
 
 export async function POST(req: NextRequest) {
+  const routeLimit = await enforceRouteRateLimit({ headers: req.headers, bucket: 'generate' });
+  if (!routeLimit.ok) {
+    return rateLimitResponse(routeLimit);
+  }
+
   try {
     const {
       prompt,

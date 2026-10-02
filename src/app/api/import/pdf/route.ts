@@ -1,10 +1,16 @@
 import { NextResponse } from 'next/server';
 import { extractPdf } from '@/lib/extract-text';
+import { enforceRouteRateLimit, rateLimitResponse } from '@/lib/platform-provider';
 
 export const runtime = 'nodejs';
 export const maxDuration = 30;
 
 export async function POST(req: Request) {
+  const rateLimit = await enforceRouteRateLimit({ headers: req.headers, bucket: 'import' });
+  if (!rateLimit.ok) {
+    return rateLimitResponse(rateLimit);
+  }
+
   try {
     const formData = await req.formData();
     const file = formData.get('file') as File | null;

@@ -1,7 +1,13 @@
 import { NextResponse } from 'next/server';
+import { enforceRouteRateLimit, rateLimitResponse } from '@/lib/platform-provider';
 import { extractYouTubeVideoId, fetchYouTubeTranscriptFromSources, YouTubeSourceError } from '@/lib/youtube-transcript';
 
 export async function POST(req: Request) {
+  const rateLimit = await enforceRouteRateLimit({ headers: req.headers, bucket: 'import' });
+  if (!rateLimit.ok) {
+    return rateLimitResponse(rateLimit);
+  }
+
   try {
     const { url } = await req.json();
     if (!url) {

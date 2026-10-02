@@ -28,7 +28,13 @@ vi.mock('@upstash/redis', () => ({
   },
 }));
 
-import { enforcePlatformRateLimit, hasUpstashRateLimitEnv, resetPlatformRateLimitState } from './platform-provider';
+import {
+  enforcePlatformRateLimit,
+  enforceRouteRateLimit,
+  hasUpstashRateLimitEnv,
+  rateLimitResponse,
+  resetPlatformRateLimitState,
+} from './platform-provider';
 
 const baseResolution = {
   providerId: 'groq' as const,
@@ -115,5 +121,76 @@ describe('platform provider helpers', () => {
     expect(result).toMatchObject({
       ok: false,
     });
+  });
+});
+
+describe('enforceRouteRateLimit', () => {
+  afterEach(() => {
+    delete process.env.UPSTASH_REDIS_REST_URL;
+    delete process.env.UPSTASH_REDIS_REST_TOKEN;
+    resetPlatformRateLimitState();
+    vi.clearAllMocks();
+  });
+
+  it('allows requests under the bucket limit regardless of provider credentials', async () => {
+    const headers = new Headers({ 'x-forwarded-for': '203.0.113.40' });
+
+    for (let i = 0; i < 15; i += 1) {
+      await expect(enforceRouteRateLimit({ headers, bucket: 'stt' })).resolves.toEqual({ ok: true });
+    }
+  });
+
+  it('rejects requests over the bucket limit with a retry hint', async () => {
+    const headers = new Headers({ 'x-forwarded-for': '203.0.113.41' });
+
+    for (let i = 0; i < 15; i += 1) {
+      await enforceRouteRateLimit({ headers, bucket: 'stt' });
+    }
+
+    const blocked = await enforceRouteRateLimit({ headers, bucket: 'stt' });
+    expect(blocked).toMatchObject({ ok: false });
+    if (!blocked.ok) {
+      expect(blocked.retryAfterSeconds).toBeGreaterThan(0);
+    }
+  });
+
+  it('keeps separate counters per bucket and per client', async () => {
+    const headers = new Headers({ 'x-forwarded-for': '203.0.113.42' });
+
+    for (let i = 0; i < 15; i += 1) {
+      await enforceRouteRateLimit({ headers, bucket: 'stt' });
+    }
+
+    await expect(enforceRouteRateLimit({ headers, bucket: 'stt' })).resolves.toMatchObject({ ok: false });
+    await expect(enforceRouteRateLimit({ headers, bucket: 'tts' })).resolves.toEqual({ ok: true });
+    await expect(
+      enforceRouteRateLimit({ headers: new Headers({ 'x-forwarded-for': '198.51.100.42' }), bucket: 'stt' }),
+    ).resolves.toEqual({ ok: true });
+  });
+
+  it('uses Upstash for route buckets when configured', async () => {
+    upstashMocks.fromEnv.mockReturnValue({ kind: 'redis' });
+    upstashMocks.slidingWindow.mockReturnValue('sliding-window');
+    upstashMocks.limit.mockResolvedValue({ success: false, reset: Date.now() + 10_000 });
+
+    process.env.UPSTASH_REDIS_REST_URL = 'https://example.upstash.io';
+    process.env.UPSTASH_REDIS_REST_TOKEN = 'token';
+
+    const result = await enforceRouteRateLimit({
+      headers: new Headers({ 'x-forwarded-for': '198.51.100.99' }),
+      bucket: 'import',
+    });
+
+    expect(upstashMocks.slidingWindow).toHaveBeenCalledWith(12, '60 s');
+    expect(upstashMocks.limit).toHaveBeenCalledWith('198.51.100.99');
+    expect(result).toMatchObject({ ok: false });
+  });
+
+  it('builds a 429 response with Retry-After', async () => {
+    const response = rateLimitResponse({ retryAfterSeconds: 42, message: 'slow down' });
+
+    expect(response.status).toBe(429);
+    expect(response.headers.get('Retry-After')).toBe('42');
+    await expect(response.json()).resolves.toMatchObject({ code: 'rate_limited', error: 'slow down' });
   });
 });

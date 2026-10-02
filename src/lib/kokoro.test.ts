@@ -3,6 +3,8 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 const fetchMock = vi.fn();
 
 vi.stubGlobal('fetch', fetchMock);
+// Kokoro is a local provider — permitted under self-host egress policy.
+vi.stubEnv('FLASHDAY_SELF_HOST', '1');
 
 const { listKokoroVoices, synthesizeKokoroSpeech } = await import('./kokoro');
 

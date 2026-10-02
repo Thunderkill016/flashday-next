@@ -238,46 +238,6 @@ describe('fish-audio helpers', () => {
     ).toEqual({ source: 'browser', reason: undefined });
   });
 
-  it('returns browser fallback when Edge TTS has no voice selected', () => {
-    expect(
-      resolveTTSSource({
-        requestedSource: 'edge',
-        hasFishCredentials: false,
-        hasFishVoice: false,
-        hasEdgeVoice: false,
-      }),
-    ).toEqual({
-      source: 'browser',
-      reason: 'Edge TTS is selected but no voice is chosen yet.',
-    });
-  });
-
-  it('returns Edge TTS when a voice is present', () => {
-    expect(
-      resolveTTSSource({
-        requestedSource: 'edge',
-        hasFishCredentials: false,
-        hasFishVoice: false,
-        hasEdgeVoice: true,
-      }),
-    ).toEqual({ source: 'edge' });
-  });
-
-  it('falls back to browser for boundary events when Edge TTS is selected', () => {
-    expect(
-      resolveTTSSource({
-        requestedSource: 'edge',
-        hasFishCredentials: false,
-        hasFishVoice: false,
-        hasEdgeVoice: true,
-        requiresBoundaryEvents: true,
-      }),
-    ).toEqual({
-      source: 'browser',
-      reason: 'Boundary-based highlighting still requires browser speech when Edge TTS is selected.',
-    });
-  });
-
   // --- synthesizeFishSpeech ---
 
   it('synthesizes Fish speech and returns audio bytes plus content type', async () => {

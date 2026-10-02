@@ -7,7 +7,7 @@ restatement of every MIT dep.
 
 | Package | License | Class | Note |
 |---|---|---|---|
-| edge-tts-universal | **AGPL-3.0** | COPYLEFT-BOUNDARY | Edge-TTS path. AGPL reaches network use — review before shipping TTS through it in a SaaS context. Replace or isolate; flagged for dedicated mission. |
+| ~~edge-tts-universal~~ | ~~AGPL-3.0~~ | **REMOVED (FDN-SEC-001)** | AGPL network clause resolved by removal — Edge TTS path deleted; persisted `edge`/`kokoro` selections fail safe to browser speech. |
 | jszip | MIT OR GPL-3.0 | COMMERCIAL-SAFE (MIT election) | backup-zip — fine under MIT; do not remove the election notice. |
 | pdf-parse, pdfjs-dist | Apache-2.0 | COMMERCIAL-SAFE | both present — duplication flagged in deep audit |
 | mammoth | BSD-2-Clause | ATTRIBUTION-REQUIRED | docx import |
@@ -15,11 +15,21 @@ restatement of every MIT dep.
 | ts-fsrs, dexie, zustand, react*, next, ai + @ai-sdk/*, radix-ui, lucide-react, recharts, cmdk, clsx, tailwind-merge, class-variance-authority, framer-motion, youtube-transcript, fish-audio, react-speech-recognition, use-sound, zod, @supabase/*, @upstash/*, @tauri-apps/*, @napi-rs/canvas, nanoid, react-markdown | MIT | COMMERCIAL-SAFE | |
 | canvas-confetti | ISC | COMMERCIAL-SAFE | |
 
-`pnpm audit` (this HEAD): **10 vulns — 1 critical / 2 high / 6 moderate / 1 low**:
-- `next@16.3.4` < 16.3.6 — GHSA-vcvr-r3jv-pc5j (RCE in `next/og`; **not used**
-  in src/ — no reachable path; patch still required in follow-up).
-- `brace-expansion` DoS ×2 (transitive), `fast-uri` ×2, `ip-address` ×2,
-  `baseline-browser-mapping`, `@ai-sdk/provider-utils` resource consumption.
+`pnpm audit` (FDN-SEC-001 HEAD): **8 vulns — 0 critical / 2 high / 5 moderate /
+1 low**:
+- `next@16.3.6` — GHSA-vcvr-r3jv-pc5j **closed** (`next/og` RCE; was never
+  imported in src/, now off the tree entirely).
+- `brace-expansion` ×3, `fast-uri` ×2, `ip-address` ×2 — all **dev-only**
+  transitives (eslint/minimatch, shadcn → @modelcontextprotocol/sdk →
+  ajv / express-rate-limit). Not shipped in the prod bundle; land with the
+  next toolchain refresh.
+- `@ai-sdk/provider-utils` (<4.0.33, low — resource consumption) — the only
+  prod advisory; 21 paths via `@ai-sdk/*`. Deferred to a Wave-2 dependency
+  mission (requires coordinated `@ai-sdk/*` bump).
+- `baseline-browser-mapping` — resolved transitively by the next bump.
+
+See `SECURITY_GATE_W1_W2.md` for the full gate report (SSRF hardening,
+route-level rate limits, AGPL removal, AES/localStorage documented debt).
 
 ## Content / assets provenance
 
@@ -40,5 +50,6 @@ restatement of every MIT dep.
 
 - Do not copy `wordbooks`/`builtin-collections`/seed corpus into new channels
   until provenance verified (UNKNOWN items above).
-- `edge-tts-universal` AGPL boundary documented — decision deferred.
+- `edge-tts-universal` AGPL boundary **resolved by removal** (FDN-SEC-001) —
+  no AGPL code remains in the dependency tree.
 - No content replacement executed in this mission.

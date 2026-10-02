@@ -1,5 +1,6 @@
 import crypto from 'node:crypto';
 import type { NextRequest } from 'next/server';
+import { enforceRouteRateLimit, rateLimitResponse } from '@/lib/platform-provider';
 
 export const runtime = 'nodejs';
 
@@ -7,6 +8,11 @@ const signature = (value: string) => crypto.createHash('sha1').update(value).dig
 
 /** SpeechSuper's documented multipart protocol. Never fill absent metrics with synthetic zeroes. */
 export async function POST(req: NextRequest) {
+  const rateLimit = await enforceRouteRateLimit({ headers: req.headers, bucket: 'generate' });
+  if (!rateLimit.ok) {
+    return rateLimitResponse(rateLimit);
+  }
+
   try {
     const form = await req.formData();
     const audio = form.get('audio');

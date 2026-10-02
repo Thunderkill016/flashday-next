@@ -1,11 +1,17 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { describeImportError } from '@/lib/import-error';
+import { enforceRouteRateLimit, rateLimitResponse } from '@/lib/platform-provider';
 import { fetchWebPageContent } from '@/lib/web-page';
 
 export const runtime = 'nodejs';
 export const maxDuration = 30;
 
 export async function POST(req: NextRequest) {
+  const rateLimit = await enforceRouteRateLimit({ headers: req.headers, bucket: 'import' });
+  if (!rateLimit.ok) {
+    return rateLimitResponse(rateLimit);
+  }
+
   try {
     const { url }: { url: string } = await req.json();
 

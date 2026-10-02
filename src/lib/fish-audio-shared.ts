@@ -61,10 +61,7 @@ export function resolveTTSSource({
   hasGoogleVoice = false,
   hasOpenAICredentials = false,
   hasOpenAIVoice = false,
-  hasEdgeVoice = false,
   requiresBoundaryEvents = false,
-  edgeTemporarilyUnavailable = false,
-  edgeTemporarilyUnavailableReason,
 }: {
   requestedSource: TTSSource;
   hasFishCredentials: boolean;
@@ -73,22 +70,13 @@ export function resolveTTSSource({
   hasGoogleVoice?: boolean;
   hasOpenAICredentials?: boolean;
   hasOpenAIVoice?: boolean;
-  hasEdgeVoice?: boolean;
   requiresBoundaryEvents?: boolean;
-  edgeTemporarilyUnavailable?: boolean;
-  edgeTemporarilyUnavailableReason?: string;
 }): ResolvedTTSSource {
   if (requiresBoundaryEvents) {
-    const cloudSources: TTSSource[] = ['fish', 'google', 'openai', 'edge'];
+    const cloudSources: TTSSource[] = ['fish', 'google', 'openai'];
     if (cloudSources.includes(requestedSource)) {
       const sourceLabel =
-        requestedSource === 'fish'
-          ? 'Fish Audio'
-          : requestedSource === 'google'
-            ? 'Google Cloud TTS'
-            : requestedSource === 'openai'
-              ? 'OpenAI TTS'
-              : 'Edge TTS';
+        requestedSource === 'fish' ? 'Fish Audio' : requestedSource === 'google' ? 'Google Cloud TTS' : 'OpenAI TTS';
       return {
         source: 'browser',
         reason: `Boundary-based highlighting still requires browser speech when ${sourceLabel} is selected.`,
@@ -138,22 +126,6 @@ export function resolveTTSSource({
       return {
         source: 'browser',
         reason: 'OpenAI TTS is selected but no voice is chosen yet.',
-      };
-    }
-  }
-
-  if (requestedSource === 'edge') {
-    if (edgeTemporarilyUnavailable) {
-      return {
-        source: 'browser',
-        reason:
-          edgeTemporarilyUnavailableReason ?? 'Edge TTS is temporarily unavailable. Using browser voice for stability.',
-      };
-    }
-    if (!hasEdgeVoice) {
-      return {
-        source: 'browser',
-        reason: 'Edge TTS is selected but no voice is chosen yet.',
       };
     }
   }

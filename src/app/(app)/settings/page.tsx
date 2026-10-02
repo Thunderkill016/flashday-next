@@ -63,7 +63,7 @@ import {
 } from '@/lib/model-recommendations';
 import { shouldEvaluateModelRecommendations } from '@/lib/model-refresh-policy';
 import { clearOAuthStorage, getStoredOAuthState, getStoredVerifier, startOAuthFlow } from '@/lib/oauth';
-import { OPENAI_TTS_MODELS } from '@/lib/openai-tts';
+import { OPENAI_TTS_MODELS } from '@/lib/openai-tts-presets';
 import { canFetchProviderModels } from '@/lib/provider-model-fetch';
 import {
   getLocalizedProviderDefinition,
@@ -2252,11 +2252,6 @@ function SettingsContent() {
                   title: voiceMessages.openaiTitle,
                   description: voiceMessages.openaiDescription,
                 },
-                {
-                  id: 'edge' as const,
-                  title: voiceMessages.edgeTitle,
-                  description: voiceMessages.edgeDescription,
-                },
               ].map((option) => (
                 <button
                   type="button"
@@ -2575,18 +2570,6 @@ function SettingsContent() {
 
               <div className="rounded-xl border border-amber-200 bg-amber-50 px-3 py-2.5 text-xs leading-relaxed text-amber-800">
                 {voiceMessages.openaiBillingWarning}
-              </div>
-            </div>
-          )}
-
-          {voiceSource === 'edge' && (
-            <div className="space-y-3 rounded-2xl border border-indigo-100 bg-indigo-50/60 p-4">
-              <div>
-                <p className="text-sm font-semibold text-indigo-950">{voiceMessages.edgeTitle}</p>
-                <p className="mt-1 text-xs leading-relaxed text-indigo-700">{voiceMessages.edgeDescription}</p>
-              </div>
-              <div className="rounded-xl border border-emerald-200 bg-emerald-50 px-3 py-2.5 text-xs leading-relaxed text-emerald-800">
-                {voiceMessages.edgeWordAlignmentBuiltIn}
               </div>
             </div>
           )}

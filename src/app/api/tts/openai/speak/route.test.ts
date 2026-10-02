@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 import { NextRequest } from 'next/server';
+import { EgressPolicyError } from '@/lib/egress';
 
 const synthesizeMock = vi.fn();
 
@@ -76,6 +77,18 @@ describe('POST /api/tts/openai/speak', () => {
 
     const buffer = await res.arrayBuffer();
     expect(new Uint8Array(buffer)).toEqual(new Uint8Array([1, 2, 3, 4]));
+  });
+
+  it('returns 403 when the egress policy blocks a custom base URL', async () => {
+    synthesizeMock.mockRejectedValue(new EgressPolicyError('Private or local URLs are not allowed'));
+
+    const res = await POST(
+      makeRequest({ apiKey: 'key', baseUrl: 'http://169.254.169.254/v1', text: 'Hello', voice: 'marin' }),
+    );
+
+    expect(res.status).toBe(403);
+    const data = await res.json();
+    expect(data.code).toBe('egress_blocked');
   });
 
   it('returns 500 with error message on synthesis failure', async () => {
