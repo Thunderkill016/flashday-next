@@ -18,6 +18,7 @@ import { I18nProvider } from '@/lib/i18n/provider';
 import { hydrateIOSNativeQA } from '@/lib/ios-native-qa';
 import { reconcileLearningUnits } from '@/lib/learning-unit-repository';
 import { seedDatabase } from '@/lib/seed';
+import '@/lib/vs01-debug';
 import { detectIOSNativeHost, IS_TAURI } from '@/lib/tauri';
 import { useAssessmentStore } from '@/stores/assessment-store';
 import { useAuthStore } from '@/stores/auth-store';
