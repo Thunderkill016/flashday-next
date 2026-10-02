@@ -7,6 +7,7 @@ import { builtinCommunityScenarios } from './seed-data/community-scenarios';
 import { builtinPhrases } from './seed-data/phrases';
 import { builtinSentences } from './seed-data/sentences';
 import { builtinWords } from './seed-data/words';
+import { VS01_TARGETS, vs01ContentItem } from './vs01-targets';
 import { loadWordBookItems } from './wordbooks';
 
 // This is an internal content-migration marker, not the application version.
@@ -60,6 +61,23 @@ async function seedStarterPacks(now: number) {
   localStorage.setItem(STARTER_PACKS_KEY, 'true');
 }
 
+/**
+ * FD-VS01 dogfood pilot items — deterministic ids make this
+ * self-idempotent: existing installs receive the items exactly once, and a
+ * learner's edits to a VS01 item are never clobbered by a reseed. These
+ * bypass the nanoid() builtin seeding above on purpose.
+ */
+export async function seedVs01Dogfood(now: number) {
+  const missing: ContentItem[] = [];
+  for (const target of VS01_TARGETS) {
+    const existing = await db.contents.get(target.id);
+    if (!existing || existing.deletedAt) missing.push(vs01ContentItem(target, now));
+  }
+  /* bulkPut (not bulkAdd): a learner-deleted VS01 item must be
+   * resurrected, and add would throw on the surviving primary key. */
+  if (missing.length > 0) await db.contents.bulkPut(missing);
+}
+
 export async function seedDatabase() {
   if (typeof window === 'undefined') return;
 
@@ -102,4 +120,5 @@ export async function seedDatabase() {
 
   await seedStarterPacks(now);
   await seedFavoriteFolders();
+  await seedVs01Dogfood(now);
 }
