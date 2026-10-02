@@ -239,18 +239,23 @@ export type SemanticHistoryTable = Table;
  *
  * The seam does NOT trust writeHistory's return value — a callback's
  * `return true` is a claim, not evidence. Inside the transaction the seam
- * reads the canonical history row BEFORE and AFTER the callback:
+ * reads the canonical history row BEFORE `writeHistory()` and branches
+ * three ways (W2-02R4):
  *
- *   row absent before + matching row present after → append event
- *   row present before                            → never mint (a retry or
- *     pre-cutover row can never gain a synthetic event — no event repair)
- *   row absent before + absent after              → throw: writeHistory
- *     lied, the whole transaction rolls back
+ *   history absent           → writeHistory() must materialize the
+ *     matching row (absent after → throw; full rollback), then append
+ *   history exists + event   → canonical re-delivery: identical content
+ *     dedupes, divergent content throws the store conflict — a mutated
+ *     retry is refused, not silently accepted. writeHistory never runs,
+ *     so .add()-based producers cannot ConstraintError on retry
+ *   history exists, no event → pre-cutover row: never mint, never
+ *     repair, writeHistory never runs — a no-op
  *
- * The verified id is `mapped.attemptId` — seam-derived, not caller-chosen.
- * Either side throwing aborts everything, and because the append primitive
- * is module-private, no caller can mint an event without a materialized
- * history row.
+ * The verified history id is `mapped.attemptId` — seam-derived, not
+ * caller-chosen; the event id is `mapped.id ?? evt.<attemptId>`, matching
+ * the bridge's own derivation. Either side throwing aborts everything, and
+ * because the append primitive is module-private, no caller can mint an
+ * event without a materialized history row.
  *
  * Contract semantics stay in the bridge (taskId → evaluator/binder); this
  * coordinator owns ordering and atomicity only, never semantic fields.
@@ -285,8 +290,16 @@ export async function runSemanticCommit(args: {
   const storeNames = [...new Set([...tables.map((t) => t.name), historyTable.name, evidenceEvents.name])];
   await database.transaction('rw', storeNames, async () => {
     const before = await historyTable.get(historyId);
-    await writeHistory();
-    if (!before) {
+    if (before) {
+      // History already committed — never re-run writeHistory (producers
+      // using .add would ConstraintError on duplicate). If this attempt's
+      // event exists, re-deliver through the canonical store: identical
+      // content dedupes, divergent content throws the conflict — a mutated
+      // retry is refused. Event absent ⇒ pre-cutover row: no mint, no repair.
+      const existing = await evidenceEvents.get(mapped.id ?? `evt.${historyId}`);
+      if (existing) await appendMappedEvent(evidenceEvents, mapped, learnerId);
+    } else {
+      await writeHistory();
       const after = await historyTable.get(historyId);
       if (!after) throw new Error(`semantic commit refused: writeHistory materialized no history row ${historyId}`);
       await appendMappedEvent(evidenceEvents, mapped, learnerId);

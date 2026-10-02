@@ -1,6 +1,8 @@
 import 'fake-indexeddb/auto';
 import { beforeEach, describe, expect, it } from 'vitest';
+import type { LearningAttempt } from '@/types/learning-activity';
 import { currentLearnerId, db, switchDatabaseForUser } from '../db';
+import { persistLearningAttempt } from '../learning-activity-persistence';
 import { importVocabulary, saveVocabularySubmission } from '../vocabulary-repository';
 import {
   LEGACY_CONTRACT_AUDIT,
@@ -243,15 +245,16 @@ describe('atomic commit mechanics (W2-02 §3, §13, W2-02R2)', () => {
     expect(events[0].id).toBe('evt.sub-1');
   });
 
-  it('same attempt id redelivery leaves the original event immutable', async () => {
+  it('R4-B — divergent post-cutover redelivery is refused (conflict), not silently accepted', async () => {
     await commitViaSeam(MAPPED);
-    // History row already exists → the seam never reaches the append; the
-    // committed event stays the original and cannot be mutated by a
-    // divergent redelivery (fail-closed at the event layer).
-    await commitViaSeam({ ...MAPPED, occurredAt: 2000 });
+    // History + event both exist → the seam re-delivers through the
+    // canonical store: same event id, different content → conflict → throw.
+    await expect(commitViaSeam({ ...MAPPED, occurredAt: 2000 })).rejects.toThrow(/conflict/);
     const events = await db.evidenceEvents.toArray();
     expect(events).toHaveLength(1);
     expect(events[0].occurredAt).toBe(1000);
+    // Original history row unchanged — writeHistory never ran.
+    expect((await db.learningAttempts.get('sub-1'))?.createdAt).toBe(1000);
   });
 
   it('the legacy seam has NO event-only escape hatch (W2-02R2/R3)', async () => {
@@ -294,9 +297,16 @@ describe('atomic commit mechanics (W2-02 §3, §13, W2-02R2)', () => {
     expect(await db.evidenceEvents.count()).toBe(0);
   });
 
-  it('R3-E — a pre-cutover history row never gains a synthetic event', async () => {
+  it('R4-C — pre-cutover row: writeHistory is never invoked and no event mints', async () => {
     await db.learningAttempts.add(attemptRow('sub-1'));
-    await commitViaSeam(MAPPED, { writeHistory: async () => 'noop' });
+    let writeCalls = 0;
+    await commitViaSeam(MAPPED, {
+      writeHistory: async () => {
+        writeCalls++;
+        return 'created';
+      },
+    });
+    expect(writeCalls).toBe(0);
     expect(await db.learningAttempts.count()).toBe(1);
     expect(await db.evidenceEvents.count()).toBe(0);
   });
@@ -468,16 +478,68 @@ describe('wired production path — seam proven end-to-end (W2-02 §13, §24, §
     }
   });
 
-  it('double submit is an idempotent no-op — one history row, one event (W2-AT1)', async () => {
+  it('identical redelivery dedupes — one history row, one event (W2-AT1, R4-A)', async () => {
     injectMapping();
     try {
       await importVocabulary('Words', 'word,meaning\nhelpful,有帮助的');
       const word = (await db.contents.toArray())[0];
       const sub = { id: 'vocab-dupe', contentId: word.id, mode: 'meaning' as const, answer: 'có ích', revealed: true, rating: 3 };
-      await saveVocabularySubmission(sub);
-      await saveVocabularySubmission(sub);
+      // Truly identical redelivery — same submission id AND same occurredAt —
+      // produces the identical event → canonical dedupe, no double-mint.
+      await saveVocabularySubmission(sub, db, 1000);
+      await saveVocabularySubmission(sub, db, 1000);
       expect(await db.learningAttempts.count()).toBe(1);
       expect(await db.evidenceEvents.count()).toBe(1);
+      // A redelivery with divergent content (different occurredAt) is a
+      // canonical conflict — refused, not silently accepted (R4-B).
+      await expect(saveVocabularySubmission(sub, db, 2000)).rejects.toThrow(/conflict/);
+      expect(await db.evidenceEvents.count()).toBe(1);
+    } finally {
+      AUDIT.pop();
+    }
+  });
+});
+
+describe('mapped persistLearningAttempt retry integrity (W2-02R4 D/E)', () => {
+  const AUDIT = LEGACY_CONTRACT_AUDIT as unknown as { push(e: unknown): number; pop(): unknown };
+  const injectWritingMapping = () =>
+    AUDIT.push({
+      action: 'learning-attempt:writing',
+      status: 'MAPPED_SAFE',
+      taskId: 'task.meet.retrieval.ask_name',
+      map: (a: LegacyAction) => ({ response: a.response }),
+      reason: 'test-injected mapping — exercises the seam through persistLearningAttempt',
+    });
+  // persistLearningAttempt's writeHistory uses unconditional .add — the
+  // seam must skip it entirely on retry or the second call ConstraintErrors.
+  const attempt = (id: string, answer = 'answer') => ({ ...attemptRow(id), answer }) as LearningAttempt;
+
+  it('R4-D — identical mapped retry is idempotent: no ConstraintError, one row, one event', async () => {
+    injectWritingMapping();
+    try {
+      await persistLearningAttempt(db, attempt('la-1'), undefined, () => true);
+      await persistLearningAttempt(db, attempt('la-1'), undefined, () => true);
+      expect(await db.learningAttempts.count()).toBe(1);
+      const events = await db.evidenceEvents.toArray();
+      expect(events).toHaveLength(1);
+      expect(events[0].id).toBe('evt.la-1');
+    } finally {
+      AUDIT.pop();
+    }
+  });
+
+  it('R4-E — divergent mapped retry is refused; original row and event unchanged', async () => {
+    injectWritingMapping();
+    try {
+      await persistLearningAttempt(db, attempt('la-1'), undefined, () => true);
+      await expect(
+        persistLearningAttempt(db, attempt('la-1', 'a different answer'), undefined, () => true),
+      ).rejects.toThrow(/conflict/);
+      const row = await db.learningAttempts.get('la-1');
+      expect(row?.answer).toBe('answer');
+      const events = await db.evidenceEvents.toArray();
+      expect(events).toHaveLength(1);
+      expect(events[0].attempt?.response).toBe('answer');
     } finally {
       AUDIT.pop();
     }

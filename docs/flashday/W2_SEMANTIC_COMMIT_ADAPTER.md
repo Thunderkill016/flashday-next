@@ -91,19 +91,28 @@ W2-02R2 — the coupling is **structural**: the event append primitive
 transaction-owning coordinator.
 
 W2-02R3 — the seam does **not** trust `writeHistory`'s return value (a
-callback's `return true` is a claim, not evidence). Inside the transaction
-the seam reads the canonical history row `historyTable.get(mapped.attemptId)`
-BEFORE and AFTER `writeHistory()`:
+callback's `return true` is a claim, not evidence).
 
-- row absent before + matching row present after → append the event
-- row present before → never mint (retry or pre-cutover; no event repair)
-- row absent before + absent after → throw; the whole transaction rolls
-  back — a lying or empty `writeHistory` cannot mint
+W2-02R4 — inside the transaction the seam reads the canonical history row
+`historyTable.get(mapped.attemptId)` BEFORE anything else, then branches
+three ways:
 
-The verified id is `mapped.attemptId` — seam-derived, so a caller cannot
-satisfy the proof with a row under a different key. `verify` runs
-post-append in the same transaction (account-switch guard) and still runs
-on the pre-existing-history path. Defense-in-depth invariants remain: the
+- **history absent** → `writeHistory()` runs; the matching row must
+  materialize (`get` again — absent after ⇒ throw, full rollback); then
+  the canonical event append runs
+- **history exists + event exists** → post-cutover retry: the seam
+  re-delivers through the canonical store — identical content dedupes,
+  divergent content throws the event conflict (same event id + different
+  content ⇒ refuse). `writeHistory` is never invoked, so producers using
+  unconditional `.add()` cannot ConstraintError on retry
+- **history exists + event absent** → pre-cutover row: `writeHistory` is
+  never invoked and nothing mints — no repair, no backfill, a no-op
+
+The verified history id is `mapped.attemptId` and the event id is
+`mapped.id ?? evt.<attemptId>` — both seam-derived (the derivation matches
+the bridge's own), so a caller cannot satisfy the proof with a row or
+event under a different key. `verify` runs in the same transaction on all
+branches (account-switch guard). Defense-in-depth invariants remain: the
 append asserts `Dexie.currentTransaction` and `evidenceEvents`
 participation. Native mission surfaces keep standalone `submitAttempt`.
 
@@ -122,13 +131,13 @@ Remote sync is outside the semantic transaction (F3): no sync call was added;
 | F1 — event append fails inside tx (conflict) | all legacy writes roll back | `semantic-commit.test.ts` mechanism + real-path tests |
 | F2 — legacy write fails inside tx | the event rolls back | mechanism test (forced legacy failure) |
 | F3 — remote/sync failure after commit | irrelevant — local commit already durable; nothing calls sync | by construction; no sync in the seam |
-| Duplicate submit | `learningAttempts.get(id)` early-return → seam sees the row → no mint; identical event → dedupe | wired-path test |
-| Same attempt id, divergent content | history row already exists → seam never appends; original event stays immutable | redelivery immutability test |
+| Duplicate submit | history row exists → `writeHistory` skipped → canonical re-delivery → identical content dedupes | wired-path + mechanics tests |
+| Same attempt id, divergent content | history + event exist → canonical re-delivery → event conflict → throw; originals unchanged | divergent-retry regression (R4-B/E) |
 | Account switch mid-tx | `database !== db` / `isCurrent()` guards roll back history AND event | guard runs after the commit call |
 | Event-only commit | inexpressible — append primitive is module-private; `runSemanticCommit` mechanically verifies a new `historyTable[mapped.attemptId]` row materialized inside the transaction | escape-hatch + lying-callback + empty-tables + wrong-id tests (W2-02R2/R3) |
 | `writeHistory` claims success but writes nothing | seam reads the row itself → throw → full rollback | lying-callback regression (R3-A/B) |
 | `writeHistory` writes a row under a different id | `get(mapped.attemptId)` still absent → throw → rollback | wrong-id regression (R3-C) |
-| Pre-existing history row (retry/pre-cutover) | seam sees row before the write → never mints (no event repair) | pre-cutover regression (R3-E) |
+| Pre-existing history, event absent (pre-cutover) | `writeHistory` never invoked; no mint, no repair — a no-op | not-invoked spy regression (R4-C) |
 | Post-append `verify` throws | history AND event roll back | post-append verify regression (R3-G) |
 | `MAPPED_SAFE` w/o provenance mapper | `mapLegacyAttempt` throws | mapper-contract tests |
 | Mapper drops declared support fact | `mapLegacyAttempt` throws `dropped support provenance` | laundering-guard test |
