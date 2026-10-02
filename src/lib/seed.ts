@@ -120,5 +120,10 @@ export async function seedDatabase() {
 
   await seedStarterPacks(now);
   await seedFavoriteFolders();
-  await seedVs01Dogfood(now);
+  /* FD-VS01 is a 1-learner dogfood experiment — the five targets must
+   * never reach production users' content. Development-only gate; the
+   * seeder itself stays directly testable. */
+  if (process.env.NODE_ENV === 'development') {
+    await seedVs01Dogfood(now);
+  }
 }

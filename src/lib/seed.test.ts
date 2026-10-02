@@ -127,4 +127,16 @@ describe('seedDatabase starter packs', () => {
     );
     expect(seededTitles).toContain('Airport: reporting lost luggage');
   });
+
+  it('R1: seedDatabase never seeds VS01 targets outside development', async () => {
+    // vitest runs with NODE_ENV=test — the dev-only VS01 gate must not fire.
+    await seedDatabase();
+
+    expect(contentsGetMock).not.toHaveBeenCalled();
+    expect(contentsBulkPutMock).not.toHaveBeenCalled();
+    const seededIds = bulkAddMock.mock.calls.flatMap(([items]) =>
+      (items as Array<{ id?: string }>).map((item) => item.id),
+    );
+    expect(seededIds.filter((id) => id?.startsWith('vs01.'))).toEqual([]);
+  });
 });
