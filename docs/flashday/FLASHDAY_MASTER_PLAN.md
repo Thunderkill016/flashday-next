@@ -1174,7 +1174,67 @@ Useful for personalization, but copyright ownership and product-hosting rights d
 
 Keep imported-source provenance.
 
-## 10.2 AI-generated content
+## 10.2 English Source Library V2 — source registry seed
+
+Reviewed artifact:
+
+`docs/flashday/ENGLISH_SOURCE_LIBRARY_V2_RESEARCH.md`
+
+The uploaded English Source Library V2 is a source-manifest/bootstrap library, not an app-ready corpus. Its manifest contains 54 curated sources across CEFR/curriculum, learning science, lexicon, grammar, learner errors, pronunciation, assessment, task design and content sources.
+
+Adopt its fail-closed promotion pipeline:
+
+```text
+RAW
+→ RIGHTS_REVIEWED
+→ NORMALIZED
+→ QA
+→ APP_READY
+```
+
+Every production source/asset must retain:
+
+- exact source/version;
+- retrieval date;
+- license snapshot;
+- attribution;
+- asset-level rights where required;
+- transformer version;
+- QA/human-review state;
+- derivation lineage.
+
+Priority source candidates for Wave 4:
+
+- CEFR-J — machine-readable vocabulary/grammar progression prior;
+- NGSL — lexical frequency/core-vocabulary prior;
+- Open English WordNet — sense/semantic graph;
+- thichhoc-dict — Vietnamese gloss candidates, never unreviewed gold truth;
+- CMUdict — pronunciation/stress reference;
+- Tatoeba — sentence candidates only through per-asset text/audio rights checks;
+- UD English ESLSpok — learner-language research/data;
+- FSRS — memory scheduler only.
+
+Important authority rule:
+
+```text
+external CEFR/frequency/expert annotation
+!=
+learner ability truth
+```
+
+Source data may inform content construction, task design, scoring references and priors. Learner capability state still comes only from valid learner evidence contracts.
+
+Sources marked REFERENCE_ONLY, RESEARCH_ONLY, ANNOTATIONS_ONLY, COMMERCIAL_RISK or equivalent may inform design/research but may not silently enter commercial lesson content.
+
+Speech-specific warning:
+
+- SpeechOcean762 is useful for pronunciation-scoring benchmark engineering but its speakers are Mandarin L1, so it cannot establish Vietnamese-accent validity;
+- Common Voice can support ASR robustness experiments but is not pronunciation authority;
+- Vietnamese pronunciation/error studies seed risk/error hypotheses with population scope and confidence, never stereotypes.
+
+Do not download all heavy corpora by default. Build the source registry + rights gate first, then fetch only what a bounded mission requires.
+
+## 10.3 AI-generated content
 
 AI belongs near the end of the content pipeline.
 
@@ -1833,17 +1893,45 @@ OpenPronounce remains experimental until it earns authority.
 
 ## Wave 4 — Curriculum / Content Factory
 
-Build:
+Build a rights-aware canonical knowledge/content pipeline before generating large lesson inventories.
 
-- source registry;
-- license/provenance layer;
-- lexical resources;
-- gold-course extraction;
-- capability mapping;
-- content QA;
-- small A1 mission pack.
+Required foundations:
 
-Do not begin with hundreds of generated lessons.
+- **Source Registry + Rights Gate** using `RAW → RIGHTS_REVIEWED → NORMALIZED → QA → APP_READY`;
+- **SourceAssertion** lineage on imported/derived claims;
+- canonical Lexeme / Sense / Pronunciation / Construction / CommunicativeFunction / ErrorPattern entities;
+- exact source/version + transformer-version provenance;
+- human/editorial QA state;
+- no direct promotion from downloaded corpus to lesson.
+
+Initial bounded source pilots:
+
+1. CEFR-J — progression priors;
+2. NGSL — lexical frequency/core vocabulary;
+3. Open English WordNet — sense graph;
+4. thichhoc-dict — Vietnamese gloss candidates with QA;
+5. CMUdict — pronunciation/stress reference;
+6. Tatoeba — per-asset sentence licensing;
+7. UD English ESLSpok — learner-language research.
+
+Reference/research sources such as CEFR/ALTE, English Grammar Profile, teacher-training material and learning-science papers guide abstractions/task design but are not copied into the production curriculum.
+
+Vietnamese learner modeling:
+
+- error/risk rules require population scope, evidence source and confidence;
+- Vietnamese pronunciation/writing studies seed hypotheses, not universal learner labels;
+- learner-specific weakness still requires learner evidence.
+
+Content Factory outputs must be capability/task-ready but must not create learner evidence by themselves.
+
+Acceptance:
+
+- every production content claim has provenance;
+- every asset has a rights state;
+- unknown rights fail closed;
+- source-derived CEFR/frequency labels remain content priors, not learner mastery;
+- share-alike obligations are tracked before derived datasets ship;
+- heavy speech corpora are downloaded only behind an explicit benchmark mission.
 
 ## Wave 5 — Core multimodal learning loop
 
