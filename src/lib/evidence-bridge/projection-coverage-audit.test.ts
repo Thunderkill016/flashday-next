@@ -1,0 +1,446 @@
+import { describe, expect, it } from 'vitest';
+import { bindAttempt } from '@/vnext/bind';
+import { CAPABILITIES } from '@/vnext/capabilities';
+import {
+  deriveCorrectionEpisodes,
+  episodeDigest,
+  pickRetestSurface,
+  retestSurfaces,
+} from '@/vnext/correction-episodes';
+import { MISSION_BUY_ITEM, MISSION_MEET_AT_TIME, TASKS_BUY_ITEM, TASKS_MEET_AT_TIME } from '@/vnext/fixtures';
+import { buildLearnerModel } from '@/vnext/learner-model';
+import { decisionAuditRecord, SELECTION_MODES, selectNextTask } from '@/vnext/next-for-you/selector';
+import { deriveTaskConsumption } from '@/vnext/next-for-you/task-resolver';
+import { deriveSupportLifecycle, planNext } from '@/vnext/planner';
+import { projectLearnerState } from '@/vnext/projection';
+
+/*
+ * W2-G04 — Projection Coverage Audit regressions.
+ *
+ * AUDIT ONLY: nothing here changes runtime behavior. Each block pins how
+ * an existing kernel artifact behaves TODAY so the coverage table in
+ * docs/flashday/W2_03_G04_PROJECTION_COVERAGE.md is backed by executable
+ * evidence inside this repo (the vendored kernel's upstream suites live in
+ * FlashDay @85ce4101 and are not part of this repo's gate).
+ *
+ * PRESENT rows prove the construct's semantics. MISSING rows reproduce
+ * the exact gap routed to W2-PC1 — those assertions pin current behavior
+ * and are expected to change when PC1 lands.
+ */
+
+// biome-ignore lint/suspicious/noExplicitAny: vendored JS kernel has no TS types
+type Any = any;
+
+const L = 'learner.g04';
+const OTHER = 'learner.g04.other';
+const T0 = Date.parse('2026-03-02T09:00:00Z');
+const MIN = 60_000;
+const DAY = 24 * 60 * MIN;
+
+const PRICE = 'reception.listen.understand_spoken_price';
+const PRICE_FN = 'understand_spoken_price';
+const NUMBER_FN = 'identify_spoken_number';
+
+const capOf = (id: string): Any => {
+  const c = (CAPABILITIES as Any[]).find((x) => x.id === id);
+  if (!c) throw new Error(`capability '${id}' missing`);
+  return c;
+};
+
+const taskIn =
+  (tasks: Any[]) =>
+  (id: string): Any => {
+    const t = tasks.find((x) => x.id === id);
+    if (!t) throw new Error(`task '${id}' missing`);
+    return t;
+  };
+
+interface Raw {
+  id: string;
+  at: number;
+  outcome: 'success' | 'fail' | 'partial';
+  observed?: boolean;
+  missing?: string[];
+  support?: Record<string, unknown>;
+  learner?: string;
+  eventType?: string;
+}
+
+const attemptOn =
+  (tasks: Any[]) =>
+  (taskId: string, r: Raw): Any => {
+    const t = taskIn(tasks)(taskId);
+    return bindAttempt(t, capOf(t.capabilityId), {
+      id: r.id,
+      learnerId: r.learner ?? L,
+      occurredAt: r.at,
+      eventType: r.eventType,
+      attempt: { observed: r.observed ?? true, outcome: r.outcome, attemptId: r.id },
+      evaluation: { missingFunctions: r.missing ?? [] },
+      support: r.support,
+    });
+  };
+
+const price = attemptOn(TASKS_BUY_ITEM as Any[]);
+const time = attemptOn(TASKS_MEET_AT_TIME as Any[]);
+
+const model = (events: Any[], extra: Record<string, unknown> = {}) =>
+  (buildLearnerModel as Any)({
+    learnerId: L,
+    events,
+    capabilities: CAPABILITIES,
+    tasks: TASKS_BUY_ITEM,
+    now: T0 + 2 * DAY,
+    ...extra,
+  });
+
+const priceView = (events: Any[]) => model(events).capabilities[PRICE];
+
+const projectionSlot = (events: Any[]) =>
+  (projectLearnerState as Any)(L, events, CAPABILITIES, TASKS_BUY_ITEM).byCapability.get(PRICE);
+
+const observedStreak = (events: Any[]) => {
+  const taskByRev = new Map((TASKS_BUY_ITEM as Any[]).map((t) => [`${t.id}@${t.revision}`, t]));
+  return (deriveTaskConsumption as Any)({ learnerId: L, events, capabilities: CAPABILITIES, taskByRev })
+    .observedFailStreak.get(PRICE) ?? 0;
+};
+
+const episodes = (events: Any[], now = T0 + 2 * DAY) =>
+  (deriveCorrectionEpisodes as Any)({
+    learnerId: L,
+    events,
+    capabilities: CAPABILITIES,
+    tasks: TASKS_BUY_ITEM,
+    now,
+  });
+
+const taught = price('task.price.retrieval.hear', { id: 'e.taught', at: T0, outcome: 'success' });
+
+/* ── capability_state / capability_milestones ─────────────────────── */
+
+describe('G04 capability_state + milestones — PRESENT', () => {
+  it('state is learner-isolated, arrival-order independent, and duplicate-safe', () => {
+    const mine = [
+      taught,
+      price('task.price.delayed.hear', { id: 'e.delayed', at: T0 + DAY + MIN, outcome: 'success' }),
+    ];
+    const foreign = price('task.price.retrieval.hear', {
+      id: 'e.foreign',
+      at: T0 + 5 * MIN,
+      outcome: 'fail',
+      learner: OTHER,
+    });
+    const a = projectionSlot([...mine, foreign]);
+    const b = projectionSlot([foreign, mine[1], mine[0], mine[0]]);
+    expect(a).toEqual(b);
+    expect(a.state).toBe('RETAINED');
+    expect(a.consecutiveFailures).toBe(0);
+  });
+
+  it('an unobserved success cannot mint INDEPENDENT', () => {
+    const slot = projectionSlot([
+      price('task.price.retrieval.hear', { id: 'e.self', at: T0, outcome: 'success', observed: false }),
+    ]);
+    expect(slot.milestones.independent).toBe(false);
+    expect(slot.state).toBe('SUPPORTED');
+  });
+});
+
+/* ── verified_consecutive_failure — MISSING ───────────────────────── */
+
+describe('G04 verified_consecutive_failure — MISSING (reproduction)', () => {
+  const unobservedFail = price('task.price.retrieval.hear', {
+    id: 'e.unobserved.fail',
+    at: T0 + MIN,
+    outcome: 'fail',
+    observed: false,
+  });
+
+  it('an UNOBSERVED fail moves every consumer-facing consecutiveFailures field', () => {
+    const events = [taught, unobservedFail];
+    const slot = projectionSlot(events);
+    const view = priceView(events);
+    // Raw engine counter: counts unobserved outcomes.
+    expect(slot.consecutiveFailures).toBe(1);
+    // The learner model copies that raw counter verbatim …
+    expect(view.failures.consecutiveFailures).toBe(1);
+    // … and derives consumer labels from it.
+    expect(model(events).profile.fragile).toContain(PRICE);
+    expect(view.uncertainty.reasons.map((r: Any) => r.code)).toContain('currently_failing');
+    // The verified-observed streak the next-for-you stack trusts says 0 —
+    // but it lives only in a planner-internal task-resolver map.
+    expect(observedStreak(events)).toBe(0);
+  });
+
+  it('a stale-revision fail still increments the raw projection counter', () => {
+    const stale = { ...unobservedFail, id: 'e.stale.fail', taskRevision: 99, attempt: { ...unobservedFail.attempt, observed: true } };
+    const slot = projectionSlot([taught, stale]);
+    expect(slot.consecutiveFailures).toBe(1);
+    expect(priceView([taught, stale]).evidence.unverifiableEventCount).toBe(1);
+    expect(observedStreak([taught, stale])).toBe(0);
+  });
+
+  it('production REFERENCE routing flips to remediation on a self-reported fail', () => {
+    const scoped = (CAPABILITIES as Any[]).filter((c) => c.id === PRICE);
+    const aided = price('task.price.retrieval.hear', {
+      id: 'e.aided',
+      at: T0,
+      outcome: 'success',
+      support: { hint: true },
+    });
+    const before = (planNext as Any)(L, [aided], { capabilities: scoped, tasks: TASKS_BUY_ITEM, now: T0 + 2 * MIN });
+    const after = (planNext as Any)(L, [aided, unobservedFail], {
+      capabilities: scoped,
+      tasks: TASKS_BUY_ITEM,
+      now: T0 + 2 * MIN,
+    });
+    expect(before.kind).toBe('independent_attempt');
+    expect(after.kind).toBe('retry');
+  });
+});
+
+/* ── function_gap_ledger — PRESENT / recurring_error — MISSING ────── */
+
+describe('G04 function_gap_ledger — PRESENT', () => {
+  it('only an observed miss under an attributing contract opens a gap; independent recovery closes it', () => {
+    const miss = price('task.price.retrieval.hear', { id: 'e.miss', at: T0 + MIN, outcome: 'fail', missing: [PRICE_FN] });
+    const unobs = price('task.price.retrieval.hear', {
+      id: 'e.miss.unobs',
+      at: T0 + MIN,
+      outcome: 'fail',
+      observed: false,
+      missing: [PRICE_FN],
+    });
+    const recover = price('task.price.retrieval.hear', { id: 'e.recover', at: T0 + 2 * MIN, outcome: 'success' });
+
+    expect(priceView([taught, unobs]).failures.unresolvedFunctions).toEqual([]);
+    expect(priceView([taught, miss]).failures.unresolvedFunctions).toEqual([PRICE_FN]);
+    expect(priceView([taught, miss, recover]).failures.unresolvedFunctions).toEqual([]);
+    expect(priceView([taught, miss, recover]).failures.resolvedFunctions).toEqual([PRICE_FN]);
+  });
+
+  it('a success on a task that never exercised the function does not resolve it', () => {
+    const miss = price('task.price.remediation.hear', { id: 'e.num.miss', at: T0 + MIN, outcome: 'fail', missing: [NUMBER_FN] });
+    const unrelated = price('task.price.retrieval.hear', { id: 'e.unrelated', at: T0 + 2 * MIN, outcome: 'success' });
+    expect(priceView([taught, miss, unrelated]).failures.unresolvedFunctions).toEqual([NUMBER_FN]);
+  });
+});
+
+describe('G04 recurring_error — MISSING (reproduction)', () => {
+  const miss = (id: string, at: number) =>
+    price('task.price.retrieval.hear', { id, at, outcome: 'fail', missing: [PRICE_FN] });
+  const win = (id: string, at: number) => price('task.price.retrieval.hear', { id, at, outcome: 'success' });
+
+  it('two back-to-back misses with no recovery are reported as "recurring" (repeated failure ≠ recurrence)', () => {
+    const view = priceView([taught, miss('m1', T0 + MIN), miss('m2', T0 + 2 * MIN)]);
+    expect(view.failures.recurringFunctions).toEqual([PRICE_FN]);
+  });
+
+  it('a true miss→recover→miss relapse is indistinguishable in the exposed output', () => {
+    const repeated = priceView([taught, miss('m1', T0 + MIN), miss('m2', T0 + 2 * MIN)]).failures;
+    const relapse = priceView([taught, miss('m1', T0 + MIN), win('w1', T0 + 2 * MIN), miss('m2', T0 + 3 * MIN)]).failures;
+    expect(relapse.recurringFunctions).toEqual(repeated.recurringFunctions);
+    expect(relapse.unresolvedFunctions).toEqual(repeated.unresolvedFunctions);
+  });
+
+  it('the recurring flag never decays — a healed function stays "recurring" forever', () => {
+    const view = priceView([
+      taught,
+      miss('m1', T0 + MIN),
+      win('w1', T0 + 2 * MIN),
+      miss('m2', T0 + 3 * MIN),
+      win('w2', T0 + 4 * MIN),
+      price('task.price.delayed.hear', { id: 'w3', at: T0 + 30 * DAY, outcome: 'success' }),
+    ]);
+    expect(view.failures.unresolvedFunctions).toEqual([]);
+    expect(view.failures.recurringFunctions).toEqual([PRICE_FN]);
+  });
+});
+
+/* ── support_dependency — MISSING / support_demand_lifecycle — PRESENT ── */
+
+describe('G04 support_dependency — MISSING (reproduction)', () => {
+  it('a single aided success marks the capability support-dependent (support used once = dependency)', () => {
+    const once = [price('task.price.retrieval.hear', { id: 'a1', at: T0, outcome: 'success', support: { hint: true } })];
+    const view = priceView(once);
+    expect(view.support.dependent).toBe(true);
+    expect(view.support.servedEpisodes).toBe(0);
+    expect(view.support.pendingFunctions).toEqual([]);
+  });
+
+  it('one unaided success afterwards clears it — the flag is a recency predicate, not a dependency measure', () => {
+    const events = [
+      price('task.price.retrieval.hear', { id: 'a1', at: T0, outcome: 'success', support: { hint: true } }),
+      price('task.price.retrieval.hear', { id: 'u1', at: T0 + MIN, outcome: 'success' }),
+    ];
+    expect(priceView(events).support.dependent).toBe(false);
+  });
+});
+
+describe('G04 support_demand_lifecycle — PRESENT', () => {
+  const roles = {
+    targets: new Set(MISSION_MEET_AT_TIME.targetCapabilities),
+    supports: new Set(MISSION_MEET_AT_TIME.supportCapabilities),
+    prereqs: new Set(MISSION_MEET_AT_TIME.prerequisiteCapabilities ?? []),
+  };
+  const lifecycle = (events: Any[]) =>
+    (deriveSupportLifecycle as Any)(L, events, { capabilities: CAPABILITIES, tasks: TASKS_MEET_AT_TIME, roles });
+  const demandingMiss = (observed: boolean) =>
+    time('task.time.retrieval.hear', { id: `d.miss.${observed}`, at: T0, outcome: 'fail', observed, missing: [NUMBER_FN] });
+
+  it('an observed attributed miss issues a function-scoped demand; an unobserved one issues nothing', () => {
+    expect(lifecycle([demandingMiss(false)]).pending).toEqual([]);
+    const { pending } = lifecycle([demandingMiss(true)]);
+    expect(pending).toHaveLength(1);
+    expect(pending[0]).toMatchObject({
+      targetCapabilityId: 'reception.listen.understand_clock_time',
+      missingFunction: NUMBER_FN,
+      supportCapabilityId: 'reception.listen.identify_spoken_number',
+    });
+  });
+
+  it('a verified support probe that tested the function consumes the demand', () => {
+    const probe = time('task.time.support.number_probe', { id: 'd.probe', at: T0 + MIN, outcome: 'success' });
+    const { pending, resolved } = lifecycle([demandingMiss(true), probe]);
+    expect(pending).toEqual([]);
+    expect(resolved).toHaveLength(1);
+    expect(resolved[0]).toMatchObject({ status: 'consumed', resolvedByEventId: 'd.probe' });
+  });
+
+  it('without mission roles the lifecycle is empty — demand history is mission-scoped', () => {
+    const none = (deriveSupportLifecycle as Any)(L, [demandingMiss(true)], {
+      capabilities: CAPABILITIES,
+      tasks: TASKS_MEET_AT_TIME,
+      roles: { supports: new Set() },
+    });
+    expect(none).toEqual({ pending: [], resolved: [] });
+  });
+});
+
+/* ── correction_episode / retest_surface / remediation_demand — PRESENT ── */
+
+describe('G04 correction_episode + retest_surface + remediation_demand — PRESENT', () => {
+  const sourceMiss = price('task.price.remediation.hear', {
+    id: 'c.miss',
+    at: T0 + MIN,
+    outcome: 'fail',
+    missing: [NUMBER_FN],
+  });
+
+  it('an episode opens only on an observed attributed miss on a taught capability', () => {
+    const unobserved = { ...sourceMiss, id: 'c.miss.unobs', attempt: { ...sourceMiss.attempt, observed: false } };
+    expect(episodes([taught, unobserved]).episodes).toEqual([]);
+    expect(episodes([sourceMiss]).episodes).toEqual([]); // baseline miss: untaught
+    const derived = episodes([taught, sourceMiss]);
+    expect(derived.episodes).toHaveLength(1);
+    expect(derived.openByCapability[PRICE].state).toBe('OPEN');
+  });
+
+  it('an unrelated success does not close the episode', () => {
+    const unrelated = price('task.price.retrieval.hear', { id: 'c.unrelated', at: T0 + 2 * MIN, outcome: 'success' });
+    expect(episodes([taught, sourceMiss, unrelated]).openByCapability[PRICE].state).toBe('OPEN');
+  });
+
+  it('independent covering repair → REPAIRED_WAITING; retest surfaces exclude burned surfaces', () => {
+    // Retest surfaces must cover a remaining missing function, so the gap
+    // here is attributed to the function the retest-eligible tasks require.
+    const priceMiss = price('task.price.remediation.hear', {
+      id: 'c.miss.pricefn',
+      at: T0 + MIN,
+      outcome: 'fail',
+      missing: [PRICE_FN],
+    });
+    const repair = price('task.price.remediation.hear', { id: 'c.repair', at: T0 + 2 * MIN, outcome: 'success' });
+    const derived = episodes([taught, priceMiss, repair], T0 + 3 * MIN);
+    const ep = derived.openByCapability[PRICE];
+    expect(ep.state).toBe('REPAIRED_WAITING');
+    const surfaceIds = retestSurfaces(ep, TASKS_BUY_ITEM).map((t: Any) => t.id);
+    expect(surfaceIds).toContain('task.price.retrieval.hear');
+    expect(surfaceIds).toContain('task.price.delayed.hear');
+    expect(surfaceIds).not.toContain('task.price.remediation.hear'); // burned source+repair surface
+    expect(pickRetestSurface(ep, TASKS_BUY_ITEM).id).toBe('task.price.delayed.hear');
+    // Past the lag the same unresolved episode is due — remediation demand
+    // is readable as (openByCapability state + retestSurfaces) without
+    // rebuilding episode state.
+    expect(episodes([taught, priceMiss, repair], T0 + 2 * MIN + DAY).openByCapability[PRICE].state).toBe('RETEST_DUE');
+  });
+
+  it('a capability whose covering surfaces all burned exposes an EMPTY retest set — honest no-surface state', () => {
+    const repair = price('task.price.remediation.hear', { id: 'c.repair.burned', at: T0 + 2 * MIN, outcome: 'success' });
+    const ep = episodes([taught, sourceMiss, repair], T0 + 3 * MIN).openByCapability[PRICE];
+    // identify_spoken_number is required only by the burned remediation
+    // task — no fresh surface can serve the retest.
+    expect(retestSurfaces(ep, TASKS_BUY_ITEM)).toEqual([]);
+    expect(pickRetestSurface(ep, TASKS_BUY_ITEM)).toBeNull();
+    expect(ep.state).toBe('REPAIRED_WAITING');
+  });
+
+  it('a verified attributed failure while waiting/due → RELAPSED with relapseCount — the recurring-error artifact', () => {
+    const repair = price('task.price.remediation.hear', { id: 'c.repair', at: T0 + 2 * MIN, outcome: 'success' });
+    const relapse = price('task.price.remediation.hear', {
+      id: 'c.relapse',
+      at: T0 + 2 * MIN + DAY + MIN,
+      outcome: 'fail',
+      missing: [NUMBER_FN],
+    });
+    const ep = episodes([taught, sourceMiss, repair, relapse], T0 + 2 * MIN + DAY + 2 * MIN).openByCapability[PRICE];
+    expect(ep.state).toBe('RELAPSED');
+    expect(ep.relapseCount).toBe(1);
+    // A second failure while still OPEN is absorbed in place (widens the
+    // gap) — it is repetition, NOT recurrence.
+    const absorbed = episodes([
+      taught,
+      sourceMiss,
+      price('task.price.remediation.hear', { id: 'c.repeat', at: T0 + 90 * 1000, outcome: 'fail', missing: [NUMBER_FN] }),
+    ]).openByCapability[PRICE];
+    expect(absorbed.state).not.toBe('RELAPSED');
+    expect(absorbed.relapseCount).toBe(0);
+    expect(absorbed.missingFunctions).toContain(NUMBER_FN);
+  });
+
+  it('episode derivation is order-independent and foreign-learner safe', () => {
+    const foreign = price('task.price.remediation.hear', { id: 'c.foreign', at: T0 + 90 * 1000, outcome: 'success', learner: OTHER });
+    const a = episodeDigest(episodes([taught, sourceMiss]));
+    const b = episodeDigest(episodes([foreign, sourceMiss, taught, sourceMiss]));
+    expect(b).toEqual(a);
+  });
+});
+
+/* ── selection + decision provenance ──────────────────────────────── */
+
+describe('G04 next_action_selection — PRESENT / selection_decision_provenance — MISSING', () => {
+  const input = (mode: string) => ({
+    mode,
+    learnerId: L,
+    mission: MISSION_BUY_ITEM,
+    tasks: TASKS_BUY_ITEM,
+    capabilities: CAPABILITIES,
+    events: [taught],
+    now: T0 + 2 * MIN,
+  });
+
+  it('B0 selection is deterministic from identical frozen input and binds its input digest into the decision id', () => {
+    const a = (selectNextTask as Any)(input(SELECTION_MODES.B0));
+    const b = (selectNextTask as Any)(input(SELECTION_MODES.B0));
+    expect(a.decision.decisionId).toBe(b.decision.decisionId);
+    expect(a.decision.decisionId).toContain(a.inputDigest.slice('sha256:'.length, 'sha256:'.length + 16));
+    const audit = (decisionAuditRecord as Any)(a.decision, {
+      learnerId: L,
+      missionId: MISSION_BUY_ITEM.id,
+      missionRevision: MISSION_BUY_ITEM.revision,
+      sessionId: 's',
+      timestamp: T0,
+      digest: a.inputDigest,
+    });
+    expect(audit.decisionId).toBe(a.decision.decisionId);
+    expect(audit.decisionInputDigest).toBe(a.inputDigest);
+    expect(audit.taskId).toBe(a.taskId);
+  });
+
+  it('the production REFERENCE path — the only mode the bridge and session serve — carries no decision record', () => {
+    const ref = (selectNextTask as Any)(input(SELECTION_MODES.REFERENCE));
+    expect(ref.status).toBe('ready');
+    expect(ref.decision).toBeUndefined();
+    expect(ref.inputDigest).toBeUndefined();
+  });
+});

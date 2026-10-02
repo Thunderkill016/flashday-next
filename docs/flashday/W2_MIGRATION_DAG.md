@@ -10,8 +10,11 @@ Decisions/doctrine: `W2_AUTHORITY_ADR.md`
 W2-G01 guardrails ─┬─ W2-G02 semantic commit contract ─┬─ W2-AT1 dual-write adapter
                    │                                   └─ W2-SY1 event sync mirror ─┐
                    ├─ W2-G03 placement boundary ────────┼─ W2-AS1 relabel            │
-                   └─ W2-G04 coverage audit ── W2-PC1 extension gate (skipped-       │
-                                                satisfied if zero missing)         │
+                   └─ W2-G04 coverage audit ── W2-PC1 extension gate               │
+                     (audited @2b0bb79 → PROJECTION_GAPS_FOUND: PC1 is             │
+                      REQUIRED — missing verified_consecutive_failure,             │
+                      selection_decision_provenance; see                           │
+                      W2_03_G04_PROJECTION_COVERAGE.md)                            │
                               │          │                    │                      │
                         W2-WS1 mapping ──┤              W2-PL1 planner ─┐            │
                               │          │                    │          │            │
@@ -43,7 +46,10 @@ G04/PC1, SY1 off G02. The JSON graph is authoritative.
    constructs that provably exist in the kernel. PC1 always executes as a gate
    node — with zero missing constructs it resolves *skipped-satisfied* with a
    recorded `missingConstructs=[]`, so dependents never wait on a node that
-   disappears.
+   disappears. **G04 audited @ `2b0bb79`: `PROJECTION_GAPS_FOUND` —
+   `missingConstructs=[verified_consecutive_failure, selection_decision_provenance]`
+   (see `W2_03_G04_PROJECTION_COVERAGE.md`), so PC1 is REQUIRED, not
+   skipped-satisfied.**
 4. **Weakness semantics before read migration** (WS1→WS2): generic `weak`
    becomes four distinct constructs (consecutive failure / recurring error /
    support dependency / remediation demand); the kernel already ships
