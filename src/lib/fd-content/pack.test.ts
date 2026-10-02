@@ -177,11 +177,12 @@ describe('validatePack failure modes', () => {
     expect(codes(broken((l) => l.sourceRefs.push('pirate-mirrors')))).toContain('rejected-source');
   });
 
-  it('rejects derived input without a derivable source', () => {
+  it('rejects derived input backed by a REFERENCE_ONLY source', () => {
     expect(
       codes(
         broken((l) => {
           l.input.origin = 'derived';
+          l.input.sourceRefId = 'english-for-it';
           l.sourceRefs = ['english-for-it']; // REFERENCE_ONLY only — nothing derivable
         }),
       ),
@@ -213,6 +214,125 @@ describe('validatePack failure modes', () => {
     expect(issues.map((i) => i.code)).toEqual(
       expect.arrayContaining(['duplicate-lesson-id', 'duplicate-activity-id', 'track-count']),
     );
+  });
+});
+
+describe('provenance gate is fail-closed on the exact source (review P1)', () => {
+  const broken = (mutate: (lesson: PackLesson) => void): PackLesson => {
+    const lesson: PackLesson = JSON.parse(JSON.stringify(FD01_LESSONS.find((l) => l.id === 'd01')));
+    mutate(lesson);
+    return lesson;
+  };
+  const codes = (lesson: PackLesson) => validatePackLesson(lesson).map((i) => i.code);
+
+  it('rejects derived input with no input.sourceRefId — "any derivable ref" is not provenance', () => {
+    expect(
+      codes(
+        broken((l) => {
+          l.input.sourceRefId = undefined;
+        }),
+      ),
+    ).toContain('derived-source-missing');
+  });
+
+  it('rejects derived input whose sourceRefId is not among sourceRefs', () => {
+    expect(
+      codes(
+        broken((l) => {
+          l.input.sourceRefId = 'nep-dialogues';
+          l.sourceRefs = l.sourceRefs.filter((r) => r !== 'nep-dialogues');
+        }),
+      ),
+    ).toContain('derived-source-not-cited');
+  });
+
+  it('accepts derived input backed by an exact derivable sourceRefId', () => {
+    // d01 as authored: derived + sourceRefId nep-phonetic-db (LINK_AND_DERIVE) + cited.
+    expect(codes(broken(() => {}))).not.toEqual(expect.arrayContaining(['derived-source-missing', 'derived-source-not-cited', 'derived-from-restricted']));
+  });
+
+  it('pins every authored derived lesson to a cited derivable source', () => {
+    for (const lesson of FD01_LESSONS.filter((l) => l.input.origin === 'derived')) {
+      expect(lesson.input.sourceRefId, lesson.id).toBeTruthy();
+      expect(lesson.sourceRefs, lesson.id).toContain(lesson.input.sourceRefId);
+      expect(SOURCE_REFERENCES[lesson.input.sourceRefId as string].klass, lesson.id).toMatch(
+        /LINK_AND_DERIVE|REUSABLE_CONTENT/,
+      );
+    }
+  });
+});
+
+describe('authored intent is carried onto runtime items (review P1)', () => {
+  const items = fd01ContentItems(1000);
+
+  it('article items carry the lesson contract in metadata.fd', () => {
+    for (const lesson of FD01_LESSONS) {
+      const item = items.find((i) => i.id === `fd01.lesson.${lesson.id}`);
+      expect(item?.metadata?.fd?.packId).toBe('flashday-foundation-v1');
+      expect(item?.metadata?.fd?.lessonId).toBe(lesson.id);
+      expect(item?.metadata?.fd?.supportLadder).toEqual(lesson.supportLadder);
+      expect(item?.metadata?.fd?.reviewVariants).toEqual(lesson.reviewVariants);
+      expect(item?.metadata?.fd?.transferContext).toBe(lesson.transferTask.prompt);
+      expect(item?.metadata?.fd?.sourceRefId).toBe(lesson.input.sourceRefId);
+    }
+  });
+
+  it('word items carry the target contract in metadata.fd', () => {
+    for (const lesson of FD01_LESSONS) {
+      for (const target of lesson.targets) {
+        const item = items.find((i) => i.id === target.id);
+        expect(item?.metadata?.fd?.lessonId).toBe(lesson.id);
+        expect(item?.metadata?.fd?.trackId).toBe(lesson.track);
+        expect(item?.metadata?.fd?.productionPattern).toBe(target.productionPattern);
+        expect(item?.metadata?.fd?.transferContext).toBe(target.transferContext);
+      }
+    }
+  });
+});
+
+describe('track D binds the audio path it claims (review P1)', () => {
+  const items = fd01ContentItems(1000);
+
+  it('every track-D lesson ladders audio + offers the audio variant', () => {
+    for (const lesson of FD01_LESSONS.filter((l) => l.track === 'd')) {
+      expect(lesson.supportLadder, lesson.id).toContain('audio');
+      expect(lesson.reviewVariants, lesson.id).toContain('audio-to-meaning');
+    }
+  });
+
+  it('audio scaffolds stay inside track D — other tracks never ladder them', () => {
+    /* supportLadder steps are authored pedagogy claims: only Track D may
+     * list audio/transcript. reviewVariants are runtime affordances —
+     * dictation mode exists on every chunk card, so audio-to-meaning is
+     * legitimately offered pack-wide. */
+    for (const lesson of FD01_LESSONS.filter((l) => l.track !== 'd')) {
+      expect(lesson.supportLadder, lesson.id).not.toContain('audio');
+      expect(lesson.supportLadder, lesson.id).not.toContain('transcript');
+    }
+  });
+
+  it('every track-D target carries a heard-form hint bound to metadata.vocabulary.pronunciation', () => {
+    for (const lesson of FD01_LESSONS.filter((l) => l.track === 'd')) {
+      for (const target of lesson.targets) {
+        expect(target.pronunciationNote, target.id).toBeTruthy();
+        const item = items.find((i) => i.id === target.id);
+        expect(item?.metadata?.vocabulary?.pronunciation, target.id).toBe(target.pronunciationNote);
+      }
+    }
+  });
+
+  it('validator rejects a non-D lesson that ladders audio scaffolds', () => {
+    const lesson: PackLesson = JSON.parse(JSON.stringify(FD01_LESSONS[0])); // a01, track a
+    lesson.supportLadder = ['context', 'audio', 'transcript'];
+    const codes = validatePackLesson(lesson).map((i) => i.code);
+    expect(codes).toContain('audio-outside-track-d');
+  });
+
+  it('validator rejects a track-D lesson missing the audio path', () => {
+    const lesson: PackLesson = JSON.parse(JSON.stringify(FD01_LESSONS.find((l) => l.id === 'd01')));
+    lesson.supportLadder = lesson.supportLadder.filter((s) => s !== 'audio');
+    lesson.reviewVariants = lesson.reviewVariants.filter((v) => v !== 'audio-to-meaning');
+    expect(validatePackLesson(lesson).map((i) => i.code)).toContain('missing-audio-path');
   });
 });
 

@@ -106,6 +106,17 @@ export function fd01ArticleItem(lesson: PackLesson, index: number, now: number):
     difficulty: cefrDifficulty(lesson.cefr),
     metadata: {
       scenario: { situation: lesson.context, role: 'You', goal: lesson.task },
+      /* The authored lesson contract travels with the item — queryable at
+       * runtime instead of dying at pack edge (review P1). */
+      fd: {
+        packId: FD01_PACK_ID,
+        lessonId: lesson.id,
+        trackId: lesson.track,
+        supportLadder: lesson.supportLadder,
+        reviewVariants: lesson.reviewVariants,
+        transferContext: lesson.transferTask.prompt,
+        sourceRefId: lesson.input.sourceRefId,
+      },
     },
     /* +index keeps authored lesson order inside the unit (items sort by
      * createdAt); the millisecond offsets are deterministic. */
@@ -131,8 +142,20 @@ export function fd01ChunkItem(target: PackTarget, lesson: PackLesson, index: num
          * produce the English chunk (attempt before reveal). */
         meaning: target.cueVi,
         example: target.sourceSentence,
-        pronunciation: '',
+        /* Track D binds a heard-form hint; the dictation mode's TTS
+         * speak(title) is the audio path the ladder/variant claim. */
+        pronunciation: target.pronunciationNote ?? '',
         bookTitle: `${trackTitle} — Chunks`,
+      },
+      /* Target-level contract: pattern + changed context survive into
+       * the seeded item for application-mode/query use. */
+      fd: {
+        packId: FD01_PACK_ID,
+        lessonId: lesson.id,
+        trackId: lesson.track,
+        reviewVariants: lesson.reviewVariants,
+        productionPattern: target.productionPattern,
+        transferContext: target.transferContext,
       },
     },
     createdAt: now + index,

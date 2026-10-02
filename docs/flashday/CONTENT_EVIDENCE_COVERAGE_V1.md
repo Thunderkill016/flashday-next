@@ -10,16 +10,34 @@ Legend for mechanisms (all existing runtime surfaces, no new engine):
 - **Retrieval**: chunk targets → word items (`cueVi — masked sentence` →
   type the English chunk; VocabularyWorkspace `spelling`/`meaning`/
   `dictation` modes) + text-cycle `recall` stage (delayed, rated).
-- **Support**: authored `supportLadder` (context→lexical→gloss-vi→
-  partial-model→full-answer; D adds `audio`/`transcript` before reveal);
-  runtime records `assisted`/`sourceRevealed`/`usedTranslation`.
+- **Support**: authored `supportLadder` carried on `metadata.fd` (D adds
+  `audio`/`transcript` — gated scaffolds, never defaults); runtime
+  records `assisted`/`sourceRevealed`/`usedTranslation`.
 - **Production**: text-cycle `output` (free write, must not copy source) +
-  `productionPattern` per target + vocabulary `application` mode (own
-  sentence in a new situation).
+  `productionPattern` per target (carried on `metadata.fd`) + vocabulary
+  `application` mode (own sentence in a new situation).
 - **Transfer**: text-cycle `apply` stage validates `expression` ⊆ source
-  and `context` ∉ source at runtime; `transferTask` is the authored intent.
-- **Review**: `reviewVariants` affordances + FSRS-scheduled vocabulary
-  records + delayed `recall` (≥24h, `TEXT_CYCLE_INITIAL_DELAY`).
+  and `context` ∉ source at runtime; `transferTask` is the authored intent
+  (also embedded in the article text's Vận dụng block and `metadata.fd`).
+- **Review**: `reviewVariants` affordances (carried on `metadata.fd`) +
+  FSRS-scheduled vocabulary records + delayed `recall` (≥24h,
+  `TEXT_CYCLE_INITIAL_DELAY`).
+
+### Authored-field → runtime mapping (what consumes what, today)
+
+| Pack field | Runtime surface today |
+|---|---|
+| `supportLadder` (audio/transcript on D) | dictation mode plays `speak(title)` via TTS before the reveal — the `audio` scaffold; the `transcript` scaffold is the masked-sentence/answer reveal after attempt |
+| `reviewVariants` `audio-to-meaning` | vocabulary `dictation` mode (TTS listens → meaning) — available on every chunk card |
+| `reviewVariants` `meaning-to-en` | vocabulary `spelling` mode (Vi cue → type the chunk) |
+| `reviewVariants` `en-to-meaning`, `context-to-phrase` | vocabulary `meaning` mode + cloze prompt |
+| `reviewVariants` `context-to-production` | vocabulary `application` mode (changed-context sentence, validated) |
+| `productionPattern`, `transferContext` | carried on `metadata.fd`; the application-mode contract (`context` ∉ source) enforces changed-context production |
+| `pronunciationNote` (Track D) | `metadata.vocabulary.pronunciation` — heard-form hint rendered beside the chunk and alongside the dictation listen button |
+
+`metadata.fd` keeps every authored field queryable on the seeded item;
+fields without a dedicated surface today are carried contract, not dead
+data — a later planner consumes them without re-seeding.
 
 ## Per-lesson evidence map
 

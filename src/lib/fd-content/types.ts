@@ -40,6 +40,10 @@ export interface PackTarget {
   productionPattern: string;
   /** Pre-authored changed context for the transfer step. */
   transferContext: string;
+  /** Heard-form hint for listening items (Track D) — reduced/stress
+   *  notation shown beside the chunk, e.g. `≈ "whaddya"`. Required on
+   *  track-D targets so the audio claim binds to a real field. */
+  pronunciationNote?: string;
 }
 
 export interface PackTransferTask {

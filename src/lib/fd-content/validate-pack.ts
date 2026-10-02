@@ -29,6 +29,10 @@ export interface PackIssue {
     | 'unknown-research-ref'
     | 'rejected-source'
     | 'derived-from-restricted'
+    | 'derived-source-missing'
+    | 'derived-source-not-cited'
+    | 'audio-outside-track-d'
+    | 'missing-audio-path'
     | 'duplicate-lesson-id'
     | 'duplicate-activity-id'
     | 'cue-leaks-answer'
@@ -66,24 +70,58 @@ export function validatePackLesson(lesson: PackLesson): PackIssue[] {
   for (const ref of lesson.researchRefs)
     if (!RESEARCH_REFERENCES[ref]) at('unknown-research-ref', `unknown researchRef "${ref}"`);
 
-  /* Rights gate — derived input must derive from a derivable source;
-   * reference-only material may inform design but never carries the text. */
+  /* Rights gate — provenance binds to the EXACT source. A derived input
+   * must name input.sourceRefId, that ref must be cited in sourceRefs,
+   * and it must be derivable. An unrelated derivable ref elsewhere in
+   * sourceRefs does not back this input (review P1). */
   if (lesson.input.origin === 'derived') {
-    const derivable = lesson.sourceRefs.some((ref) => {
-      const klass = SOURCE_REFERENCES[ref]?.klass;
-      return klass === 'LINK_AND_DERIVE' || klass === 'REUSABLE_CONTENT';
-    });
-    if (!derivable)
-      at('derived-from-restricted', 'input marked derived but no REUSABLE_CONTENT/LINK_AND_DERIVE sourceRef backs it');
-  }
-  if (lesson.input.sourceRefId) {
+    if (!lesson.input.sourceRefId) {
+      at('derived-source-missing', 'input marked derived but input.sourceRefId is absent');
+    } else {
+      if (!lesson.sourceRefs.includes(lesson.input.sourceRefId))
+        at(
+          'derived-source-not-cited',
+          `input.sourceRefId "${lesson.input.sourceRefId}" is not cited in sourceRefs — derivation must be explicit`,
+        );
+      const source = SOURCE_REFERENCES[lesson.input.sourceRefId];
+      if (!source) at('unknown-source-ref', `unknown input.sourceRefId "${lesson.input.sourceRefId}"`);
+      else if (source.klass === 'REFERENCE_ONLY' || source.klass === 'REJECTED')
+        at(
+          'derived-from-restricted',
+          `input derives from ${source.klass} source "${lesson.input.sourceRefId}" — never embed restricted material`,
+        );
+    }
+  } else if (lesson.input.sourceRefId) {
     const source = SOURCE_REFERENCES[lesson.input.sourceRefId];
     if (!source) at('unknown-source-ref', `unknown input.sourceRefId "${lesson.input.sourceRefId}"`);
     else if (source.klass === 'REFERENCE_ONLY' || source.klass === 'REJECTED')
       at(
         'derived-from-restricted',
-        `input derives from ${source.klass} source "${lesson.input.sourceRefId}" — never embed restricted material`,
+        `input claims ${source.klass} source "${lesson.input.sourceRefId}" — never embed restricted material`,
       );
+  }
+
+  /* Track D audio claim — audio/transcript are authored pedagogy steps
+   * that only the listening track may carry. A track-D lesson must
+   * actually offer the audio path (ladder + audio-to-meaning variant),
+   * and every track-D target must bind a heard-form hint to the item's
+   * pronunciation field so the claim reaches a rendered surface. */
+  const audioSteps = lesson.supportLadder.filter((s) => s === 'audio' || s === 'transcript');
+  if (lesson.track !== 'd' && audioSteps.length)
+    at('audio-outside-track-d', 'audio/transcript support steps are only valid on track D lessons');
+  if (lesson.track === 'd') {
+    if (!audioSteps.includes('audio') || !lesson.reviewVariants.includes('audio-to-meaning'))
+      at(
+        'missing-audio-path',
+        'track D claims listening support but ladders no audio step or audio-to-meaning variant',
+      );
+    for (const target of lesson.targets)
+      if (!target.pronunciationNote?.trim())
+        at(
+          'missing-audio-path',
+          `target "${target.id}" has no pronunciationNote — heard-form hint is the audio binding`,
+          `${lesson.id}/${target.id}`,
+        );
   }
 
   /* Retrieval exists and never reveals the answer first. */

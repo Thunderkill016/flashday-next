@@ -37,6 +37,7 @@ export const TRACK_D: PackLesson[] = [
     targets: [
       {
         id: 'fd01.d01.t1',
+        pronunciationNote: '"nicetomeetyou" — 4 từ nối một mạch, nhấn MEET',
         chunk: 'nice to meet you',
         cueVi: 'rất vui được gặp bạn (nghe: 4 từ nối nhau)',
         sourceSentence: 'nice to meet you — not "nicetomeetyou"',
@@ -45,6 +46,7 @@ export const TRACK_D: PackLesson[] = [
       },
       {
         id: 'fd01.d01.t2',
+        pronunciationNote: '"whaddya DO" — what-do-you co lại thành 2 âm',
         chunk: 'what do you do',
         cueVi: 'bạn làm nghề gì (nghe nhanh: "whaddya do")',
         sourceSentence: 'what do you do — often sounds like "whaddya" fast',
@@ -53,6 +55,7 @@ export const TRACK_D: PackLesson[] = [
       },
       {
         id: 'fd01.d01.t3',
+        pronunciationNote: '"I\'m-from-Vietnam" — I\'m from gộp một nhịp',
         chunk: 'I am from Vietnam',
         cueVi: "tôi đến từ Việt Nam (nghe nhanh: I'm from gộp một nhịp)",
         sourceSentence: "I am from Vietnam — in fast speech, I'm from is one beat",
@@ -61,6 +64,7 @@ export const TRACK_D: PackLesson[] = [
       },
       {
         id: 'fd01.d01.t4',
+        pronunciationNote: '"LEM-me CHECK" — let me → lemme',
         chunk: 'let me check',
         cueVi: 'để tôi kiểm tra (nghe nhanh: "lemme check")',
         sourceSentence: 'let me check — "lemme" is the reduced form',
@@ -69,6 +73,7 @@ export const TRACK_D: PackLesson[] = [
       },
       {
         id: 'fd01.d01.t5',
+        pronunciationNote: 'could you SAY that a-GAIN — nhấn SAY và GAIN',
         chunk: 'could you say that again',
         cueVi: 'bạn nói lại được không (trọng âm rơi vào SAY và AGAIN)',
         sourceSentence: 'could you say that again — stress lands on SAY and AGAIN',
@@ -114,6 +119,7 @@ export const TRACK_D: PackLesson[] = [
     targets: [
       {
         id: 'fd01.d02.t1',
+        pronunciationNote: 'i-NEED-help-with-the-PASS-word — từ nối gần như mất',
         chunk: 'I need help with the password',
         cueVi: 'tôi cần giúp với mật khẩu (nhấn NEED, PASS-)',
         sourceSentence: 'I NEED help with the password — NEED and PASS-word carry it',
@@ -122,6 +128,7 @@ export const TRACK_D: PackLesson[] = [
       },
       {
         id: 'fd01.d02.t2',
+        pronunciationNote: 'the-PROB-lem-is-that-the-app-CRASH-es — nhấn PROB, CRASH',
         chunk: 'the problem is that the app crashes',
         cueVi: 'vấn đề là app bị crash (nhấn PROB-, CRASH-)',
         sourceSentence:
@@ -131,6 +138,7 @@ export const TRACK_D: PackLesson[] = [
       },
       {
         id: 'fd01.d02.t3',
+        pronunciationNote: 'də-yə-NOW-if-the-SHOP-is-O-pen — nhấn KNOW, SHOP, O-',
         chunk: 'do you know if the shop is open',
         cueVi: 'bạn có biết cửa hàng còn mở không (nhấn KNOW, SHOP, O-)',
         sourceSentence: 'do you KNOW if the SHOP is open — KNOW and SHOP and O-pen',
@@ -139,6 +147,7 @@ export const TRACK_D: PackLesson[] = [
       },
       {
         id: 'fd01.d02.t4',
+        pronunciationNote: 'AL-most-dis-ap-PEAR — to/the/of gần như biến mất',
         chunk: 'almost disappear',
         cueVi: 'gần như biến mất (về âm thanh)',
         sourceSentence: 'listen for the strong beat, not every sound — "to", "the", "of" almost disappear',
@@ -185,6 +194,7 @@ export const TRACK_D: PackLesson[] = [
     targets: [
       {
         id: 'fd01.d03.t1',
+        pronunciationNote: '"a-NAP-ple" — âm n chạy sang từ sau',
         chunk: 'an apple',
         cueVi: 'một quả táo (nghe: "a-napple" — âm n nối sang)',
         sourceSentence: 'linking — an apple: the "n" moves: a-NAP-ple',
@@ -193,6 +203,7 @@ export const TRACK_D: PackLesson[] = [
       },
       {
         id: 'fd01.d03.t2',
+        pronunciationNote: '"I-DUN-no" — mất âm t cuối',
         chunk: "I don't know",
         cueVi: 'tôi không biết (nghe nhanh: "I dunno")',
         sourceSentence: 'dropping — I don\'t know: the "t" often goes silent: "I dunno"',
@@ -201,6 +212,7 @@ export const TRACK_D: PackLesson[] = [
       },
       {
         id: 'fd01.d03.t3',
+        pronunciationNote: '"DID-ja" — d+y trộn thành j',
         chunk: 'did you',
         cueVi: 'bạn đã ~ chưa (nghe nhanh: "didja")',
         sourceSentence: 'blending — did you: "d"+"y" becomes "j": "didja"',
@@ -209,6 +221,7 @@ export const TRACK_D: PackLesson[] = [
       },
       {
         id: 'fd01.d03.t4',
+        pronunciationNote: '"GON-na" — dạng nói nhanh của going to',
         chunk: 'going to',
         cueVi: 'sắp ~ (nói nhanh: "gonna")',
         sourceSentence: 'going to and want to become gonna and wanna in casual speech',
@@ -217,6 +230,7 @@ export const TRACK_D: PackLesson[] = [
       },
       {
         id: 'fd01.d03.t5',
+        pronunciationNote: '"WAN-na" — dạng nói nhanh của want to',
         chunk: 'want to',
         cueVi: 'muốn ~ (nói nhanh: "wanna")',
         sourceSentence: 'going to and want to become gonna and wanna in casual speech',
@@ -263,6 +277,7 @@ export const TRACK_D: PackLesson[] = [
     targets: [
       {
         id: 'fd01.d04.t1',
+        pronunciationNote: "ai'd-LUV-tə-BUT — nghe là một khối từ chối mềm",
         chunk: 'I would love to but',
         cueVi: 'tôi rất muốn nhưng ~ (khối từ chối mềm)',
         sourceSentence: 'I would love to but I have a class — a soft-decline move, not six separate words',
@@ -271,6 +286,7 @@ export const TRACK_D: PackLesson[] = [
       },
       {
         id: 'fd01.d04.t2',
+        pronunciationNote: 'the-PROB-lem-iz-that — khung chẩn đoán, nghe một nhịp',
         chunk: 'the problem is that',
         cueVi: 'vấn đề là ~ (khung chẩn đoán)',
         sourceSentence: 'the problem is that / the app crashes — frame + content',
@@ -279,6 +295,7 @@ export const TRACK_D: PackLesson[] = [
       },
       {
         id: 'fd01.d04.t3',
+        pronunciationNote: 'it-de-PEN-dzon — khung điều kiện một nhịp',
         chunk: 'it depends on',
         cueVi: 'còn tùy vào ~ (khung điều kiện)',
         sourceSentence: 'it depends on / the cause — hedge + variable',
@@ -287,6 +304,7 @@ export const TRACK_D: PackLesson[] = [
       },
       {
         id: 'fd01.d04.t4',
+        pronunciationNote: 'could-you-SAY-that-a-GAIN — khung yêu cầu + hành động',
         chunk: 'could you say that again',
         cueVi: 'bạn nói lại được không (khung yêu cầu + hành động)',
         sourceSentence: 'could you say that again — the polite request frame plus the action',
