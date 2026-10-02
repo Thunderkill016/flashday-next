@@ -1,0 +1,1150 @@
+{
+  "mission": "W2-01",
+  "description": "Inventoried read sites of authority-sensitive legacy state. Guardrail: any new sensitive read outside this manifest fails; any manifest entry whose source pattern disappears fails (stale). CAPABILITY_CLAIM entries must name the DAG node that owns the migration.",
+  "baseCommit": "c2ef466",
+  "classifications": [
+    "LEGIT_SCHEDULING",
+    "LEGIT_HISTORY",
+    "LEGIT_ANALYTICS",
+    "LEGIT_PRESENTATION",
+    "LEGIT_CANDIDATE_SIGNAL",
+    "CAPABILITY_CLAIM",
+    "AMBIGUOUS"
+  ],
+  "sites": [
+    {
+      "file": "src/app/(app)/dashboard/page.tsx",
+      "source": "records",
+      "classification": "LEGIT_ANALYTICS",
+      "reason": "avgAccuracy stat card; aggregate display only",
+      "migrationNode": "W2-CS1"
+    },
+    {
+      "file": "src/app/(app)/dashboard/page.tsx",
+      "source": "fsrs",
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "buildReviewForecast — upcoming-due forecast",
+      "migrationNode": "W2-MB1"
+    },
+    {
+      "file": "src/app/(app)/dashboard/page.tsx",
+      "source": "sessions",
+      "classification": "LEGIT_ANALYTICS",
+      "reason": "streak/minutes/count aggregates",
+      "migrationNode": "W2-CS1"
+    },
+    {
+      "file": "src/app/(app)/dashboard/page.tsx",
+      "source": "weakSpots",
+      "classification": "LEGIT_PRESENTATION",
+      "reason": "open weak-spot count + nav link",
+      "migrationNode": "W2-WS2"
+    },
+    {
+      "file": "src/app/(app)/dashboard/page.tsx",
+      "source": "assessment.currentLevel",
+      "classification": "LEGIT_PRESENTATION",
+      "reason": "assessment reminder/nudge; advisory only",
+      "migrationNode": "W2-AS1"
+    },
+    {
+      "file": "src/app/(app)/layout.tsx",
+      "source": "assessment.currentLevel",
+      "classification": "LEGIT_HISTORY",
+      "reason": "store hydration on app init; no claim",
+      "migrationNode": null
+    },
+    {
+      "file": "src/app/(app)/layout.tsx",
+      "source": "dailyPlan",
+      "classification": "LEGIT_HISTORY",
+      "reason": "store hydration on app init; no claim",
+      "migrationNode": null
+    },
+    {
+      "file": "src/app/(app)/learn/[unitId]/page.tsx",
+      "source": "sessions",
+      "classification": "LEGIT_PRESENTATION",
+      "reason": "lessonProgress → step completion display",
+      "migrationNode": "W2-CS1"
+    },
+    {
+      "file": "src/app/(app)/learn/[unitId]/page.tsx",
+      "source": "weakSpots",
+      "classification": "LEGIT_CANDIDATE_SIGNAL",
+      "reason": "sourceWeakSpotId passthrough into workshop flow",
+      "migrationNode": "W2-WS2"
+    },
+    {
+      "file": "src/app/(app)/learn/[unitId]/page.tsx",
+      "source": "learningAttempts",
+      "classification": "LEGIT_PRESENTATION",
+      "reason": "deriveTextCycle → cycle step display",
+      "migrationNode": "W2-CS1"
+    },
+    {
+      "file": "src/app/(app)/learn/page.tsx",
+      "source": "sessions",
+      "classification": "LEGIT_PRESENTATION",
+      "reason": "lessonProgress → lesson completion display",
+      "migrationNode": "W2-CS1"
+    },
+    {
+      "file": "src/app/(app)/learn/page.tsx",
+      "source": "learningAttempts",
+      "classification": "LEGIT_PRESENTATION",
+      "reason": "deriveTextCycle → cycle state display",
+      "migrationNode": "W2-CS1"
+    },
+    {
+      "file": "src/app/(app)/listen/[id]/page.tsx",
+      "source": "weakSpots",
+      "classification": "LEGIT_CANDIDATE_SIGNAL",
+      "reason": "writes/updates weakSpot rows from dictation results",
+      "migrationNode": "W2-WS2"
+    },
+    {
+      "file": "src/app/(app)/listen/[id]/page.tsx",
+      "source": "dailyPlan",
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "isDailyPlanPractice → task completion wiring",
+      "migrationNode": "W2-PL1"
+    },
+    {
+      "file": "src/app/(app)/read/[id]/page.tsx",
+      "source": "dailyPlan",
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "isDailyPlanPractice → task completion wiring",
+      "migrationNode": "W2-PL1"
+    },
+    {
+      "file": "src/app/(app)/write/[id]/page.tsx",
+      "source": "dailyPlan",
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "isDailyPlanPractice → task completion wiring",
+      "migrationNode": "W2-PL1"
+    },
+    {
+      "file": "src/app/(app)/review/page.tsx",
+      "source": "weakSpots",
+      "classification": "LEGIT_PRESENTATION",
+      "reason": "open weak-spot count",
+      "migrationNode": "W2-WS2"
+    },
+    {
+      "file": "src/app/(app)/review/today/page.tsx",
+      "source": "fsrs",
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "FSRS due queue",
+      "migrationNode": "W2-MB1"
+    },
+    {
+      "file": "src/app/(app)/weak-spots/page.tsx",
+      "source": "weakSpots",
+      "classification": "LEGIT_PRESENTATION",
+      "reason": "weak-spot list page",
+      "migrationNode": "W2-WS2"
+    },
+    {
+      "file": "src/app/api/assessment/route.ts",
+      "source": "assessment.currentLevel",
+      "classification": "LEGIT_CANDIDATE_SIGNAL",
+      "reason": "adaptive question distribution input — advisory placement use",
+      "migrationNode": "W2-AS1"
+    },
+    {
+      "file": "src/app/api/chat/route.ts",
+      "source": "sessions",
+      "classification": "LEGIT_PRESENTATION",
+      "reason": "formats stats tool output for the chat tutor",
+      "migrationNode": "W2-CS1"
+    },
+    {
+      "file": "src/components/assessment/assessment-section.tsx",
+      "source": "sessions",
+      "classification": "LEGIT_ANALYTICS",
+      "reason": "session counts as assessment metadata",
+      "migrationNode": "W2-CS1"
+    },
+    {
+      "file": "src/components/assessment/assessment-section.tsx",
+      "source": "assessment.currentLevel",
+      "classification": "LEGIT_CANDIDATE_SIGNAL",
+      "reason": "level display + advisory adaptive input; no gating",
+      "migrationNode": "W2-AS1"
+    },
+    {
+      "file": "src/components/chat/chat-panel.tsx",
+      "source": "assessment.currentLevel",
+      "classification": "LEGIT_CANDIDATE_SIGNAL",
+      "reason": "userLevel → difficulty context for tutor; advisory",
+      "migrationNode": "W2-AS1"
+    },
+    {
+      "file": "src/components/dashboard/goal-setting-dialog.tsx",
+      "source": "dailyPlan",
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "goal change triggers plan regeneration",
+      "migrationNode": "W2-PL1"
+    },
+    {
+      "file": "src/components/dashboard/streak-badge.tsx",
+      "source": "dailyPlan",
+      "classification": "LEGIT_PRESENTATION",
+      "reason": "streak display from plan store",
+      "migrationNode": "W2-PL1"
+    },
+    {
+      "file": "src/components/dashboard/today-plan.tsx",
+      "source": "records",
+      "classification": "LEGIT_HISTORY",
+      "reason": "latest lastPracticed → activity signature for plan refresh",
+      "migrationNode": "W2-PL1"
+    },
+    {
+      "file": "src/components/dashboard/today-plan.tsx",
+      "source": "sessions",
+      "classification": "LEGIT_HISTORY",
+      "reason": "latest session → signature + per-task session summaries",
+      "migrationNode": "W2-PL1"
+    },
+    {
+      "file": "src/components/dashboard/today-plan.tsx",
+      "source": "assessment.currentLevel",
+      "classification": "LEGIT_CANDIDATE_SIGNAL",
+      "reason": "advisory plan input + levelKey invalidation",
+      "migrationNode": "W2-AS1"
+    },
+    {
+      "file": "src/components/dashboard/today-plan.tsx",
+      "source": "dailyPlan",
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "plan store read/write + task lifecycle",
+      "migrationNode": "W2-PL1"
+    },
+    {
+      "file": "src/components/favorites/favorite-detail.tsx",
+      "source": "fsrs",
+      "classification": "LEGIT_PRESENTATION",
+      "reason": "nextReview display on detail",
+      "migrationNode": "W2-MB1"
+    },
+    {
+      "file": "src/components/favorites/favorite-item-row.tsx",
+      "source": "fsrs",
+      "classification": "LEGIT_PRESENTATION",
+      "reason": "nextReview/due badge on rows",
+      "migrationNode": "W2-MB1"
+    },
+    {
+      "file": "src/components/favorites/favorites-list.tsx",
+      "source": "fsrs",
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "due-state grouping in list",
+      "migrationNode": "W2-MB1"
+    },
+    {
+      "file": "src/components/favorites/favorites-review.tsx",
+      "source": "fsrs",
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "due filter + previewRatings + gradeCard write",
+      "migrationNode": "W2-MB1"
+    },
+    {
+      "file": "src/components/layout/command-palette.tsx",
+      "source": "sessions",
+      "classification": "LEGIT_ANALYTICS",
+      "reason": "today-stats snippet in palette",
+      "migrationNode": "W2-CS1"
+    },
+    {
+      "file": "src/components/learning/daily-task-queue.tsx",
+      "source": "records",
+      "classification": "LEGIT_CANDIDATE_SIGNAL",
+      "reason": "records feed review/vocab task candidates",
+      "migrationNode": "W2-PL1"
+    },
+    {
+      "file": "src/components/learning/daily-task-queue.tsx",
+      "source": "fsrs",
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "favorites fsrsCard.due → review task candidate",
+      "migrationNode": "W2-MB1"
+    },
+    {
+      "file": "src/components/learning/daily-task-queue.tsx",
+      "source": "sessions",
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "sessions as task-completion evidence",
+      "migrationNode": "W2-PL1"
+    },
+    {
+      "file": "src/components/learning/daily-task-queue.tsx",
+      "source": "weakSpots",
+      "classification": "LEGIT_CANDIDATE_SIGNAL",
+      "reason": "weakSpots[0] → weak-spot task candidate",
+      "migrationNode": "W2-PL1"
+    },
+    {
+      "file": "src/components/learning/daily-task-queue.tsx",
+      "source": "pronunciationProgress",
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "pronunciation task-completion evidence",
+      "migrationNode": "W2-PR1"
+    },
+    {
+      "file": "src/components/learning/daily-task-queue.tsx",
+      "source": "learningAttempts",
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "attempts as task-completion evidence",
+      "migrationNode": "W2-PL1"
+    },
+    {
+      "file": "src/components/learning/daily-task-queue.tsx",
+      "source": "dailyTasks",
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "planner-cache CRUD + reconcile (executable cache, not truth)",
+      "migrationNode": "W2-PL1"
+    },
+    {
+      "file": "src/components/learning/learning-section-nav.tsx",
+      "source": "weakSpots",
+      "classification": "LEGIT_PRESENTATION",
+      "reason": "nav link/section routing to weak-spots",
+      "migrationNode": "W2-WS2"
+    },
+    {
+      "file": "src/components/learning/learning-settings.tsx",
+      "source": "dailyPlan",
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "plan preference settings",
+      "migrationNode": "W2-PL1"
+    },
+    {
+      "file": "src/components/learning/lesson-workshop.tsx",
+      "source": "weakSpots",
+      "classification": "CAPABILITY_CLAIM",
+      "reason": "weakSpot.resolved drives learner-facing 'Resolved' recovery claim + workshop resolution flow",
+      "migrationNode": "W2-WS2"
+    },
+    {
+      "file": "src/components/learning/lesson-workshop.tsx",
+      "source": "learningAttempts",
+      "classification": "LEGIT_HISTORY",
+      "reason": "attempt list shown as remediation evidence",
+      "migrationNode": "W2-AT1"
+    },
+    {
+      "file": "src/components/learning/text-cycle-practice.tsx",
+      "source": "weakSpots",
+      "classification": "LEGIT_CANDIDATE_SIGNAL",
+      "reason": "sourceWeakSpotId context passthrough into attempts",
+      "migrationNode": "W2-WS2"
+    },
+    {
+      "file": "src/components/learning/text-cycle-practice.tsx",
+      "source": "learningAttempts",
+      "classification": "LEGIT_HISTORY",
+      "reason": "attempts → deriveTextCycle + persistLearningAttempt writer",
+      "migrationNode": "W2-AT1"
+    },
+    {
+      "file": "src/components/learning/vocabulary-practice.tsx",
+      "source": "records",
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "records drive vocab practice ordering/due selection",
+      "migrationNode": "W2-MB1"
+    },
+    {
+      "file": "src/components/learning/vocabulary-practice.tsx",
+      "source": "fsrs",
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "fsrsCard/nextReview due ordering",
+      "migrationNode": "W2-MB1"
+    },
+    {
+      "file": "src/components/learning/vocabulary-workspace.tsx",
+      "source": "records",
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "records → vocab practice data",
+      "migrationNode": "W2-MB1"
+    },
+    {
+      "file": "src/components/learning/vocabulary-workspace.tsx",
+      "source": "learningAttempts",
+      "classification": "LEGIT_HISTORY",
+      "reason": "attempt history feeding workspace tasks",
+      "migrationNode": "W2-AT1"
+    },
+    {
+      "file": "src/components/learning/vocabulary-workspace.tsx",
+      "source": "dailyTasks",
+      "classification": "LEGIT_HISTORY",
+      "reason": "preferences:vocabulary row — settings, not evidence",
+      "migrationNode": "W2-PL1"
+    },
+    {
+      "file": "src/components/library/material-library.tsx",
+      "source": "sessions",
+      "classification": "LEGIT_PRESENTATION",
+      "reason": "sessions → lessonProgress per-unit completion",
+      "migrationNode": "W2-CS1"
+    },
+    {
+      "file": "src/components/pronunciation/pronunciation-studio.tsx",
+      "source": "weakSpots",
+      "classification": "LEGIT_CANDIDATE_SIGNAL",
+      "reason": "writes weakSpot rows from mispronounced sounds",
+      "migrationNode": "W2-WS2"
+    },
+    {
+      "file": "src/components/pronunciation/pronunciation-studio.tsx",
+      "source": "pronunciationProgress",
+      "classification": "LEGIT_PRESENTATION",
+      "reason": "N/48 practiced display + progress-row writes",
+      "migrationNode": "W2-PR1"
+    },
+    {
+      "file": "src/components/review/rating-buttons.tsx",
+      "source": "fsrs",
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "previewRatings → grade write path",
+      "migrationNode": "W2-MB1"
+    },
+    {
+      "file": "src/components/settings/data-backup.tsx",
+      "source": "records",
+      "classification": "LEGIT_HISTORY",
+      "reason": "export/backup transport",
+      "migrationNode": "W2-SY1"
+    },
+    {
+      "file": "src/components/settings/data-backup.tsx",
+      "source": "sessions",
+      "classification": "LEGIT_HISTORY",
+      "reason": "export/backup transport",
+      "migrationNode": "W2-SY1"
+    },
+    {
+      "file": "src/components/settings/data-backup.tsx",
+      "source": "learningAttempts",
+      "classification": "LEGIT_HISTORY",
+      "reason": "export/backup transport",
+      "migrationNode": "W2-SY1"
+    },
+    {
+      "file": "src/components/shared/content-list.tsx",
+      "source": "sessions",
+      "classification": "LEGIT_PRESENTATION",
+      "reason": "per-content completion badge",
+      "migrationNode": "W2-CS1"
+    },
+    {
+      "file": "src/components/shared/word-book-practice.tsx",
+      "source": "records",
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "records → practiced set / due selection",
+      "migrationNode": "W2-MB1"
+    },
+    {
+      "file": "src/components/shared/word-book-practice.tsx",
+      "source": "dailyPlan",
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "isDailyPlanPractice → task completion wiring",
+      "migrationNode": "W2-PL1"
+    },
+    {
+      "file": "src/components/weak-spots/weak-spot-list.tsx",
+      "source": "weakSpots",
+      "classification": "LEGIT_PRESENTATION",
+      "reason": "spot list + accuracy display; no claim beyond the row itself",
+      "migrationNode": "W2-WS2"
+    },
+    {
+      "file": "src/components/weak-spots/weak-spot-summary.tsx",
+      "source": "weakSpots",
+      "classification": "LEGIT_PRESENTATION",
+      "reason": "open count badge",
+      "migrationNode": "W2-WS2"
+    },
+    {
+      "file": "src/hooks/use-learning-workspace.ts",
+      "source": "records",
+      "classification": "LEGIT_ANALYTICS",
+      "reason": "workspace aggregate reads",
+      "migrationNode": "W2-CS1"
+    },
+    {
+      "file": "src/hooks/use-learning-workspace.ts",
+      "source": "sessions",
+      "classification": "LEGIT_ANALYTICS",
+      "reason": "workspace aggregate reads",
+      "migrationNode": "W2-CS1"
+    },
+    {
+      "file": "src/hooks/use-learning-workspace.ts",
+      "source": "weakSpots",
+      "classification": "LEGIT_CANDIDATE_SIGNAL",
+      "reason": "unresolved spots feed workspace remediation data",
+      "migrationNode": "W2-WS2"
+    },
+    {
+      "file": "src/hooks/use-recommendations.ts",
+      "source": "assessment.currentLevel",
+      "classification": "LEGIT_CANDIDATE_SIGNAL",
+      "reason": "userLevel → recommendation request; advisory",
+      "migrationNode": "W2-AS1"
+    },
+    {
+      "file": "src/hooks/use-review-summary.ts",
+      "source": "records",
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "records due filter for review counts",
+      "migrationNode": "W2-MB1"
+    },
+    {
+      "file": "src/hooks/use-review-summary.ts",
+      "source": "fsrs",
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "fsrsCard.due/nextReview due filter",
+      "migrationNode": "W2-MB1"
+    },
+    {
+      "file": "src/hooks/use-review-summary.ts",
+      "source": "weakSpots",
+      "classification": "LEGIT_PRESENTATION",
+      "reason": "open weak-spot count in summary",
+      "migrationNode": "W2-WS2"
+    },
+    {
+      "file": "src/lib/analytics.ts",
+      "source": "records",
+      "classification": "LEGIT_ANALYTICS",
+      "reason": "record aggregates for stats",
+      "migrationNode": "W2-CS1"
+    },
+    {
+      "file": "src/lib/analytics.ts",
+      "source": "fsrs",
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "buildReviewForecast over nextReview",
+      "migrationNode": "W2-MB1"
+    },
+    {
+      "file": "src/lib/analytics.ts",
+      "source": "sessions",
+      "classification": "LEGIT_ANALYTICS",
+      "reason": "session aggregates for stats",
+      "migrationNode": "W2-CS1"
+    },
+    {
+      "file": "src/lib/backup.ts",
+      "source": "weakSpots",
+      "classification": "LEGIT_HISTORY",
+      "reason": "backup export transport",
+      "migrationNode": "W2-SY1"
+    },
+    {
+      "file": "src/lib/backup.ts",
+      "source": "pronunciationProgress",
+      "classification": "LEGIT_HISTORY",
+      "reason": "backup export transport",
+      "migrationNode": "W2-SY1"
+    },
+    {
+      "file": "src/lib/backup.ts",
+      "source": "learningAttempts",
+      "classification": "LEGIT_HISTORY",
+      "reason": "backup export transport",
+      "migrationNode": "W2-SY1"
+    },
+    {
+      "file": "src/lib/backup.ts",
+      "source": "dailyTasks",
+      "classification": "LEGIT_HISTORY",
+      "reason": "backup export transport",
+      "migrationNode": "W2-SY1"
+    },
+    {
+      "file": "src/lib/chat-analytics.ts",
+      "source": "records",
+      "classification": "CAPABILITY_CLAIM",
+      "reason": "records.accuracy<70 → 'weaknesses' fed to AI tutor — capability-shaped claim from a heuristic",
+      "migrationNode": "W2-CS1"
+    },
+    {
+      "file": "src/lib/chat-analytics.ts",
+      "source": "sessions",
+      "classification": "LEGIT_ANALYTICS",
+      "reason": "session aggregates for tutor context",
+      "migrationNode": "W2-CS1"
+    },
+    {
+      "file": "src/lib/chat-analytics.ts",
+      "source": "assessment.currentLevel",
+      "classification": "LEGIT_CANDIDATE_SIGNAL",
+      "reason": "cefrLevel → tutor context; advisory",
+      "migrationNode": "W2-AS1"
+    },
+    {
+      "file": "src/lib/chat-tool-executor.ts",
+      "source": "sessions",
+      "classification": "LEGIT_ANALYTICS",
+      "reason": "stats tool reads sessions",
+      "migrationNode": "W2-CS1"
+    },
+    {
+      "file": "src/lib/chat-ui.ts",
+      "source": "sessions",
+      "classification": "LEGIT_PRESENTATION",
+      "reason": "formats tool payload into chat text",
+      "migrationNode": "W2-CS1"
+    },
+    {
+      "file": "src/lib/daily-plan-links.ts",
+      "source": "dailyPlan",
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "PlanTask→route linking helper",
+      "migrationNode": "W2-PL1"
+    },
+    {
+      "file": "src/lib/daily-plan-progress.ts",
+      "source": "records",
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "writer: session.accuracy → accuracyToRating → record+fsrsCard write (fact-preserving write path)",
+      "migrationNode": "W2-AT1"
+    },
+    {
+      "file": "src/lib/daily-plan-progress.ts",
+      "source": "fsrs",
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "writer: gradeCard → fsrsCard/nextReview",
+      "migrationNode": "W2-MB1"
+    },
+    {
+      "file": "src/lib/daily-plan-progress.ts",
+      "source": "sessions",
+      "classification": "LEGIT_HISTORY",
+      "reason": "writer: session row persistence",
+      "migrationNode": "W2-AT1"
+    },
+    {
+      "file": "src/lib/daily-plan-progress.ts",
+      "source": "dailyPlan",
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "syncPlanTasks → task completion propagation",
+      "migrationNode": "W2-PL1"
+    },
+    {
+      "file": "src/lib/daily-plan.ts",
+      "source": "records",
+      "classification": "CAPABILITY_CLAIM",
+      "reason": "weakness = 100 − avgAccuracy(records.accuracy) → module priority — accuracy repurposed as weakness heuristic",
+      "migrationNode": "W2-PL1"
+    },
+    {
+      "file": "src/lib/daily-plan.ts",
+      "source": "sessions",
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "sessions as plan-task completion evidence",
+      "migrationNode": "W2-PL1"
+    },
+    {
+      "file": "src/lib/daily-plan.ts",
+      "source": "assessment.currentLevel",
+      "classification": "LEGIT_CANDIDATE_SIGNAL",
+      "reason": "levelToDifficulty → plan difficulty; advisory initial-content suggestion",
+      "migrationNode": "W2-AS1"
+    },
+    {
+      "file": "src/lib/daily-plan.ts",
+      "source": "dailyPlan",
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "generateDailyPlan produces PlanTask[]",
+      "migrationNode": "W2-PL1"
+    },
+    {
+      "file": "src/lib/daily-task-planner.ts",
+      "source": "fsrs",
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "fsrsCard.last_review → task-completion detection",
+      "migrationNode": "W2-PL1"
+    },
+    {
+      "file": "src/lib/daily-task-planner.ts",
+      "source": "sessions",
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "sessions as task-completion evidence",
+      "migrationNode": "W2-PL1"
+    },
+    {
+      "file": "src/lib/daily-task-planner.ts",
+      "source": "weakSpots",
+      "classification": "LEGIT_CANDIDATE_SIGNAL",
+      "reason": "weak-spot task generation + resolution evidence",
+      "migrationNode": "W2-WS2"
+    },
+    {
+      "file": "src/lib/daily-task-planner.ts",
+      "source": "pronunciationProgress",
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "pronunciation task-completion evidence",
+      "migrationNode": "W2-PR1"
+    },
+    {
+      "file": "src/lib/daily-task-planner.ts",
+      "source": "learningAttempts",
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "attempts as task-completion evidence",
+      "migrationNode": "W2-PL1"
+    },
+    {
+      "file": "src/lib/daily-task-planner.ts",
+      "source": "dailyTasks",
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "dailyTasks planner engine (executable cache)",
+      "migrationNode": "W2-PL1"
+    },
+    {
+      "file": "src/lib/daily-workspace-progress.ts",
+      "source": "sessions",
+      "classification": "LEGIT_ANALYTICS",
+      "reason": "completed-today → words/minutes progress",
+      "migrationNode": "W2-CS1"
+    },
+    {
+      "file": "src/lib/db.ts",
+      "source": "records",
+      "classification": "LEGIT_HISTORY",
+      "reason": "Dexie schema + migrations",
+      "migrationNode": null
+    },
+    {
+      "file": "src/lib/db.ts",
+      "source": "fsrs",
+      "classification": "LEGIT_HISTORY",
+      "reason": "schema index declarations",
+      "migrationNode": null
+    },
+    {
+      "file": "src/lib/db.ts",
+      "source": "sessions",
+      "classification": "LEGIT_HISTORY",
+      "reason": "Dexie schema + migrations",
+      "migrationNode": null
+    },
+    {
+      "file": "src/lib/db.ts",
+      "source": "weakSpots",
+      "classification": "LEGIT_HISTORY",
+      "reason": "Dexie schema + migrations",
+      "migrationNode": null
+    },
+    {
+      "file": "src/lib/db.ts",
+      "source": "pronunciationProgress",
+      "classification": "LEGIT_HISTORY",
+      "reason": "Dexie schema + migrations",
+      "migrationNode": null
+    },
+    {
+      "file": "src/lib/db.ts",
+      "source": "learningAttempts",
+      "classification": "LEGIT_HISTORY",
+      "reason": "Dexie schema + migrations",
+      "migrationNode": null
+    },
+    {
+      "file": "src/lib/db.ts",
+      "source": "dailyTasks",
+      "classification": "LEGIT_HISTORY",
+      "reason": "Dexie schema + migrations",
+      "migrationNode": null
+    },
+    {
+      "file": "src/lib/fsrs.ts",
+      "source": "fsrs",
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "FSRS algorithm implementation — scheduling authority",
+      "migrationNode": "W2-MB1"
+    },
+    {
+      "file": "src/lib/import-schedule.ts",
+      "source": "records",
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "owner.records → import-task scheduling inputs",
+      "migrationNode": "W2-PL1"
+    },
+    {
+      "file": "src/lib/import-schedule.ts",
+      "source": "learningAttempts",
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "attempts → import-task generation",
+      "migrationNode": "W2-PL1"
+    },
+    {
+      "file": "src/lib/import-schedule.ts",
+      "source": "dailyTasks",
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "writes import dailyTasks rows",
+      "migrationNode": "W2-PL1"
+    },
+    {
+      "file": "src/lib/ios-native-qa.ts",
+      "source": "records",
+      "classification": "LEGIT_HISTORY",
+      "reason": "QA fixture seeding (test-only data)",
+      "migrationNode": null
+    },
+    {
+      "file": "src/lib/ios-native-qa.ts",
+      "source": "fsrs",
+      "classification": "LEGIT_HISTORY",
+      "reason": "QA fixture seeding (test-only data)",
+      "migrationNode": null
+    },
+    {
+      "file": "src/lib/ios-native-qa.ts",
+      "source": "sessions",
+      "classification": "LEGIT_HISTORY",
+      "reason": "QA fixture seeding (test-only data)",
+      "migrationNode": null
+    },
+    {
+      "file": "src/lib/ios-native-qa.ts",
+      "source": "weakSpots",
+      "classification": "LEGIT_HISTORY",
+      "reason": "QA fixture seeding (test-only data)",
+      "migrationNode": null
+    },
+    {
+      "file": "src/lib/learning-activity-persistence.ts",
+      "source": "learningAttempts",
+      "classification": "LEGIT_HISTORY",
+      "reason": "writer: atomic learningAttempts + mediaBlobs commit",
+      "migrationNode": "W2-AT1"
+    },
+    {
+      "file": "src/lib/learning-activity.ts",
+      "source": "weakSpots",
+      "classification": "LEGIT_HISTORY",
+      "reason": "WeakSpot linkage types in attempt model",
+      "migrationNode": "W2-WS2"
+    },
+    {
+      "file": "src/lib/learning-activity.ts",
+      "source": "learningAttempts",
+      "classification": "LEGIT_HISTORY",
+      "reason": "createLearningAttempt factory",
+      "migrationNode": "W2-AT1"
+    },
+    {
+      "file": "src/lib/learning-goals.ts",
+      "source": "assessment.currentLevel",
+      "classification": "LEGIT_HISTORY",
+      "reason": "CEFRLevel type import only",
+      "migrationNode": "W2-AS1"
+    },
+    {
+      "file": "src/lib/learning-navigation.ts",
+      "source": "weakSpots",
+      "classification": "LEGIT_PRESENTATION",
+      "reason": "navigation hrefs/labels to weak-spots",
+      "migrationNode": "W2-WS2"
+    },
+    {
+      "file": "src/lib/learning-units.ts",
+      "source": "sessions",
+      "classification": "LEGIT_PRESENTATION",
+      "reason": "lessonProgress — sessions.completed → step completion",
+      "migrationNode": "W2-CS1"
+    },
+    {
+      "file": "src/lib/pronunciation-progression.ts",
+      "source": "records",
+      "classification": "LEGIT_PRESENTATION",
+      "reason": "local `records` var holds PronunciationProgress rows — not the records table",
+      "migrationNode": "W2-PR1"
+    },
+    {
+      "file": "src/lib/pronunciation-progression.ts",
+      "source": "pronunciationProgress",
+      "classification": "LEGIT_PRESENTATION",
+      "reason": "progress rows → SoundEvidenceStatus derivation",
+      "migrationNode": "W2-PR1"
+    },
+    {
+      "file": "src/lib/review-summary.ts",
+      "source": "records",
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "records due filter for review counts",
+      "migrationNode": "W2-MB1"
+    },
+    {
+      "file": "src/lib/review-summary.ts",
+      "source": "fsrs",
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "fsrsCard.due/nextReview due filter",
+      "migrationNode": "W2-MB1"
+    },
+    {
+      "file": "src/lib/review-summary.ts",
+      "source": "weakSpots",
+      "classification": "LEGIT_PRESENTATION",
+      "reason": "open weak-spot count",
+      "migrationNode": "W2-WS2"
+    },
+    {
+      "file": "src/lib/sync/engine.ts",
+      "source": "weakSpots",
+      "classification": "LEGIT_HISTORY",
+      "reason": "raw-mirror sync transport",
+      "migrationNode": "W2-SY1"
+    },
+    {
+      "file": "src/lib/sync/engine.ts",
+      "source": "pronunciationProgress",
+      "classification": "LEGIT_HISTORY",
+      "reason": "raw-mirror sync transport",
+      "migrationNode": "W2-SY1"
+    },
+    {
+      "file": "src/lib/sync/engine.ts",
+      "source": "learningAttempts",
+      "classification": "LEGIT_HISTORY",
+      "reason": "raw-mirror sync transport",
+      "migrationNode": "W2-SY1"
+    },
+    {
+      "file": "src/lib/sync/engine.ts",
+      "source": "dailyTasks",
+      "classification": "LEGIT_HISTORY",
+      "reason": "raw-mirror sync transport",
+      "migrationNode": "W2-SY1"
+    },
+    {
+      "file": "src/lib/sync/mapper.ts",
+      "source": "records",
+      "classification": "LEGIT_HISTORY",
+      "reason": "mapped sync transport",
+      "migrationNode": "W2-SY1"
+    },
+    {
+      "file": "src/lib/sync/mapper.ts",
+      "source": "fsrs",
+      "classification": "LEGIT_HISTORY",
+      "reason": "mapped sync transport of scheduling fields",
+      "migrationNode": "W2-SY1"
+    },
+    {
+      "file": "src/lib/sync/mapper.ts",
+      "source": "sessions",
+      "classification": "LEGIT_HISTORY",
+      "reason": "mapped sync transport",
+      "migrationNode": "W2-SY1"
+    },
+    {
+      "file": "src/lib/text-daily-tasks.ts",
+      "source": "learningAttempts",
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "attempts → text-course task generation",
+      "migrationNode": "W2-PL1"
+    },
+    {
+      "file": "src/lib/text-daily-tasks.ts",
+      "source": "dailyTasks",
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "emits DailyTask rows",
+      "migrationNode": "W2-PL1"
+    },
+    {
+      "file": "src/lib/text-learning-cycle.ts",
+      "source": "learningAttempts",
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "deriveTextCycle — attempt history → next cycle step",
+      "migrationNode": "W2-AT1"
+    },
+    {
+      "file": "src/lib/today-review.ts",
+      "source": "records",
+      "classification": "LEGIT_CANDIDATE_SIGNAL",
+      "reason": "record.accuracy as weakest-first ordering heuristic (display ordering, no claim)",
+      "migrationNode": "W2-MB1"
+    },
+    {
+      "file": "src/lib/today-review.ts",
+      "source": "fsrs",
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "fsrsCard.due/nextReview → due-queue filter",
+      "migrationNode": "W2-MB1"
+    },
+    {
+      "file": "src/lib/vocabulary-repository.ts",
+      "source": "records",
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "writer + due/budget reads inside one atomic submission commit",
+      "migrationNode": "W2-AT1"
+    },
+    {
+      "file": "src/lib/vocabulary-repository.ts",
+      "source": "fsrs",
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "fsrsCard persistence in records",
+      "migrationNode": "W2-MB1"
+    },
+    {
+      "file": "src/lib/vocabulary-repository.ts",
+      "source": "sessions",
+      "classification": "LEGIT_HISTORY",
+      "reason": "session rows written in submission commit",
+      "migrationNode": "W2-AT1"
+    },
+    {
+      "file": "src/lib/vocabulary-repository.ts",
+      "source": "learningAttempts",
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "attempt writes + introducedVocabularyToday budget",
+      "migrationNode": "W2-PL1"
+    },
+    {
+      "file": "src/lib/vocabulary-repository.ts",
+      "source": "dailyTasks",
+      "classification": "LEGIT_HISTORY",
+      "reason": "preferences:vocabulary settings row",
+      "migrationNode": "W2-PL1"
+    },
+    {
+      "file": "src/lib/vocabulary.ts",
+      "source": "records",
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "records → due/learned vocab queries",
+      "migrationNode": "W2-MB1"
+    },
+    {
+      "file": "src/lib/vocabulary.ts",
+      "source": "fsrs",
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "fsrsCard/nextReview due ordering",
+      "migrationNode": "W2-MB1"
+    },
+    {
+      "file": "src/lib/vocabulary.ts",
+      "source": "learningAttempts",
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "introducedVocabularyToday daily budget",
+      "migrationNode": "W2-PL1"
+    },
+    {
+      "file": "src/lib/vocabulary.ts",
+      "source": "dailyTasks",
+      "classification": "LEGIT_HISTORY",
+      "reason": "preferences:vocabulary settings row",
+      "migrationNode": "W2-PL1"
+    },
+    {
+      "file": "src/lib/weak-spots.ts",
+      "source": "weakSpots",
+      "classification": "LEGIT_HISTORY",
+      "reason": "weakSpot upsert + open-list domain helpers",
+      "migrationNode": "W2-WS2"
+    },
+    {
+      "file": "src/lib/workshop-draft.ts",
+      "source": "weakSpots",
+      "classification": "LEGIT_HISTORY",
+      "reason": "sourceWeakSpotId used in draft persistence key",
+      "migrationNode": "W2-WS2"
+    },
+    {
+      "file": "src/stores/assessment-store.ts",
+      "source": "assessment.currentLevel",
+      "classification": "LEGIT_HISTORY",
+      "reason": "store definition + persistence; advisory placement state",
+      "migrationNode": "W2-AS1"
+    },
+    {
+      "file": "src/stores/daily-plan-store.ts",
+      "source": "dailyPlan",
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "planner-cache store definition",
+      "migrationNode": "W2-PL1"
+    },
+    {
+      "file": "src/stores/favorite-store.ts",
+      "source": "fsrs",
+      "classification": "LEGIT_SCHEDULING",
+      "reason": "writer: gradeCard on favorites",
+      "migrationNode": "W2-MB1"
+    },
+    {
+      "file": "src/stores/weak-spots-store.ts",
+      "source": "weakSpots",
+      "classification": "LEGIT_PRESENTATION",
+      "reason": "store hydrates spot list for UI",
+      "migrationNode": "W2-WS2"
+    },
+    {
+      "file": "src/types/content.ts",
+      "source": "records",
+      "classification": "LEGIT_HISTORY",
+      "reason": "LearningRecord/typing-session type declarations",
+      "migrationNode": null
+    },
+    {
+      "file": "src/types/content.ts",
+      "source": "fsrs",
+      "classification": "LEGIT_HISTORY",
+      "reason": "FSRS field declarations on record/favorite types",
+      "migrationNode": null
+    },
+    {
+      "file": "src/types/content.ts",
+      "source": "sessions",
+      "classification": "LEGIT_HISTORY",
+      "reason": "TypingSession type declaration",
+      "migrationNode": null
+    },
+    {
+      "file": "src/types/daily-task.ts",
+      "source": "dailyTasks",
+      "classification": "LEGIT_HISTORY",
+      "reason": "DailyTask type declaration",
+      "migrationNode": null
+    },
+    {
+      "file": "src/types/favorite.ts",
+      "source": "fsrs",
+      "classification": "LEGIT_HISTORY",
+      "reason": "FSRS field declarations",
+      "migrationNode": null
+    },
+    {
+      "file": "src/types/learning-activity.ts",
+      "source": "weakSpots",
+      "classification": "LEGIT_HISTORY",
+      "reason": "WeakSpot linkage types",
+      "migrationNode": null
+    },
+    {
+      "file": "src/types/learning-activity.ts",
+      "source": "learningAttempts",
+      "classification": "LEGIT_HISTORY",
+      "reason": "LearningAttempt type declaration",
+      "migrationNode": null
+    },
+    {
+      "file": "src/types/pronunciation.ts",
+      "source": "pronunciationProgress",
+      "classification": "LEGIT_HISTORY",
+      "reason": "PronunciationProgress type declaration",
+      "migrationNode": null
+    },
+    {
+      "file": "src/types/weak-spot.ts",
+      "source": "weakSpots",
+      "classification": "LEGIT_HISTORY",
+      "reason": "WeakSpot type declaration",
+      "migrationNode": null
+    }
+  ]
+}

@@ -56,3 +56,30 @@ course position ≠ ability · AI score ≠ certified level
    semantic outcomes only mint EvidenceEvents through the bridge.
 
 No deletions executed in this mission — dispositions are audit output only.
+
+## Wave-2 migration ownership (W2-01 / W2-G01)
+
+Per-state migration owner nodes (see `W2_MIGRATION_DAG.json`; inventory +
+guardrail manifest in `W2_AUTHORITY_CLAIM_INVENTORY.md` and
+`src/lib/authority-guardrails/`):
+
+| STATE | MIGRATION OWNER | READ-SITE GUARDRAIL |
+|---|---|---|
+| evidenceEvents | W2-AT1 (write path), W2-VR1 (replay verify) | kernel-only by construction |
+| learningAttempts | W2-AT1 | manifest family `learningAttempts` |
+| records (FSRS fields) | W2-MB1 | `records` + `fsrs` |
+| records (accuracy/attempts/mistakes) | W2-AT1 (writers) / W2-CS1 (consumers) | `records` |
+| sessions | W2-AT1 (writers) / W2-CS1 (consumers) | `sessions` |
+| weakSpots | W2-WS2 | `weakSpots` |
+| pronunciationProgress | W2-PR1 | `pronunciationProgress` |
+| dailyTasks | W2-PL1 | `dailyTasks` |
+| dailyPlan (zustand task cache) | W2-PL1 | `dailyPlan` |
+| assessment.currentLevel | W2-AS1 (relabel + boundary), W2-G03 (contract) | `assessment.currentLevel` |
+| sync transport (mapper/engine/backup) | W2-SY1 | per-family transport entries |
+
+Guardrail contract: any new production read of a sensitive family that is not
+in the manifest fails `src/lib/authority-guardrails/guardrail.test.ts`;
+`CAPABILITY_CLAIM` entries must name a DAG owner; `AMBIGUOUS` is forbidden.
+Inventoried claims today: `daily-plan.ts` accuracy→weakness heuristic (W2-PL1),
+`chat-analytics.ts` accuracy→"weaknesses" tutor context (W2-CS1),
+`lesson-workshop.tsx` `resolved`→recovery claim (W2-WS2).
