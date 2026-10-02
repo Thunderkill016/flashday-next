@@ -164,9 +164,7 @@
     "googleDescription": "Dùng giọng Google Cloud chính thức với gói miễn phí hằng tháng hào phóng.",
     "openaiDescription": "Dùng text-to-speech tương thích OpenAI với API key và base URL tuỳ chỉnh.",
     "kokoroDescription": "Dùng server Kokoro của bạn để đọc đám mây nhanh với giọng tuyển chọn.",
-    "edgeTitle": "Edge TTS",
-    "edgeDescription": "Giọng Microsoft Neural miễn phí chất lượng cao với 47+ giọng qua 14 vùng tiếng Anh. Không cần API key.",
-    "edgeWordAlignmentBuiltIn": "Edge TTS có sẵn dấu thời gian từng từ — tô sáng karaoke chính xác dùng ngay mà không cần Groq API key.",
+
     "macOs": "macOS",
     "windows11": "Windows 11",
     "downloadMoreVoicesTitle": "Tải thêm giọng hệ thống",

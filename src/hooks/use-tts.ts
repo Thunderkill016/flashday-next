@@ -5,13 +5,12 @@ import { getBrowserVoiceMetadata } from '@/lib/browser-voice-metadata';
 import type { FishVoice } from '@/lib/fish-audio-shared';
 import { resolveTTSSource } from '@/lib/fish-audio-shared';
 import type { GoogleTTSVoice } from '@/lib/google-tts';
-import { getIOSNativeQAMockEdgeVoices, getIOSNativeQAMode } from '@/lib/ios-native-qa';
 import { OPENAI_TTS_VOICES, type OpenAITTSVoice } from '@/lib/openai-tts';
 import type { WordTimestamp } from '@/lib/word-alignment';
 import { type TTSSource, useTTSStore } from '@/stores/tts-store';
 
 export interface VoiceOption {
-  source: 'browser' | 'fish' | 'google' | 'openai' | 'edge';
+  source: 'browser' | 'fish' | 'google' | 'openai';
   voiceURI: string;
   name: string;
   lang: string;
@@ -162,11 +161,6 @@ export function formatDuration(seconds: number): string {
   return secs > 0 ? `${mins}m ${secs}s` : `${mins}m`;
 }
 
-const EDGE_FALLBACK_COOLDOWN_MS = 2 * 60 * 1000;
-const EDGE_TIMEOUT_MESSAGE = 'Edge TTS timed out. Browser voice is temporarily active for stability.';
-const EDGE_UNAVAILABLE_MESSAGE =
-  'Edge TTS is temporarily unavailable. Browser voice is temporarily active for stability.';
-
 export function useTTS() {
   const {
     voiceSource,
@@ -184,26 +178,20 @@ export function useTTS() {
     openaiTtsBaseUrl,
     openaiTtsModel,
     openaiTtsVoice,
-    edgeVoiceId,
   } = useTTSStore();
   const [browserVoices, setBrowserVoices] = useState<VoiceOption[]>([]);
   const [fishVoices, setFishVoices] = useState<VoiceOption[]>([]);
   const [googleVoices, setGoogleVoices] = useState<VoiceOption[]>([]);
   const [openaiVoices] = useState<VoiceOption[]>(() => OPENAI_TTS_VOICES.map(normalizeOpenAIVoiceToOption));
-  const [edgeVoices, setEdgeVoices] = useState<VoiceOption[]>([]);
   const [isBrowserReady, setIsBrowserReady] = useState(false);
   const [isFishLoading, setIsFishLoading] = useState(false);
   const [isGoogleLoading, setIsGoogleLoading] = useState(false);
-  const [isEdgeLoading, setIsEdgeLoading] = useState(false);
   const [fishError, setFishError] = useState<string | null>(null);
   const [googleError, setGoogleError] = useState<string | null>(null);
-  const [edgeError, setEdgeError] = useState<string | null>(null);
   const [isSpeaking, setIsSpeaking] = useState(false);
   const [previewingURI, setPreviewingURI] = useState<string | null>(null);
   const [lastPlaybackSource, setLastPlaybackSource] = useState<TTSSource | null>(null);
   const [lastPlaybackSourceReason, setLastPlaybackSourceReason] = useState<string | null>(null);
-  const [edgeFallbackUntil, setEdgeFallbackUntil] = useState(0);
-  const [edgeFallbackReason, setEdgeFallbackReason] = useState<string | null>(null);
   const utteranceRef = useRef<SpeechSynthesisUtterance | null>(null);
   const audioRef = useRef<HTMLAudioElement | null>(null);
   const objectUrlRef = useRef<string | null>(null);
@@ -212,18 +200,6 @@ export function useTTS() {
   const markPlaybackSource = useCallback((source: TTSSource, reason?: string | null) => {
     setLastPlaybackSource(source);
     setLastPlaybackSourceReason(reason ?? null);
-  }, []);
-
-  const isEdgeTemporarilyUnavailable = edgeFallbackUntil > Date.now();
-
-  const activateEdgeFallback = useCallback((message: string) => {
-    setEdgeFallbackUntil(Date.now() + EDGE_FALLBACK_COOLDOWN_MS);
-    setEdgeFallbackReason(message);
-  }, []);
-
-  const clearEdgeFallback = useCallback(() => {
-    setEdgeFallbackUntil(0);
-    setEdgeFallbackReason(null);
   }, []);
 
   useEffect(() => {
@@ -465,109 +441,6 @@ export function useTTS() {
     }
   }, [googleVoices, googleVoiceName, voiceSource]);
 
-  useEffect(() => {
-    if (voiceSource !== 'edge') return;
-
-    if (getIOSNativeQAMode()) {
-      const localeToAccent: Record<string, VoiceOption['accent']> = {
-        'en-US': 'us',
-        'en-GB': 'uk',
-        'en-AU': 'au',
-        'en-CA': 'ca',
-        'en-IN': 'in',
-        'en-IE': 'ie',
-        'en-ZA': 'za',
-        'en-NZ': 'nz',
-        'en-SG': 'sg',
-      };
-
-      setEdgeVoices(
-        getIOSNativeQAMockEdgeVoices().map((v) => ({
-          source: 'edge' as const,
-          voiceURI: v.id,
-          name: v.name,
-          lang: v.locale,
-          localService: false,
-          isPremium: true,
-          label: `${v.name} (${v.locale})`,
-          description: `${v.gender} voice`,
-          tags: v.personalities,
-          provider: 'microsoft' as const,
-          voiceType: 'natural' as const,
-          accent: localeToAccent[v.locale] ?? ('other-english' as const),
-          isEnglish: true,
-          isFeatured: v.locale === 'en-US' || v.locale === 'en-GB',
-        })),
-      );
-      setEdgeError(null);
-      setIsEdgeLoading(false);
-      return;
-    }
-
-    setIsEdgeLoading(true);
-    setEdgeError(null);
-
-    void fetch('/api/tts/edge/voices')
-      .then(async (response) => {
-        const data = (await response.json()) as {
-          voices?: Array<{ id: string; name: string; locale: string; gender: string; personalities?: string[] }>;
-        };
-        if (!response.ok) return;
-
-        const localeToAccent: Record<string, VoiceOption['accent']> = {
-          'en-US': 'us',
-          'en-GB': 'uk',
-          'en-AU': 'au',
-          'en-CA': 'ca',
-          'en-IN': 'in',
-          'en-IE': 'ie',
-          'en-ZA': 'za',
-          'en-NZ': 'nz',
-          'en-SG': 'sg',
-        };
-
-        setEdgeVoices(
-          (data.voices ?? []).map((v) => ({
-            source: 'edge' as const,
-            voiceURI: v.id,
-            name: v.name,
-            lang: v.locale,
-            localService: false,
-            isPremium: true,
-            label: `${v.name} (${v.locale})`,
-            description: `${v.gender} voice`,
-            tags: v.personalities,
-            provider: 'microsoft' as const,
-            voiceType: 'natural' as const,
-            accent: localeToAccent[v.locale] ?? ('other-english' as const),
-            isEnglish: true,
-            isFeatured: v.locale === 'en-US' || v.locale === 'en-GB',
-          })),
-        );
-      })
-      .catch(() => {
-        setEdgeVoices([]);
-        setEdgeError('Failed to load Edge voices. Using fallback list.');
-      })
-      .finally(() => setIsEdgeLoading(false));
-  }, [voiceSource]);
-
-  useEffect(() => {
-    if (voiceSource !== 'edge' || edgeVoices.length === 0) return;
-
-    const currentSelection = edgeVoices.find((voice) => voice.voiceURI === edgeVoiceId);
-    if (currentSelection) return;
-
-    const preferredVoice =
-      edgeVoices.find((voice) => voice.voiceURI === 'en-US-JennyNeural') ??
-      edgeVoices.find((voice) => voice.lang === 'en-US' && voice.voiceType === 'natural' && voice.isPremium) ??
-      edgeVoices[0];
-
-    if (preferredVoice) {
-      useTTSStore.getState().setEdgeVoice(preferredVoice.voiceURI, preferredVoice.name);
-    }
-  }, [edgeVoices, edgeVoiceId, voiceSource]);
-
   const stop = useCallback(() => {
     requestAbortRef.current?.abort();
     requestAbortRef.current = null;
@@ -794,54 +667,6 @@ export function useTTS() {
     [openaiTtsApiKey, openaiTtsBaseUrl, openaiTtsModel, speed, stop, playAudioBlob, markPlaybackSource],
   );
 
-  const synthesizeEdgeWithAlignment = useCallback(
-    async (
-      text: string,
-      voiceId: string,
-      overrides?: { rate?: number },
-    ): Promise<{ blob: Blob; audio: HTMLAudioElement; wordTimestamps: WordTimestamp[] }> => {
-      stop();
-      const controller = new AbortController();
-      requestAbortRef.current = controller;
-
-      const response = await fetch('/api/tts/edge/synthesize', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          text,
-          voice: voiceId,
-          speed: overrides?.rate ?? speed,
-        }),
-        signal: controller.signal,
-      });
-
-      if (!response.ok) {
-        const data = (await response.json().catch(() => ({}))) as { error?: string };
-        throw new Error(data.error || 'Edge TTS synthesis failed.');
-      }
-
-      const data = (await response.json()) as {
-        audio: string;
-        contentType: string;
-        words: WordTimestamp[];
-      };
-
-      const binaryStr = atob(data.audio);
-      const bytes = new Uint8Array(binaryStr.length);
-      for (let i = 0; i < binaryStr.length; i++) {
-        bytes[i] = binaryStr.charCodeAt(i);
-      }
-      const blob = new Blob([bytes], { type: data.contentType });
-      const { audio } = playAudioBlob(blob);
-      markPlaybackSource('edge');
-      clearEdgeFallback();
-
-      await audio.play();
-      return { blob, audio, wordTimestamps: data.words };
-    },
-    [speed, stop, playAudioBlob, markPlaybackSource, clearEdgeFallback],
-  );
-
   const resolvedPlayback = useMemo(
     () =>
       resolveTTSSource({
@@ -852,9 +677,6 @@ export function useTTS() {
         hasGoogleVoice: Boolean(googleVoiceName.trim()),
         hasOpenAICredentials: Boolean(openaiTtsApiKey.trim()),
         hasOpenAIVoice: Boolean(openaiTtsVoice.trim()),
-        hasEdgeVoice: Boolean(edgeVoiceId.trim()),
-        edgeTemporarilyUnavailable: isEdgeTemporarilyUnavailable,
-        edgeTemporarilyUnavailableReason: edgeFallbackReason ?? undefined,
       }),
     [
       voiceSource,
@@ -865,9 +687,6 @@ export function useTTS() {
       googleVoiceName,
       openaiTtsApiKey,
       openaiTtsVoice,
-      edgeVoiceId,
-      isEdgeTemporarilyUnavailable,
-      edgeFallbackReason,
     ],
   );
 
@@ -881,7 +700,6 @@ export function useTTS() {
         hasGoogleVoice: Boolean(googleVoiceName.trim()),
         hasOpenAICredentials: Boolean(openaiTtsApiKey.trim()),
         hasOpenAIVoice: Boolean(openaiTtsVoice.trim()),
-        hasEdgeVoice: Boolean(edgeVoiceId.trim()),
         requiresBoundaryEvents: true,
       }),
     [
@@ -893,7 +711,6 @@ export function useTTS() {
       googleVoiceName,
       openaiTtsApiKey,
       openaiTtsVoice,
-      edgeVoiceId,
     ],
   );
 
@@ -928,19 +745,6 @@ export function useTTS() {
         }
       }
 
-      if (resolvedPlayback.source === 'edge') {
-        try {
-          return await synthesizeEdgeWithAlignment(text, edgeVoiceId, overrides);
-        } catch (error) {
-          const message =
-            error instanceof Error && error.message.includes('timed out')
-              ? EDGE_TIMEOUT_MESSAGE
-              : EDGE_UNAVAILABLE_MESSAGE;
-          activateEdgeFallback(message);
-          return playBrowserSpeech(text, overrides, message);
-        }
-      }
-
       return playBrowserSpeech(text, overrides, resolvedPlayback.reason ?? null);
     },
     [
@@ -953,10 +757,7 @@ export function useTTS() {
       googleLanguageCode,
       playOpenAISpeech,
       openaiTtsVoice,
-      synthesizeEdgeWithAlignment,
-      edgeVoiceId,
       playBrowserSpeech,
-      activateEdgeFallback,
     ],
   );
 
@@ -1002,25 +803,6 @@ export function useTTS() {
         }
       }
 
-      if (voiceSource === 'edge') {
-        if (isEdgeTemporarilyUnavailable) {
-          setPreviewingURI(null);
-          playBrowserSpeech(text, undefined, edgeFallbackReason ?? EDGE_UNAVAILABLE_MESSAGE);
-          return;
-        }
-        try {
-          await synthesizeEdgeWithAlignment(text, uri);
-          return;
-        } catch (error) {
-          activateEdgeFallback(
-            error instanceof Error && error.message.includes('timed out')
-              ? EDGE_TIMEOUT_MESSAGE
-              : EDGE_UNAVAILABLE_MESSAGE,
-          );
-          setPreviewingURI(null);
-        }
-      }
-
       window.speechSynthesis.cancel();
       const allVoices = window.speechSynthesis.getVoices();
       const voice = allVoices.find((item) => item.voiceURI === uri) || null;
@@ -1055,11 +837,7 @@ export function useTTS() {
       playGoogleSpeech,
       googleLanguageCode,
       playOpenAISpeech,
-      synthesizeEdgeWithAlignment,
-      isEdgeTemporarilyUnavailable,
-      edgeFallbackReason,
       playBrowserSpeech,
-      activateEdgeFallback,
       markPlaybackSource,
     ],
   );
@@ -1068,9 +846,8 @@ export function useTTS() {
     if (voiceSource === 'fish') return fishVoices;
     if (voiceSource === 'google') return googleVoices;
     if (voiceSource === 'openai') return openaiVoices;
-    if (voiceSource === 'edge') return edgeVoices;
     return browserVoices;
-  }, [voiceSource, fishVoices, googleVoices, openaiVoices, edgeVoices, browserVoices]);
+  }, [voiceSource, fishVoices, googleVoices, openaiVoices, browserVoices]);
 
   const currentVoice = useMemo(() => {
     if (voiceSource === 'fish') {
@@ -1082,9 +859,6 @@ export function useTTS() {
     if (voiceSource === 'openai') {
       return openaiVoices.find((voice) => voice.voiceURI === openaiTtsVoice) ?? null;
     }
-    if (voiceSource === 'edge') {
-      return edgeVoices.find((voice) => voice.voiceURI === edgeVoiceId) ?? null;
-    }
     return browserVoices.find((voice) => voice.voiceURI === voiceURI) ?? null;
   }, [
     voiceSource,
@@ -1094,28 +868,12 @@ export function useTTS() {
     googleVoiceName,
     openaiVoices,
     openaiTtsVoice,
-    edgeVoices,
-    edgeVoiceId,
     browserVoices,
     voiceURI,
   ]);
 
-  const sourceError =
-    voiceSource === 'fish'
-      ? fishError
-      : voiceSource === 'google'
-        ? googleError
-        : voiceSource === 'edge'
-          ? edgeError
-          : null;
-  const isSourceLoading =
-    voiceSource === 'fish'
-      ? isFishLoading
-      : voiceSource === 'google'
-        ? isGoogleLoading
-        : voiceSource === 'edge'
-          ? isEdgeLoading
-          : false;
+  const sourceError = voiceSource === 'fish' ? fishError : voiceSource === 'google' ? googleError : null;
+  const isSourceLoading = voiceSource === 'fish' ? isFishLoading : voiceSource === 'google' ? isGoogleLoading : false;
 
   return {
     voices,
@@ -1123,16 +881,13 @@ export function useTTS() {
     fishVoices,
     googleVoices,
     openaiVoices,
-    edgeVoices,
     currentVoice,
     isReady: isBrowserReady && !isSourceLoading,
     isSpeaking,
     isFishLoading,
     isGoogleLoading,
-    isEdgeLoading,
     fishError,
     googleError,
-    edgeError,
     previewingURI,
     voiceSource,
     resolvedVoiceSource: resolvedPlayback.source,

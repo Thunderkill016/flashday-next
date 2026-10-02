@@ -455,7 +455,7 @@ test.describe('Listen Module', () => {
     expect(count).toBeGreaterThan(0);
   });
 
-  test('listen detail shows selected Edge TTS voice', async ({ page }) => {
+  test('listen detail falls back to browser voice from a stale Edge TTS setting', async ({ page }) => {
     await page.addInitScript(() => {
       window.localStorage.setItem(
         'echotype_tts_settings',
@@ -469,7 +469,10 @@ test.describe('Listen Module', () => {
 
     await navigateToContentDetail(page, 'listen');
 
-    await expect(page.getByText('Jenny')).toBeVisible();
+    // Retired Edge source must fail safe to browser speech — the player still renders.
+    const wordButtons = page.getByTestId('listen-content-text').getByRole('button');
+    await expect(wordButtons.first()).toBeVisible({ timeout: 10000 });
+    await expect(page.getByText('Jenny')).toHaveCount(0);
   });
 
   test('listen detail back button returns to list', async ({ page }) => {
@@ -520,26 +523,26 @@ test.describe('Listen Module', () => {
     );
     await expect(popup).not.toContainText('=');
 
-    await popup.getByRole('button', { name: '♡ 收藏' }).click();
-    await expect(popup.getByRole('button', { name: '取消收藏' })).toBeVisible();
+    await popup.getByRole('button', { name: '♡ Favorite' }).click();
+    await expect(popup.getByRole('button', { name: 'Remove favorite' })).toBeVisible();
 
-    await popup.getByRole('button', { name: '选择收藏夹' }).click();
-    await expect(popup.getByRole('button', { name: '智能收藏' })).toBeVisible();
+    await popup.getByRole('button', { name: 'Choose folder' }).click();
+    await expect(popup.getByRole('button', { name: 'Smart' })).toBeVisible();
     await popup.getByText('行动', { exact: true }).first().click();
-    await expect(popup.getByRole('button', { name: '智能收藏' })).toHaveCount(0);
+    await expect(popup.getByRole('button', { name: 'Smart' })).toHaveCount(0);
 
-    await popup.getByRole('button', { name: '选择收藏夹' }).click();
-    await popup.getByRole('button', { name: '智能收藏' }).click();
-    await expect(popup.getByRole('button', { name: '移动到此收藏夹' })).toBeVisible();
-    await popup.getByRole('button', { name: '移动到此收藏夹' }).click();
-    await expect(popup.getByRole('button', { name: '取消收藏' })).toBeVisible();
+    await popup.getByRole('button', { name: 'Choose folder' }).click();
+    await popup.getByRole('button', { name: 'Smart' }).click();
+    await expect(popup.getByRole('button', { name: 'Move here' })).toBeVisible();
+    await popup.getByRole('button', { name: 'Move here' }).click();
+    await expect(popup.getByRole('button', { name: 'Remove favorite' })).toBeVisible();
 
-    await popup.getByRole('button', { name: '新建收藏夹' }).click();
-    await popup.getByLabel('新收藏夹名称').fill('考试收藏');
-    await popup.getByRole('button', { name: '创建' }).click();
-    await expect(popup.getByRole('button', { name: '移动到此收藏夹' })).toBeVisible();
-    await popup.getByRole('button', { name: '移动到此收藏夹' }).click();
-    await expect(popup.getByRole('button', { name: '取消收藏' })).toBeVisible();
+    await popup.getByRole('button', { name: 'New folder' }).click();
+    await popup.getByLabel('New folder name').fill('考试收藏');
+    await popup.getByRole('button', { name: 'Create' }).click();
+    await expect(popup.getByRole('button', { name: 'Move here' })).toBeVisible();
+    await popup.getByRole('button', { name: 'Move here' }).click();
+    await expect(popup.getByRole('button', { name: 'Remove favorite' })).toBeVisible();
 
     await popup.getByRole('button', { name: 'Speak' }).click();
     const spokenTexts = await page.evaluate(() => (window as any).__spokenTexts as string[]);

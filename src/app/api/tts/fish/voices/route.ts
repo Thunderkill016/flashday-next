@@ -1,7 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { listFishVoices } from '@/lib/fish-audio';
+import { enforceRouteRateLimit, rateLimitResponse } from '@/lib/platform-provider';
 
 export async function POST(req: NextRequest) {
+  const rateLimit = await enforceRouteRateLimit({ headers: req.headers, bucket: 'tts' });
+  if (!rateLimit.ok) {
+    return rateLimitResponse(rateLimit);
+  }
+
   const { apiKey, query }: { apiKey?: string; query?: string } = await req.json();
 
   if (!apiKey) {

@@ -2,10 +2,10 @@ import { create } from 'zustand';
 import { DEFAULT_TRANSLATION_TARGET, isTranslationTarget } from '@/lib/i18n/locale';
 
 const STORAGE_KEY = 'echotype_tts_settings';
-export const DEFAULT_EDGE_VOICE_ID = 'en-US-JennyNeural';
-export const DEFAULT_EDGE_VOICE_NAME = 'Jenny';
 
-export type TTSSource = 'browser' | 'fish' | 'google' | 'openai' | 'edge';
+export type TTSSource = 'browser' | 'fish' | 'google' | 'openai';
+
+const VALID_VOICE_SOURCES: ReadonlySet<string> = new Set(['browser', 'fish', 'google', 'openai']);
 
 export interface TTSSettings {
   voiceSource: TTSSource;
@@ -30,8 +30,6 @@ export interface TTSSettings {
   kokoroApiKey: string;
   kokoroVoiceId: string;
   kokoroVoiceName: string;
-  edgeVoiceId: string;
-  edgeVoiceName: string;
   targetLang: string;
   recommendationsEnabled: boolean;
   recommendationsCount: number;
@@ -60,7 +58,6 @@ interface TTSStore extends TTSSettings {
   setKokoroServerUrl: (url: string) => void;
   setKokoroApiKey: (key: string) => void;
   setKokoroVoice: (voiceId: string, voiceName?: string) => void;
-  setEdgeVoice: (voiceId: string, voiceName?: string) => void;
   setTargetLang: (lang: string) => void;
   setRecommendationsEnabled: (enabled: boolean) => void;
   setRecommendationsCount: (count: number) => void;
@@ -106,8 +103,6 @@ function toPersistedSettings(settings: TTSSettings | TTSStore): TTSSettings {
     kokoroApiKey: settings.kokoroApiKey,
     kokoroVoiceId: settings.kokoroVoiceId,
     kokoroVoiceName: settings.kokoroVoiceName,
-    edgeVoiceId: settings.edgeVoiceId,
-    edgeVoiceName: settings.edgeVoiceName,
     targetLang: settings.targetLang,
     recommendationsEnabled: settings.recommendationsEnabled,
     recommendationsCount: settings.recommendationsCount,
@@ -132,13 +127,9 @@ function normalizeSavedSettings(
 ): Partial<TTSSettings> {
   const normalized = { ...saved } as Partial<TTSSettings>;
 
-  if (saved.voiceSource === 'kokoro') {
-    normalized.voiceSource = 'edge';
-  }
-
-  if (normalized.voiceSource === 'edge' && (!normalized.edgeVoiceId || !normalized.edgeVoiceId.trim())) {
-    normalized.edgeVoiceId = DEFAULT_EDGE_VOICE_ID;
-    normalized.edgeVoiceName = DEFAULT_EDGE_VOICE_NAME;
+  // Retired sources ('kokoro', 'edge') and corrupt values fail safe to browser speech.
+  if (normalized.voiceSource !== undefined && !VALID_VOICE_SOURCES.has(normalized.voiceSource)) {
+    normalized.voiceSource = 'browser';
   }
 
   if ('kokoroServerUrl' in normalized && !normalized.kokoroServerUrl?.trim()) {
@@ -185,8 +176,6 @@ const defaults: TTSSettings = {
   kokoroApiKey: '',
   kokoroVoiceId: '',
   kokoroVoiceName: '',
-  edgeVoiceId: DEFAULT_EDGE_VOICE_ID,
-  edgeVoiceName: DEFAULT_EDGE_VOICE_NAME,
   targetLang: DEFAULT_TRANSLATION_TARGET,
   recommendationsEnabled: true,
   recommendationsCount: 5,
@@ -283,11 +272,6 @@ export const useTTSStore = create<TTSStore>((set, get) => ({
   setKokoroVoice: (kokoroVoiceId, kokoroVoiceName = '') => {
     set({ kokoroVoiceId, kokoroVoiceName });
     saveToStorage({ ...get(), kokoroVoiceId, kokoroVoiceName });
-  },
-
-  setEdgeVoice: (edgeVoiceId, edgeVoiceName = '') => {
-    set({ edgeVoiceId, edgeVoiceName });
-    saveToStorage({ ...get(), edgeVoiceId, edgeVoiceName });
   },
 
   setTargetLang: (targetLang) => {

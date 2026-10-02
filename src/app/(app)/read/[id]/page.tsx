@@ -485,10 +485,7 @@ export default function ReadDetailPage() {
   const raSentences = useReadAloudStore((s) => s.sentences);
 
   const isCloudReadMode =
-    resolvedVoiceSource === 'fish' ||
-    resolvedVoiceSource === 'google' ||
-    resolvedVoiceSource === 'openai' ||
-    resolvedVoiceSource === 'edge';
+    resolvedVoiceSource === 'fish' || resolvedVoiceSource === 'google' || resolvedVoiceSource === 'openai';
   const cloudPlaybackStartedRef = useRef(false);
   const alignmentPlayerRef = useRef<WordAlignmentPlayer | null>(null);
   const alignmentAbortRef = useRef<AbortController | null>(null);
@@ -570,10 +567,10 @@ export default function ReadDetailPage() {
           fishVoiceId: fvId,
           googleVoiceName: gvName,
           openaiTtsVoice: ovId,
-          edgeVoiceId: evId,
+          voiceURI: vURI,
           speed: spd,
         } = useTTSStore.getState();
-        const voiceId = vs === 'fish' ? fvId : vs === 'google' ? gvName : vs === 'openai' ? ovId : evId;
+        const voiceId = vs === 'fish' ? fvId : vs === 'google' ? gvName : vs === 'openai' ? ovId : vURI;
         const duration = audio.duration || matched[matched.length - 1]?.end || 0;
         void setAlignmentCache(contentId, voiceId, spd, matched, duration);
         return;
@@ -584,11 +581,11 @@ export default function ReadDetailPage() {
         fishVoiceId: fvId,
         googleVoiceName: gvName,
         openaiTtsVoice: ovId,
-        edgeVoiceId: evId,
+        voiceURI: vURI,
         speed: spd,
         groqApiKey,
       } = useTTSStore.getState();
-      const voiceId = vs === 'fish' ? fvId : vs === 'google' ? gvName : vs === 'openai' ? ovId : evId;
+      const voiceId = vs === 'fish' ? fvId : vs === 'google' ? gvName : vs === 'openai' ? ovId : vURI;
 
       const cached = await getAlignmentCache(contentId, voiceId, spd);
       if (cached) {

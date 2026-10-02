@@ -2,6 +2,7 @@ import { generateText } from 'ai';
 import { NextRequest, NextResponse } from 'next/server';
 import { resolveModel } from '@/lib/ai-model';
 import { parseAIJson } from '@/lib/parse-ai-json';
+import { enforceRouteRateLimit, rateLimitResponse } from '@/lib/platform-provider';
 import {
   getDefaultModelId,
   type ProviderId,
@@ -62,6 +63,11 @@ function filterChatCandidates(models: ProviderModel[]): ProviderModel[] {
 }
 
 export async function POST(req: NextRequest) {
+  const rateLimit = await enforceRouteRateLimit({ headers: req.headers, bucket: 'generate' });
+  if (!rateLimit.ok) {
+    return rateLimitResponse(rateLimit);
+  }
+
   try {
     const providerId = req.nextUrl.searchParams.get('providerId') as ProviderId | null;
     const { models, evaluatorModelId, selectedModelId } = (await req.json()) as {

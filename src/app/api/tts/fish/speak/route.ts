@@ -1,8 +1,14 @@
 import { NextRequest } from 'next/server';
 import { synthesizeFishSpeech } from '@/lib/fish-audio';
 import type { FishAudioModelId } from '@/lib/fish-audio-shared';
+import { enforceRouteRateLimit, rateLimitResponse } from '@/lib/platform-provider';
 
 export async function POST(req: NextRequest) {
+  const rateLimit = await enforceRouteRateLimit({ headers: req.headers, bucket: 'tts' });
+  if (!rateLimit.ok) {
+    return rateLimitResponse(rateLimit);
+  }
+
   const {
     apiKey,
     text,

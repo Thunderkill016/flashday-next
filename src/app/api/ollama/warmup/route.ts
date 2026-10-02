@@ -1,6 +1,12 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { enforceRouteRateLimit, rateLimitResponse } from '@/lib/platform-provider';
 
 export async function POST(req: NextRequest) {
+  const rateLimit = await enforceRouteRateLimit({ headers: req.headers, bucket: 'generate' });
+  if (!rateLimit.ok) {
+    return rateLimitResponse(rateLimit);
+  }
+
   try {
     const { modelId, baseUrl, apiPath } = await req.json();
 

@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { resolveApiKey } from '@/lib/ai-model';
-import { enforcePlatformRateLimit } from '@/lib/platform-provider';
+import { enforcePlatformRateLimit, enforceRouteRateLimit, rateLimitResponse } from '@/lib/platform-provider';
 import { ProviderResolutionError } from '@/lib/provider-resolver';
 import type { ProviderConfig, ProviderId } from '@/lib/providers';
 import { PROVIDER_REGISTRY } from '@/lib/providers';
@@ -100,6 +100,11 @@ async function transcribeWithProvider({
  * Accepts a short audio blob and returns just the transcript text.
  */
 export async function POST(req: NextRequest) {
+  const routeLimit = await enforceRouteRateLimit({ headers: req.headers, bucket: 'stt' });
+  if (!routeLimit.ok) {
+    return rateLimitResponse(routeLimit);
+  }
+
   try {
     const formData = await req.formData();
     const audio = formData.get('audio') as File | null;

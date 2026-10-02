@@ -120,7 +120,6 @@ function getSearchPlaceholder(voiceSource: string, locale: VoicePickerLocale): s
   if (voiceSource === 'fish') return locale.search.fish;
   if (voiceSource === 'google') return locale.search.google;
   if (voiceSource === 'openai') return locale.search.openai;
-  if (voiceSource === 'edge') return locale.search.edge;
   return locale.search.browser;
 }
 
@@ -269,22 +268,6 @@ function VoiceCard({
               {getVoiceTypeBadge(voice.voiceType, locale)}
             </Badge>
           )}
-          {voice.source === 'edge' && voice.description && (
-            <Badge
-              variant="secondary"
-              className={`text-[10px] px-1.5 py-0 ${
-                voice.description.includes('Female') ? 'bg-pink-100/80 text-pink-600' : 'bg-sky-100/80 text-sky-600'
-              }`}
-            >
-              {voice.description.includes('Female') ? '♀' : '♂'}
-            </Badge>
-          )}
-          {voice.source === 'edge' &&
-            voice.tags?.slice(0, 3).map((tag) => (
-              <Badge key={tag} variant="secondary" className="text-[10px] px-1.5 py-0 bg-indigo-50/80 text-indigo-500">
-                {tag}
-              </Badge>
-            ))}
         </div>
       </div>
     </div>
@@ -298,22 +281,20 @@ export function VoicePicker() {
     isReady,
     isSpeaking,
     isFishLoading,
-    isEdgeLoading,
     isGoogleLoading,
     fishError,
     googleError,
-    edgeError,
     previewingURI,
     previewVoice,
     stop,
     voiceSource,
   } = useTTS();
-  const { voiceURI, fishVoiceId, edgeVoiceId, setVoiceURI, setFishVoice, setEdgeVoice, fishApiKey } = useTTSStore();
+  const { voiceURI, fishVoiceId, setVoiceURI, setFishVoice, fishApiKey } = useTTSStore();
   const { googleVoiceName, setGoogleVoice } = useTTSStore();
   const { openaiTtsApiKey, openaiTtsVoice, setOpenAITtsVoice } = useTTSStore();
   const interfaceLanguage = useLanguageStore((state) => state.interfaceLanguage);
   const [tab, setTab] = useState<BrowserVoicePickerTab>('english');
-  const [edgeLocaleTab, setEdgeLocaleTab] = useState<string>('all');
+  const [localeTab, setLocaleTab] = useState<string>('all');
   const [searchQuery, setSearchQuery] = useState('');
   const locale = getVoicePickerLocale(interfaceLanguage);
 
@@ -326,13 +307,13 @@ export function VoicePicker() {
 
   useEffect(() => {
     setTab(voiceSource === 'browser' ? 'english' : 'all');
-    setEdgeLocaleTab('all');
+    setLocaleTab('all');
   }, [voiceSource]);
 
   const browserVoiceGroups = useMemo(() => getBrowserVoicePickerGroups(voices), [voices]);
 
-  const edgeLocaleGroups = useMemo(() => {
-    if (voiceSource !== 'edge' && voiceSource !== 'google') return {};
+  const localeGroups = useMemo(() => {
+    if (voiceSource !== 'google') return {};
     const groups: Record<string, VoiceOption[]> = {};
     for (const v of voices) {
       const locale = v.lang;
@@ -344,12 +325,12 @@ export function VoicePicker() {
 
   const visibleVoices = useMemo(() => {
     if (voiceSource === 'fish' || voiceSource === 'openai') return voices;
-    if (voiceSource === 'edge') {
-      if (edgeLocaleTab === 'all') return voices;
-      return voices.filter((v) => v.lang === edgeLocaleTab);
+    if (voiceSource === 'google' && localeTab !== 'all') {
+      return voices.filter((v) => v.lang === localeTab);
     }
+    if (voiceSource === 'google') return voices;
     return filterBrowserVoicesByTab(voices, tab);
-  }, [voiceSource, voices, tab, edgeLocaleTab]);
+  }, [voiceSource, voices, tab, localeTab]);
 
   const filtered = useMemo(() => {
     let result = visibleVoices;
@@ -370,7 +351,7 @@ export function VoicePicker() {
     return result;
   }, [visibleVoices, searchQuery]);
 
-  if (!isReady || isFishLoading || isGoogleLoading || isEdgeLoading) {
+  if (!isReady || isFishLoading || isGoogleLoading) {
     return (
       <div className="flex items-center justify-center gap-2 py-8 text-sm text-indigo-400">
         <Loader2 className="w-4 h-4 animate-spin" />
@@ -419,11 +400,6 @@ export function VoicePicker() {
 
   return (
     <div data-testid="settings-voice-picker" className={isIOSNativeHost ? 'space-y-4' : 'space-y-3'}>
-      {voiceSource === 'edge' && edgeError && (
-        <div className="rounded-xl border border-amber-200 bg-amber-50 px-4 py-3 text-sm text-amber-700">
-          {locale.errors.edge}
-        </div>
-      )}
       {voiceSource === 'browser' && (
         <Tabs value={tab} onValueChange={(value) => setTab(value as BrowserVoicePickerTab)}>
           <TabsList className="bg-indigo-50/80">
@@ -443,24 +419,24 @@ export function VoicePicker() {
         </Tabs>
       )}
 
-      {(voiceSource === 'edge' || voiceSource === 'google') && Object.keys(edgeLocaleGroups).length > 1 && (
+      {voiceSource === 'google' && Object.keys(localeGroups).length > 1 && (
         <div className="flex flex-wrap gap-1.5">
           <button
             type="button"
-            onClick={() => setEdgeLocaleTab('all')}
+            onClick={() => setLocaleTab('all')}
             className={`rounded-full px-3 py-1 text-xs font-medium transition-colors cursor-pointer ${
-              edgeLocaleTab === 'all' ? 'bg-indigo-500 text-white' : 'bg-indigo-50 text-indigo-600 hover:bg-indigo-100'
+              localeTab === 'all' ? 'bg-indigo-500 text-white' : 'bg-indigo-50 text-indigo-600 hover:bg-indigo-100'
             }`}
           >
             {locale.tabs.all} ({voices.length})
           </button>
-          {Object.entries(edgeLocaleGroups).map(([localeKey, group]) => (
+          {Object.entries(localeGroups).map(([localeKey, group]) => (
             <button
               key={localeKey}
               type="button"
-              onClick={() => setEdgeLocaleTab(localeKey)}
+              onClick={() => setLocaleTab(localeKey)}
               className={`rounded-full px-3 py-1 text-xs font-medium transition-colors cursor-pointer ${
-                edgeLocaleTab === localeKey
+                localeTab === localeKey
                   ? 'bg-indigo-500 text-white'
                   : 'bg-indigo-50 text-indigo-600 hover:bg-indigo-100'
               }`}
@@ -530,9 +506,7 @@ export function VoicePicker() {
                         ? v.voiceURI === googleVoiceName
                         : voiceSource === 'openai'
                           ? v.voiceURI === openaiTtsVoice
-                          : voiceSource === 'edge'
-                            ? v.voiceURI === edgeVoiceId
-                            : v.voiceURI === voiceURI
+                          : v.voiceURI === voiceURI
                   }
                   isPreviewing={isSpeaking && previewingURI === v.voiceURI}
                   onSelect={() => {
@@ -542,8 +516,6 @@ export function VoicePicker() {
                       setGoogleVoice(v.voiceURI, v.name, v.lang);
                     } else if (voiceSource === 'openai') {
                       setOpenAITtsVoice(v.voiceURI, v.name);
-                    } else if (voiceSource === 'edge') {
-                      setEdgeVoice(v.voiceURI, v.name);
                     } else {
                       setVoiceURI(v.voiceURI);
                     }
@@ -551,10 +523,7 @@ export function VoicePicker() {
                   onPreview={() => previewVoice(v.voiceURI)}
                   onStop={stop}
                 />
-                {(voiceSource === 'fish' ||
-                  voiceSource === 'google' ||
-                  voiceSource === 'openai' ||
-                  voiceSource === 'edge') && (
+                {(voiceSource === 'fish' || voiceSource === 'google' || voiceSource === 'openai') && (
                   <div className="space-y-1 px-1 text-[11px] text-slate-500">
                     {v.authorName && (
                       <p className="truncate">

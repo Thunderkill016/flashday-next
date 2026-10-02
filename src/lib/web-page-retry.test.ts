@@ -2,6 +2,10 @@ import { afterEach, expect, it, vi } from 'vitest';
 import { describeImportError } from './import-error';
 import { fetchWebPageContent } from './web-page';
 
+vi.mock('node:dns/promises', () => ({
+  lookup: vi.fn(async () => [{ address: '93.184.216.34', family: 4 }]),
+}));
+
 afterEach(() => { vi.useRealTimers(); vi.unstubAllGlobals(); });
 
 it('backs off for 1s then 2s and recovers on the third request', async () => {

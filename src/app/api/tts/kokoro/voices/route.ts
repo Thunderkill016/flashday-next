@@ -1,7 +1,13 @@
 import { NextRequest, NextResponse } from 'next/server';
 import { listKokoroVoices } from '@/lib/kokoro';
+import { enforceRouteRateLimit, rateLimitResponse } from '@/lib/platform-provider';
 
 export async function POST(req: NextRequest) {
+  const rateLimit = await enforceRouteRateLimit({ headers: req.headers, bucket: 'tts' });
+  if (!rateLimit.ok) {
+    return rateLimitResponse(rateLimit);
+  }
+
   const { serverUrl, apiKey }: { serverUrl?: string; apiKey?: string } = await req.json();
 
   if (!serverUrl?.trim()) {

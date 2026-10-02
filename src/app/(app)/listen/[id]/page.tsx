@@ -106,7 +106,7 @@ export default function ListenDetailPage() {
     currentVoice,
     resolvedVoiceSource,
   } = useTTS();
-  const { speed, setSpeed, voiceURI, edgeVoiceName } = useTTSStore();
+  const { speed, setSpeed, voiceURI } = useTTSStore();
   const showTranslation = usePracticeTranslationStore((s) => s.visibility.listen);
   const targetLang = useTTSStore((s) => s.targetLang);
   const recommendationsEnabled = useTTSStore((s) => s.recommendationsEnabled);
@@ -277,21 +277,14 @@ export default function ListenDetailPage() {
 
   const browserVoice = browserVoices.find((voice) => voice.voiceURI === voiceURI);
   const isCloudListenMode =
-    resolvedVoiceSource === 'fish' ||
-    resolvedVoiceSource === 'google' ||
-    resolvedVoiceSource === 'openai' ||
-    resolvedVoiceSource === 'edge';
+    resolvedVoiceSource === 'fish' || resolvedVoiceSource === 'google' || resolvedVoiceSource === 'openai';
   const cloudSourceLabel =
     resolvedVoiceSource === 'fish'
       ? 'Fish Audio'
       : resolvedVoiceSource === 'google'
         ? 'Google Cloud TTS'
-        : resolvedVoiceSource === 'openai'
-          ? 'OpenAI TTS'
-          : 'Edge TTS';
-  const activeListenVoiceName = isCloudListenMode
-    ? currentVoice?.name || edgeVoiceName || cloudSourceLabel
-    : browserVoice?.name;
+        : 'OpenAI TTS';
+  const activeListenVoiceName = isCloudListenMode ? currentVoice?.name || cloudSourceLabel : browserVoice?.name;
   const activeSentenceIndex =
     currentSentenceIndex >= 0
       ? currentSentenceIndex
@@ -376,10 +369,10 @@ export default function ListenDetailPage() {
           fishVoiceId: fvId,
           googleVoiceName: gvName,
           openaiTtsVoice: ovId,
-          edgeVoiceId: evId,
+          voiceURI: vURI,
           speed: spd,
         } = useTTSStore.getState();
-        const voiceId = vs === 'fish' ? fvId : vs === 'google' ? gvName : vs === 'openai' ? ovId : evId;
+        const voiceId = vs === 'fish' ? fvId : vs === 'google' ? gvName : vs === 'openai' ? ovId : vURI;
         const duration = audio.duration || matched[matched.length - 1]?.end || 0;
         void setAlignmentCache(contentId, voiceId, spd, matched, duration);
         return;
@@ -390,11 +383,11 @@ export default function ListenDetailPage() {
         fishVoiceId: fvId,
         googleVoiceName: gvName,
         openaiTtsVoice: ovId,
-        edgeVoiceId: evId,
+        voiceURI: vURI,
         speed: spd,
         groqApiKey,
       } = useTTSStore.getState();
-      const voiceId = vs === 'fish' ? fvId : vs === 'google' ? gvName : vs === 'openai' ? ovId : evId;
+      const voiceId = vs === 'fish' ? fvId : vs === 'google' ? gvName : vs === 'openai' ? ovId : vURI;
 
       const cached = await getAlignmentCache(contentId, voiceId, spd);
       if (cached) {

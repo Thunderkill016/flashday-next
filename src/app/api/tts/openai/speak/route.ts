@@ -1,7 +1,13 @@
 import { NextRequest } from 'next/server';
 import { synthesizeOpenAISpeech } from '@/lib/openai-tts';
+import { enforceRouteRateLimit, rateLimitResponse } from '@/lib/platform-provider';
 
 export async function POST(req: NextRequest) {
+  const rateLimit = await enforceRouteRateLimit({ headers: req.headers, bucket: 'tts' });
+  if (!rateLimit.ok) {
+    return rateLimitResponse(rateLimit);
+  }
+
   const {
     apiKey,
     baseUrl,

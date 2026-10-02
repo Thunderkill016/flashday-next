@@ -45,8 +45,6 @@ const DEFAULT_STATE = {
   kokoroApiKey: '',
   kokoroVoiceId: '',
   kokoroVoiceName: '',
-  edgeVoiceId: 'en-US-JennyNeural',
-  edgeVoiceName: 'Jenny',
   targetLang: 'zh-CN',
   recommendationsEnabled: true,
   recommendationsCount: 5,
@@ -75,8 +73,6 @@ describe('tts-store', () => {
     expect(state.openaiTtsBaseUrl).toBe('https://api.openai.com/v1');
     expect(state.openaiTtsModel).toBe('gpt-4o-mini-tts');
     expect(state.openaiTtsVoice).toBe('marin');
-    expect(state.edgeVoiceId).toBe('en-US-JennyNeural');
-    expect(state.edgeVoiceName).toBe('Jenny');
   });
 
   it('persists Fish settings to localStorage', () => {
@@ -117,7 +113,7 @@ describe('tts-store', () => {
     expect(state.fishModel).toBe('s1');
   });
 
-  it('migrates persisted Kokoro selection to Edge defaults', () => {
+  it('migrates persisted retired sources (kokoro, edge) to browser speech', () => {
     storage.set(
       'echotype_tts_settings',
       JSON.stringify({
@@ -132,17 +128,33 @@ describe('tts-store', () => {
     useTTSStore.getState().hydrate();
 
     const state = useTTSStore.getState();
-    expect(state.voiceSource).toBe('edge');
-    expect(state.edgeVoiceId).toBe('en-US-JennyNeural');
-    expect(state.edgeVoiceName).toBe('Jenny');
+    expect(state.voiceSource).toBe('browser');
     expect(state.kokoroServerUrl).toBe('http://localhost:8880');
     expect(state.kokoroApiKey).toBe('persisted-kokoro-key');
     expect(state.kokoroVoiceId).toBe('bm_daniel');
     expect(state.kokoroVoiceName).toBe('Daniel');
 
     const saved = JSON.parse(storage.get('echotype_tts_settings') ?? '{}');
-    expect(saved.voiceSource).toBe('edge');
-    expect(saved.edgeVoiceId).toBe('en-US-JennyNeural');
+    expect(saved.voiceSource).toBe('browser');
+  });
+
+  it('migrates a persisted Edge selection to browser speech', () => {
+    storage.set(
+      'echotype_tts_settings',
+      JSON.stringify({
+        voiceSource: 'edge',
+        edgeVoiceId: 'en-US-JennyNeural',
+        edgeVoiceName: 'Jenny',
+      }),
+    );
+
+    useTTSStore.getState().hydrate();
+
+    const state = useTTSStore.getState();
+    expect(state.voiceSource).toBe('browser');
+
+    const saved = JSON.parse(storage.get('echotype_tts_settings') ?? '{}');
+    expect(saved.voiceSource).toBe('browser');
   });
 
   it('auto-saves Fish API key on change', () => {
@@ -254,22 +266,11 @@ describe('tts-store', () => {
     store.setVoiceSource('openai');
     expect(useTTSStore.getState().voiceSource).toBe('openai');
 
-    store.setVoiceSource('edge');
-    expect(useTTSStore.getState().voiceSource).toBe('edge');
+    store.setVoiceSource('browser');
+    expect(useTTSStore.getState().voiceSource).toBe('browser');
 
     const saved = JSON.parse(storage.get('echotype_tts_settings') ?? '{}');
-    expect(saved.voiceSource).toBe('edge');
-  });
-
-  it('persists selected Edge voice metadata', () => {
-    useTTSStore.getState().setEdgeVoice('en-US-AvaNeural', 'Ava');
-
-    const state = useTTSStore.getState();
-    const saved = JSON.parse(storage.get('echotype_tts_settings') ?? '{}');
-    expect(state.edgeVoiceId).toBe('en-US-AvaNeural');
-    expect(state.edgeVoiceName).toBe('Ava');
-    expect(saved.edgeVoiceId).toBe('en-US-AvaNeural');
-    expect(saved.edgeVoiceName).toBe('Ava');
+    expect(saved.voiceSource).toBe('browser');
   });
 
   it('persists full configuration roundtrip', () => {

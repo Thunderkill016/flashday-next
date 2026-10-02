@@ -6,6 +6,7 @@ import path from 'node:path';
 import { promisify } from 'node:util';
 import { nanoid } from 'nanoid';
 import { NextRequest, NextResponse } from 'next/server';
+import { enforceRouteRateLimit, rateLimitResponse } from '@/lib/platform-provider';
 
 const execFileAsync = promisify(execFile);
 const IS_VERCEL = process.env.VERCEL === '1' || process.env.VERCEL_ENV !== undefined;
@@ -113,6 +114,11 @@ async function downloadMedia(url: string, format: 'audio' | 'video', outputPath:
 }
 
 export async function POST(req: NextRequest) {
+  const rateLimit = await enforceRouteRateLimit({ headers: req.headers, bucket: 'download' });
+  if (!rateLimit.ok) {
+    return rateLimitResponse(rateLimit);
+  }
+
   let tempDirectoryPath: string | null = null;
   let tempFilePath: string | null = null;
   let format: 'audio' | 'video' = 'audio';

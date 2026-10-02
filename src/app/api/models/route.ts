@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { enforceRouteRateLimit, rateLimitResponse } from '@/lib/platform-provider';
 import { PROVIDER_REGISTRY, type ProviderId, type ProviderModel } from '@/lib/providers';
 
 // Known models endpoints for providers that don't have baseUrl in the registry
@@ -117,6 +118,11 @@ function buildOpenAICompatibleModelsUrl(baseUrl: string, apiPath: string): strin
 }
 
 export async function GET(req: NextRequest) {
+  const rateLimit = await enforceRouteRateLimit({ headers: req.headers, bucket: 'metadata' });
+  if (!rateLimit.ok) {
+    return rateLimitResponse(rateLimit);
+  }
+
   const { searchParams } = new URL(req.url);
   const providerId = searchParams.get('providerId') as ProviderId | null;
 

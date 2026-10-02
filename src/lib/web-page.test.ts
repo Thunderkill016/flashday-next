@@ -2,6 +2,10 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import * as extractText from './extract-text';
 import { extractFirstUrl, fetchWebPageContent, htmlToText, removeUrlFromPrompt } from './web-page';
 
+vi.mock('node:dns/promises', () => ({
+  lookup: vi.fn(async () => [{ address: '93.184.216.34', family: 4 }]),
+}));
+
 describe('web-page helpers', () => {
   it('retries a temporary gateway failure once but never retries an access denial', async () => {
     const fetcher = vi.fn().mockResolvedValueOnce(new Response('temporary', {status:503})).mockResolvedValueOnce(new Response('Recovered', {headers:{'content-type':'text/plain'}}));

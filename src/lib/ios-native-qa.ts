@@ -65,14 +65,6 @@ type NativeQAMode =
   | 'library-nested'
   | 'collection-generate';
 
-export interface IOSNativeQAEdgeVoice {
-  id: string;
-  name: string;
-  locale: string;
-  gender: string;
-  personalities?: string[];
-}
-
 function isLocalNativeQAHost() {
   if (typeof window === 'undefined') return false;
   const host = window.location.hostname.toLowerCase();
@@ -140,32 +132,6 @@ export function getIOSNativeQAMockTranslation(text: string, targetLang: string) 
 
 export function getIOSNativeQAMockTranslations(sentences: string[], targetLang: string) {
   return sentences.map((sentence) => getIOSNativeQAMockTranslation(sentence, targetLang));
-}
-
-export function getIOSNativeQAMockEdgeVoices(): IOSNativeQAEdgeVoice[] {
-  return [
-    {
-      id: 'en-US-AriaNeural',
-      name: 'Aria',
-      locale: 'en-US',
-      gender: 'Female',
-      personalities: ['Friendly', 'Clear'],
-    },
-    {
-      id: 'en-US-GuyNeural',
-      name: 'Guy',
-      locale: 'en-US',
-      gender: 'Male',
-      personalities: ['Warm', 'Confident'],
-    },
-    {
-      id: 'en-GB-SoniaNeural',
-      name: 'Sonia',
-      locale: 'en-GB',
-      gender: 'Female',
-      personalities: ['Calm', 'Precise'],
-    },
-  ];
 }
 
 async function ensureFavoriteFolders() {

@@ -1,10 +1,127 @@
+import { lookup } from 'node:dns/promises';
+import { isIP } from 'node:net';
+
 const URL_REGEX = /https?:\/\/[^\s]+/i;
 const HTTP_FALLBACK_HOSTS = new Set(['downloads.bbc.co.uk']);
+const MAX_REDIRECT_HOPS = 5;
+
+function isPrivateIpv4Address(ip: string): boolean {
+  const octets = ip.split('.').map(Number);
+  const [a, b, c] = octets;
+  return (
+    a === 0 || // "this network"
+    a === 10 ||
+    a === 127 ||
+    (a === 100 && b >= 64 && b <= 127) || // CGNAT 100.64.0.0/10
+    (a === 169 && b === 254) || // link-local, covers cloud metadata endpoints
+    (a === 172 && b >= 16 && b <= 31) ||
+    (a === 192 && b === 168) ||
+    (a === 192 && b === 0 && c === 0) || // IETF protocol assignments
+    (a === 192 && b === 0 && c === 2) || // documentation TEST-NET-1
+    (a === 198 && (b === 18 || b === 19)) || // benchmark ranges
+    (a === 198 && b === 51 && c === 100) || // TEST-NET-2
+    (a === 203 && b === 0 && c === 113) || // TEST-NET-3
+    a >= 224 // multicast (224/4) and reserved (240/4)
+  );
+}
+
+function parseIpv6Address(ip: string): Uint8Array | null {
+  const normalized = ip.toLowerCase();
+  const zoneIndex = normalized.indexOf('%');
+  const address = zoneIndex >= 0 ? normalized.slice(0, zoneIndex) : normalized;
+
+  const doubleColon = address.indexOf('::');
+  if (doubleColon !== address.lastIndexOf('::')) return null;
+
+  const parseSide = (side: string): number[] | null => {
+    if (!side) return [];
+    const hextets: number[] = [];
+    const parts = side.split(':');
+    const last = parts[parts.length - 1];
+    const hasEmbeddedIpv4 = last.includes('.');
+    const end = hasEmbeddedIpv4 ? parts.length - 1 : parts.length;
+    for (let i = 0; i < end; i++) {
+      if (!/^[0-9a-f]{1,4}$/.test(parts[i])) return null;
+      hextets.push(parseInt(parts[i], 16));
+    }
+    if (hasEmbeddedIpv4) {
+      if (!/^\d{1,3}(\.\d{1,3}){3}$/.test(last)) return null;
+      const octets = last.split('.').map(Number);
+      if (octets.some((o) => o > 255)) return null;
+      hextets.push((octets[0] << 8) | octets[1], (octets[2] << 8) | octets[3]);
+    }
+    return hextets;
+  };
+
+  let head: number[];
+  let tail: number[] = [];
+  if (doubleColon >= 0) {
+    const headParsed = parseSide(address.slice(0, doubleColon));
+    const tailParsed = parseSide(address.slice(doubleColon + 2));
+    if (headParsed === null || tailParsed === null) return null;
+    head = headParsed;
+    tail = tailParsed;
+  } else {
+    const parsed = parseSide(address);
+    if (parsed === null) return null;
+    head = parsed;
+  }
+
+  const total = head.length + tail.length;
+  if (total > 8 || (doubleColon < 0 && total !== 8)) return null;
+  const hextets = [...head, ...new Array(8 - total).fill(0), ...tail];
+
+  const bytes = new Uint8Array(16);
+  for (let i = 0; i < 8; i++) {
+    bytes[i * 2] = (hextets[i] >> 8) & 0xff;
+    bytes[i * 2 + 1] = hextets[i] & 0xff;
+  }
+  return bytes;
+}
+
+function ipv4FromBytes(bytes: Uint8Array, offset: number): string {
+  return `${bytes[offset]}.${bytes[offset + 1]}.${bytes[offset + 2]}.${bytes[offset + 3]}`;
+}
+
+function isPrivateIpAddress(ip: string): boolean {
+  if (isIP(ip) === 4) {
+    return isPrivateIpv4Address(ip);
+  }
+
+  const bytes = parseIpv6Address(ip);
+  if (!bytes) return false;
+
+  const isZero = (start: number, end: number) => bytes.slice(start, end).every((b) => b === 0);
+
+  if (isZero(0, 16)) return true; // :: unspecified
+  if (isZero(0, 15) && bytes[15] === 1) return true; // ::1 loopback
+  if (bytes[0] === 0xff) return true; // multicast ff00::/8
+  if (bytes[0] === 0xfc || bytes[0] === 0xfd) return true; // unique-local fc00::/7
+  if (bytes[0] === 0xfe && (bytes[1] & 0xc0) === 0x80) return true; // link-local fe80::/10
+  if (bytes[0] === 0xfe && (bytes[1] & 0xc0) === 0xc0) return true; // site-local fec0::/10
+
+  // IPv4-mapped ::ffff:a.b.c.d — unwrap and apply IPv4 policy
+  if (isZero(0, 10) && bytes[10] === 0xff && bytes[11] === 0xff) {
+    return isPrivateIpv4Address(ipv4FromBytes(bytes, 12));
+  }
+
+  // NAT64 well-known prefix 64:ff9b::/96 — embedded IPv4 in last 4 bytes
+  if (bytes[0] === 0x00 && bytes[1] === 0x64 && bytes[2] === 0xff && bytes[3] === 0x9b && isZero(4, 12)) {
+    return isPrivateIpv4Address(ipv4FromBytes(bytes, 12));
+  }
+
+  // 6to4 2002::/16 — embedded IPv4 in bytes 2-5
+  if (bytes[0] === 0x20 && bytes[1] === 0x02) {
+    return isPrivateIpv4Address(ipv4FromBytes(bytes, 2));
+  }
+
+  return false;
+}
 
 function isPrivateHostname(hostname: string): boolean {
   const normalized = hostname.toLowerCase();
 
-  if (normalized === 'localhost' || normalized === '0.0.0.0' || normalized === '::1') {
+  if (normalized === 'localhost' || normalized.endsWith('.localhost')) {
     return true;
   }
 
@@ -12,31 +129,36 @@ function isPrivateHostname(hostname: string): boolean {
     return true;
   }
 
-  if (
-    /^127\./.test(normalized) ||
-    /^10\./.test(normalized) ||
-    /^192\.168\./.test(normalized) ||
-    /^169\.254\./.test(normalized)
-  ) {
-    return true;
+  const literal = normalized.startsWith('[') && normalized.endsWith(']') ? normalized.slice(1, -1) : normalized;
+  return isIP(literal) !== 0 && isPrivateIpAddress(literal);
+}
+
+async function assertSafeRequestUrl(parsedUrl: URL): Promise<void> {
+  if (!['http:', 'https:'].includes(parsedUrl.protocol)) {
+    throw new Error(`Unsupported URL protocol: ${parsedUrl.protocol}`);
   }
 
-  const private172Match = normalized.match(/^172\.(\d{1,3})\./);
-  if (private172Match) {
-    const secondOctet = Number(private172Match[1]);
-    if (secondOctet >= 16 && secondOctet <= 31) {
-      return true;
+  const hostname = parsedUrl.hostname.toLowerCase();
+  const literal = hostname.startsWith('[') && hostname.endsWith(']') ? hostname.slice(1, -1) : hostname;
+
+  if (isIP(literal)) {
+    if (isPrivateIpAddress(literal)) {
+      throw new Error('Private or local URLs are not allowed');
     }
+    return;
   }
 
-  if (normalized.startsWith('[') && normalized.endsWith(']')) {
-    const ipv6 = normalized.slice(1, -1);
-    if (ipv6 === '::1' || ipv6.startsWith('fc') || ipv6.startsWith('fd') || ipv6.startsWith('fe80:')) {
-      return true;
-    }
+  if (isPrivateHostname(hostname)) {
+    throw new Error('Private or local URLs are not allowed');
   }
 
-  return false;
+  const addresses = await lookup(literal, { all: true }).catch((error: unknown) => {
+    throw new Error(`Could not resolve host: ${literal}`, { cause: error });
+  });
+
+  if (!addresses.length || addresses.some(({ address }) => isPrivateIpAddress(address))) {
+    throw new Error('Private or local URLs are not allowed');
+  }
 }
 
 function stripTags(html: string): string {
@@ -160,24 +282,15 @@ function canRetryOverHttp(parsedUrl: URL, error: unknown): boolean {
   return /fetch failed|ECONNRESET|TLS|secure TLS connection/i.test(error.message);
 }
 
-async function fetchRemoteResponse(url: string): Promise<Response> {
-  const parsedUrl = new URL(url);
-  const deadline = Date.now() + 24_000;
-  let requestUrl = url;
-  const requestInit: RequestInit = {
-    headers: {
-      'User-Agent':
-        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36',
-      Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,text/plain;q=0.8,*/*;q=0.7',
-    },
-  };
-
+async function requestWithRetries(parsedUrl: URL, requestInit: RequestInit, deadline: number): Promise<Response> {
+  let requestUrl = parsedUrl.toString();
   for (let attempt = 0; attempt < 3; attempt++) {
     let delay = 1000 * 2 ** attempt;
     let response: Response;
     try {
       response = await fetch(requestUrl, {
         ...requestInit,
+        redirect: 'manual',
         signal: AbortSignal.timeout(Math.max(1, Math.min(15_000, deadline - Date.now()))),
       });
     } catch (error) {
@@ -188,7 +301,7 @@ async function fetchRemoteResponse(url: string): Promise<Response> {
         throw new Error('URL automatic retries exhausted', { cause: error });
       }
       if (canRetryOverHttp(parsedUrl, error)) {
-        const fallbackUrl = new URL(url);
+        const fallbackUrl = new URL(parsedUrl);
         fallbackUrl.protocol = 'http:';
         requestUrl = fallbackUrl.toString();
       }
@@ -212,6 +325,35 @@ async function fetchRemoteResponse(url: string): Promise<Response> {
     await new Promise((resolve) => setTimeout(resolve, delay));
   }
   throw new Error('URL automatic retries exhausted');
+}
+
+async function fetchRemoteResponse(url: string): Promise<Response> {
+  const deadline = Date.now() + 24_000;
+  const requestInit: RequestInit = {
+    headers: {
+      'User-Agent':
+        'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/133.0.0.0 Safari/537.36',
+      Accept: 'text/html,application/xhtml+xml,application/xml;q=0.9,text/plain;q=0.8,*/*;q=0.7',
+    },
+  };
+
+  let currentUrl = url;
+  for (let hop = 0; hop <= MAX_REDIRECT_HOPS; hop++) {
+    const parsedUrl = new URL(currentUrl);
+    // Every hop — initial URL and each redirect target — is revalidated
+    // against protocol, literal-IP, hostname, and DNS policy before fetching.
+    await assertSafeRequestUrl(parsedUrl);
+
+    const response = await requestWithRetries(parsedUrl, requestInit, deadline);
+    if (response.status < 300 || response.status >= 400) return response;
+
+    const location = response.headers.get('location');
+    await response.body?.cancel();
+    if (!location) return response;
+
+    currentUrl = new URL(location, currentUrl).toString();
+  }
+  throw new Error('Too many redirects while fetching page');
 }
 
 async function extractPdfFromBuffer(buffer: Buffer) {
@@ -239,10 +381,6 @@ export async function fetchWebPageContent(url: string): Promise<{ title: string;
   const parsedUrl = new URL(url);
   if (!['http:', 'https:'].includes(parsedUrl.protocol)) {
     throw new Error(`Unsupported URL protocol: ${parsedUrl.protocol}`);
-  }
-
-  if (isPrivateHostname(parsedUrl.hostname)) {
-    throw new Error('Private or local URLs are not allowed');
   }
 
   const response = await fetchRemoteResponse(url);

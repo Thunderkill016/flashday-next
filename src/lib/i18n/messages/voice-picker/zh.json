@@ -18,7 +18,6 @@
     "google": "按名称、口音或性别搜索 Google 语音...",
     "openai": "按名称或风格搜索 OpenAI 语音...",
     "kokoro": "按名称、语言或性别搜索语音...",
-    "edge": "按名称、口音或性别搜索 Edge 语音...",
     "browser": "按名称、口音或提供方搜索语音..."
   },
   "browserSummary": "当前视图显示 {{filtered}} / {{visible}} 个浏览器语音。WebView 中可用 {{english}} 个英语语音，共 {{total}} 个语音。",
@@ -42,8 +41,7 @@
   "errors": {
     "fish": "Fish 语音库加载失败：",
     "google": "Google Cloud TTS 语音库加载失败：",
-    "kokoro": "Kokoro 语音库加载失败：",
-    "edge": "Edge 语音加载失败，使用备用列表。"
+    "kokoro": "Kokoro 语音库加载失败："
   },
   "actions": {
     "clearSearch": "清空搜索",
