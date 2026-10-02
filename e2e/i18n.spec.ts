@@ -259,4 +259,79 @@ test.describe('vietnam-first i18n', () => {
     const trigger = targetSection.getByRole('combobox');
     await expect(trigger).toHaveText('English');
   });
+
+  test('stored language without explicit preference falls back to Vietnamese', async ({ page }) => {
+    await page.addInitScript(`
+      localStorage.setItem('echotype_language_settings', JSON.stringify({
+        interfaceLanguage: 'en',
+        hasExplicitPreference: false,
+      }));
+    `);
+    await gotoSeeded(page, '/dashboard');
+
+    await expect(page.locator('html')).toHaveAttribute('lang', 'vi');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Chào mừng đến FlashDay');
+  });
+
+  test('stored language with missing explicit flag falls back to Vietnamese', async ({ page }) => {
+    await page.addInitScript(`
+      localStorage.setItem('echotype_language_settings', JSON.stringify({
+        interfaceLanguage: 'zh',
+      }));
+    `);
+    await gotoSeeded(page, '/dashboard');
+
+    await expect(page.locator('html')).toHaveAttribute('lang', 'vi');
+    await expect(page.getByRole('heading', { level: 1 })).toHaveText('Chào mừng đến FlashDay');
+  });
+
+  test('favorites surface renders Vietnamese folder chrome on fresh install', async ({ page }) => {
+    await page.addInitScript(clearOnce('en-US'));
+    await gotoSeeded(page, '/favorites');
+
+    await expect(page.locator('html')).toHaveAttribute('lang', 'vi');
+    await expect(page.getByTestId('favorites-folder-all')).toHaveText('Tất cả');
+    await expect(page.getByTestId('favorites-folder-default')).toContainText('Mặc định');
+    await expect(page.getByTestId('favorites-folder-auto')).toContainText('Thông minh');
+    await expect(page.getByTestId('favorites-folder-manage')).toContainText('Quản lý');
+    await expect(page.getByText('默认收藏')).toHaveCount(0);
+
+    await page.getByTestId('favorites-folder-manage').click();
+    await expect(page.getByRole('dialog')).toContainText('Quản lý thư mục');
+    await expect(page.getByTestId('favorites-folder-name-input')).toHaveAttribute('placeholder', 'Tên thư mục');
+    await expect(page.getByTestId('favorites-folder-create')).toHaveText('Tạo');
+    await expect(page.getByTestId('favorites-folder-row-default')).toContainText('Mặc định');
+    await expect(page.getByRole('dialog')).not.toContainText('管理收藏夹');
+  });
+
+  test('favorites surface localizes under explicit en and zh preferences', async ({ page }) => {
+    await page.addInitScript(`
+      if (!sessionStorage.getItem('__i18nTestInit')) {
+        sessionStorage.setItem('__i18nTestInit', '1');
+        localStorage.setItem('echotype_language_settings', JSON.stringify({
+          interfaceLanguage: 'en', hasExplicitPreference: true,
+        }));
+      }
+    `);
+    await gotoSeeded(page, '/favorites');
+
+    await expect(page.getByTestId('favorites-folder-all')).toHaveText('All');
+    await expect(page.getByTestId('favorites-folder-default')).toContainText('Default');
+    await expect(page.getByTestId('favorites-folder-auto')).toContainText('Smart');
+    await expect(page.getByTestId('favorites-folder-manage')).toContainText('Manage');
+
+    await page.evaluate(() =>
+      localStorage.setItem(
+        'echotype_language_settings',
+        JSON.stringify({ interfaceLanguage: 'zh', hasExplicitPreference: true }),
+      ),
+    );
+    await reloadSeeded(page);
+
+    await expect(page.locator('html')).toHaveAttribute('lang', 'zh');
+    await expect(page.getByTestId('favorites-folder-all')).toHaveText('全部');
+    await expect(page.getByTestId('favorites-folder-default')).toContainText('默认收藏');
+    await expect(page.getByTestId('favorites-folder-auto')).toContainText('智能收藏');
+    await expect(page.getByTestId('favorites-folder-manage')).toContainText('管理');
+  });
 });

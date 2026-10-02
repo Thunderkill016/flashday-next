@@ -60,6 +60,31 @@ export const DEFAULT_FOLDERS: FavoriteFolder[] = [
   { id: 'auto', name: '智能收藏', emoji: '🤖', sortOrder: 1, createdAt: 0 },
 ];
 
+export type ReservedFolderId = 'default' | 'auto';
+
+export function isReservedFolderId(id: string): id is ReservedFolderId {
+  return id === 'default' || id === 'auto';
+}
+
+interface FolderLabelMessages {
+  defaultFolderName: string;
+  smartFolderName: string;
+}
+
+/**
+ * Reserved folders keep semantic identity by id ('default' | 'auto'); their
+ * stored `name` is legacy seed data, so display labels resolve through i18n
+ * at render time. User-authored folder names render unchanged.
+ */
+export function favoriteFolderDisplayName(
+  folder: Pick<FavoriteFolder, 'id' | 'name'>,
+  messages: FolderLabelMessages,
+): string {
+  if (folder.id === 'default') return messages.defaultFolderName;
+  if (folder.id === 'auto') return messages.smartFolderName;
+  return folder.name;
+}
+
 export const SENSITIVITY_THRESHOLDS = {
   low: { writeErrorRate: 0.7, fsrsAgainCount: 3, lookupCount: 5 },
   medium: { writeErrorRate: 0.5, fsrsAgainCount: 2, lookupCount: 3 },

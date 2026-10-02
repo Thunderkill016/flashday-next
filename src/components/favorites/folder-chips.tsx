@@ -2,22 +2,23 @@
 
 import { Plus } from 'lucide-react';
 import { useState } from 'react';
+import { useI18n } from '@/lib/i18n/use-i18n';
 import { detectIOSNativeHost } from '@/lib/tauri';
 import { cn } from '@/lib/utils';
 import { useFavoriteStore } from '@/stores/favorite-store';
+import { favoriteFolderDisplayName } from '@/types/favorite';
 import { FolderManageDialog } from './folder-manage-dialog';
 
 export function FolderChips() {
   const isIOSNativeHost = detectIOSNativeHost();
+  const { messages: t } = useI18n('favorites');
   const folders = useFavoriteStore((s) => s.folders);
   const activeFolderId = useFavoriteStore((s) => s.activeFolderId);
   const setActiveFolderId = useFavoriteStore((s) => s.setActiveFolderId);
   const [showManage, setShowManage] = useState(false);
   const getFolderLabel = (folder: (typeof folders)[number]) => {
-    if (!isIOSNativeHost) return folder.name;
-    if (folder.id === 'default') return 'Default';
-    if (folder.id === 'auto') return 'Smart';
-    return folder.name.trim() || 'Folder';
+    const name = favoriteFolderDisplayName(folder, t);
+    return isIOSNativeHost ? name.trim() || t.folderLabel : name;
   };
   const chipBaseClass = isIOSNativeHost
     ? 'shrink-0 rounded-full px-3.5 py-2 text-xs font-semibold transition-all'
@@ -48,7 +49,7 @@ export function FolderChips() {
                 : 'bg-slate-100 text-slate-600 hover:bg-slate-200',
           )}
         >
-          All
+          {t.all}
         </button>
 
         {folders.map((f) => (
@@ -68,7 +69,7 @@ export function FolderChips() {
                   : 'bg-slate-100 text-slate-600 hover:bg-slate-200',
             )}
           >
-            {isIOSNativeHost ? getFolderLabel(f) : `${f.emoji} ${f.name}`}
+            {isIOSNativeHost ? getFolderLabel(f) : `${f.emoji} ${getFolderLabel(f)}`}
           </button>
         ))}
 
@@ -84,7 +85,7 @@ export function FolderChips() {
               : 'px-3 py-1.5 bg-slate-50 text-slate-400 hover:bg-slate-100',
           )}
         >
-          <Plus className="h-3 w-3" /> Manage
+          <Plus className="h-3 w-3" /> {t.manage}
         </button>
       </div>
 

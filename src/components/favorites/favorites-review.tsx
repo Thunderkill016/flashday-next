@@ -21,6 +21,7 @@ import { PageSpinner } from '@/components/shared/page-spinner';
 import { Button } from '@/components/ui/button';
 import { db, LOCAL_DATABASE_CHANGED_EVENT } from '@/lib/db';
 import { previewRatings } from '@/lib/fsrs';
+import { useI18n } from '@/lib/i18n/use-i18n';
 import { detectIOSNativeHost, reportNativeQAState } from '@/lib/tauri';
 import { cn } from '@/lib/utils';
 import { useFavoriteStore } from '@/stores/favorite-store';
@@ -46,6 +47,8 @@ function FavoritesReviewRoute() {
 
 function FavoritesReviewSession({ targetId }: { targetId: string | null }) {
   const isIOSNativeHost = detectIOSNativeHost();
+  const { messages: t } = useI18n('favorites');
+  const { messages: reviewMessages } = useI18n('review');
   const gradeReview = useFavoriteStore((s) => s.gradeReview);
   const isLoaded = useFavoriteStore((s) => s.isLoaded);
   const [revealed, setRevealed] = useState(false);
@@ -95,10 +98,7 @@ function FavoritesReviewSession({ targetId }: { targetId: string | null }) {
       <div className={isIOSNativeHost ? IOS_PAGE_CONTAINER_CLASS : 'max-w-lg mx-auto text-center py-20'}>
         {isIOSNativeHost ? (
           <>
-            <IOSPageHeader
-              title="Favorites Review"
-              description="Work through saved vocabulary with spaced repetition."
-            />
+            <IOSPageHeader title={t.reviewTitle} description={t.reviewEmptyDescription} />
             <div className={cn(IOS_EMPTY_STATE_CARD_CLASS, 'px-6 py-10 text-center')}>
               <div className="mx-auto max-w-sm space-y-4">
                 <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-[22px] bg-emerald-50 text-emerald-600">
@@ -106,18 +106,18 @@ function FavoritesReviewSession({ targetId }: { targetId: string | null }) {
                 </div>
                 <div className="space-y-1.5">
                   <p className="text-lg font-semibold text-slate-900">
-                    {completedCount > 0 ? `Completed ${completedCount} reviews` : 'No favorites due right now'}
+                    {completedCount > 0
+                      ? t.reviewCompleted.replace('{{count}}', String(completedCount))
+                      : t.noDueFavorites}
                   </p>
                   <p className="text-sm leading-6 text-slate-500">
-                    {completedCount > 0
-                      ? 'Your saved vocabulary is up to date for now.'
-                      : 'Come back after your next collection session or when new review items are due.'}
+                    {completedCount > 0 ? t.reviewDoneDetail : t.noDueDetail}
                   </p>
                 </div>
                 <Link href="/favorites" className="inline-flex">
                   <Button className={cn(IOS_PRIMARY_BUTTON_CLASS, 'gap-1.5')}>
                     <ArrowLeft className="h-4 w-4" />
-                    Back to favorites
+                    {t.backToFavorites}
                   </Button>
                 </Link>
               </div>
@@ -127,12 +127,12 @@ function FavoritesReviewSession({ targetId }: { targetId: string | null }) {
           <div className="max-w-lg mx-auto text-center py-20">
             <div className="text-4xl mb-4">&#127881;</div>
             <p className="text-lg font-medium text-slate-700">
-              {completedCount > 0 ? `已完成 ${completedCount} 项复习！` : '没有待复习的收藏'}
+              {completedCount > 0 ? t.reviewCompleted.replace('{{count}}', String(completedCount)) : t.noDueFavorites}
             </p>
             <Link href="/favorites">
               <Button variant="outline" className="mt-4 gap-1.5">
                 <ArrowLeft className="h-4 w-4" />
-                返回收藏列表
+                {t.backToFavorites}
               </Button>
             </Link>
           </div>
@@ -159,7 +159,7 @@ function FavoritesReviewSession({ targetId }: { targetId: string | null }) {
       setCompletedCount((c) => c + 1);
       setRevealed(false);
     } catch {
-      if (isCurrent()) setGradeError('Review could not be saved. Please try again. / 复习保存失败，请重试。');
+      if (isCurrent()) setGradeError(t.gradeError);
     } finally {
       gradingLock.current = false;
       if (isCurrent()) setGrading(false);
@@ -174,10 +174,10 @@ function FavoritesReviewSession({ targetId }: { targetId: string | null }) {
   };
 
   const RATING_BUTTONS = [
-    { rating: Rating.Again, label: 'Again', color: 'bg-red-500 hover:bg-red-600' },
-    { rating: Rating.Hard, label: 'Hard', color: 'bg-amber-500 hover:bg-amber-600' },
-    { rating: Rating.Good, label: 'Good', color: 'bg-green-500 hover:bg-green-600' },
-    { rating: Rating.Easy, label: 'Easy', color: 'bg-blue-500 hover:bg-blue-600' },
+    { rating: Rating.Again, label: reviewMessages.rating.again, color: 'bg-red-500 hover:bg-red-600' },
+    { rating: Rating.Hard, label: reviewMessages.rating.hard, color: 'bg-amber-500 hover:bg-amber-600' },
+    { rating: Rating.Good, label: reviewMessages.rating.good, color: 'bg-green-500 hover:bg-green-600' },
+    { rating: Rating.Easy, label: reviewMessages.rating.easy, color: 'bg-blue-500 hover:bg-blue-600' },
   ];
 
   return (
@@ -189,25 +189,22 @@ function FavoritesReviewSession({ targetId }: { targetId: string | null }) {
       )}
       {isIOSNativeHost ? (
         <>
-          <IOSPageHeader
-            title="Favorites Review"
-            description="Reveal the meaning, rate recall, and keep your saved vocabulary fresh."
-          />
+          <IOSPageHeader title={t.reviewTitle} description={t.reviewDescription} />
           <div className={`${IOS_SECTION_CARD_CLASS} space-y-4 p-4`}>
             <div className="flex items-center justify-between gap-3">
               <Link
                 href="/favorites"
                 className={cn(IOS_TERTIARY_BUTTON_CLASS, 'inline-flex items-center gap-1.5 text-sm font-semibold')}
-                aria-label="Back to favorites"
+                aria-label={t.backToFavorites}
               >
                 <ArrowLeft className="h-4 w-4" />
-                Back
+                {t.back}
               </Link>
               <div className="flex flex-wrap items-center justify-end gap-2">
                 <span className={IOS_PILL_CLASS}>
                   {currentIndex + 1} / {totalCount}
                 </span>
-                <span className={IOS_PILL_CLASS}>{completedCount} done</span>
+                <span className={IOS_PILL_CLASS}>{t.doneCount.replace('{{count}}', String(completedCount))}</span>
               </div>
             </div>
             <div className="h-2 overflow-hidden rounded-full bg-slate-100">
@@ -237,7 +234,7 @@ function FavoritesReviewSession({ targetId }: { targetId: string | null }) {
           >
             <div className="flex items-center justify-between gap-3">
               <div className="text-left">
-                <p className={IOS_EYEBROW_CLASS}>Saved item</p>
+                <p className={IOS_EYEBROW_CLASS}>{t.savedItem}</p>
                 <div className="mt-2 flex flex-wrap items-center gap-2">
                   <span
                     className="text-[1.95rem] font-bold tracking-[-0.04em] text-slate-950"
@@ -261,28 +258,26 @@ function FavoritesReviewSession({ targetId }: { targetId: string | null }) {
                   <p className="mt-2 text-sm font-mono text-slate-400">{item.pronunciation}</p>
                 ) : null}
               </div>
-              <span className={IOS_PILL_CLASS}>{revealed ? 'Revealed' : 'Tap to reveal'}</span>
+              <span className={IOS_PILL_CLASS}>{revealed ? t.revealed : t.tapToReveal}</span>
             </div>
 
             <div className="mt-8">
               {revealed ? (
                 <div className="space-y-3">
                   <div className={`${IOS_SUBCARD_CLASS} px-4 py-4`}>
-                    <p className={IOS_EYEBROW_CLASS}>Translation</p>
+                    <p className={IOS_EYEBROW_CLASS}>{t.translationLabel}</p>
                     <p className="mt-2 text-lg font-medium text-slate-700">{item.translation}</p>
                   </div>
                   {item.context ? (
                     <div className={`${IOS_SUBCARD_CLASS} px-4 py-4 text-left`}>
-                      <p className={IOS_EYEBROW_CLASS}>Context</p>
+                      <p className={IOS_EYEBROW_CLASS}>{t.contextLabel}</p>
                       <p className="mt-2 text-sm leading-6 text-slate-500">{item.context}</p>
                     </div>
                   ) : null}
                 </div>
               ) : (
                 <div className={`${IOS_SUBCARD_CLASS} px-4 py-5`}>
-                  <p className="text-sm leading-6 text-slate-500">
-                    Tap the card to reveal the translation, then rate how easy it felt to recall.
-                  </p>
+                  <p className="text-sm leading-6 text-slate-500">{t.revealHint}</p>
                 </div>
               )}
             </div>
@@ -318,9 +313,9 @@ function FavoritesReviewSession({ targetId }: { targetId: string | null }) {
             <Link
               href="/favorites"
               className="text-sm text-slate-500 hover:text-slate-700 flex items-center gap-1"
-              aria-label="Back to favorites"
+              aria-label={t.backToFavorites}
             >
-              <ArrowLeft className="h-4 w-4" /> Back
+              <ArrowLeft className="h-4 w-4" /> {t.back}
             </Link>
             <span className="text-sm text-slate-500">
               {currentIndex + 1} / {totalCount}
@@ -377,7 +372,7 @@ function FavoritesReviewSession({ targetId }: { targetId: string | null }) {
                 {item.context && <p className="text-xs text-slate-400 mt-2">{item.context}</p>}
               </div>
             ) : (
-              <p className="text-sm text-slate-400 mt-4">点击翻转查看翻译</p>
+              <p className="text-sm text-slate-400 mt-4">{t.flipToReveal}</p>
             )}
           </div>
 

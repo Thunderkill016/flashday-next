@@ -96,6 +96,39 @@ describe('language-store', () => {
     });
   });
 
+  it.each(['en', 'zh'] as const)(
+    'falls back to vietnamese when stored %s was never explicitly chosen',
+    (interfaceLanguage) => {
+      storage.set(
+        'echotype_language_settings',
+        JSON.stringify({ interfaceLanguage, hasExplicitPreference: false }),
+      );
+
+      useLanguageStore.getState().initialize();
+
+      expect(useLanguageStore.getState()).toMatchObject({
+        interfaceLanguage: 'vi',
+        hasExplicitPreference: false,
+        initialized: true,
+      });
+    },
+  );
+
+  it('falls back to vietnamese when the explicit flag is missing', () => {
+    storage.set(
+      'echotype_language_settings',
+      JSON.stringify({ interfaceLanguage: 'en' }),
+    );
+
+    useLanguageStore.getState().initialize();
+
+    expect(useLanguageStore.getState()).toMatchObject({
+      interfaceLanguage: 'vi',
+      hasExplicitPreference: false,
+      initialized: true,
+    });
+  });
+
   it('ignores malformed storage and falls back to browser detection', () => {
     storage.set('echotype_language_settings', '{bad json');
     Object.defineProperty(globalThis, 'navigator', {

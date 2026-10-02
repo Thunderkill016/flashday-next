@@ -79,11 +79,11 @@ export const useLanguageStore = create<LanguageStore>((set) => ({
       return;
     }
 
-    /* Explicit saved preference wins (even when hasExplicitPreference was
-     * never persisted — a stored language is still a stored choice);
-     * everything else falls back to the Vietnam-first product default. */
+    /* Vietnam-first: only an explicitly saved preference survives. A stored
+     * language without the explicit flag (never persisted, flag lost, or
+     * legacy write) is not a learner choice — fall back to Vietnamese. */
     set({
-      interfaceLanguage: saved.interfaceLanguage ?? DEFAULT_INTERFACE_LANGUAGE,
+      interfaceLanguage: DEFAULT_INTERFACE_LANGUAGE,
       hasExplicitPreference: saved.hasExplicitPreference ?? false,
       initialized: true,
     });

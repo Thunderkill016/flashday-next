@@ -14,15 +14,16 @@ course position ≠ ability · AI score ≠ certified level
 | STATE | STORAGE | WRITERS | READERS | CLAIM | CURRENT AUTHORITY | FUTURE AUTHORITY | CONFLICT RISK | DISPOSITION |
 |---|---|---|---|---|---|---|---|---|
 | evidenceEvents | Dexie | evidence-bridge commit | projection, falsification specs | durable attempt outcomes | FlashDay kernel | FlashDay kernel | none observed | KEEP |
-| learningAttempts | Dexie | lesson/workshop flows | progress UI | per-activity attempt record | EchoType | bridge to kernel | dual-write vs evidenceEvents | ADAPT — funnel writes through bridge |
+| learningAttempts | Dexie | lesson/workshop flows | progress UI | rich learner artifact/attempt history | EchoType | keep as history; adapter/transaction may also write EvidenceEvent for semantic outcomes | medium — must not become a second mastery source; embedded self/AI feedback must not promote capability state directly | ADAPT — funnel semantic writes through bridge |
 | records (FSRS) | Dexie | practice flows, import-schedule | review, today-review, dashboard | memory scheduling state | FSRS | FSRS (scheduling only) | medium — sometimes read as ability | KEEP but enforce scheduling-only reads |
 | sessions | Dexie | practice completion | dashboard analytics, streaks | a practice session happened | EchoType | keep for history/analytics | low | KEEP (demote to analytics, not ability) |
 | weakSpots | Dexie | chat-analysis, practice | review surfaces | "user is weak at X" | EchoType heuristics | evidence projection | high — heuristic vs evidence | DEMOTE pending projection parity |
-| pronunciationProgress | Dexie | pronunciation studio | pronunciation page | per-sound progress | EchoType | future speech/acoustic evidence | medium | ADAPT — keep as practice cache, not proficiency |
+| pronunciationProgress | Dexie | pronunciation studio | pronunciation page | per-sound practice progress | EchoType | calibrated acoustic EvidenceEvents (Wave 3 contract) | medium — mutable per-sound row must not become future acoustic authority | DEMOTE as ability authority; KEEP/ADAPT only as practice/diagnostic history |
 | dailyTasks | Dexie | daily-task-planner | task queue UI | today's plan | EchoType planner | planner reading evidence projection | medium — planner not evidence-driven | ADAPT |
 | learningUnits / lessons | Dexie | reconcileLearningUnits (derived index) | learn pages | content → unit/lesson index | derived | derived | none — rebuilt atomically | KEEP (derived, disposable — pruned/rebuilt) |
 | contents / books / collections | Dexie | import, seed | all surfaces | material corpus | store-of-record | same | low | KEEP |
-| favorites / favoriteFolders | Dexie | user actions | favorites, review influence | saved items | store-of-record | same | low | KEEP |
+| favorites / favoriteFolders (content metadata) | Dexie | user actions (save, move, folder CRUD) | favorites surfaces, selection popup | saved learner item/context/translation/notes | store-of-record | same | low | KEEP |
+| favorites.fsrsCard / nextReview | Dexie (fields on favorites rows) | favorite-store.gradeReview() + add/init | favorites review, due calculation, daily-task-planner (reads fsrsCard.last_review as review evidence) | memory scheduling state only | FSRS | FSRS memory scheduler | medium — due-ness must never imply capability mastery | KEEP — scheduling only |
 | journals | Dexie | journal flows | journal page | learner notes | store-of-record | same | low | KEEP |
 | conversations | Dexie | chat flows | chat history | speak/chat history | store-of-record | same | low | KEEP |
 | lookupHistory | Dexie | word lookup | dictionary suggestions | lookups happened | store-of-record | same | low | KEEP |
@@ -44,5 +45,14 @@ course position ≠ ability · AI score ≠ certified level
    You; legacy task kinds keep working meanwhile).
 4. `accuracy` in `sessions`/`records` feeds dashboard "avgAccuracy" — display
    only, must not become proficiency → KEEP with display-only note.
+5. `favorites.fsrsCard/nextReview` was previously folded into the favorites
+   KEEP row; it is now split out as memory-scheduling substate — due-ness is
+   never a mastery claim.
+6. `pronunciationProgress` demoted from "ADAPT — practice cache" to DEMOTE as
+   ability authority: independent pronunciation claims must arrive through
+   explicit acoustic EvidenceEvents, not this mutable per-sound row.
+7. `learningAttempts` stays a rich learner-artifact/history table; embedded
+   self/AI feedback inside an attempt must not promote capability state —
+   semantic outcomes only mint EvidenceEvents through the bridge.
 
 No deletions executed in this mission — dispositions are audit output only.
