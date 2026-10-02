@@ -986,6 +986,55 @@ Requirements include:
 
 Accessibility support must not silently change evidence semantics.
 
+## 8.19 Competitive research synthesis — VSpeak / eJOY / EnglishCentral / Yabla / Migaku / Language Reactor / Speechling
+
+Detailed artifact:
+
+`docs/flashday/COMPETITIVE_LEARNING_RESEARCH_2026-10.md`
+
+Research refresh 2026-10-02 established seven product rules that future feature missions must treat as explicit hypotheses/gates rather than informal inspiration:
+
+1. **One content object -> many TaskContracts.**
+   - Reuse one canonical segment across comprehension, dictation, lexical work, production and later retrieval where each contract is semantically honest.
+   - Do not duplicate source truth into disconnected exercise records.
+
+2. **Support is a timeline, not merely a final boolean.**
+   - Distinguish replay/slow from answer-bearing support.
+   - Preserve whether transcript/translation/hint/reveal occurred before, during or after the response.
+   - Answer reveal after submission must not retroactively contaminate the first attempt as pre-answer support.
+
+3. **Correction Episode is first-class.**
+   - Failure/partial evidence can open repair work.
+   - Feedback must lead to another performance opportunity.
+   - Immediate corrected retry does not by itself prove retention or recovery.
+
+4. **Lexical capture keeps context.**
+   - Prefer word/chunk + source sentence + source provenance + encounter history over context-free cards.
+   - Multiple encounters accumulate rather than overwrite one another.
+   - Lookup and deliberate save should remain distinguishable.
+
+5. **Default UX is a planner-composed bounded circuit, not a toolbox.**
+   - The learner should normally receive one understandable next session rather than choose among dozens of unrelated tools.
+   - User override remains possible.
+
+6. **Real input should have a route to output.**
+   - Watch/read/listen can progress toward retrieval or production when a registered contract supports the claim.
+   - Content completion itself remains history, not mastery.
+
+7. **Speaking feedback preserves flow and remains decomposed.**
+   - Communicative success, pronunciation, grammar, lexical choice and fluency are distinct.
+   - AI feedback can propose repairs but cannot self-certify learner ability.
+
+Explicit anti-copy rule:
+
+```text
+competitor activity/proficiency/game score
+!=
+FlashDay capability truth
+```
+
+These findings influence Waves 3-8 but do not authorize skipping current architecture gates.
+
 ---
 
 # 9. Vietnam-first product policy
@@ -1807,7 +1856,19 @@ Deliver:
 - memory integration;
 - support provenance;
 - repair loop;
-- cross-modal transfer.
+- cross-modal transfer;
+- **Content-to-Task Multiplexer**: one canonical content segment may instantiate several registered TaskContracts without duplicating source truth;
+- **Support Action Timeline** where task semantics require ordering of replay/slow/hint/translation/reveal relative to response;
+- **Correction Episode -> repair -> retry** lifecycle;
+- input-to-output escalation only through registered contracts;
+- self-listen/model-compare/rerecord surfaces where useful without prematurely granting pronunciation authority.
+
+Acceptance additions from competitive research:
+
+- exercise completion never upgrades capability by itself;
+- answer reveal after response is distinguishable from answer-bearing support before/during response;
+- immediate retry is not labelled retention;
+- content provenance remains stable across all derived task surfaces.
 
 ## Wave 6 — Immersion / Learn From Anything
 
@@ -1818,7 +1879,21 @@ Build:
 - lexical overlays;
 - content difficulty;
 - sentence/chunk capture;
-- mission generation from imported content where evidence-safe.
+- mission generation from imported content where evidence-safe;
+- sentence-level previous/replay/next and optional auto-pause;
+- low-interruption contextual lookup;
+- **context-rich lexical capture** with source sentence/content/time/media provenance;
+- multiple encounter contexts per word/chunk;
+- lookup vs deliberate-save telemetry;
+- lexical-familiarity-aware difficulty/recommendation, explicitly advisory;
+- resume position and source-context return path.
+
+Acceptance additions from competitive research:
+
+- contextful capture is the default when provenance is available;
+- known-word count never becomes general proficiency;
+- static CEFR level may inform difficulty but is not the sole learner truth;
+- imported content does not mint capability evidence until executed through a registered TaskContract.
 
 ## Wave 7 — Adaptive Planner v2
 
@@ -1828,7 +1903,22 @@ Use accumulated evidence to improve:
 - memory interleaving;
 - modality balance;
 - goal alignment;
-- session composition.
+- session composition;
+- **planner-composed bounded daily circuits** that combine a small number of ordered tasks over learner need and available time;
+- explicit session reasons;
+- interleaving of correction/retest, memory due-ness, fresh input and production where appropriate.
+
+Default UX target:
+
+```text
+learner state + memory + goal + available time
+-> planner
+-> one bounded session
+-> ordered tasks
+-> explainable reason
+```
+
+Avoid making a large tool grid the default path.
 
 Experiment behind shadow mode/feature flags.
 
@@ -2082,6 +2172,16 @@ This section records important primary/credible sources informing the plan. It i
   https://www.loora.com/support/features/feedback-and-corrections
 - Speechling quickstart:
   https://speechling.com/help/quickstart
+- Speechling Dictation:
+  https://speechling.com/help/dictation
+- Speechling feedback / rerecord history:
+  https://speechling.com/help/checking-feedback
+- EnglishCentral Watch -> Learn -> Speak -> GoLive:
+  https://www.englishcentral.com/about-us
+- Gliglish:
+  https://gliglish.com/
+- Praktika:
+  https://praktika.ai/
 
 ## Immersion / reading
 
@@ -2093,6 +2193,18 @@ This section records important primary/credible sources informing the plan. It i
   https://migaku.com/faq/features
 - Readlang:
   https://readlang.com/
+- VSpeak:
+  https://vspeak.asia/
+- eJOY YouTube learning workflow:
+  https://ejoy-english.com/en/help/learning-youtube-videos-on-ejoy-english-2
+- Yabla English:
+  https://english.yabla.com/en/
+- Language Reactor contextual saved-item/export model:
+  https://www.languagereactor.com/help/export
+- FluentU:
+  https://www.fluentu.com/courses/
+- Competitive synthesis artifact:
+  docs/flashday/COMPETITIVE_LEARNING_RESEARCH_2026-10.md
 
 ## Open/free speech technology
 
