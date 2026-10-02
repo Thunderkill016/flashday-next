@@ -29,7 +29,7 @@ import { Button } from '@/components/ui/button';
 import { Card, CardContent } from '@/components/ui/card';
 import { useFallbackSTT } from '@/hooks/use-fallback-stt';
 import { useTTS } from '@/hooks/use-tts';
-import { savePracticeSession } from '@/lib/daily-plan-progress';
+import { recordFailedPracticeSession, savePracticeSession } from '@/lib/daily-plan-progress';
 import { toLocalDateKey } from '@/lib/date-key';
 import { db } from '@/lib/db';
 import enWordBook from '@/lib/i18n/messages/word-book-practice/en.json';
@@ -423,6 +423,26 @@ function WritePractice({
     if (submitted.current) return;
     if (!isWordBookWriteMatch(typedText, target.text)) {
       setResult('wrong');
+      /* Persist the miss as history only — no FSRS grade, no record
+       * mutation — so VS01 telemetry can see the first-attempt outcome. */
+      try {
+        await recordFailedPracticeSession({
+          id: nanoid(),
+          contentId: item.id,
+          module: 'write',
+          startTime: startedAtRef.current,
+          endTime: Date.now(),
+          totalChars: target.text.length,
+          correctChars: 0,
+          wrongChars: 0,
+          totalWords: target.text.split(/\s+/).filter(Boolean).length,
+          wpm: 0,
+          accuracy: 0,
+          completed: false,
+        });
+      } catch {
+        setSaveError(true);
+      }
       return;
     }
     submitted.current = true;
