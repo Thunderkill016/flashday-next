@@ -309,9 +309,10 @@ export type SemanticHistoryTable = Table;
  *   history exists, no event → pre-cutover row: never mint, never
  *     repair, writeHistory never runs — a no-op
  *
- * The verified history id is `mapped.attemptId` — seam-derived, not
- * caller-chosen; the event id is `mapped.id ?? evt.<attemptId>`, matching
- * the bridge's own derivation. Either side throwing aborts everything, and
+ * The verified history id is `mapped.attemptId`. The canonical event id
+ * is always `evt.<mapped.attemptId>`; a payload-carried `mapped.id` is
+ * never authoritative at mint or retry lookup. Either side throwing
+ * aborts everything, and
  * because the append primitive is module-private, no caller can mint an
  * event without a materialized history row.
  *

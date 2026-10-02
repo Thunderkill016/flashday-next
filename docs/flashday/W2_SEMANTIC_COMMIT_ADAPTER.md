@@ -108,11 +108,11 @@ three ways:
 - **history exists + event absent** → pre-cutover row: `writeHistory` is
   never invoked and nothing mints — no repair, no backfill, a no-op
 
-The verified history id is `mapped.attemptId` and the event id is
-`mapped.id ?? evt.<attemptId>` — both seam-derived (the derivation matches
-the bridge's own), so a caller cannot satisfy the proof with a row or
-event under a different key. `verify` runs in the same transaction on all
-branches (account-switch guard). Defense-in-depth invariants remain: the
+The verified history id is `mapped.attemptId`. The canonical event id is
+always `evt.<mapped.attemptId>` — a payload-carried `mapped.id` is never
+authoritative at mint or retry lookup, so a caller cannot satisfy the
+proof with a row or event under a different key. `verify` runs in the
+same transaction on all branches (account-switch guard). Defense-in-depth invariants remain: the
 append asserts `Dexie.currentTransaction` and `evidenceEvents`
 participation. Native mission surfaces keep standalone `submitAttempt`.
 
