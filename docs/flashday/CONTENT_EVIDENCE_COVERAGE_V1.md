@@ -17,8 +17,10 @@ Legend for mechanisms (all existing runtime surfaces, no new engine):
   `productionPattern` per target (carried on `metadata.fd`) + vocabulary
   `application` mode (own sentence in a new situation).
 - **Transfer**: text-cycle `apply` stage validates `expression` ⊆ source
-  and `context` ∉ source at runtime; `transferTask` is the authored intent
-  (also embedded in the article text's Vận dụng block and `metadata.fd`).
+  and `context` ∉ source at runtime (`text-learning-cycle.ts`);
+  `transferTask` is the authored intent (also embedded in the article
+  text's Vận dụng block and `metadata.fd`). The vocabulary `application`
+  mode is weaker — see the mapping table below.
 - **Review**: `reviewVariants` affordances (carried on `metadata.fd`) +
   FSRS-scheduled vocabulary records + delayed `recall` (≥24h,
   `TEXT_CYCLE_INITIAL_DELAY`).
@@ -31,8 +33,8 @@ Legend for mechanisms (all existing runtime surfaces, no new engine):
 | `reviewVariants` `audio-to-meaning` | vocabulary `dictation` mode (TTS listens → meaning) — available on every chunk card |
 | `reviewVariants` `meaning-to-en` | vocabulary `spelling` mode (Vi cue → type the chunk) |
 | `reviewVariants` `en-to-meaning`, `context-to-phrase` | vocabulary `meaning` mode + cloze prompt |
-| `reviewVariants` `context-to-production` | vocabulary `application` mode (changed-context sentence, validated) |
-| `productionPattern`, `transferContext` | carried on `metadata.fd`; the application-mode contract (`context` ∉ source) enforces changed-context production |
+| `reviewVariants` `context-to-production` | vocabulary `application` mode (learner writes a sentence + describes a new situation; format-validated, context change is authored not enforced) |
+| `productionPattern`, `transferContext` | carried on `metadata.fd` (authored spec for the changed-context task). Application mode today validates only: context non-empty, answer ≥4 words, contains the target chunk, and differs from the example — it does **not** verify context ∉ source. Changed-context enforcement lives in the authored prompt + the no-copying rule, not in runtime checks |
 | `pronunciationNote` (Track D) | `metadata.vocabulary.pronunciation` — heard-form hint rendered beside the chunk and alongside the dictation listen button |
 
 `metadata.fd` keeps every authored field queryable on the seeded item;
