@@ -1,6 +1,7 @@
-# W2-01 / W2-01R — Authority Claim Inventory (W2-G01 output)
+# W2-01 / W2-01R / W2-01R2 — Authority Claim Inventory (W2-G01 output)
 
-Mission: W2-01 → W2-01R (site-level guardrail revision, per external review).
+Mission: W2-01 → W2-01R (site-level guardrail revision) → W2-01R2
+(multiplicity-safe coverage + owner correction, per external review).
 Base: `main @ c2ef466` (post-W2-00R2).
 Status: inventory + invariant guardrails only — **no runtime behavior changes**.
 
@@ -22,11 +23,14 @@ sites**:
   identity).
 - A *site* is a logical read path: `{id, file, source, anchor, occurrences,
   classification, reason, migrationNode, transitional?}`. Its `occurrences`
-  list owns a disjoint set of sensitive lines.
-- Guardrail: per `(file, source)`, the union of site occurrences must equal
-  the detected occurrence set exactly — any added/removed/edited sensitive
-  line fails until a human re-classifies it. Type/import/plumbing lines are
-  owned by explicit `*-io`/`access` sites so semantic sites stay clean.
+  list owns sensitive lines **with multiplicity preserved** — a line that
+  legitimately occurs N times is listed N times (W2-01R2: set-based coverage
+  collapsed duplicates, letting a verbatim copy pass undetected).
+- Guardrail: per `(file, source)`, the claimed occurrence multiset must equal
+  the detected occurrence multiset exactly — any added, removed, duplicated,
+  or edited sensitive line fails until a human re-classifies it.
+  Type/import/plumbing lines are owned by explicit `*-io`/`access` sites so
+  semantic sites stay clean.
 
 ## Sources under guard
 
@@ -47,7 +51,8 @@ sites**:
 - **84** unique production files touched
 - **167** (file, source-family) pairs
 - **172** logical sites
-- **909** sensitive occurrence lines frozen
+- **990** sensitive occurrence lines frozen (909 distinct; multiplicity
+  preserved — 81 lines occur more than once)
 - Classification counts: `LEGIT_HISTORY` 56 · `LEGIT_SCHEDULING` 53 ·
   `LEGIT_PRESENTATION` 33 · `LEGIT_CANDIDATE_SIGNAL` 17 · `LEGIT_ANALYTICS` 10
   · `CAPABILITY_CLAIM` 3 · `AMBIGUOUS` 0 (forbidden by test)
@@ -64,7 +69,10 @@ sites**:
 
 - `today-review.ts :: records` → three sites: `io` (load/types, HISTORY),
   `display` (subtitle fields, PRESENTATION), `sort` (`a.accuracy − b.accuracy`
-  weakest-first ordering, CANDIDATE_SIGNAL → W2-MB1).
+  weakest-first ordering, CANDIDATE_SIGNAL → **W2-CS1**; corrected in W2-01R2 —
+  legacy-accuracy ordering is a review-surface consumer heuristic, not an FSRS
+  memory-boundary concern. W2-MB1 keeps only the `fsrsCard.due/nextReview`
+  sites).
 - `daily-plan.ts :: records` → `io` (HISTORY) + `weakness-heuristic`
   (CAPABILITY_CLAIM → W2-PL1).
 - `dashboard/page.tsx :: sessions` → `aggregates` (ANALYTICS) +
@@ -98,7 +106,7 @@ Learner-facing surfaces that assert or imply capability, traced to source:
 | Daily-plan module ordering | implicit "you need module X" | `lib-daily-plan.records-weakness-heuristic` | CAPABILITY_CLAIM → W2-PL1 |
 | AI tutor "Weaknesses" | diagnosed weak areas | `lib-chat-analytics.records-weakness-claim` | CAPABILITY_CLAIM → W2-CS1 |
 | Lesson workshop "Resolved" | remediation achieved | `…lesson-workshop.weakSpots-resolve-claim` | CAPABILITY_CLAIM → W2-WS2 |
-| Today-review ordering | weakest-first sort | `…today-review.records-sort` | LEGIT_CANDIDATE_SIGNAL → W2-MB1 |
+| Today-review ordering | weakest-first sort | `…today-review.records-sort` | LEGIT_CANDIDATE_SIGNAL → W2-CS1 |
 | Daily-task weak-spot card | "retry a recent difficulty" | `…daily-task-queue.weakSpots` | LEGIT_CANDIDATE_SIGNAL → W2-PL1 |
 | Dashboard stats | aggregate %/counts | `…dashboard.sessions-aggregates`, `records`, `fsrs` forecast | ANALYTICS / SCHEDULING |
 | Review queue / forecast | due items | `fsrs` sites | LEGIT_SCHEDULING → W2-MB1 |
@@ -108,10 +116,15 @@ Learner-facing surfaces that assert or imply capability, traced to source:
 
 ## Adversarial review (spec §12 + W2-01R H)
 
-- **Same-file new read (the documented bypass):** adding
+- **Same-file new read (the documented W2-01 bypass):** adding
   `records.filter((r) => r.accuracy > 80)` to an inventoried file leaves the
   legacy `(file, source)` check green but produces an *uncovered occurrence* →
   site-level test fails. Reproduced and regressed in `guardrail.test.ts`.
+- **Identical-line duplication (the W2-01R bypass):** duplicating an
+  already-inventoried line verbatim (`accuracy: record.accuracy,` appended to
+  `today-review.ts`) leaves set-based coverage green — both copies satisfy
+  `owned.has(line)` — but detected count 2 ≠ claimed count 1 → multiset test
+  fails. Reproduced and regressed in `guardrail.test.ts`.
 - **A — accuracy-threshold mastery:** `record.accuracy > 80` detected.
 - **B — FSRS ordering:** `fsrsCard.due` detected; suite asserts no `fsrs` site
   may carry `CAPABILITY_CLAIM` (memory boundary, both directions).
@@ -130,9 +143,10 @@ Learner-facing surfaces that assert or imply capability, traced to source:
 
 ## Three-layer limitation model (W2-01R item I)
 
-1. **Mechanically frozen** — any added/removed/edited sensitive-token line in
-   production code changes a `(file, source)` occurrence set → test fails until
-   a human classifies it. Type/import/plumbing lines are frozen too.
+1. **Mechanically frozen** — any added/removed/edited/duplicated
+   sensitive-token line in production code changes a `(file, source)`
+   occurrence multiset → test fails until a human classifies it.
+   Type/import/plumbing lines are frozen too.
 2. **Review-policy frozen** — the scanner sees *read lines*, not downstream
    value flow: `const acc = record.accuracy` stays frozen, but a later
    `showMastered(acc)` in a file with no sensitive token would not be caught

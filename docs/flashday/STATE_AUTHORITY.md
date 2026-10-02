@@ -77,10 +77,10 @@ guardrail manifest in `W2_AUTHORITY_CLAIM_INVENTORY.md` and
 | assessment.currentLevel | W2-AS1 (relabel + boundary), W2-G03 (contract) | `assessment.currentLevel` |
 | sync transport (mapper/engine/backup) | W2-SY1 | per-family transport entries |
 
-Guardrail contract (W2-01R, site-level): the manifest freezes the
-sensitive-read baseline at *occurrence* level — every normalized sensitive
-line in production code is owned by exactly one logical site; any
-added/removed/edited sensitive line fails
+Guardrail contract (W2-01R2, site-level, multiplicity-safe): the manifest
+freezes the sensitive-read baseline as an *occurrence multiset* — every
+normalized sensitive line in production code is claimed by manifest sites with
+counts preserved; any added/removed/edited/duplicated sensitive line fails
 `src/lib/authority-guardrails/guardrail.test.ts` until a human re-classifies
 it. `CAPABILITY_CLAIM` sites must name a DAG owner; `AMBIGUOUS` is forbidden.
 Inventoried claims today: `daily-plan.ts` accuracy→weakness heuristic (W2-PL1),

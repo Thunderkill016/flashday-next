@@ -8,10 +8,11 @@ import { detectSensitiveSources, extractAllOccurrences, SOURCE_IDS } from './pat
 /**
  * W2-G01 — site-level authority guardrails.
  *
- * The manifest freezes the sensitive-read baseline at *occurrence* level: for
- * each (file, source) the union of manifest-site `occurrences` must exactly
- * equal the detected sensitive lines. Adding, removing, or editing a sensitive
- * line — even in a file+family already inventoried — fails until a human
+ * The manifest freezes the sensitive-read baseline at *occurrence multiset*
+ * level: for each (file, source) the lines claimed by manifest sites must
+ * equal the detected sensitive lines WITH COUNTS — adding, removing,
+ * duplicating, or editing a sensitive line (even in a file+family already
+ * inventoried, even an exact copy of an existing line) fails until a human
  * re-classifies the site.
  *
  * The scanner detects change; the manifest records human semantics. A passed
@@ -72,14 +73,22 @@ const root = process.cwd();
 const manifest = manifestJson as { sites: Site[] };
 const dagNodeIds = new Set(dagJson.nodes.map((n: { id: string }) => n.id));
 
-/** Occurrences per (file, source) claimed by manifest sites. */
-function manifestOccurrences(): Map<string, Map<string, Set<string>>> {
-  const map = new Map<string, Map<string, Set<string>>>();
+/** Line → count multiset for a normalized-occurrence list. */
+function toCountMap(lines: string[]): Map<string, number> {
+  const counts = new Map<string, number>();
+  for (const line of lines) counts.set(line, (counts.get(line) ?? 0) + 1);
+  return counts;
+}
+
+/** Occurrence multiset per (file, source) claimed by manifest sites. */
+function manifestOccurrences(): Map<string, Map<string, Map<string, number>>> {
+  const map = new Map<string, Map<string, Map<string, number>>>();
   for (const site of manifest.sites) {
     if (!map.has(site.file)) map.set(site.file, new Map());
     const fam = map.get(site.file)!;
-    if (!fam.has(site.source)) fam.set(site.source, new Set());
-    for (const line of site.occurrences) fam.get(site.source)!.add(line);
+    if (!fam.has(site.source)) fam.set(site.source, new Map());
+    const counts = fam.get(site.source)!;
+    for (const line of site.occurrences) counts.set(line, (counts.get(line) ?? 0) + 1);
   }
   return map;
 }
@@ -93,21 +102,46 @@ function legacyFileLevelKeys(): Set<string> {
 }
 
 describe('W2-G01 site-level authority guardrails', () => {
-  it('every detected sensitive occurrence is owned by a manifest site', () => {
-    const covered = manifestOccurrences();
-    const uncovered: string[] = [];
-    for (const [file, fams] of scanProductionFiles(root)) {
+  it('manifest claims exactly the detected occurrence multiset for every (file, source)', () => {
+    const owned = manifestOccurrences();
+    const detected = scanProductionFiles(root);
+    const problems: string[] = [];
+    // Detected → owned: every detected line copy must be claimed (no unowned).
+    for (const [file, fams] of detected) {
       for (const [source, lines] of Object.entries(fams)) {
         if (!lines) continue;
-        const owned = covered.get(file)?.get(source) ?? new Set<string>();
-        for (const line of lines) {
-          if (!owned.has(line)) uncovered.push(`${file}::${source} → ${line.slice(0, 100)}`);
+        const ownedCounts = owned.get(file)?.get(source);
+        if (!ownedCounts) {
+          problems.push(`${file}::${source} — no manifest site covers this source`);
+          continue;
+        }
+        for (const [line, count] of toCountMap(lines)) {
+          const oc = ownedCounts.get(line) ?? 0;
+          if (oc !== count)
+            problems.push(
+              `${file}::${source} "${line.slice(0, 80)}" — manifest claims ${oc}, source has ${count}`,
+            );
+        }
+      }
+    }
+    // Owned → detected: over-claimed or stale (owned where nothing detects).
+    for (const [file, fams] of owned) {
+      for (const [source, ownedCounts] of fams) {
+        const detectedCounts = toCountMap(detected.get(file)?.[source] ?? []);
+        for (const [line, count] of ownedCounts) {
+          const dc = detectedCounts.get(line) ?? 0;
+          if (dc !== count && detected.get(file)?.[source])
+            problems.push(
+              `${file}::${source} "${line.slice(0, 80)}" — manifest claims ${count}, source has ${dc}`,
+            );
+          else if (dc !== count)
+            problems.push(`${file}::${source} — ${count} claimed line(s) never detected`);
         }
       }
     }
     expect(
-      uncovered,
-      `new sensitive occurrences must be classified into a manifest site:\n${uncovered.join('\n')}`,
+      problems,
+      `occurrence multiset drift — re-classify changed sensitive reads:\n${problems.join('\n')}`,
     ).toEqual([]);
   });
 
@@ -131,18 +165,12 @@ describe('W2-G01 site-level authority guardrails', () => {
     );
   });
 
-  it('site ids are unique and occurrences do not overlap within (file, source)', () => {
+  it('site ids are unique', () => {
     const ids = new Set<string>();
     const dupes: string[] = [];
-    const owner = new Map<string, string>();
     for (const site of manifest.sites) {
       if (ids.has(site.id)) dupes.push(`duplicate id ${site.id}`);
       ids.add(site.id);
-      for (const line of site.occurrences) {
-        const key = `${site.file}::${site.source}::${line}`;
-        if (owner.has(key)) dupes.push(`${key.slice(0, 90)} claimed by ${owner.get(key)} AND ${site.id}`);
-        else owner.set(key, site.id);
-      }
     }
     expect(dupes).toEqual([]);
   });
@@ -258,10 +286,36 @@ describe('adversarial detection — sneaky authority reads must be caught', () =
     const legacyCovered = legacyDetected.every((s) => legacyFileLevelKeys().has(`${file}::${s}`));
     expect(legacyCovered, 'file-level guardrail cannot see the new read').toBe(true);
 
-    // Site-level occurrence check: the new line is an uncovered occurrence → FAILS.
-    const owned = manifestOccurrences().get(file)?.get('records') ?? new Set<string>();
+    // Set-based occurrence check (the W2-01R residual weakness): the new line
+    // is not in the claimed set → FAILS.
+    const owned = manifestOccurrences().get(file)?.get('records') ?? new Map<string, number>();
     const detectedNow = extractAllOccurrences(mutated)['records'] ?? [];
     const uncovered = detectedNow.filter((l) => !owned.has(l));
     expect(uncovered).toContain('const mastered = records.filter((r) => r.accuracy > 80);');
+  });
+
+  it('I: identical-line duplication reproduces the set-coverage multiplicity bypass', () => {
+    // W2-01R residual weakness: coverage compared Sets, so duplicating an
+    // already-inventoried line verbatim collapsed to the same set entry.
+    // `accuracy: record.accuracy,` is claimed exactly once by
+    // `lib-today-review.records-display`.
+    const file = 'src/lib/today-review.ts';
+    const duplicatedLine = 'accuracy: record.accuracy,';
+    const baseline = readFileSync(join(root, file), 'utf8');
+    const mutated = `${baseline}\n  ${duplicatedLine}\n`;
+
+    const owned = manifestOccurrences().get(file)?.get('records') ?? new Map<string, number>();
+    expect(owned.get(duplicatedLine), 'baseline must claim this line exactly once').toBe(1);
+
+    // Set-based coverage (W2-01R): both copies satisfy `owned.has(line)` →
+    // the duplication passes undetected. This is the documented bypass.
+    const detectedNow = extractAllOccurrences(mutated)['records'] ?? [];
+    const setCovered = detectedNow.every((l) => owned.has(l));
+    expect(setCovered, 'set-based coverage cannot see the duplicated read').toBe(true);
+
+    // Multiset coverage (W2-01R2): detected count 2 ≠ claimed count 1 → FAILS.
+    const detectedCounts = toCountMap(detectedNow);
+    expect(detectedCounts.get(duplicatedLine)).toBe(2);
+    expect(detectedCounts.get(duplicatedLine)).not.toBe(owned.get(duplicatedLine));
   });
 });

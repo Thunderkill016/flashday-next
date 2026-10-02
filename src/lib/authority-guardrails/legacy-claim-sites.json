@@ -1,6 +1,6 @@
 {
   "mission": "W2-01R",
-  "description": "Site-level inventory of authority-sensitive legacy reads. Each site owns an explicit occurrences list (normalized sensitive lines). Guardrail: per (file, source) the union of site occurrences must exactly equal detected occurrences — any added/removed/changed sensitive line fails until a human re-classifies.",
+  "description": "Site-level inventory of authority-sensitive legacy reads. Each site owns an occurrences list of normalized sensitive lines WITH MULTIPLICITY PRESERVED — per (file, source) the claimed multiset must equal the detected multiset exactly. Added, removed, duplicated, or edited sensitive lines all fail until a human re-classifies.",
   "baseCommit": "c2ef466",
   "classifications": [
     "LEGIT_SCHEDULING",
@@ -206,6 +206,7 @@
       "anchor": "see reason",
       "occurrences": [
         "import { resolveWeakSpot, upsertWeakSpot } from '@/lib/weak-spots';",
+        "weakSpotType: 'dictation-sentence',",
         "weakSpotType: 'dictation-sentence',"
       ],
       "classification": "LEGIT_CANDIDATE_SIGNAL",
@@ -374,6 +375,7 @@
         "type CEFRLevel,",
         "useAssessmentStore,",
         "{currentLevel && phase === 'idle' && (",
+        "{currentLevel}",
         "{currentLevel}",
         "{phase === 'idle' && !currentLevel && (",
         "{phase === 'idle' && currentLevel && (",
@@ -757,8 +759,12 @@
         "key={JSON.stringify([db.name, lesson.id, source, activeActivity, weakSpot?.id])}",
         "key={JSON.stringify([db.name, lesson.id, source, stage, progress.referenceAttemptId, weakSpot?.id])}",
         "sourceWeakSpotId,",
+        "sourceWeakSpotId,",
+        "sourceWeakSpotId,",
+        "sourceWeakSpotId={weakSpot?.id}",
         "sourceWeakSpotId={weakSpot?.id}",
         "sourceWeakSpotId?: string;",
+        "{ databaseName: draftDatabase, lessonId: lesson.id, activity, source, sourceWeakSpotId },",
         "{ databaseName: draftDatabase, lessonId: lesson.id, activity, source, sourceWeakSpotId },",
         "{related.length > 0 && !weakSpot && (",
         "}, [draftKey, draftDatabase, lesson.id, activity, sourceWeakSpotId, source]);"
@@ -798,6 +804,7 @@
       "anchor": "see reason",
       "occurrences": [
         "const draftStage = JSON.stringify([stage, reference?.id, sourceWeakSpotId]);",
+        "sourceWeakSpotId,",
         "sourceWeakSpotId,",
         "sourceWeakSpotId?: string;"
       ],
@@ -908,6 +915,7 @@
       "occurrences": [
         "import { resolveWeakSpot, upsertWeakSpot } from '@/lib/weak-spots';",
         "weakSpotType: 'listening-segment',",
+        "weakSpotType: 'listening-segment',",
         "weakSpotType: 'pronunciation-phrase',"
       ],
       "classification": "LEGIT_CANDIDATE_SIGNAL",
@@ -921,6 +929,7 @@
       "anchor": "see reason",
       "occurrences": [
         ".transaction('rw', database.pronunciationProgress, async () => {",
+        "await database.pronunciationProgress.add({",
         "await database.pronunciationProgress.add({",
         "await database.pronunciationProgress.add({ id, soundId, kind: 'legacy', updatedAt: Date.now() });",
         "const progress = useLiveQuery(() => database.pronunciationProgress.toArray(), [database]) ?? [];",
@@ -938,7 +947,9 @@
       "anchor": "see reason",
       "occurrences": [
         ": rating === Rating.Easy",
+        ": rating === Rating.Easy",
         ": rating === Rating.Good",
+        ": rating === Rating.Hard",
         ": rating === Rating.Hard",
         "? rating === Rating.Good",
         "const preview = useMemo(() => previewRatings(fsrsCard), [fsrsCard]);",
@@ -1168,6 +1179,7 @@
       "occurrences": [
         "const key = dateKey(r.lastPracticed);",
         "const records = await db.records.toArray();",
+        "const records = await db.records.toArray();",
         "const sorted = [...records].sort((a, b) => a.lastPracticed - b.lastPracticed);",
         "if (records.length === 0) return [];",
         "import type { LearningRecord, TypingSession } from '@/types/content';",
@@ -1201,10 +1213,19 @@
         "const completed = sessions.filter((s) => s.completed && (!module || s.module === module));",
         "const completed = sessions.filter((s) => s.completed && s.startTime >= cutoff);",
         "const completed = sessions.filter((s) => s.completed);",
+        "const completed = sessions.filter((s) => s.completed);",
+        "const completed = sessions.filter((s) => s.completed);",
+        "const key = dateKey(s.startTime);",
+        "const key = dateKey(s.startTime);",
+        "const key = dateKey(s.startTime);",
         "const key = dateKey(s.startTime);",
         "const mod = (s.module || 'write') as 'listen' | 'speak' | 'read' | 'write';",
         "const mod = s.module || 'write';",
         "const sessions = await db.sessions.toArray();",
+        "const sessions = await db.sessions.toArray();",
+        "const sessions = await db.sessions.where('startTime').aboveOrEqual(cutoff).toArray();",
+        "const sessions = await db.sessions.where('startTime').aboveOrEqual(cutoff).toArray();",
+        "const sessions = await db.sessions.where('startTime').aboveOrEqual(cutoff).toArray();",
         "const sessions = await db.sessions.where('startTime').aboveOrEqual(cutoff).toArray();",
         "const writes = sessions.filter((s) => s.completed && s.module === 'write');",
         "entry.time += s.endTime - s.startTime;",
@@ -1459,6 +1480,7 @@
         "db.records.toArray(),",
         "if (typeof record.lastPracticed === 'number' && record.lastPracticed >= windowStart) {",
         "import type { ContentItem, Difficulty, LearningRecord, TypingSession } from '@/types/content';",
+        "records: LearningRecord[],",
         "records: LearningRecord[],"
       ],
       "classification": "LEGIT_HISTORY",
@@ -1491,6 +1513,10 @@
         "function getSessionTimestamp(session: TypingSession): number {",
         "import type { ContentItem, Difficulty, LearningRecord, TypingSession } from '@/types/content';",
         "return session.endTime ?? session.startTime;",
+        "sessions: TypingSession[],",
+        "sessions: TypingSession[],",
+        "sessions: TypingSession[],",
+        "sessions: TypingSession[],",
         "sessions: TypingSession[],"
       ],
       "classification": "LEGIT_SCHEDULING",
@@ -1548,6 +1574,7 @@
       "occurrences": [
         "const time = evidence.favorites?.find((item) => item.id === task.sourceId)?.fsrsCard?.last_review;",
         "const time = record?.fsrsCard?.last_review;",
+        "const time = record?.fsrsCard?.last_review;",
         "favorites?: { id: string; updatedAt?: number; fsrsCard?: { last_review?: number } }[];",
         "records?: { id: string; contentId: string; module: string; fsrsCard?: { last_review?: number } }[];"
       ],
@@ -1561,6 +1588,7 @@
       "source": "sessions",
       "anchor": "see reason",
       "occurrences": [
+        "const time = session.endTime ?? session.startTime;",
         "const time = session.endTime ?? session.startTime;",
         "if (session.completed && task.contentIds?.includes(session.contentId) && fresh(time))",
         "session.completed &&"
@@ -1604,9 +1632,12 @@
         "? attempt.parentAttemptId",
         "Partial<Omit<LearningAttempt, 'status'>> & { status: string })[];",
         "['submitted', 'revised'].includes(attempt.status) &&",
+        "['submitted', 'revised'].includes(attempt.status) &&",
         "['submitted', 'revised'].includes(attempt.status),",
         "attempt.answer.trim() &&",
+        "attempt.answer.trim() &&",
         "attempt.createdAt,",
+        "attempt.lessonId === task.lessonId &&",
         "attempt.lessonId === task.lessonId &&",
         "attempt.sourceWeakSpotId === task.sourceId &&",
         "attempts.filter((item) => item.id !== attempt.id),",
@@ -1615,11 +1646,15 @@
         "const cycle = deriveTextCycle(task.lessonId, task.sourceText, attempts, attempt.createdAt);",
         "deriveTextCycle(",
         "for (const attempt of evidence.attempts ?? []) {",
+        "for (const attempt of evidence.attempts ?? []) {",
+        "fresh(attempt.createdAt)",
         "fresh(attempt.createdAt)",
         "if (!fresh(attempt.createdAt) || (task.dueAt !== undefined && attempt.createdAt < task.dueAt)) continue;",
         "if (evidenceId === attempt.id && reference === task.referenceAttemptId)",
         "import type { LearningAttempt } from '@/types/learning-activity';",
         "import { deriveTextCycle } from './text-learning-cycle';",
+        "options.push({ id: `attempt:${attempt.id}`, time: attempt.createdAt });",
+        "options.push({ id: `attempt:${attempt.id}`, time: attempt.createdAt });",
         "options.push({ id: `attempt:${attempt.id}`, time: attempt.createdAt });"
       ],
       "classification": "LEGIT_SCHEDULING",
@@ -1639,6 +1674,7 @@
         ".filter((task) => task.kind !== 'settings' && task.dateKey >= dateKey)",
         "candidates: DailyTask[],",
         "const add = (candidates: DailyTask[], allowance: number) => {",
+        "const result: DailyTask[] = [];",
         "const result: DailyTask[] = [];",
         "const review = tasks.find((task) => task.kind === 'review' || task.kind === 'favorite');",
         "export function applyDailyEvidence(tasks: DailyTask[], evidence: DailyEvidence, now: number): DailyTask[] {",
@@ -1709,9 +1745,30 @@
       "anchor": "see reason",
       "occurrences": [
         "'id, normalizedText, type, folderId, sourceContentId, targetLang, nextReview, autoCollected, createdAt, updatedAt',",
+        "'id, normalizedText, type, folderId, sourceContentId, targetLang, nextReview, autoCollected, createdAt, updatedAt',",
+        "'id, normalizedText, type, folderId, sourceContentId, targetLang, nextReview, autoCollected, createdAt, updatedAt',",
+        "'id, normalizedText, type, folderId, sourceContentId, targetLang, nextReview, autoCollected, createdAt, updatedAt',",
+        "'id, normalizedText, type, folderId, sourceContentId, targetLang, nextReview, autoCollected, createdAt, updatedAt',",
+        "'id, normalizedText, type, folderId, sourceContentId, targetLang, nextReview, autoCollected, createdAt, updatedAt',",
+        "'id, normalizedText, type, folderId, sourceContentId, targetLang, nextReview, autoCollected, createdAt, updatedAt',",
+        "'id, normalizedText, type, folderId, sourceContentId, targetLang, nextReview, autoCollected, createdAt, updatedAt',",
         "if (!record.fsrsCard) {",
         "record.fsrsCard = migrateToFSRS(record.nextReview, record.lastPracticed, record.attempts);",
         "records: 'id, contentId, module, lastPracticed, nextReview',",
+        "records: 'id, contentId, module, lastPracticed, nextReview',",
+        "records: 'id, contentId, module, lastPracticed, nextReview',",
+        "records: 'id, contentId, module, lastPracticed, nextReview',",
+        "records: 'id, contentId, module, lastPracticed, nextReview',",
+        "records: 'id, contentId, module, lastPracticed, nextReview',",
+        "records: 'id, contentId, module, lastPracticed, nextReview',",
+        "records: 'id, contentId, module, lastPracticed, nextReview, updatedAt',",
+        "records: 'id, contentId, module, lastPracticed, nextReview, updatedAt',",
+        "records: 'id, contentId, module, lastPracticed, nextReview, updatedAt',",
+        "records: 'id, contentId, module, lastPracticed, nextReview, updatedAt',",
+        "records: 'id, contentId, module, lastPracticed, nextReview, updatedAt',",
+        "records: 'id, contentId, module, lastPracticed, nextReview, updatedAt',",
+        "records: 'id, contentId, module, lastPracticed, nextReview, updatedAt',",
+        "records: 'id, contentId, module, lastPracticed, nextReview, updatedAt',",
         "records: 'id, contentId, module, lastPracticed, nextReview, updatedAt',"
       ],
       "classification": "LEGIT_HISTORY",
@@ -1738,8 +1795,12 @@
       "anchor": "see reason",
       "occurrences": [
         "for (const name of ['records', 'sessions', 'favoriteFolders', 'books', 'collections', 'weakSpots']) {",
+        "for (const name of ['records', 'sessions', 'favoriteFolders', 'books', 'collections', 'weakSpots']) {",
         "import type { WeakSpot } from '@/types/weak-spot';",
         "weakSpots!: Table<WeakSpot>;",
+        "weakSpots: 'id, module, weakSpotType, normalizedText, lastSeenAt, resolved, [module+weakSpotType+normalizedText]',",
+        "weakSpots: 'id, module, weakSpotType, normalizedText, lastSeenAt, resolved, [module+weakSpotType+normalizedText]',",
+        "weakSpots: 'id, module, weakSpotType, normalizedText, lastSeenAt, resolved, [module+weakSpotType+normalizedText]',",
         "weakSpots: 'id, module, weakSpotType, normalizedText, lastSeenAt, resolved, [module+weakSpotType+normalizedText]',"
       ],
       "classification": "LEGIT_HISTORY",
@@ -1801,6 +1862,8 @@
         "/** Map an accuracy percentage (0-100) to an FSRS Rating. */",
         "// ─── FSRS Scheduler Singleton ────────────────────────────────────────────────",
         "cardData: FSRSCardData | undefined,",
+        "cardData: FSRSCardData | undefined,",
+        "const card = cardData ? dataToCard(cardData) : createNewCard(now);",
         "const card = cardData ? dataToCard(cardData) : createNewCard(now);",
         "const preview = {} as Record<Rating, { nextReview: number; interval: string }>;",
         "const updated = cardToData(next.card);",
@@ -1892,9 +1955,13 @@
       "anchor": "see reason",
       "occurrences": [
         "const fsrsCard = cardToData(createNewCard(new Date(due)));",
+        "const fsrsCard = cardToData(createNewCard(new Date(due)));",
+        "fsrsCard,",
         "fsrsCard,",
         "fsrsCard.due = due;",
+        "fsrsCard.due = due;",
         "import { cardToData, createNewCard } from '@/lib/fsrs';",
+        "nextReview: due,",
         "nextReview: due,"
       ],
       "classification": "LEGIT_HISTORY",
@@ -1924,6 +1991,7 @@
       "occurrences": [
         "await db.weakSpots.bulkPut([",
         "await db.weakSpots.clear();",
+        "case 'weak-spots-rich':",
         "case 'weak-spots-rich':",
         "weakSpotType: 'dictation-sentence',",
         "weakSpotType: 'pronunciation-phrase',",
@@ -1977,6 +2045,7 @@
       "anchor": "see reason",
       "occurrences": [
         ": parent?.answer !== attempt.answer;",
+        "LearningAttempt,",
         "LearningAttempt,",
         "const own = attempts.filter((item) => item.lessonId === lessonId);",
         "const own = attempts.filter((item) => item.sourceWeakSpotId === weakSpotId && item.createdAt > lastSeenAt);",
@@ -2207,6 +2276,7 @@
         "fsrs_card: item.fsrsCard ?? null,",
         "fsrs_card: record.fsrsCard ?? null,",
         "nextReview: row.next_review != null ? new Date(row.next_review as string).getTime() : undefined,",
+        "nextReview: row.next_review != null ? new Date(row.next_review as string).getTime() : undefined,",
         "next_review: item.nextReview != null ? new Date(item.nextReview).toISOString() : null,",
         "next_review: record.nextReview != null ? new Date(record.nextReview).toISOString() : null,"
       ],
@@ -2298,6 +2368,7 @@
         "if (!attempt.cycle.rating || !ratings.includes(attempt.cycle.rating)) return 'rating';",
         "if (!attempt.feedback.notes.trim()) return 'improvement';",
         "if (!normalize(attempt.answer)) return 'answer';",
+        "if (!normalize(attempt.answer)) return 'answer';",
         "if (!state.referenceAttemptId || state.referenceAttemptId !== attempt.cycle.referenceAttemptId) return 'reference';",
         "if (!state.stages.recall || !recalled || attempt.createdAt <= recalled.createdAt) return 'recall-first';",
         "if (attempt.cycle.stage !== 'apply') return 'stage';",
@@ -2350,8 +2421,8 @@
       "anchor": "buildTodayReviewItems:weakest-first-sort",
       "occurrences": ["if (a.accuracy !== b.accuracy) return a.accuracy - b.accuracy;"],
       "classification": "LEGIT_CANDIDATE_SIGNAL",
-      "reason": "lower accuracy ordered first — heuristic weakness ranking of already-due items",
-      "migrationNode": "W2-MB1"
+      "reason": "weakest-first ordering over records.accuracy is a review-surface consumer heuristic, not a planner decision — consolidated under consumer migration at W2-CS1 (FSRS due/nextReview stays with W2-MB1)",
+      "migrationNode": "W2-CS1"
     },
     {
       "id": "lib-today-review.fsrs",
@@ -2360,6 +2431,7 @@
       "anchor": "see reason",
       "occurrences": [
         "// Use fsrsCard.due if available, fall back to nextReview",
+        "const dueTime = record.fsrsCard?.due ?? record.nextReview;",
         "const dueTime = record.fsrsCard?.due ?? record.nextReview;",
         "fsrsCard: record.fsrsCard,",
         "fsrsCard?: FSRSCardData;",
@@ -2458,6 +2530,7 @@
         "const record = records.find((r) => r.id === sourceId);",
         "import type { ContentItem, LearningRecord } from '@/types/content';",
         "records: LearningRecord[],",
+        "records: LearningRecord[],",
         "return r?.attempts === 1 && toLocalDateKey(r.lastPracticed) === toLocalDateKey(now);"
       ],
       "classification": "LEGIT_SCHEDULING",
@@ -2515,14 +2588,20 @@
       "anchor": "see reason",
       "occurrences": [
         ".equals([input.module, input.weakSpotType, normalizedText])",
+        ".equals([input.module, input.weakSpotType, normalizedText])",
+        ".where('[module+weakSpotType+normalizedText]')",
         ".where('[module+weakSpotType+normalizedText]')",
         "await database.weakSpots.add({",
         "await database.weakSpots.update(existing.id, {",
+        "await database.weakSpots.update(existing.id, {",
+        "const existing = await database.weakSpots",
         "const existing = await database.weakSpots",
         "const items = await db.weakSpots.toArray();",
         "import type { WeakSpot, WeakSpotType } from '@/types/weak-spot';",
         "module: WeakSpot['module'];",
+        "module: WeakSpot['module'];",
         "sourceType: WeakSpot['sourceType'];",
+        "weakSpotType: WeakSpotType;",
         "weakSpotType: WeakSpotType;"
       ],
       "classification": "LEGIT_HISTORY",
@@ -2554,6 +2633,7 @@
         "currentLevel: level,",
         "currentLevel: null,",
         "currentLevel: result.level,",
+        "currentLevel: state.currentLevel,",
         "currentLevel: state.currentLevel,",
         "export const CEFR_DESCRIPTIONS: Record<CEFRLevel, { summary: string; canDo: string; tip: string }> = {",
         "export const CEFR_LABELS: Record<CEFRLevel, string> = {",
@@ -2593,6 +2673,7 @@
       "anchor": "see reason",
       "occurrences": [
         "'id' | 'normalizedText' | 'createdAt' | 'updatedAt' | 'autoCollected' | 'fsrsCard' | 'nextReview'",
+        "// FSRS",
         "// FSRS",
         "const count = await database.favorites.update(id, { fsrsCard: cardData, nextReview, updatedAt });",
         "const fsrsCard = cardToData(newCard);",
