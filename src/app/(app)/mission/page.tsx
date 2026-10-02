@@ -1,18 +1,27 @@
 'use client';
 
 /*
- * /mission — the first FlashDay vertical slice on EchoType.
+ * /mission — the FlashDay vertical slice on EchoType.
  *
- * One registered mission (mission.meet_new_person) driven entirely by
- * the vendored kernel: the reference planner picks each step with an
- * explainable reason, the session driver mints deterministic attempt
- * ids from the committed log, every response is scored by the task's
- * declared evaluator, and all evidence lands append-only in Dexie —
- * reloads resume the same trajectory because nothing here is session
- * state, only replayed evidence.
+ * One registered mission (?m=<id>, default mission.meet_at_a_time)
+ * driven entirely by the vendored kernel: the reference planner picks
+ * each step with an explainable reason, the session driver mints
+ * deterministic attempt ids from the committed log, every response is
+ * scored by the task's declared evaluator, and all evidence lands
+ * append-only in Dexie — reloads resume the same trajectory because
+ * nothing here is session state, only replayed evidence.
+ *
+ * Surface honesty (W2-02.6): the web can only execute exposure and
+ * listening/audio_line/choice tasks. Every other contract —
+ * spoken_turn in particular — renders a fail-closed
+ * surface_unavailable card. There is no text fallback: typed text can
+ * never mint spoken evidence. On the listening surface, choices stay
+ * disabled until the browser confirms stimulus playback (utterance
+ * onend); if delivery can't be confirmed, the task cannot commit.
  */
-import { ChevronRight, Volume2 } from 'lucide-react';
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { ChevronRight, MicOff, Volume2 } from 'lucide-react';
+import { useSearchParams } from 'next/navigation';
+import { Suspense, useCallback, useEffect, useRef, useState } from 'react';
 import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -31,7 +40,7 @@ import { createMissionSession, type SessionScreen } from '@/lib/evidence-bridge/
 import { createDexieEventStore } from '@/lib/evidence-bridge/store';
 import { useAuthStore } from '@/stores/auth-store';
 
-const MISSION_ID = 'mission.meet_new_person';
+const DEFAULT_MISSION_ID = 'mission.meet_at_a_time';
 
 /* Demo/test clock: the honest way to reach delayed_retrieval without
  * waiting 24h is a clock shift — kernel policy still owns the lag.
@@ -44,25 +53,38 @@ const testOffsetMs = () =>
     : Number(window.localStorage.getItem('fdn:timeOffsetMs') ?? 0) +
       Number((window as { __FDN_TIME_OFFSET__?: number }).__FDN_TIME_OFFSET__ ?? 0);
 
-const speak = (text: string | null) => {
+/* Transport-confirmed playback: `onDelivered` runs ONLY on the
+ * utterance's `onend` — the browser's report that the stimulus actually
+ * finished playing. A press alone confirms nothing; an error or a
+ * missing speech engine confirms nothing either, and the session stays
+ * undelivered (commit remains refused). The utterance's identity is
+ * bound by the caller — a completion arriving after the session or task
+ * moved on must not mark anything delivered. */
+const speak = (text: string | null, onDelivered: () => void): void => {
   if (!text || typeof window === 'undefined' || !('speechSynthesis' in window)) return;
   window.speechSynthesis.cancel();
   const u = new SpeechSynthesisUtterance(text);
   u.lang = 'en-US';
+  u.onend = onDelivered;
   window.speechSynthesis.speak(u);
 };
 
-export default function MissionPage() {
+function MissionPageInner() {
   const user = useAuthStore((s) => s.user);
+  const params = useSearchParams();
+  /* Only registered missions resolve — an unknown ?m= fails closed to
+   * the pilot default rather than constructing an unregistered run. */
+  const requested = params.get('m');
+  const missionId = requested && fixtureRegistry().missionById(requested) ? requested : DEFAULT_MISSION_ID;
+
   const [screen, setScreen] = useState<SessionScreen | null>(null);
   const [busy, setBusy] = useState(false);
   // learnerName is evaluation context (state_own_name matching) — it
   // is not evidence, so it lives in localStorage, not the event log.
-  const nameKey = `fdn:learnerName:${MISSION_ID}`;
+  const nameKey = `fdn:learnerName:${missionId}`;
   const [name, setName] = useState(() =>
     typeof window === 'undefined' ? '' : (window.localStorage.getItem(nameKey) ?? ''),
   );
-  const [text, setText] = useState('');
   const [eventCount, setEventCount] = useState(0);
   const sessionRef = useRef<ReturnType<typeof createMissionSession> | null>(null);
 
@@ -84,7 +106,7 @@ export default function MissionPage() {
     const learnerId = currentLearnerId();
     const session = createMissionSession({
       learnerId,
-      missionId: MISSION_ID,
+      missionId,
       registry: fixtureRegistry(),
       store: createDexieEventStore(db.evidenceEvents),
       now: () => Date.now() + testOffsetMs(),
@@ -92,12 +114,14 @@ export default function MissionPage() {
     sessionRef.current = session;
     setBusy(true);
     sync(session.init());
-  }, [user?.id, sync]);
-
-  // Latency evidence: stamp when a prompt actually reaches the screen.
-  useEffect(() => {
-    if (screen?.type === 'task' && screen.phase === 'prompt') sessionRef.current?.markPromptShown();
-  }, [screen]);
+    /* Session teardown is also transport teardown: an utterance owned
+     * by the old session must not be allowed to finish and mark the
+     * NEW session delivered. cancel() alone is not the boundary — the
+     * utterance→(session, taskId, attemptId) binding in the play
+     * handler is — but cancelling shrinks the stale-completion window
+     * and stops audio actually bleeding across a swap. */
+    return () => window.speechSynthesis?.cancel();
+  }, [user?.id, missionId, sync]);
 
   const act = (fn: () => SessionScreen | Promise<SessionScreen>) => {
     if (busy) return;
@@ -121,12 +145,10 @@ export default function MissionPage() {
         <Card>
           <CardHeader>
             <Badge variant="secondary" className="w-fit">
-              FlashDay · {MISSION_ID}
+              FlashDay · {screen.missionId}
             </Badge>
-            <CardTitle className="text-2xl">Gặp người mới — Meet someone new</CardTitle>
-            <p className="text-sm text-slate-500">
-              Chào hỏi, nói tên của bạn, và hỏi tên người khác — từng bước được ghi lại làm bằng chứng học tập.
-            </p>
+            <CardTitle className="text-2xl">{screen.scenario || screen.missionId}</CardTitle>
+            {screen.learnerGoal && <p className="text-sm text-slate-500">{screen.learnerGoal}</p>}
             {screen.resumed && (
               <p className="text-xs text-indigo-600" data-testid="mission-resumed">
                 Tiếp tục từ phiên trước — tiến trình của bạn đã được lưu.
@@ -196,6 +218,37 @@ export default function MissionPage() {
     );
   }
 
+  if (screen.type === 'surface_unavailable') {
+    return (
+      <div className="max-w-2xl mx-auto p-6 space-y-4" data-testid="mission-surface-unavailable">
+        <StepHeader
+          frame={{ label: PURPOSE_FRAME[screen.purpose]?.label ?? screen.purpose, hint: '' }}
+          taskId={screen.taskId}
+          reason={screen.decisionReason}
+          testid="mission-unavailable-purpose"
+        />
+        <Card>
+          <CardContent className="pt-6 space-y-3">
+            <div className="flex items-start gap-3">
+              <MicOff className="mt-0.5 h-5 w-5 shrink-0 text-slate-400" />
+              <div className="space-y-1">
+                <p className="text-slate-800 font-medium" data-testid="mission-unavailable-reason">
+                  Bài tập này cần kênh {screen.modality === 'spoken_production' ? 'nói' : screen.modality} — bản web
+                  chưa hỗ trợ.
+                </p>
+                <p className="text-sm text-slate-500">
+                  Hệ thống không chấp nhận câu trả lời thay thế (ví dụ gõ chữ cho bài nói), nên không có bằng chứng nào
+                  được ghi cho bước này. Tính năng sẽ mở khi có đúng kênh nói.
+                </p>
+              </div>
+            </div>
+          </CardContent>
+        </Card>
+        <EvidenceFooter count={eventCount} />
+      </div>
+    );
+  }
+
   const frame = PURPOSE_FRAME[screen.purpose] ?? { label: screen.purpose, hint: '' };
 
   if (screen.type === 'input') {
@@ -220,7 +273,7 @@ export default function MissionPage() {
                   variant="outline"
                   size="sm"
                   data-testid="mission-play"
-                  onClick={() => speak(screen.prompt.audioText)}
+                  onClick={() => speak(screen.prompt.audioText, () => {})}
                 >
                   <Volume2 className="w-4 h-4" /> Nghe
                 </Button>
@@ -279,9 +332,21 @@ export default function MissionPage() {
                 variant="outline"
                 size="sm"
                 data-testid="mission-play"
+                disabled={busy}
                 onClick={() => {
-                  speak(screen.prompt.audioText);
-                  act(() => sessionRef.current!.play());
+                  /* confirmDelivery is called ONLY from this utterance's
+                   * onend — transport confirmation, not the press. The
+                   * utterance is bound to the session + task + attempt
+                   * that started it: if the session was swapped (?m= or
+                   * account change) or the attempt advanced while the
+                   * audio was in flight, this completion is stale and
+                   * confirms nothing for the live session. */
+                  const owner = sessionRef.current;
+                  const { taskId, attemptId } = screen;
+                  speak(screen.prompt.audioText, () => {
+                    if (sessionRef.current !== owner) return;
+                    act(() => owner!.confirmDelivery({ taskId, attemptId }));
+                  });
                 }}
               >
                 <Volume2 className="w-4 h-4" /> Nghe
@@ -321,55 +386,26 @@ export default function MissionPage() {
             </div>
           ) : (
             <div className="space-y-3">
-              {screen.responseType === 'choice' ? (
-                <div className="space-y-2" data-testid="mission-options">
-                  {(screen.options ?? []).map((opt) => (
-                    <Button
-                      key={opt.id}
-                      variant="outline"
-                      className="w-full justify-start"
-                      data-testid={`mission-option-${opt.id}`}
-                      disabled={busy}
-                      onClick={() => act(() => sessionRef.current!.commit({ optionId: opt.id }))}
-                    >
-                      {opt.text}
-                    </Button>
-                  ))}
-                </div>
-              ) : (
-                <div className="space-y-2">
-                  <div className="flex gap-2">
-                    <Input
-                      data-testid="mission-response-input"
-                      value={text}
-                      onChange={(e) => setText(e.target.value)}
-                      onKeyDown={(e) => {
-                        if (e.key === 'Enter' && text.trim()) {
-                          act(async () => {
-                            const scr = await sessionRef.current!.commit({ text });
-                            setText('');
-                            return scr;
-                          });
-                        }
-                      }}
-                      placeholder="Nhập câu trả lời của bạn…"
-                      className="flex-1"
-                    />
-                    <Button
-                      data-testid="mission-commit"
-                      disabled={busy || text.trim() === ''}
-                      onClick={() =>
-                        act(async () => {
-                          const scr = await sessionRef.current!.commit({ text });
-                          setText('');
-                          return scr;
-                        })
-                      }
-                    >
-                      Gửi
-                    </Button>
-                  </div>
-                </div>
+              {/* The only claim-bearing web surface is choice — gated on
+               * transport-confirmed stimulus delivery. */}
+              <div className="space-y-2" data-testid="mission-options">
+                {(screen.options ?? []).map((opt) => (
+                  <Button
+                    key={opt.id}
+                    variant="outline"
+                    className="w-full justify-start"
+                    data-testid={`mission-option-${opt.id}`}
+                    disabled={busy || !screen.delivered}
+                    onClick={() => act(() => sessionRef.current!.commit({ optionId: opt.id }))}
+                  >
+                    {opt.text}
+                  </Button>
+                ))}
+              </div>
+              {!screen.delivered && (
+                <p className="text-xs text-slate-400" data-testid="mission-awaiting-delivery">
+                  Nghe đoạn hội thoại trước khi chọn đáp án.
+                </p>
               )}
               {screen.supportOffered.length > 0 && (
                 <div className="flex flex-wrap gap-2" data-testid="mission-supports">
@@ -420,6 +456,14 @@ export default function MissionPage() {
       </Card>
       <EvidenceFooter count={eventCount} />
     </div>
+  );
+}
+
+export default function MissionPage() {
+  return (
+    <Suspense>
+      <MissionPageInner />
+    </Suspense>
   );
 }
 
