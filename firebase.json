@@ -1,0 +1,16 @@
+{
+  "apphosting": {
+    "backendId": "fd-next-dogfood",
+    "rootDir": "/",
+    "ignore": [
+      "node_modules",
+      ".git",
+      "firebase-debug.log",
+      "firebase-debug.*.log",
+      "functions",
+      "src-tauri",
+      "e2e",
+      "docs"
+    ]
+  }
+}

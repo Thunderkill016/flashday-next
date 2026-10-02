@@ -139,4 +139,17 @@ describe('seedDatabase starter packs', () => {
     );
     expect(seededIds.filter((id) => id?.startsWith('vs01.'))).toEqual([]);
   });
+
+  it('NEXT_PUBLIC_VS01_DOGFOOD=1 opts a deployment into the pilot seed', async () => {
+    vi.stubEnv('NEXT_PUBLIC_VS01_DOGFOOD', '1');
+
+    await seedDatabase();
+
+    const putIds = contentsBulkPutMock.mock.calls.flatMap(([items]) =>
+      (items as Array<{ id?: string }>).map((item) => item.id),
+    );
+    expect(putIds.filter((id) => id?.startsWith('vs01.'))).toHaveLength(5);
+
+    vi.unstubAllEnvs();
+  });
 });

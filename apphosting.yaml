@@ -1,0 +1,17 @@
+# FD-VS01 dogfood backend — FlashDay Next.js on Firebase App Hosting.
+# 1-learner pilot: the NEXT_PUBLIC_VS01_DOGFOOD flag is what turns the
+# experimental seed + __vs01Report on for THIS deployment only.
+
+runConfig:
+  cpu: 1
+  memoryMiB: 512
+  minInstances: 0
+  maxInstances: 2
+  concurrency: 80
+
+env:
+  - variable: NEXT_PUBLIC_VS01_DOGFOOD
+    value: "1"
+    availability:
+      - BUILD
+      - RUNTIME

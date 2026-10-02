@@ -86,6 +86,16 @@ export function isVs01TargetId(id: string): boolean {
   return VS01_TARGET_IDS.has(id);
 }
 
+/*
+ * The pilot only exists where it was deliberately enabled: development
+ * builds, or a deployment built with NEXT_PUBLIC_VS01_DOGFOOD=1 (the
+ * Firebase dogfood backend). A normal production build ships neither the
+ * seeded targets nor the debug report.
+ */
+export function vs01DogfoodEnabled(): boolean {
+  return process.env.NODE_ENV === 'development' || process.env.NEXT_PUBLIC_VS01_DOGFOOD === '1';
+}
+
 const normalize = (text: string) => text.trim().replace(/\s+/g, ' ').toLowerCase();
 
 /**

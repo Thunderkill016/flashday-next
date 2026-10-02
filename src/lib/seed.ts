@@ -7,7 +7,7 @@ import { builtinCommunityScenarios } from './seed-data/community-scenarios';
 import { builtinPhrases } from './seed-data/phrases';
 import { builtinSentences } from './seed-data/sentences';
 import { builtinWords } from './seed-data/words';
-import { VS01_TARGETS, vs01ContentItem } from './vs01-targets';
+import { VS01_TARGETS, vs01ContentItem, vs01DogfoodEnabled } from './vs01-targets';
 import { loadWordBookItems } from './wordbooks';
 
 // This is an internal content-migration marker, not the application version.
@@ -121,9 +121,10 @@ export async function seedDatabase() {
   await seedStarterPacks(now);
   await seedFavoriteFolders();
   /* FD-VS01 is a 1-learner dogfood experiment — the five targets must
-   * never reach production users' content. Development-only gate; the
-   * seeder itself stays directly testable. */
-  if (process.env.NODE_ENV === 'development') {
+   * never reach production users' content. Only development builds and
+   * the flagged dogfood deployment seed them; the seeder itself stays
+   * directly testable. */
+  if (vs01DogfoodEnabled()) {
     await seedVs01Dogfood(now);
   }
 }

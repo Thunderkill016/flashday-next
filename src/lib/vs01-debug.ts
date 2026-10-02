@@ -5,9 +5,10 @@
  * Usage (pnpm dev):  await __vs01Report()
  */
 import { db } from './db';
+import { vs01DogfoodEnabled } from './vs01-targets';
 import { vs01ReportJson } from './vs01-telemetry';
 
-if (typeof window !== 'undefined' && process.env.NODE_ENV === 'development') {
+if (typeof window !== 'undefined' && vs01DogfoodEnabled()) {
   (window as unknown as Record<string, unknown>).__vs01Report = async () => {
     const [contents, attempts, sessions] = await Promise.all([
       db.contents.toArray(),
