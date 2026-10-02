@@ -219,7 +219,7 @@ export function MaterialImportV2({
         <header className={s.header}>
           <div className={`${s.row} ${s.between}`}>
             <div>
-              <div className={s.eyebrow}>ECHOTYPE / LEARNING MATERIALS</div>
+              <div className={s.eyebrow}>FLASHDAY / LEARNING MATERIALS</div>
               <h1 id={titleId}>{t('Add learning material', '添加学习材料', 'Thêm tài liệu học')}</h1>
             </div>
             <button className={s.close} aria-label={t('Close import', '关闭导入', 'Đóng nhập liệu')} onClick={onClose}>
@@ -354,7 +354,7 @@ export function MaterialImportV2({
                         </div>
                       ))}
                     </div>
-                    <a className={s.ghost} href="/templates/echotype-wordbook-template.csv" download>
+                    <a className={s.ghost} href="/templates/flashday-wordbook-template.csv" download>
                       {t('Download word book template', '下载词书模板', 'Tải mẫu sổ từ')}
                     </a>
                     <div className={s.queue}>

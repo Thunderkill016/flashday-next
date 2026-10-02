@@ -163,7 +163,7 @@ test.describe('Today review mode', () => {
     await page.reload();
     await page.waitForSelector('main[data-seeded="true"]', { timeout: 15000 });
 
-    await expect(page.getByTestId('daily-task-row').filter({ hasText: 'Due for spaced review' })).toBeVisible();
+    await expect(page.getByTestId('daily-task-row').filter({ hasText: 'Due for spaced review' }).first()).toBeVisible();
     await expect(page.getByRole('link', { name: 'Review center' })).toBeVisible();
 
     await page.getByRole('link', { name: 'Review center' }).click();

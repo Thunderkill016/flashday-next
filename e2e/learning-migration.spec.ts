@@ -10,6 +10,12 @@ test('v16 upgrade preserves originals/history/media and idempotently reconciles 
   await page.goto('/migration-fixture');
   const sourceText = 'First paragraph.\n\n' + 'A useful English sentence. '.repeat(200);
   await page.evaluate(async (text) => {
+    // The shared warm snapshot restores the current database; drop it so the
+    // legacy v16 fixture can be opened below its existing version.
+    await new Promise<void>((resolve) => {
+      const del = indexedDB.deleteDatabase('echotype:anonymous');
+      del.onsuccess = del.onerror = del.onblocked = () => resolve();
+    });
     const schemas: Record<string,string> = {
       contents:'id,type,category,source,difficulty,createdAt,updatedAt,deletedAt,*tags',
       records:'id,contentId,module,lastPracticed,nextReview,updatedAt',
@@ -56,7 +62,7 @@ test('v16 upgrade preserves originals/history/media and idempotently reconciles 
     database.close();return {version:database.version,content,record,session,favorite,audio:await media.blob.text(),unit,lessonIds:lessons.map(l=>l.id).sort(),text:lessons.sort((a,b)=>a.order-b.order).map(l=>l.exercises[0].text).join('')};
   });
   const first=await snapshot();
-  expect(first.version).toBe(190);
+  expect(first.version).toBe(210);
   expect(first.content.text).toBe(sourceText);
   expect(first.text).toBe(sourceText);
   expect(first.lessonIds.length).toBeGreaterThan(1);

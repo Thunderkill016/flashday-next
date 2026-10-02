@@ -7,10 +7,19 @@ async function openChatPanel(page: Page) {
   await page.waitForLoadState('networkidle');
   await page.waitForTimeout(1000);
 
-  // Clear localStorage chat state
-  await page.evaluate(() => {
-    localStorage.removeItem('echotype_chat_messages');
-  });
+  // Clear stored conversations (IndexedDB, not localStorage)
+  await page.evaluate(() => new Promise<void>((resolve) => {
+    const request = indexedDB.open('echotype:anonymous');
+    request.onsuccess = () => {
+      const idb = request.result;
+      if (!idb.objectStoreNames.contains('conversations')) return resolve();
+      const tx = idb.transaction('conversations', 'readwrite');
+      tx.objectStore('conversations').clear();
+      tx.oncomplete = () => resolve();
+      tx.onerror = () => resolve();
+    };
+    request.onerror = () => resolve();
+  }));
   await page.reload();
   await page.waitForLoadState('networkidle');
   await page.waitForTimeout(1500);
@@ -29,8 +38,8 @@ async function openChatPanel(page: Page) {
 
 // Helper: click "+" for new conversation
 async function newConversation(page: Page) {
-  const newBtn = page.locator('button[aria-label="New conversation"]');
-  await newBtn.click();
+  await page.getByLabel('Conversation history').click();
+  await page.getByRole('button', { name: 'New Conversation' }).click();
   await page.waitForTimeout(500);
 }
 
@@ -106,21 +115,8 @@ test.describe('Chat Toolbar E2E Tests', () => {
       await expect(practicingBar).toBeVisible({ timeout: 3000 });
       console.log('T1: "Practicing:" bar appeared');
 
-      // Verify exercise mode selector appears with "Exercise:" label
-      const exerciseLabel = page.locator('text=Exercise:');
-      await expect(exerciseLabel).toBeVisible({ timeout: 3000 });
-
-      // Check exercise pills
-      const translatePill = page.locator('button:text-is("Translate")');
-      const fillBlankPill = page.locator('button:text-is("Fill Blank")');
-      const quizPill = page.locator('button:text-is("Quiz")');
-      const dictationPill = page.locator('button:text-is("Dictation")');
-
-      await expect(translatePill).toBeVisible({ timeout: 3000 });
-      await expect(fillBlankPill).toBeVisible();
-      await expect(quizPill).toBeVisible();
-      await expect(dictationPill).toBeVisible();
-      console.log('T1: Exercise pills (Translate, Fill Blank, Quiz, Dictation) all visible');
+      // The exercise-mode selector is no longer rendered in the panel
+      // (chat-mode-selector.tsx is dead code) — 'Practicing:' is the proof.
 
       // Screenshot: Content loaded with exercise selector
       await page.screenshot({ path: 'e2e/screenshots/T1-library-content-loaded.png', fullPage: false });
@@ -231,8 +227,9 @@ test.describe('Chat Toolbar E2E Tests', () => {
     // New conversation
     await newConversation(page);
 
-    // Click the Analytics/BarChart icon
-    const analyticsBtn = page.locator('button[aria-label="Analytics"]');
+    // The Analytics toolbar button was removed; the "My Progress" quick
+    // action chip sends the same analytics prompt.
+    const analyticsBtn = page.getByRole('button', { name: 'My Progress' });
     await analyticsBtn.waitFor({ state: 'visible', timeout: 5000 });
     await analyticsBtn.click();
 
@@ -288,7 +285,7 @@ test.describe('Chat Toolbar E2E Tests', () => {
 
     // Get initial panel size via the Card element
     // The panel uses: w-[400px] h-[500px] for compact, w-[600px] h-[700px] for expanded
-    const panelCard = page.locator('.fixed.bottom-24.right-6');
+    const panelCard = page.getByTestId('chat-panel');
     await panelCard.waitFor({ state: 'visible', timeout: 5000 });
 
     const initialBox = await panelCard.boundingBox();
@@ -343,7 +340,7 @@ test.describe('Chat Toolbar E2E Tests', () => {
     await openChatPanel(page);
 
     // Click the Mic icon in the toolbar
-    const micBtn = page.locator('button[aria-label="Voice"]');
+    const micBtn = page.locator('button[aria-label="Mic"]');
     await micBtn.waitFor({ state: 'visible', timeout: 5000 });
 
     // Check initial state - should be inactive

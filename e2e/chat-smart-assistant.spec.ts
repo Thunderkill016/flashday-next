@@ -22,7 +22,7 @@ test.describe('Chat Smart Learning Assistant', () => {
   test('E-0.3: Chat panel shows welcome message on first open', async ({ page }) => {
     await page.getByLabel('Open AI chat').click();
     await expect(page.getByText(/I.m your English tutor/)).toBeVisible();
-    await expect(page.getByText(/What would you like to practice/)).toBeVisible();
+    await expect(page.getByText(/Tell me what you want to do/)).toBeVisible();
   });
 
   test('E-0.4: Chat panel closes via FAB toggle', async ({ page }) => {
@@ -49,12 +49,11 @@ test.describe('Chat Smart Learning Assistant', () => {
   test('E-1.1: Chat toolbar shows all action buttons', async ({ page }) => {
     await page.getByLabel('Open AI chat').click();
     // Toolbar buttons by their aria-label/title
-    await expect(page.getByLabel('Library')).toBeVisible();
-    await expect(page.getByLabel('Voice')).toBeVisible();
-    await expect(page.getByLabel('Search')).toBeVisible();
-    await expect(page.getByLabel('Analytics')).toBeVisible();
-    await expect(page.getByLabel('Settings')).toBeVisible();
-    await expect(page.getByLabel('Expand')).toBeVisible();
+    const chatPanel = page.getByTestId('chat-panel');
+    await expect(chatPanel.getByLabel('Library')).toBeVisible();
+    await expect(chatPanel.getByLabel('Search')).toBeVisible();
+    await expect(chatPanel.getByLabel('Mic')).toBeVisible();
+    await expect(chatPanel.getByLabel('Expand')).toBeVisible();
   });
 
   // ── Phase 2: Content Picker ───────────────────────────────────────────
@@ -63,7 +62,7 @@ test.describe('Chat Smart Learning Assistant', () => {
     await page.getByLabel('Open AI chat').click();
     await page.getByLabel('Library').click();
     // Content picker should show tab pills (scope to chat panel to avoid dashboard matches)
-    const chatPanel = page.locator('.fixed.bottom-24.right-6');
+    const chatPanel = page.getByTestId('chat-panel');
     await expect(chatPanel.getByRole('button', { name: 'Words' })).toBeVisible();
     await expect(chatPanel.getByRole('button', { name: 'Phrases' })).toBeVisible();
     await expect(chatPanel.getByRole('button', { name: 'Sentences' })).toBeVisible();
@@ -111,7 +110,7 @@ test.describe('Chat Smart Learning Assistant', () => {
     await page.getByLabel('Open AI chat').click();
 
     // Panel starts compact (400px wide)
-    const panel = page.locator('.fixed.bottom-24.right-6');
+    const panel = page.getByTestId('chat-panel');
     await expect(panel).toBeVisible();
 
     // Click expand
@@ -131,8 +130,9 @@ test.describe('Chat Smart Learning Assistant', () => {
     const input = page.getByPlaceholder('Ask me anything...');
     await input.fill('test message');
 
-    // Click new conversation
-    await page.getByLabel('New conversation').click();
+    // New conversation lives in the Conversation history popover
+    await page.getByLabel('Conversation history').click();
+    await page.getByRole('button', { name: 'New Conversation' }).click();
 
     // Welcome message should be visible again (messages cleared)
     await expect(page.getByText(/I.m your English tutor/)).toBeVisible();
@@ -141,25 +141,49 @@ test.describe('Chat Smart Learning Assistant', () => {
   // ── Phase 0: Persistence ──────────────────────────────────────────────
 
   test('E-0.6: Messages persist across panel close/reopen', async ({ page }) => {
+    // Conversations persist in IndexedDB `conversations` — seed one pre-load.
+    await page.addInitScript(() => {
+      const request = indexedDB.open('echotype:anonymous');
+      request.onsuccess = (event) => {
+        const idb = (event.target as IDBOpenDBRequest).result;
+        if (!idb.objectStoreNames.contains('conversations')) return;
+        const tx = idb.transaction('conversations', 'readwrite');
+        tx.objectStore('conversations').put({
+          id: 'e2e-conversation',
+          title: 'E2E Conversation',
+          messages: [
+            {
+              id: 'm1',
+              role: 'user',
+              parts: [{ type: 'text', text: 'Hello tutor!' }],
+            },
+            {
+              id: 'm2',
+              role: 'assistant',
+              parts: [{ type: 'text', text: 'Hi there! How can I help?' }],
+            },
+          ],
+          chatMode: 'general',
+          activeContentId: null,
+          createdAt: Date.now(),
+          updatedAt: Date.now(),
+        });
+      };
+    });
+
+    await page.goto('/dashboard');
     await page.getByLabel('Open AI chat').click();
 
-    // Inject a message directly into localStorage to simulate a previous conversation
-    await page.evaluate(() => {
-      const messages = [
-        { id: 'test-1', role: 'user', content: 'Hello tutor!', timestamp: Date.now() },
-        { id: 'test-2', role: 'assistant', content: 'Hi there! How can I help?', timestamp: Date.now() },
-      ];
-      localStorage.setItem('echotype_chat_messages', JSON.stringify(messages));
-    });
+    // Messages restored from the latest stored conversation
+    await expect(page.getByText('Hello tutor!')).toBeVisible();
+    await expect(page.getByText('Hi there! How can I help?')).toBeVisible();
 
     // Close chat
     await page.getByLabel('Close chat').last().click();
     await expect(page.getByText('AI English Tutor')).not.toBeVisible();
 
-    // Reopen chat
+    // Reopen chat — messages persist across close/reopen
     await page.getByLabel('Open AI chat').click();
-
-    // Messages should be restored
     await expect(page.getByText('Hello tutor!')).toBeVisible();
     await expect(page.getByText('Hi there! How can I help?')).toBeVisible();
   });
@@ -209,29 +233,22 @@ test.describe('Chat Smart Learning Assistant', () => {
     await page.waitForTimeout(1000);
 
     // If the seeded content appears, test selection
-    const useButton = page.getByText('Use').first();
+    const useButton = page.getByTestId('chat-panel').getByText('Use', { exact: true }).first();
     if (await useButton.isVisible({ timeout: 3000 }).catch(() => false)) {
       await useButton.click();
 
-      // Context bar should appear
+      // Context bar should appear (the exercise-mode selector is no longer
+      // rendered in the panel — ChatModeSelector is dead code)
       await expect(page.getByText('Practicing:')).toBeVisible();
-
-      // Exercise mode selector should appear
-      await expect(page.getByText('Exercise:')).toBeVisible();
-      await expect(page.getByText('Translate', { exact: true })).toBeVisible();
-      await expect(page.getByText('Fill Blank', { exact: true })).toBeVisible();
-      await expect(page.getByText('Quiz', { exact: true })).toBeVisible();
-      await expect(page.getByText('Dictation', { exact: true })).toBeVisible();
     }
   });
 
   // ── Navigation ─────────────────────────────────────────────────────
 
-  test('E-9.1: Settings button navigates to settings page', async ({ page }) => {
+  test('E-9.1: Conversation history opens from the panel header', async ({ page }) => {
     await page.getByLabel('Open AI chat').click();
-    await page.getByLabel('Settings').click();
-    await page.waitForURL('**/settings');
-    await expect(page).toHaveURL(/\/settings/);
+    await page.getByLabel('Conversation history').click();
+    await expect(page.getByRole('button', { name: 'New Conversation' })).toBeVisible();
   });
 
   test('E-9.2: Search panel shows Browse button for wordbook results', async ({ page }) => {

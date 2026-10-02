@@ -1,7 +1,19 @@
 import { test } from '@playwright/test';
 
+// These diagnostics drive the real /api/speak endpoint through a configured
+// Ollama provider — skip them when no local Ollama instance is running,
+// matching the guard convention in ollama-test.spec.ts.
+async function ollamaRunning(request: import('@playwright/test').APIRequestContext) {
+  try {
+    return (await request.get('http://localhost:11434/api/tags')).ok();
+  } catch {
+    return false;
+  }
+}
+
 test.describe('Speak Module - Complete Flow with API Setup', () => {
-  test('should setup provider and test complete conversation flow', async ({ page, context }) => {
+  test('should setup provider and test complete conversation flow', async ({ page, context, request }) => {
+    test.skip(!(await ollamaRunning(request)), 'Requires a running Ollama instance');
     await context.grantPermissions(['microphone']);
 
     // Monitor API calls

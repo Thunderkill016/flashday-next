@@ -2,6 +2,9 @@ import { test, expect, chromium } from '@playwright/test';
 
 test.describe('Speak Module - API & LLM Verification', () => {
   test('should capture complete API flow with detailed logging', async () => {
+    // Launches a headed devtools browser against a live provider — manual
+    // debugging tool, not a hermetic regression test.
+    test.fixme();
     // Launch browser with DevTools
     const browser = await chromium.launch({
       headless: false,

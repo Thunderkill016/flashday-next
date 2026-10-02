@@ -1,7 +1,18 @@
 import { test, expect } from '@playwright/test';
 
+// Test 1 drives the real /api/speak endpoint through a configured provider —
+// skip it when no local Ollama instance is running (see ollama-test.spec.ts).
+async function ollamaRunning(request: import('@playwright/test').APIRequestContext) {
+  try {
+    return (await request.get('http://localhost:11434/api/tags')).ok();
+  } catch {
+    return false;
+  }
+}
+
 test.describe('Speak Module - Detailed API & LLM Test', () => {
-  test('should test complete conversation flow with API monitoring', async ({ page, context }) => {
+  test('should test complete conversation flow with API monitoring', async ({ page, context, request }) => {
+    test.skip(!(await ollamaRunning(request)), 'Requires a running Ollama instance');
     // Grant microphone permission
     await context.grantPermissions(['microphone']);
 
@@ -175,19 +186,16 @@ test.describe('Speak Module - Detailed API & LLM Test', () => {
   test('should test voice input button interaction', async ({ page, context }) => {
     await context.grantPermissions(['microphone']);
 
-    await page.goto('http://localhost:3000/speak');
-    await page.waitForLoadState('networkidle');
+    await page.goto('/speak');
+    await page.waitForSelector('main[data-seeded="true"]', { timeout: 30000 });
 
-    // Select a scenario
-    const scenarioCard = page.locator('div').filter({ hasText: /Ordering Coffee|Coffee Shop/ }).first();
-    await scenarioCard.click();
+    // Scenario cards are links on the picker page.
+    await page.getByRole('link').filter({ hasText: 'Ordering Coffee' }).first().click();
     await page.waitForURL(/\/speak\/[^/]+/);
-    await page.waitForLoadState('networkidle');
 
     console.log('\n=== Testing Voice Input Button ===');
 
-    // Find voice button
-    const voiceButton = page.locator('button').filter({ has: page.locator('svg') }).first();
+    const voiceButton = page.getByRole('button', { name: 'Start voice input' });
     await expect(voiceButton).toBeVisible();
     console.log('✓ Voice button found');
 
@@ -218,35 +226,32 @@ test.describe('Speak Module - Detailed API & LLM Test', () => {
   });
 
   test('should verify scenario data structure', async ({ page }) => {
-    await page.goto('http://localhost:3000/speak');
-    await page.waitForLoadState('networkidle');
+    await page.goto('/speak');
+    await page.waitForSelector('main[data-seeded="true"]', { timeout: 30000 });
 
     console.log('\n=== Verifying Scenario Data ===');
 
-    // Check if scenarios are loaded
-    const scenarioCards = page.locator('[data-testid="scenario-card"]').or(
-      page.locator('div').filter({ hasText: /Ordering Coffee|Grocery Shopping|Asking for Directions/ })
-    );
+    const scenarioCards = page.getByRole('link').filter({ hasText: /Ordering Coffee|Grocery Shopping|Asking for Directions/ });
 
     const count = await scenarioCards.count();
     console.log(`✓ Found ${count} scenario cards`);
+    expect(count).toBeGreaterThan(0);
 
-    // Click first scenario and check structure
     await scenarioCards.first().click();
     await page.waitForURL(/\/speak\/[^/]+/);
-    await page.waitForLoadState('networkidle');
 
     // Check page elements
-    const hasTitle = await page.locator('h1').isVisible();
-    const hasBackButton = await page.locator('button').filter({ has: page.locator('svg') }).first().isVisible();
-    const hasTextInput = await page.locator('input[type="text"]').isVisible();
-    const hasSendButton = await page.locator('button').filter({ has: page.locator('svg') }).last().isVisible();
+    const hasTitle = await page.getByRole('heading', { level: 1 }).isVisible();
+    const hasBackButton = await page.getByRole('button', { name: 'Back to scenarios' }).isVisible();
+    const hasTextInput = await page.getByLabel('Speak scenario input').isVisible();
+    const hasSendButton = await page.getByLabel('Send speak scenario message').isVisible();
 
     console.log('✓ Page structure:');
     console.log('  - Title:', hasTitle);
     console.log('  - Back button:', hasBackButton);
     console.log('  - Text input:', hasTextInput);
     console.log('  - Send button:', hasSendButton);
+    expect(hasTitle && hasBackButton && hasTextInput && hasSendButton).toBe(true);
 
     await page.screenshot({ path: 'test-results/scenario-structure.png', fullPage: true });
   });

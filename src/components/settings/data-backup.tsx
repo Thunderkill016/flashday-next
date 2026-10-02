@@ -82,7 +82,7 @@ export function DataBackup() {
       if (!full) {
         await download(
           new Blob([JSON.stringify(await database.contents.toArray())], { type: 'application/json' }),
-          `echotype-library-${date}.json`,
+          `flashday-library-${date}.json`,
         );
       } else {
         const tables: BackupTables = {};
@@ -96,7 +96,7 @@ export function DataBackup() {
         const bytes = await createBackupArchive(tables, database.name);
         await download(
           new Blob([bytes as Uint8Array<ArrayBuffer>], { type: 'application/zip' }),
-          `echotype-full-backup-${date}.zip`,
+          `flashday-full-backup-${date}.zip`,
         );
       }
       setStatus(
@@ -118,7 +118,7 @@ export function DataBackup() {
       });
       await download(
         new Blob([JSON.stringify(data)], { type: 'application/json' }),
-        `echotype-learning-${new Date().toISOString().slice(0, 10)}.json`,
+        `flashday-learning-${new Date().toISOString().slice(0, 10)}.json`,
       );
       setStatus(t('Learning records exported.', '学习记录已导出。', 'Đã xuất bản ghi học tập.'));
     });

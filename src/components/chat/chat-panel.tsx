@@ -400,6 +400,12 @@ export function ChatPanel({ onClose }: ChatPanelProps) {
     .map(toRenderableChatMessage)
     .filter((message): message is NonNullable<typeof message> => message !== null);
 
+  useEffect(() => {
+    if (scrollRef.current) {
+      scrollRef.current.scrollTop = scrollRef.current.scrollHeight;
+    }
+  }, [uiMessages]);
+
   const sendChatText = useCallback(
     async (text: string, overrides?: { chatMode?: typeof chatMode }) => {
       const nextText = text.trim();

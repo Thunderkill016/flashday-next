@@ -83,6 +83,36 @@ async function installSpeechRecognitionMock(page: Page) {
         __emitSpeechResult?: (text: string) => void;
       };
 
+    // Headless Chromium denies getUserMedia with a timing-dependent delay,
+    // which races emitted speech results through use-fallback-stt's onError
+    // path. Stub the mic pipeline so the fallback recorder runs deterministically
+    // and the result phase is decided by the emitted transcript alone.
+    class FakeMediaStream {
+      getTracks() {
+        return [] as MediaStreamTrack[];
+      }
+    }
+    class FakeMediaRecorder {
+      static isTypeSupported() {
+        return true;
+      }
+      state: 'inactive' | 'recording' = 'inactive';
+      ondataavailable: ((event: { data: Blob }) => void) | null = null;
+      onstop: (() => void) | null = null;
+      start() {
+        this.state = 'recording';
+      }
+      stop() {
+        this.state = 'inactive';
+        this.onstop?.();
+      }
+    }
+    speechWindow.MediaRecorder = FakeMediaRecorder as unknown as typeof MediaRecorder;
+    Object.defineProperty(speechWindow.navigator, 'mediaDevices', {
+      configurable: true,
+      value: { getUserMedia: async () => new FakeMediaStream() },
+    });
+
     speechWindow.SpeechRecognition = FakeSpeechRecognition;
     speechWindow.webkitSpeechRecognition = FakeSpeechRecognition;
     speechWindow.__emitSpeechResult = (text: string) => FakeSpeechRecognition.emit(text);
@@ -131,15 +161,14 @@ test.describe('WordBook Practice – Listen', () => {
     await expect(page.locator('h2').first()).toBeVisible();
   });
 
-  test('has Play button and speed controls', async ({ page }) => {
+  test('has word and sentence play buttons', async ({ page }) => {
     await page.goto(`/listen/book/${BOOK_ID}`);
     await waitForPracticeCard(page);
 
-    await expect(page.getByTestId('read-aloud-inline-controls')).toBeVisible();
-    await expect(page.getByRole('button', { name: 'Play', exact: true })).toBeVisible();
-    await expect(page.getByText('0.5x')).toBeVisible();
-    await expect(page.getByText('1x')).toBeVisible();
-    await expect(page.getByText('1.5x')).toBeVisible();
+    // The standalone wordbook surface plays via per-item TTS buttons; the
+    // transport row only renders inside course lessons (inlineListen).
+    await expect(page.getByRole('button', { name: 'Play word' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Play sentence' })).toBeVisible();
   });
 
   test('navigation buttons work', async ({ page }) => {
@@ -192,12 +221,14 @@ test.describe('WordBook Practice – Write', () => {
     await expect(page.getByPlaceholder('Type the text above...')).toBeVisible();
   });
 
-  test('hides translation by default in write mode', async ({ page }) => {
+  test('shows translation by default in write mode', async ({ page }) => {
     await mockTranslationApi(page);
     await page.goto(`/write/book/${BOOK_ID}`);
     await waitForPracticeCard(page);
 
-    await expect(page.getByTestId('wordbook-translation')).toHaveCount(0);
+    const translation = page.getByTestId('wordbook-translation');
+    await expect(translation).toBeVisible();
+    await expect(translation).toHaveText(MOCK_TRANSLATION);
   });
 
   test('enabling write translations in settings shows them in write practice', async ({ page }) => {
@@ -294,7 +325,7 @@ test.describe('WordBook Practice – Write', () => {
     const finishButton = page.getByRole('button', { name: 'Finish' });
     await expect(finishButton).toBeDisabled();
 
-    const textContent = await page.locator('.bg-indigo-50\\/50 p').textContent();
+    const textContent = await page.getByTestId('listen-book-sentence').textContent();
     expect(textContent).toBeTruthy();
 
     const input = page.getByPlaceholder('Type the text above...');
@@ -336,7 +367,7 @@ test.describe('WordBook Practice – Write', () => {
     await page.goto(`/write/book/${BOOK_ID}?limit=1`);
     await waitForPracticeCard(page);
 
-    const textContent = await page.locator('.bg-indigo-50\\/50 p').textContent();
+    const textContent = await page.getByTestId('listen-book-sentence').textContent();
     expect(textContent).toBeTruthy();
     await page.getByPlaceholder('Type the text above...').fill(textContent!);
     await page.getByRole('button', { name: 'Check' }).click();
@@ -354,8 +385,9 @@ test.describe('WordBook Practice – Read', () => {
     await waitForPracticeCard(page);
 
     await expect(page.getByText('Read Mode')).toBeVisible();
-    // Should have Listen button for TTS reference
-    await expect(page.getByRole('button', { name: 'Listen' })).toBeVisible();
+    // Read mode pairs the mic with the shared Play transport.
+    await expect(page.getByRole('button', { name: 'Start wordbook speech practice' })).toBeVisible();
+    await expect(page.getByRole('button', { name: 'Play', exact: true })).toBeVisible();
   });
 
   test('navigation works in read mode', async ({ page }) => {
@@ -446,9 +478,21 @@ test.describe('WordBook Practice – Speak', () => {
 
     const firstText = (await page.getByTestId('listen-book-sentence').textContent())?.trim();
     expect(firstText).toBeTruthy();
+    const finishAttempt = async () => {
+      await expect(async () => {
+        const stopButton = page.getByRole('button', { name: 'Stop wordbook speech practice' });
+        if (await stopButton.isVisible()) {
+          await stopButton.click();
+        }
+        await expect(page.getByTestId('wordbook-pronunciation-panel')).toContainText('100%', {
+          timeout: 1000,
+        });
+      }).toPass();
+    };
 
     await page.getByTestId('wordbook-speech-toggle').click();
     await emitSpeech(firstText!);
+    await finishAttempt();
 
     const panel = page.getByTestId('wordbook-pronunciation-panel');
     await expect(panel).toContainText('100%');
@@ -463,6 +507,7 @@ test.describe('WordBook Practice – Speak', () => {
 
     await page.getByTestId('wordbook-speech-toggle').click();
     await emitSpeech(secondText!);
+    await finishAttempt();
 
     await expect(page.getByTestId('wordbook-pronunciation-panel')).toContainText('100%');
   });

@@ -1,6 +1,6 @@
 import { expect, test } from '@playwright/test';
 
-const APP_URL = process.env.ECHOTYPE_APP_URL ?? 'http://localhost:3000';
+const APP_URL = process.env.PLAYWRIGHT_BASE_URL ?? 'http://localhost:3000';
 
 async function waitForSeedAndReload(page: import('@playwright/test').Page, path: string) {
   await page.goto(`${APP_URL}${path}`);
@@ -125,12 +125,12 @@ test.describe('Read word highlight', () => {
 
     await page.waitForFunction(() => {
       return Array.from(document.querySelectorAll('[data-read-aloud-word]')).some((word) => {
-        return window.getComputedStyle(word).backgroundColor === 'rgb(249, 115, 22)';
+        return (word as HTMLElement).style.background.includes('rgb(249, 115, 22)');
       });
     });
 
     const highlightedWordCount = await page.locator('[data-read-aloud-word]').evaluateAll((words) => {
-      return words.filter((word) => window.getComputedStyle(word).backgroundColor === 'rgb(249, 115, 22)').length;
+      return words.filter((word) => (word as HTMLElement).style.background.includes('rgb(249, 115, 22)')).length;
     });
     expect(highlightedWordCount).toBeGreaterThan(0);
   });

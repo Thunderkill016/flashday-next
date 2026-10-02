@@ -1,7 +1,9 @@
 import { test, expect, type Page } from '@playwright/test';
 
-// ─── Z.AI API Key from .env.local ───────────────────────────────────────────────
-const ZAI_API_KEY = '82a7be32da64412ab70b3dff6a81677c.2258WHZFw8VPboi0';
+// ─── Z.AI API Key ────────────────────────────────────────────────────────────
+// Live-provider integration suite: requires ZAI_E2E_API_KEY in the environment.
+// The whole describe skips when it is unset (same convention as ollama-test).
+const ZAI_API_KEY = process.env.ZAI_E2E_API_KEY ?? '';
 const ZAI_CODING_BASE = 'https://api.z.ai/api/coding/paas/v4';
 
 // Helper: wait for store to settle
@@ -75,6 +77,9 @@ async function injectZhipuConfig(page: Page) {
 
 test.describe('ZhiPu AI Integration Tests', () => {
   test.setTimeout(120000);
+  test.beforeEach(() => {
+    test.skip(!ZAI_API_KEY, 'Requires ZAI_E2E_API_KEY for the live Z.AI provider');
+  });
 
   // ─── TC-00: Verify API Key + Models ──────────────────────────────────────────
 

@@ -33,18 +33,21 @@ test.describe('Chat FAB Navigation Tests', () => {
     const chatPanel = page.locator('text=AI English Tutor');
     await expect(chatPanel).toBeVisible({ timeout: 5000 });
 
-    // Verify FAB changed to close state
-    await expect(fab).toHaveAttribute('aria-label', 'Close chat');
+    // The FAB unmounts while the panel is open; closing lives on the panel header.
+    const closeChat = page.getByLabel('Close chat');
+    await expect(closeChat).toBeVisible();
+    await expect(fab).toHaveCount(0);
 
     // Take screenshot
     await page.screenshot({ path: 'e2e/screenshots/N1-dashboard-chat-open.png', fullPage: false });
 
-    // Close panel by clicking FAB again
-    await fab.click();
+    // Close panel via its header button
+    await closeChat.click();
     await page.waitForTimeout(300);
 
-    // Verify panel closed
+    // Verify panel closed and FAB is back
     await expect(chatPanel).not.toBeVisible();
+    await expect(fab).toBeVisible();
     console.log('N1: PASS - Chat FAB visible on dashboard, opens/closes correctly');
   });
 
@@ -52,10 +55,8 @@ test.describe('Chat FAB Navigation Tests', () => {
     await page.goto('/dashboard');
     await waitForAppReady(page);
 
-    // Navigate to Listen page via sidebar
-    const listenLink = page.locator('aside a[href="/listen"]');
-    await expect(listenLink).toBeVisible();
-    await listenLink.click();
+    // Module pages are not in the sidebar nav anymore — go direct.
+    await page.goto('/listen');
     await page.waitForURL('**/listen');
 
     // Verify chat FAB is visible
@@ -73,10 +74,11 @@ test.describe('Chat FAB Navigation Tests', () => {
     // Take screenshot
     await page.screenshot({ path: 'e2e/screenshots/N2-listen-chat-open.png', fullPage: false });
 
-    // Close panel by clicking FAB
-    await fab.click();
+    // Close panel via its header button
+    await page.getByLabel('Close chat').click();
     await page.waitForTimeout(300);
     await expect(chatPanel).not.toBeVisible();
+    await expect(fab).toBeVisible();
 
     console.log('N2: PASS - Chat FAB visible on Listen page, opens/closes correctly');
   });
@@ -105,10 +107,7 @@ test.describe('Chat FAB Navigation Tests', () => {
     await page.goto('/dashboard');
     await waitForAppReady(page);
 
-    // Navigate to Read page via sidebar
-    const readLink = page.locator('aside a[href="/read"]');
-    await expect(readLink).toBeVisible();
-    await readLink.click();
+    await page.goto('/read');
     await page.waitForURL('**/read');
 
     // Verify chat FAB is visible
@@ -125,10 +124,7 @@ test.describe('Chat FAB Navigation Tests', () => {
     await page.goto('/dashboard');
     await waitForAppReady(page);
 
-    // Navigate to Write page via sidebar
-    const writeLink = page.locator('aside a[href="/write"]');
-    await expect(writeLink).toBeVisible();
-    await writeLink.click();
+    await page.goto('/write');
     await page.waitForURL('**/write');
 
     // Verify chat FAB is visible
@@ -165,11 +161,9 @@ test.describe('Chat FAB Navigation Tests', () => {
     await page.goto('/dashboard');
     await waitForAppReady(page);
 
-    // Navigate to Word Books page via sidebar
-    const wordBooksLink = page.locator('aside a[href="/library/wordbooks"]');
-    await expect(wordBooksLink).toBeVisible();
-    await wordBooksLink.click();
-    await page.waitForURL('**/library/wordbooks');
+    // /library/wordbooks was folded into /learn (My courses)
+    await page.goto('/learn');
+    await page.waitForURL('**/learn');
 
     // Verify chat FAB is visible
     const fab = chatFabLocator(page);
@@ -287,13 +281,11 @@ test.describe('Chat FAB Navigation Tests', () => {
     // Wait a bit for any response to start streaming
     await page.waitForTimeout(3000);
 
-    // Close the chat panel using the FAB
-    await fab.click();
+    // Close the chat panel via its header button
+    await page.getByLabel('Close chat').click();
     await page.waitForTimeout(300);
 
-    // Navigate to Listen page via sidebar
-    const listenLink = page.locator('aside a[href="/listen"]');
-    await listenLink.click();
+    await page.goto('/listen');
     await page.waitForURL('**/listen');
     await page.waitForTimeout(1000);
 
