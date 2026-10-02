@@ -77,9 +77,13 @@ guardrail manifest in `W2_AUTHORITY_CLAIM_INVENTORY.md` and
 | assessment.currentLevel | W2-AS1 (relabel + boundary), W2-G03 (contract) | `assessment.currentLevel` |
 | sync transport (mapper/engine/backup) | W2-SY1 | per-family transport entries |
 
-Guardrail contract: any new production read of a sensitive family that is not
-in the manifest fails `src/lib/authority-guardrails/guardrail.test.ts`;
-`CAPABILITY_CLAIM` entries must name a DAG owner; `AMBIGUOUS` is forbidden.
+Guardrail contract (W2-01R, site-level): the manifest freezes the
+sensitive-read baseline at *occurrence* level — every normalized sensitive
+line in production code is owned by exactly one logical site; any
+added/removed/edited sensitive line fails
+`src/lib/authority-guardrails/guardrail.test.ts` until a human re-classifies
+it. `CAPABILITY_CLAIM` sites must name a DAG owner; `AMBIGUOUS` is forbidden.
 Inventoried claims today: `daily-plan.ts` accuracy→weakness heuristic (W2-PL1),
 `chat-analytics.ts` accuracy→"weaknesses" tutor context (W2-CS1),
-`lesson-workshop.tsx` `resolved`→recovery claim (W2-WS2).
+`lesson-workshop.tsx` `resolved`+`canResolveTransfer` recovery claim (W2-WS2).
+Two `currentLevel` planner inputs are flagged transitional (W2-AS1/W2-PL1).

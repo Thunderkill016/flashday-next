@@ -1,138 +1,147 @@
-# W2-01 — Authority Claim Inventory (W2-G01 output)
+# W2-01 / W2-01R — Authority Claim Inventory (W2-G01 output)
 
-Mission: W2-01 — Authority Guardrails.
+Mission: W2-01 → W2-01R (site-level guardrail revision, per external review).
 Base: `main @ c2ef466` (post-W2-00R2).
 Status: inventory + invariant guardrails only — **no runtime behavior changes**.
 
-This document records every production read site of authority-sensitive legacy
-state, its classification, and the Wave-2 DAG node that owns its migration.
-The machine-readable twin is `src/lib/authority-guardrails/legacy-claim-sites.json`;
-`src/lib/authority-guardrails/guardrail.test.ts` enforces that the inventory is
-complete (new sensitive read → test failure) and current (removed read → stale
-entry failure).
+This document records every production occurrence of authority-sensitive
+legacy state, grouped into logical sites with classifications and Wave-2
+migration owners. The machine-readable twin is
+`src/lib/authority-guardrails/legacy-claim-sites.json`;
+`src/lib/authority-guardrails/guardrail.test.ts` enforces the frozen baseline.
+
+## Site model (W2-01R)
+
+The W2-01 manifest used `(file, source)` pairs — a file once inventoried for
+`records` could gain further `records` reads undetected (documented bypass,
+reproduced in the test suite). W2-01R replaces that with **occurrence-level
+sites**:
+
+- A *sensitive occurrence* is a normalized source line matching a source-family
+  pattern (whitespace-collapsed; line content, not line numbers, is the
+  identity).
+- A *site* is a logical read path: `{id, file, source, anchor, occurrences,
+  classification, reason, migrationNode, transitional?}`. Its `occurrences`
+  list owns a disjoint set of sensitive lines.
+- Guardrail: per `(file, source)`, the union of site occurrences must equal
+  the detected occurrence set exactly — any added/removed/edited sensitive
+  line fails until a human re-classifies it. Type/import/plumbing lines are
+  owned by explicit `*-io`/`access` sites so semantic sites stay clean.
 
 ## Sources under guard
 
 | Source family | Sensitive reads | Authority doctrine (STATE_AUTHORITY.md) |
 |---|---|---|
-| `records` | `records.accuracy`, `attempts`, `mistakes`, `lastPracticed`, `LearningRecord` values | History/analytics. `accuracy` is a *display statistic*, not ability. |
-| `fsrs` | `fsrsCard.*`, `nextReview`, `last_review`, `accuracyToRating`, `gradeCard`, `previewRatings`, `buildReviewForecast` | Memory scheduling only. Due-ness ≠ mastery. |
-| `sessions` | `sessions.completed`, `accuracy`, `startTime/endTime`, `TypingSession`, `lessonProgress` | History/analytics. Aggregates are display data. |
-| `weakSpots` | `weakSpots.*`, `weakSpotType`, `resolved`, `WeakSpot` type, `sourceWeakSpotId` | Remediation candidate rows. `resolved` is user/system lifecycle, not recovery proof. |
-| `pronunciationProgress` | `pronunciationProgress.*`, `PronunciationProgress` | Practice history. Not pronunciation mastery. |
-| `assessment.currentLevel` | `currentLevel`, `useAssessmentStore`, `echotype_assessment`, `CEFRLevel` | **Advisory placement estimate only** (W2-00R2 boundary). Never capability truth. |
-| `learningAttempts` | `learningAttempts.*`, `persistLearningAttempt`, `LearningAttempt`, `attempt.*`, `deriveTextCycle`, `introducedVocabularyToday` | Raw attempt history — fact-preserving replay source for W2-AT1. |
+| `records` | `records.*` member access, `record.accuracy/attempts/mistakes/lastPracticed`, `r.`/`a.`/`b.` callback reads of those fields, `LearningRecord` | History/analytics. `accuracy` is a *display statistic*, not ability. |
+| `fsrs` | `fsrsCard.*`, `nextReview`, `last_review`, `FSRSCardData`, `accuracyToRating`, `gradeCard`, `previewRatings`, `buildReviewForecast`, `Rating.*` | Memory scheduling only. Due-ness ≠ mastery. No `CAPABILITY_CLAIM` may cite this family (test-enforced). |
+| `sessions` | `sessions.*`, `session.completed/accuracy/endTime/startTime`, `s.` equivalents incl. `totalWords/module/contentId`, `TypingSession`, `lessonProgress` | History/analytics. Aggregates are display data. |
+| `weakSpots` | `weakSpot(s)`, `weakSpotType`, `resolved`, `WeakSpot`, `sourceWeakSpotId`, `canResolveTransfer`, `weak-spots` refs | Remediation candidate rows. `resolved` is lifecycle, not recovery proof. |
+| `pronunciationProgress` | `pronunciationProgress.*`, `PronunciationProgress`, `evidence.pronunciation` | Practice history. Not pronunciation mastery. |
+| `assessment.currentLevel` | `currentLevel`, `useAssessmentStore`, `echotype_assessment`, `CEFRLevel`, `levelToDifficulty`, `cefrToDifficulty` | **Advisory placement estimate only** (W2-00R2 boundary). Never capability truth. |
+| `learningAttempts` | `learningAttempts.*`, `attempt.*` fields, `attempts.*`, `LearningAttempt`, `persistLearningAttempt`, `deriveTextCycle`, `introducedVocabularyToday`, `validateTextCycle*` | Raw attempt history — fact-preserving replay source for W2-AT1. |
 | `dailyTasks` | `dailyTasks.*`, `DailyTask`, `preferences:*`, `task.kind`, task lifecycle helpers | Executable planner cache + lifecycle + preferences rows. Not capability truth. |
-| `dailyPlan` | `useDailyPlanStore`, `generateDailyPlan`, `syncPlanTasks*`, `PlanTask`, `getDailyPlanSignature` | Zustand planner cache — same class as `dailyTasks`. |
+| `dailyPlan` | `useDailyPlanStore`, `generateDailyPlan`, `syncPlanTasks*`, `PlanTask`, `getDailyPlanSignature`, `isDailyPlanPractice` | Zustand planner cache — same class as `dailyTasks`. |
 
-## Classification taxonomy
+## Truthful counts (exact HEAD)
 
-- **LEGIT_SCHEDULING** — drives *when/what to practice next* via FSRS due-ness or
-  task lifecycle. Legitimate use of scheduling authority.
-- **LEGIT_HISTORY** — transport, schema, export, hydration, fixtures, type
-  declarations, and write-path persistence of history rows.
-- **LEGIT_ANALYTICS** — aggregate statistics for dashboards/reports.
-- **LEGIT_PRESENTATION** — renders stored values to the user as-is (counts,
-  badges, lists) without elevating them to capability claims.
-- **LEGIT_CANDIDATE_SIGNAL** — advisory input to ordering/recommendation/
-  orientation. Permitted for placement (`currentLevel`) per the W2-00R2 boundary;
-  for other sources it marks heuristic candidate selection owned by a Wave-2 node.
-- **CAPABILITY_CLAIM** — a read that *produces or feeds a learner-facing or
-  planner-facing capability assertion* (mastery, weakness, recovery, level,
-  readiness). These are the sites W2 must migrate to kernel projection.
-- **AMBIGUOUS** — forbidden in the final manifest (test-enforced).
+- **84** unique production files touched
+- **167** (file, source-family) pairs
+- **172** logical sites
+- **909** sensitive occurrence lines frozen
+- Classification counts: `LEGIT_HISTORY` 56 · `LEGIT_SCHEDULING` 53 ·
+  `LEGIT_PRESENTATION` 33 · `LEGIT_CANDIDATE_SIGNAL` 17 · `LEGIT_ANALYTICS` 10
+  · `CAPABILITY_CLAIM` 3 · `AMBIGUOUS` 0 (forbidden by test)
 
-## CAPABILITY_CLAIM findings
+## CAPABILITY_CLAIM sites (owned, unmodified)
 
-Three production sites turn legacy history into capability claims today.
-Each is owned by a Wave-2 node; none is modified in this mission.
+| Site | Claim | Owner |
+|---|---|---|
+| `lib-daily-plan.records-weakness-heuristic` | `moduleRecords` avg `accuracy` → weakness score → module priority | W2-PL1 |
+| `lib-chat-analytics.records-weakness-claim` | `records.accuracy < 70` → "weaknesses" in AI tutor context | W2-CS1 |
+| `components-learning-lesson-workshop.weakSpots-resolve-claim` | `weakSpot.resolved` + `canResolveTransfer` heuristic → learner-facing "Resolved" | W2-WS2 |
 
-### C1 — `src/lib/daily-plan.ts` :: records → `W2-PL1`
+## Mixed-use splits (W2-01R item E)
 
-`buildModulePriority` computes `weakness = 100 − avgAccuracy(records.accuracy)`
-and feeds it into daily-plan module ordering. Raw typing accuracy is reused as
-a *weakness model*. Under Wave 2, plan ordering must consume kernel projection
-(due memory work + capability gaps), not record statistics.
+- `today-review.ts :: records` → three sites: `io` (load/types, HISTORY),
+  `display` (subtitle fields, PRESENTATION), `sort` (`a.accuracy − b.accuracy`
+  weakest-first ordering, CANDIDATE_SIGNAL → W2-MB1).
+- `daily-plan.ts :: records` → `io` (HISTORY) + `weakness-heuristic`
+  (CAPABILITY_CLAIM → W2-PL1).
+- `dashboard/page.tsx :: sessions` → `aggregates` (ANALYTICS) +
+  `recent-activity` (PRESENTATION).
+- `lesson-workshop.tsx :: weakSpots` → `resolve-claim` (CAPABILITY_CLAIM →
+  W2-WS2) + `context` (CANDIDATE_SIGNAL → W2-WS2).
+- `chat-analytics.ts :: records` → single `weakness-claim` site (the only
+  semantic use is the claim).
+- `daily-task-planner.ts` — reviewed: per-source use is semantically uniform
+  (task-completion evidence / task lifecycle) → single sites kept.
 
-### C2 — `src/lib/chat-analytics.ts` :: records → `W2-CS1`
+## Transitional advisory sites (W2-01R item F)
 
-`collectLearningSnapshot` labels contents with `records.accuracy < 70` as
-"weaknesses" and injects them into the AI tutor's context. The tutor then
-speaks as if those were diagnosed weaknesses. Under W2-CS1 the tutor context
-must carry kernel-derived remediation constructs (correction episodes,
-recurring-error ledgers) or nothing.
+`assessment.currentLevel` consumers are advisory placement uses — none gates
+missions or tasks. Two are explicitly marked `transitional: true` because they
+feed *ongoing* daily-plan generation rather than one-time orientation:
 
-### C3 — `src/components/learning/lesson-workshop.tsx` :: weakSpots → `W2-WS2`
-
-`weakSpot.resolved` drives a learner-facing "Resolved" recovery claim and
-gates the workshop resolution flow. A lifecycle flag stands in for demonstrated
-remediation. W2-WS2 replaces this with the kernel's remediation constructs
-(correction episodes, retest surfaces, support lifecycle).
+- `lib-daily-plan.assessment-currentLevel-advisory-difficulty`
+  (`currentLevel → levelToDifficulty → generateDailyPlan`) — owner W2-AS1,
+  co-owned by W2-PL1. Will not survive final planner authority unless the
+  W2-00R2 placement boundary explicitly justifies it.
+- `components-dashboard-today-plan.assessment-currentLevel` (`currentLevel →
+  plan input + levelKey invalidation`) — same transitional status.
 
 ## Claim-surface audit
 
 Learner-facing surfaces that assert or imply capability, traced to source:
 
-| Surface | Claim | Source | Classification | Owner |
-|---|---|---|---|---|
-| Daily-plan module ordering | "you need more of module X" (implicit) | `records.accuracy` weakness heuristic | CAPABILITY_CLAIM | W2-PL1 |
-| AI tutor context "Weaknesses" | diagnosed weak areas | `records.accuracy < 70` | CAPABILITY_CLAIM | W2-CS1 |
-| Lesson workshop "Resolved" | remediation achieved | `weakSpots.resolved` | CAPABILITY_CLAIM | W2-WS2 |
-| Today-review ordering | weakest-first sort | `record.accuracy` ordering heuristic | LEGIT_CANDIDATE_SIGNAL | W2-MB1 |
-| Daily-task weak-spot card | "retry a recent difficulty" | `weakSpots[0]` candidate | LEGIT_CANDIDATE_SIGNAL | W2-PL1 |
-| Dashboard "Accuracy" card | aggregate % | `sessions`/`records` aggregates | LEGIT_ANALYTICS | W2-CS1 |
-| Dashboard "Weak spots" entry | open count | `weakSpots` unresolved count | LEGIT_PRESENTATION | W2-WS2 |
-| Review queue / forecast | due items, upcoming load | `fsrsCard.due`, `nextReview` | LEGIT_SCHEDULING | W2-MB1 |
-| Favorites review | due favorites | `favorites.fsrsCard` | LEGIT_SCHEDULING | W2-MB1 |
-| Pronunciation studio "N/48 practiced" | practice coverage | `pronunciationProgress` rows | LEGIT_PRESENTATION | W2-PR1 |
-| Learn pages "step done" | lesson completion | `sessions.completed` via `lessonProgress`, `learningAttempts` via `deriveTextCycle` | LEGIT_PRESENTATION | W2-CS1 |
-| Assessment "Current level" | placement estimate | `assessment.currentLevel` | LEGIT_PRESENTATION (advisory) | W2-AS1 |
-| Recommendations/difficulty hints | level-appropriate suggestions | `assessment.currentLevel` | LEGIT_CANDIDATE_SIGNAL (advisory) | W2-AS1 |
-| AI tutor level context | tutor difficulty tuning | `assessment.currentLevel` → `cefrLevel` | LEGIT_CANDIDATE_SIGNAL (advisory) | W2-AS1 |
+| Surface | Claim | Source site | Classification |
+|---|---|---|---|
+| Daily-plan module ordering | implicit "you need module X" | `lib-daily-plan.records-weakness-heuristic` | CAPABILITY_CLAIM → W2-PL1 |
+| AI tutor "Weaknesses" | diagnosed weak areas | `lib-chat-analytics.records-weakness-claim` | CAPABILITY_CLAIM → W2-CS1 |
+| Lesson workshop "Resolved" | remediation achieved | `…lesson-workshop.weakSpots-resolve-claim` | CAPABILITY_CLAIM → W2-WS2 |
+| Today-review ordering | weakest-first sort | `…today-review.records-sort` | LEGIT_CANDIDATE_SIGNAL → W2-MB1 |
+| Daily-task weak-spot card | "retry a recent difficulty" | `…daily-task-queue.weakSpots` | LEGIT_CANDIDATE_SIGNAL → W2-PL1 |
+| Dashboard stats | aggregate %/counts | `…dashboard.sessions-aggregates`, `records`, `fsrs` forecast | ANALYTICS / SCHEDULING |
+| Review queue / forecast | due items | `fsrs` sites | LEGIT_SCHEDULING → W2-MB1 |
+| Pronunciation studio "N/48" | practice coverage | `pronunciation-studio` site | LEGIT_PRESENTATION → W2-PR1 |
+| Learn pages "step done" | lesson completion | `lessonProgress`/`deriveTextCycle` sites | LEGIT_PRESENTATION → W2-CS1 |
+| Assessment level display | placement estimate | `assessment.currentLevel` sites | PRESENTATION / CANDIDATE_SIGNAL → W2-AS1 |
 
-`currentLevel` consumers are all advisory placement uses (display, adaptive
-question distribution, recommendation/tutor context) — none gates missions or
-tasks, matching the W2-00R2 placement boundary. W2-AS1 still owns the relabel
-(estimate wording) and consumer audit.
+## Adversarial review (spec §12 + W2-01R H)
 
-## Adversarial review (spec §12)
+- **Same-file new read (the documented bypass):** adding
+  `records.filter((r) => r.accuracy > 80)` to an inventoried file leaves the
+  legacy `(file, source)` check green but produces an *uncovered occurrence* →
+  site-level test fails. Reproduced and regressed in `guardrail.test.ts`.
+- **A — accuracy-threshold mastery:** `record.accuracy > 80` detected.
+- **B — FSRS ordering:** `fsrsCard.due` detected; suite asserts no `fsrs` site
+  may carry `CAPABILITY_CLAIM` (memory boundary, both directions).
+- **C — `weakSpot.resolved` render reads:** detected; the resolve-claim site
+  already carries `CAPABILITY_CLAIM → W2-WS2`.
+- **D — `currentLevel` onboarding:** detected; transitional advisory sites are
+  flagged and owned.
+- **E — alias/helper hiding:** type tokens (`LearningRecord`, `TypingSession`,
+  `WeakSpot`, `LearningAttempt`, `DailyTask`, `PronunciationProgress`,
+  `FSRSCardData`, `CEFRLevel`), helper names (`deriveTextCycle`,
+  `introducedVocabularyToday`, `persistLearningAttempt`, `lessonProgress`,
+  `levelToDifficulty`, `cefrToDifficulty`, `canResolveTransfer`), and short
+  iterator vars (`r.`, `a.`/`b.` comparators) are all detected. Strengthened
+  patterns caught 5 additional (file, source) pairs vs the original run —
+  all benign word-match `r.accuracy` categorical reads, classified honestly.
 
-- **A — "mastered" from `record.accuracy > 80`:** would appear as a new
-  `records` read not in the manifest → guardrail test fails. The scanner treats
-  *any* sensitive read as requiring classification, so a hidden mastery claim
-  cannot slip in without an explicit `CAPABILITY_CLAIM` + owner entry.
-- **B — FSRS ordering disguised as capability:** `fsrsCard.due` reads are
-  detected and classified `LEGIT_SCHEDULING`; the suite additionally asserts no
-  `fsrs` entry may carry `CAPABILITY_CLAIM` — scheduling state can never be a
-  capability source, enforcing the memory boundary in both directions.
-- **C — `weakSpot.resolved` in render paths:** detected via the `weakSpots`
-  family; the lesson-workshop site is already marked `CAPABILITY_CLAIM → W2-WS2`.
-- **D — `currentLevel` for onboarding:** detected via the assessment family and
-  held to `LEGIT_CANDIDATE_SIGNAL`/`LEGIT_PRESENTATION` — any gating use would
-  need a new manifest entry reviewed against the placement boundary.
-- **E — alias/helper hiding:** detection keys on type imports
-  (`LearningRecord`, `TypingSession`, `WeakSpot`, `LearningAttempt`, `DailyTask`,
-  `PronunciationProgress`, `FSRSCardData`) and helper names
-  (`deriveTextCycle`, `introducedVocabularyToday`, `persistLearningAttempt`,
-  `lessonProgress`, sync/task helpers), so a helper that funnels the read is
-  itself flagged. Limitation: a helper reading a field via a fresh local
-  variable name with no type import could evade the patterns — mitigated by
-  code review + the doc-level claim-surface audit, which traces UI claims to
-  their data source rather than to identifiers.
+## Three-layer limitation model (W2-01R item I)
 
-## Guardrail mechanics
-
-- `patterns.ts` defines the detection families (file-level, bounded regexes —
-  deliberately no parser dependency; type tokens provide alias coverage).
-- `legacy-claim-sites.json` is the test-owned manifest: `{file, source,
-  classification, reason, migrationNode}` per (file, source) pair.
-- `guardrail.test.ts` enforces:
-  1. every detected (file, source) has a manifest entry — *new reader → fail*;
-  2. every manifest entry still detects its source — *stale entry → fail*;
-  3. classifications are known; `AMBIGUOUS` is forbidden;
-  4. every `CAPABILITY_CLAIM` names a `migrationNode` present in
-     `docs/flashday/W2_MIGRATION_DAG.json`;
-  5. adversarial fixtures A–E verify the detector itself.
+1. **Mechanically frozen** — any added/removed/edited sensitive-token line in
+   production code changes a `(file, source)` occurrence set → test fails until
+   a human classifies it. Type/import/plumbing lines are frozen too.
+2. **Review-policy frozen** — the scanner sees *read lines*, not downstream
+   value flow: `const acc = record.accuracy` stays frozen, but a later
+   `showMastered(acc)` in a file with no sensitive token would not be caught
+   by static scanning alone. Mitigation: the claim-surface audit traces UI
+   claims to data sources, and review policy requires mapping any new
+   capability-shaped surface to a manifest owner.
+3. **Future migrated** — inventoried `CAPABILITY_CLAIM` / transitional sites
+   remain runtime-unchanged by design; each names the W2 node that owns its
+   migration to kernel projection.
 
 ## Scope statement
 

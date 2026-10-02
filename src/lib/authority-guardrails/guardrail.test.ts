@@ -3,17 +3,19 @@ import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
 import dagJson from '../../../docs/flashday/W2_MIGRATION_DAG.json';
 import manifestJson from './legacy-claim-sites.json';
-import { detectSensitiveSources, SOURCE_IDS } from './patterns';
+import { detectSensitiveSources, extractAllOccurrences, SOURCE_IDS } from './patterns';
 
 /**
- * W2-G01 — authority guardrails.
+ * W2-G01 — site-level authority guardrails.
  *
- * Any read of authority-sensitive legacy state (records fields incl. accuracy,
- * FSRS scheduling fields, sessions, weakSpots, pronunciationProgress,
- * learningAttempts, dailyTasks, assessment.currentLevel, the dailyPlan cache)
- * must be inventoried in `legacy-claim-sites.json` with a classification and a
- * migration owner. Adding a new sensitive read without a manifest entry fails.
- * Removing the read without updating the manifest fails (stale entry).
+ * The manifest freezes the sensitive-read baseline at *occurrence* level: for
+ * each (file, source) the union of manifest-site `occurrences` must exactly
+ * equal the detected sensitive lines. Adding, removing, or editing a sensitive
+ * line — even in a file+family already inventoried — fails until a human
+ * re-classifies the site.
+ *
+ * The scanner detects change; the manifest records human semantics. A passed
+ * suite proves baseline integrity, not semantic correctness.
  */
 
 const CLASSIFICATIONS = [
@@ -43,93 +45,140 @@ function* walk(dir: string): Generator<string> {
   }
 }
 
-function scanProductionFiles(root: string): Map<string, string[]> {
-  const hits = new Map<string, string[]>();
+function scanProductionFiles(root: string): Map<string, Partial<Record<string, string[]>>> {
+  const hits = new Map<string, Partial<Record<string, string[]>>>();
   for (const abs of walk(join(root, 'src'))) {
     const rel = abs.slice(root.length + 1).replace(/\\/g, '/');
     if (EXCLUDE.some((re) => re.test(rel))) continue;
-    const sources = detectSensitiveSources(readFileSync(abs, 'utf8'));
-    if (sources.length) hits.set(rel, sources);
+    const occurrences = extractAllOccurrences(readFileSync(abs, 'utf8'));
+    if (Object.keys(occurrences).length) hits.set(rel, occurrences);
   }
   return hits;
 }
 
 type Site = {
+  id: string;
   file: string;
   source: string;
+  anchor: string;
+  occurrences: string[];
   classification: string;
   reason: string;
   migrationNode: string | null;
+  transitional?: boolean;
 };
 
 const root = process.cwd();
 const manifest = manifestJson as { sites: Site[] };
-const manifestKeys = new Set(manifest.sites.map((s) => `${s.file}::${s.source}`));
 const dagNodeIds = new Set(dagJson.nodes.map((n: { id: string }) => n.id));
 
-describe('W2-G01 authority guardrails', () => {
-  it('every sensitive legacy read in production code is inventoried', () => {
-    const missing: string[] = [];
-    for (const [file, sources] of scanProductionFiles(root)) {
-      for (const source of sources) {
-        if (!manifestKeys.has(`${file}::${source}`)) missing.push(`${file}::${source}`);
+/** Occurrences per (file, source) claimed by manifest sites. */
+function manifestOccurrences(): Map<string, Map<string, Set<string>>> {
+  const map = new Map<string, Map<string, Set<string>>>();
+  for (const site of manifest.sites) {
+    if (!map.has(site.file)) map.set(site.file, new Map());
+    const fam = map.get(site.file)!;
+    if (!fam.has(site.source)) fam.set(site.source, new Set());
+    for (const line of site.occurrences) fam.get(site.source)!.add(line);
+  }
+  return map;
+}
+
+/**
+ * Emulates the W2-01 (pre-revision) file::source-level check for the bypass
+ * reproduction: a (file, source) pair passes if any manifest site covers it.
+ */
+function legacyFileLevelKeys(): Set<string> {
+  return new Set(manifest.sites.map((s) => `${s.file}::${s.source}`));
+}
+
+describe('W2-G01 site-level authority guardrails', () => {
+  it('every detected sensitive occurrence is owned by a manifest site', () => {
+    const covered = manifestOccurrences();
+    const uncovered: string[] = [];
+    for (const [file, fams] of scanProductionFiles(root)) {
+      for (const [source, lines] of Object.entries(fams)) {
+        if (!lines) continue;
+        const owned = covered.get(file)?.get(source) ?? new Set<string>();
+        for (const line of lines) {
+          if (!owned.has(line)) uncovered.push(`${file}::${source} → ${line.slice(0, 100)}`);
+        }
       }
     }
     expect(
-      missing,
-      `new sensitive reads must be classified in legacy-claim-sites.json:\n${missing.join('\n')}`,
+      uncovered,
+      `new sensitive occurrences must be classified into a manifest site:\n${uncovered.join('\n')}`,
     ).toEqual([]);
   });
 
-  it('no stale manifest entries — every entry still detects its source', () => {
+  it('no stale manifest occurrences — every claimed line still detects', () => {
     const stale: string[] = [];
     for (const site of manifest.sites) {
       const abs = join(root, site.file);
       if (!existsSync(abs)) {
-        stale.push(`${site.file}::${site.source} (file removed)`);
+        stale.push(`${site.id} (file removed)`);
         continue;
       }
-      const detected = detectSensitiveSources(readFileSync(abs, 'utf8'));
-      if (!detected.includes(site.source as never)) {
-        stale.push(`${site.file}::${site.source} (pattern no longer matches)`);
+      const detected = new Set(
+        extractAllOccurrences(readFileSync(abs, 'utf8'))[site.source as never] ?? [],
+      );
+      for (const line of site.occurrences) {
+        if (!detected.has(line)) stale.push(`${site.id} stale line: ${line.slice(0, 100)}`);
       }
     }
-    expect(
-      stale,
-      `stale manifest entries — remove or re-classify:\n${stale.join('\n')}`,
-    ).toEqual([]);
+    expect(stale, `stale manifest occurrences — re-review the site:\n${stale.join('\n')}`).toEqual(
+      [],
+    );
+  });
+
+  it('site ids are unique and occurrences do not overlap within (file, source)', () => {
+    const ids = new Set<string>();
+    const dupes: string[] = [];
+    const owner = new Map<string, string>();
+    for (const site of manifest.sites) {
+      if (ids.has(site.id)) dupes.push(`duplicate id ${site.id}`);
+      ids.add(site.id);
+      for (const line of site.occurrences) {
+        const key = `${site.file}::${site.source}::${line}`;
+        if (owner.has(key)) dupes.push(`${key.slice(0, 90)} claimed by ${owner.get(key)} AND ${site.id}`);
+        else owner.set(key, site.id);
+      }
+    }
+    expect(dupes).toEqual([]);
   });
 
   it('manifest entries are schema-valid', () => {
     for (const site of manifest.sites) {
       expect(
         CLASSIFICATIONS,
-        `${site.file}::${site.source} has unknown classification`,
+        `${site.id} has unknown classification`,
       ).toContain(site.classification);
-      expect(SOURCE_IDS, `${site.file}::${site.source} has unknown source`).toContain(site.source);
-      expect(site.reason.length, `${site.file}::${site.source} needs a reason`).toBeGreaterThan(0);
+      expect(SOURCE_IDS, `${site.id} has unknown source`).toContain(site.source);
+      expect(site.reason.length, `${site.id} needs a reason`).toBeGreaterThan(0);
+      expect(site.occurrences.length, `${site.id} owns zero occurrences`).toBeGreaterThan(0);
+      expect(site.anchor.length, `${site.id} needs an anchor`).toBeGreaterThan(0);
     }
   });
 
   it('no AMBIGUOUS classifications remain', () => {
     const ambiguous = manifest.sites.filter((s) => s.classification === 'AMBIGUOUS');
     expect(
-      ambiguous.map((s) => `${s.file}::${s.source}`),
+      ambiguous.map((s) => s.id),
       'AMBIGUOUS sites must be resolved before this gate passes',
     ).toEqual([]);
   });
 
   it('every CAPABILITY_CLAIM names a migration owner in the W2 DAG', () => {
     const claims = manifest.sites.filter((s) => s.classification === 'CAPABILITY_CLAIM');
-    expect(claims.length, 'expected at least one inventoried capability claim').toBeGreaterThan(0);
+    expect(claims.length, 'expected inventoried capability claims').toBeGreaterThan(0);
     for (const site of claims) {
       expect(
         site.migrationNode,
-        `${site.file}::${site.source} is a CAPABILITY_CLAIM without a migrationNode`,
+        `${site.id} is a CAPABILITY_CLAIM without a migrationNode`,
       ).not.toBeNull();
       expect(
         dagNodeIds.has(site.migrationNode as string),
-        `${site.file}::${site.source} migrationNode ${site.migrationNode} is not a DAG node`,
+        `${site.id} migrationNode ${site.migrationNode} is not a DAG node`,
       ).toBe(true);
     }
   });
@@ -139,7 +188,7 @@ describe('W2-G01 authority guardrails', () => {
       if (site.migrationNode === null) continue;
       expect(
         dagNodeIds.has(site.migrationNode),
-        `${site.file}::${site.source} references unknown node ${site.migrationNode}`,
+        `${site.id} references unknown node ${site.migrationNode}`,
       ).toBe(true);
     }
   });
@@ -148,14 +197,11 @@ describe('W2-G01 authority guardrails', () => {
     const claims = new Set(
       manifest.sites
         .filter((s) => s.classification === 'CAPABILITY_CLAIM')
-        .map((s) => `${s.file}::${s.source}`),
+        .map((s) => s.id),
     );
-    // Known capability claims discovered in the W2-01 audit — a claim removed
-    // from this set means either the site was fixed (good: remove the manifest
-    // entry) or the manifest regressed.
-    expect(claims).toContain('src/lib/daily-plan.ts::records');
-    expect(claims).toContain('src/lib/chat-analytics.ts::records');
-    expect(claims).toContain('src/components/learning/lesson-workshop.tsx::weakSpots');
+    expect(claims).toContain('lib-daily-plan.records-weakness-heuristic');
+    expect(claims).toContain('lib-chat-analytics.records-weakness-claim');
+    expect(claims).toContain('components-learning-lesson-workshop.weakSpots-resolve-claim');
   });
 });
 
@@ -168,8 +214,6 @@ describe('adversarial detection — sneaky authority reads must be caught', () =
   it('B: FSRS due-ordering is detected (allowed only as LEGIT_SCHEDULING)', () => {
     const snippet = 'queue.sort((a, b) => a.fsrsCard.due - b.fsrsCard.due);';
     expect(detectSensitiveSources(snippet)).toContain('fsrs');
-    // Policy check: scheduling use is legitimate — the manifest proves it for
-    // the real sites, and no CAPABILITY_CLAIM may cite fsrs ordering.
     const fsrsClaims = manifest.sites.filter(
       (s) => s.source === 'fsrs' && s.classification === 'CAPABILITY_CLAIM',
     );
@@ -194,5 +238,30 @@ describe('adversarial detection — sneaky authority reads must be caught', () =
     expect(detectSensitiveSources(byType)).toContain('records');
     const byHelper = 'const step = deriveTextCycle(lesson.id, source, attempts, now);';
     expect(detectSensitiveSources(byHelper)).toContain('learningAttempts');
+    const byShortVar = 'const mastered = records.filter((r) => r.accuracy > 80);';
+    expect(detectSensitiveSources(byShortVar)).toContain('records');
+    const byComparator = 'items.sort((a, b) => a.accuracy - b.accuracy);';
+    expect(detectSensitiveSources(byComparator)).toContain('records');
+  });
+
+  it('H: same-file + same-family new read reproduces the pre-revision bypass', () => {
+    // Reproduction of the W2-01 weakness: a file already inventoried for
+    // `records` gained a second semantic read. The old file::source check
+    // could not distinguish it — the pair was already whitelisted.
+    const file = 'src/lib/today-review.ts';
+    const baseline = readFileSync(join(root, file), 'utf8');
+    const mutated = `${baseline}\nconst mastered = records.filter((r) => r.accuracy > 80);\n`;
+
+    // Legacy file::source-level check: the pair is already covered → PASSES
+    // (this is the documented bypass).
+    const legacyDetected = detectSensitiveSources(mutated);
+    const legacyCovered = legacyDetected.every((s) => legacyFileLevelKeys().has(`${file}::${s}`));
+    expect(legacyCovered, 'file-level guardrail cannot see the new read').toBe(true);
+
+    // Site-level occurrence check: the new line is an uncovered occurrence → FAILS.
+    const owned = manifestOccurrences().get(file)?.get('records') ?? new Set<string>();
+    const detectedNow = extractAllOccurrences(mutated)['records'] ?? [];
+    const uncovered = detectedNow.filter((l) => !owned.has(l));
+    expect(uncovered).toContain('const mastered = records.filter((r) => r.accuracy > 80);');
   });
 });
