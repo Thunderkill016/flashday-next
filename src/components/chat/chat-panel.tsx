@@ -352,7 +352,7 @@ export function ChatPanel({ onClose }: ChatPanelProps) {
         setChatMode,
         setExerciseType: setActiveExercise,
         speakText: (text) => speak(text),
-        updateUserLevel: (level) => setPlacementEstimate(level as CEFRLevel, 'chat_tool'),
+        updateUserLevel: (level) => setPlacementEstimate(level as CEFRLevel),
         updateProviderConfig,
         buildApiHeaders,
         providerId: activeProviderId,

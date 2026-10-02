@@ -23,9 +23,10 @@ demonstrated ability:
   `difficultyFitScore` — placement silently steered *which* recurring
   tasks/content the daily plan selected (a planner-authority leak, since
   the permitted uses are orientation/onboarding/initial-content only).
-- `use-recommendations.ts` sent it to the AI recommendations API as
-  `userLevel` (content-recommendation hint — within the permitted uses;
-  flagged for reviewer confirmation).
+- `use-recommendations.ts` sent it to `/api/recommendations` as
+  `userLevel`, which injected "recommend content appropriate for this
+  proficiency level" into every AI recommendation prompt — recurring
+  personalization, not initial-content recommendation (cut in R2).
 - `chat-panel.tsx` exposed an `updateUserLevel` tool letting the chatbot
   *write* the level with no provenance.
 - `app/api/assessment/route.ts` used it to tune the next quiz's question
@@ -56,9 +57,9 @@ export interface PlacementEstimate {
 - `setResult(assessment)` — quiz completion mints an estimate with real
   score + timestamp and appends the result to `history` unchanged. This is
   the ONLY way `source: 'placement_test'` can be produced.
-- `setPlacementEstimate(level, 'chat_tool')` — the source literal is
-  type-pinned to `'chat_tool'`; quiz provenance cannot be forged through
-  the claim path.
+- `setPlacementEstimate(level)` — takes no source argument; the writer
+  hard-codes `source: 'chat_tool'` / `method: 'chat_tool'`, so even an
+  untyped JS caller passing a second argument cannot forge quiz provenance.
 - `hydrate()` — accepts the legacy `{ currentLevel, history }` payload and
   lifts it to `placement` with `source: 'legacy_payload'`,
   `method: 'hydrated_legacy'`, `score: null`, `completedAt: 0`. The bare
@@ -66,8 +67,10 @@ export interface PlacementEstimate {
   chat claim could have overwritten it — so provenance is honestly
   unknown rather than inferred from a colliding level string.
 - `isPlacementEstimate()` validates the full shape including
-  source↔method↔score correlation; malformed persisted objects hydrate
-  to `null`, never to a trusted estimate.
+  source↔method↔score↔timestamp correlation (`placement_test` ⇒ numeric
+  score + `completedAt > 0`; `chat_tool` ⇒ `score: null` +
+  `completedAt > 0`; `legacy_payload` ⇒ `score: null` + `completedAt === 0`);
+  malformed persisted objects hydrate to `null`, never to a trusted estimate.
 - The persisted payload still carries `currentLevel` as a compatibility
   mirror so older builds/readers keep working; it is a projection of
   `placement.levelEstimate`, never an input.
@@ -89,7 +92,8 @@ Every consumer of the store was inventoried and classified:
 | `lib/daily-plan.ts` | **none** — `levelEstimate` option removed | cut (see §3a) |
 | `stores/daily-plan-store.ts` | **none** — `levelKey` invalidation removed | cut (see §3a) |
 | `lib/learning-goals.ts` | **none** — `level` param removed from plan explanation | cut (see §3a) |
-| `hooks/use-recommendations.ts` | `levelEstimate` → API `userLevel` hint | advisory recommendation (flagged) |
+| `hooks/use-recommendations.ts` | **none** — `userLevel` no longer sent | cut (see §3a) |
+| `app/api/recommendations/route.ts` | **none** — `userLevel` no longer read or injected into the prompt | cut (see §3a) |
 | `assessment/assessment-section.tsx` | display + seeds next quiz | advisory |
 | `app/api/assessment/route.ts` | question-distribution tuning | advisory producer |
 | `chat/chat-panel.tsx` | context + `updateUserLevel` tool | advisory (write path → `setPlacementEstimate`) |
@@ -114,6 +118,11 @@ is removed structurally:
 - Plan explanation copy no longer claims level-driven difficulty.
 - Selection now ranks by weakness + recency + goal with deterministic
   date-seeded rotation; content difficulty metadata is not a selector.
+- R2: the same rule applies to AI content recommendations —
+  `use-recommendations` no longer reads placement and `/api/recommendations`
+  no longer accepts `userLevel`, so placement cannot shape generated
+  recommendation content. Using placement as a long-term personalization
+  signal would need its own ADR.
 
 Verified negatives (repo-wide):
 
@@ -157,9 +166,13 @@ Verified negatives (repo-wide):
 - **placement A1 vs C2 yields an identical recurring daily plan**
   (semantic task keys equal) and `generateDailyPlan` rejects a
   `levelEstimate` option at the type level (`@ts-expect-error` pin)
-- `setPlacementEstimate` cannot mint `placement_test` provenance
-  (`@ts-expect-error` pin); `isPlacementEstimate` rejects malformed or
-  source-inconsistent persisted objects
+- `setPlacementEstimate` always writes `chat_tool` provenance even when an
+  untyped caller passes `'placement_test'` as an extra argument (runtime
+  pin, in memory and persisted); `isPlacementEstimate` rejects malformed or
+  provenance-inconsistent persisted objects, including a `legacy_payload`
+  claiming a known timestamp
+- `/api/recommendations` builds an identical system/user prompt with and
+  without a client-supplied `userLevel` (`route.test.ts`)
 - sensitive-read inventory unchanged by authority: scanning
   `evidence-bridge/**` + `vnext/**` for the placement token family
   detects nothing
@@ -187,5 +200,11 @@ evidence for merge readiness.
 - Audited placement evidence is **not** implemented — per reviewer
   decision it would require a separate ADR (separate placement/history
   domain or non-capability ledger), not an `EvidenceEvent` extension.
+- **Open for reviewer ruling:** `chat-panel.tsx` sends `levelEstimate` as
+  `userLevel` to `/api/chat`, which tells the tutor to adjust vocabulary
+  and explanation complexity to that CEFR level
+  (`src/app/api/chat/route.ts:681`). It doesn't select tasks, gate anything,
+  or mint evidence, but it is recurring AI personalization shaped by
+  placement. Left unchanged in R2 pending an explicit ruling.
 
 `PLACEMENT BOUNDARY CONFIRMED — ESTIMATE IS NOT CAPABILITY TRUTH`

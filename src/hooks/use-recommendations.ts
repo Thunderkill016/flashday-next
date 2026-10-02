@@ -1,7 +1,6 @@
 import { useCallback, useRef, useState } from 'react';
 import { getIOSNativeQAMode } from '@/lib/ios-native-qa';
 import { PROVIDER_REGISTRY } from '@/lib/providers';
-import { useAssessmentStore } from '@/stores/assessment-store';
 import { useProviderStore } from '@/stores/provider-store';
 import { useTTSStore } from '@/stores/tts-store';
 
@@ -25,7 +24,6 @@ export function useRecommendations() {
   });
   const activeHeaderKey = PROVIDER_REGISTRY[activeProviderId]?.headerKey;
   const recommendationsCount = useTTSStore((s) => s.recommendationsCount);
-  const levelEstimate = useAssessmentStore((s) => s.placement?.levelEstimate ?? null);
 
   const fetchRecommendations = useCallback(
     async (content: string, contentType: string, count?: number) => {
@@ -73,7 +71,6 @@ export function useRecommendations() {
             count: resolvedCount,
             provider: activeProviderId,
             providerConfigs: providers,
-            userLevel: levelEstimate,
           }),
         });
         const data = await res.json();
@@ -92,7 +89,7 @@ export function useRecommendations() {
         setIsLoading(false);
       }
     },
-    [activeProviderId, providers, activeApiKey, activeHeaderKey, recommendationsCount, levelEstimate],
+    [activeProviderId, providers, activeApiKey, activeHeaderKey, recommendationsCount],
   );
 
   const clear = useCallback(() => setRecommendations([]), []);

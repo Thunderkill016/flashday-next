@@ -399,7 +399,7 @@
         "const setPlacementEstimate = useAssessmentStore((s) => s.setPlacementEstimate);",
         "userLevel: levelEstimate,",
         "levelEstimate,",
-        "updateUserLevel: (level) => setPlacementEstimate(level as CEFRLevel, 'chat_tool'),",
+        "updateUserLevel: (level) => setPlacementEstimate(level as CEFRLevel),",
         "currentDifficulty: activeContentItem?.difficulty ?? cefrToDifficulty(levelEstimate),"
       ],
       "classification": "LEGIT_CANDIDATE_SIGNAL",
@@ -1099,21 +1099,6 @@
       "classification": "LEGIT_CANDIDATE_SIGNAL",
       "reason": "unresolved spots feed workspace remediation data",
       "migrationNode": "W2-WS2"
-    },
-    {
-      "id": "hooks-use-recommendations.assessment-currentLevel",
-      "file": "src/hooks/use-recommendations.ts",
-      "source": "assessment.currentLevel",
-      "anchor": "see reason",
-      "occurrences": [
-        "import { useAssessmentStore } from '@/stores/assessment-store';",
-        "const levelEstimate = useAssessmentStore((s) => s.placement?.levelEstimate ?? null);",
-        "userLevel: levelEstimate,",
-        "[activeProviderId, providers, activeApiKey, activeHeaderKey, recommendationsCount, levelEstimate],"
-      ],
-      "classification": "LEGIT_CANDIDATE_SIGNAL",
-      "reason": "userLevel \u2192 recommendation request; advisory",
-      "migrationNode": "W2-AS1"
     },
     {
       "id": "hooks-use-review-summary.records",
@@ -2592,7 +2577,7 @@
         "placement: PlacementEstimate | null;",
         "/** Persisted payload keeps the legacy `currentLevel` mirror so older readers",
         "currentLevel?: CEFRLevel | null;",
-        "setPlacementEstimate: (level: CEFRLevel, source: 'chat_tool') => void;",
+        "setPlacementEstimate: (level: CEFRLevel) => void;",
         "currentLevel: settings.placement?.levelEstimate ?? null,",
         "/** True when a persisted value is a well-formed PlacementEstimate with",
         "function isPlacementEstimate(value: unknown): value is PlacementEstimate {",
@@ -2603,7 +2588,7 @@
         "function legacyPlacementFrom(level: CEFRLevel | null | undefined): PlacementEstimate | null {",
         "levelEstimate: level,",
         "export const useAssessmentStore = create<AssessmentStore>((set, get) => ({",
-        "setPlacementEstimate: (level, source) => {",
+        "setPlacementEstimate: (level) => {",
         "const placement: PlacementEstimate = {",
         "levelEstimate: level,",
         "const placement: PlacementEstimate = {",

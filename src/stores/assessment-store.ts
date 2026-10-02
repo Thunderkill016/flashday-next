@@ -114,11 +114,12 @@ interface PersistedAssessmentSettings extends AssessmentSettings {
 
 interface AssessmentStore extends AssessmentSettings {
   /**
-   * Record a claimed level from the chat tool's updateUserLevel. The source
-   * literal is pinned to 'chat_tool' — placement_test provenance can only be
-   * produced by setResult() with a real AssessmentResult.
+   * Record a claimed level from the chat tool's updateUserLevel. Provenance is
+   * hard-coded to 'chat_tool' inside the writer — callers cannot pass a source,
+   * so placement_test provenance can only be produced by setResult() with a
+   * real AssessmentResult.
    */
-  setPlacementEstimate: (level: CEFRLevel, source: 'chat_tool') => void;
+  setPlacementEstimate: (level: CEFRLevel) => void;
   setResult: (result: AssessmentResult) => void;
   dismissReminder: () => void;
   resetReminder: () => void;
@@ -171,7 +172,7 @@ function isPlacementEstimate(value: unknown): value is PlacementEstimate {
   if (v.source === 'chat_tool') {
     return v.method === 'chat_tool' && v.score === null && v.completedAt > 0;
   }
-  return v.source === 'legacy_payload' && v.method === 'hydrated_legacy' && v.score === null;
+  return v.source === 'legacy_payload' && v.method === 'hydrated_legacy' && v.score === null && v.completedAt === 0;
 }
 
 /** Hydrate a legacy `currentLevel` string into an advisory estimate. The
@@ -201,11 +202,11 @@ const defaults: AssessmentSettings = {
 export const useAssessmentStore = create<AssessmentStore>((set, get) => ({
   ...defaults,
 
-  setPlacementEstimate: (level, source) => {
+  setPlacementEstimate: (level) => {
     const state = get();
     const placement: PlacementEstimate = {
       levelEstimate: level,
-      source,
+      source: 'chat_tool',
       score: null,
       completedAt: Date.now(),
       method: 'chat_tool',

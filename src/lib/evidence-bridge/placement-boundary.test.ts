@@ -147,7 +147,7 @@ describe('placement writes never mint evidence', () => {
   });
 
   it('setPlacementEstimate (chat-tool claim) writes an advisory estimate and zero evidenceEvents', async () => {
-    useAssessmentStore.getState().setPlacementEstimate('C1', 'chat_tool');
+    useAssessmentStore.getState().setPlacementEstimate('C1');
 
     const placement = useAssessmentStore.getState().placement;
     expect(placement?.source).toBe('chat_tool');
@@ -187,7 +187,7 @@ describe('capability authority ignores placement', () => {
       {},
     );
 
-    useAssessmentStore.getState().setPlacementEstimate('C2', 'chat_tool');
+    useAssessmentStore.getState().setPlacementEstimate('C2');
     const withPlacement = projectLearnerState(
       LEARNER,
       events as never[],
@@ -207,7 +207,7 @@ describe('capability authority ignores placement', () => {
     const runA = strip(await runPilotAttempt(LEARNER));
 
     await db.evidenceEvents.clear();
-    useAssessmentStore.getState().setPlacementEstimate('C2', 'chat_tool');
+    useAssessmentStore.getState().setPlacementEstimate('C2');
     const runB = strip(await runPilotAttempt(LEARNER));
 
     expect(runB).toEqual(runA);
@@ -305,22 +305,22 @@ describe('hydration', () => {
 /* ── 6. Provenance cannot be forged ── */
 
 describe('provenance integrity', () => {
-  it('the claim setter cannot produce placement_test provenance', () => {
-    // Type-level pin: 'placement_test' is not assignable to the setter's
-    // source parameter — quiz provenance exists only through setResult().
-    const source: 'chat_tool' = 'chat_tool';
-    // @ts-expect-error — 'placement_test' must never be settable via claims
-    useAssessmentStore.getState().setPlacementEstimate('C1', 'placement_test');
+  it('the claim setter always writes chat_tool provenance, even if a JS caller passes a source', () => {
+    // Runtime pin: the writer takes no source parameter and hard-codes
+    // provenance, so an untyped caller smuggling a second argument cannot
+    // produce placement_test — quiz provenance exists only via setResult().
+    const untypedSetter = useAssessmentStore.getState().setPlacementEstimate as (...args: unknown[]) => void;
+    untypedSetter('C1', 'placement_test');
 
-    useAssessmentStore.getState().setPlacementEstimate('C1', source);
-    const placement = useAssessmentStore.getState().placement;
-    expect(placement).toMatchObject({
+    expect(useAssessmentStore.getState().placement).toMatchObject({
       levelEstimate: 'C1',
       source: 'chat_tool',
       method: 'chat_tool',
       score: null,
       version: 1,
     });
+    const persisted = JSON.parse(localStorageData.get('echotype_assessment') ?? '{}');
+    expect(persisted.placement?.source).toBe('chat_tool');
   });
 
   it('a malformed persisted placement object is rejected, not trusted', () => {
@@ -342,6 +342,14 @@ describe('provenance integrity', () => {
         completedAt: 1,
         version: 1,
       }, // invalid CEFR
+      {
+        levelEstimate: 'B1',
+        source: 'legacy_payload',
+        method: 'hydrated_legacy',
+        score: null,
+        completedAt: 1_700_000_000_000,
+        version: 1,
+      }, // legacy provenance claiming a known timestamp — malformed
     ]) {
       localStorageData.set('echotype_assessment', JSON.stringify({ placement: bad }));
       resetPlacementStore();
@@ -391,10 +399,10 @@ describe('daily-plan boundary', () => {
     await seedContent();
     const { generateDailyPlan } = await import('@/lib/daily-plan');
 
-    useAssessmentStore.getState().setPlacementEstimate('A1', 'chat_tool');
+    useAssessmentStore.getState().setPlacementEstimate('A1');
     const lowPlan = await generateDailyPlan(goal, { dateKey: '2026-03-12' });
 
-    useAssessmentStore.getState().setPlacementEstimate('C2', 'chat_tool');
+    useAssessmentStore.getState().setPlacementEstimate('C2');
     const highPlan = await generateDailyPlan(goal, { dateKey: '2026-03-12' });
 
     expect(semanticKey(highPlan)).toEqual(semanticKey(lowPlan));
