@@ -22,7 +22,8 @@ import { createDexieEventStore } from './store';
  */
 
 const registry = fixtureRegistry();
-const LEARNER = 'local.anonymous';
+// The persistent anonymous subject — generated once, stored, stable.
+const LEARNER = currentLearnerId();
 
 /** A real registered fixture task — used to exercise commit mechanics. */
 const MAPPED: MappedAttempt = {
@@ -32,6 +33,10 @@ const MAPPED: MappedAttempt = {
   attemptId: 'sub-1',
   response: "What's your name?",
 };
+
+/** Seed an event through the seam inside a legal ambient transaction. */
+const seedEvent = (mapped: MappedAttempt) =>
+  db.transaction('rw', [db.evidenceEvents], () => commitMappedAttempt(db, mapped, LEARNER));
 
 const legacyAction = (over: Partial<LegacyAction> = {}): LegacyAction => ({
   id: 'sub-1',
@@ -101,6 +106,68 @@ describe('contract-mapping audit (W2-02 §6–§8)', () => {
   });
 });
 
+describe('MAPPED_SAFE requires an action-specific provenance mapper (W2-02R)', () => {
+  const AUDIT = LEGACY_CONTRACT_AUDIT as unknown as { push(e: unknown): number; pop(): unknown };
+
+  it('a bare {status, taskId} flip is not activatable — missing map throws', () => {
+    AUDIT.push({
+      action: 'vocabulary:meaning',
+      status: 'MAPPED_SAFE',
+      taskId: 'task.meet.retrieval.ask_name',
+      reason: 'injected MAPPED_SAFE without a mapper',
+    });
+    try {
+      expect(() => mapLegacyAttempt(legacyAction())).toThrow(/no provenance mapper/);
+    } finally {
+      AUDIT.pop();
+    }
+  });
+
+  it('a mapper that drops declared support provenance fails closed (laundering guard)', () => {
+    AUDIT.push({
+      action: 'text-cycle:recall',
+      status: 'MAPPED_SAFE',
+      taskId: 'task.meet.retrieval.ask_name',
+      // Dishonest mapper: omits assisted/sourceRevealed → would mint
+      // apparent independent evidence from an assisted recall.
+      map: (a: LegacyAction) => ({ response: a.response }),
+      reason: 'injected laundering mapper',
+    });
+    try {
+      const assistedRecall = legacyAction({
+        kind: 'text-cycle',
+        mode: 'recall',
+        support: { assisted: true, sourceRevealed: true, translation: true },
+      });
+      expect(() => mapLegacyAttempt(assistedRecall)).toThrow(
+        /dropped support provenance: assisted, sourceRevealed, translation/,
+      );
+    } finally {
+      AUDIT.pop();
+    }
+  });
+
+  it('an honest mapper preserves every declared support fact', () => {
+    AUDIT.push({
+      action: 'text-cycle:recall',
+      status: 'MAPPED_SAFE',
+      taskId: 'task.meet.retrieval.ask_name',
+      map: (a: LegacyAction) => ({ response: a.response, support: { ...a.support } }),
+      reason: 'injected honest mapper',
+    });
+    try {
+      const mapped = mapLegacyAttempt(
+        legacyAction({ kind: 'text-cycle', mode: 'recall', support: { assisted: true } }),
+      );
+      expect(mapped).toBeTruthy();
+      expect(mapped?.support?.assisted).toBe(true);
+      expect(mapped?.id).toBe('evt.sub-1');
+    } finally {
+      AUDIT.pop();
+    }
+  });
+});
+
 describe('atomic commit mechanics (W2-02 §3, §13)', () => {
   it('commits history + event in one transaction', async () => {
     await db.transaction('rw', [db.learningAttempts, db.evidenceEvents], async () => {
@@ -117,7 +184,7 @@ describe('atomic commit mechanics (W2-02 §3, §13)', () => {
 
   it('F1 — event conflict inside the transaction rolls back legacy history', async () => {
     // Seed a conflicting event: same id, different content.
-    await commitMappedAttempt(db, MAPPED, LEARNER);
+    await seedEvent(MAPPED);
     await expect(
       db.transaction('rw', [db.learningAttempts, db.evidenceEvents], async () => {
         await db.learningAttempts.add(attemptRow('sub-1'));
@@ -143,30 +210,42 @@ describe('atomic commit mechanics (W2-02 §3, §13)', () => {
   });
 
   it('duplicate submit dedupes — identical redelivery does not double-mint', async () => {
-    await commitMappedAttempt(db, MAPPED, LEARNER);
-    await commitMappedAttempt(db, MAPPED, LEARNER);
+    await seedEvent(MAPPED);
+    await seedEvent(MAPPED);
     const events = await db.evidenceEvents.toArray();
     expect(events).toHaveLength(1);
     expect(events[0].id).toBe('evt.sub-1');
   });
 
   it('same event id with different content is refused (fail-closed)', async () => {
-    await commitMappedAttempt(db, MAPPED, LEARNER);
+    await seedEvent(MAPPED);
     await expect(
-      commitMappedAttempt(db, { ...MAPPED, occurredAt: 2000 }, LEARNER),
+      db.transaction('rw', [db.evidenceEvents], () =>
+        commitMappedAttempt(db, { ...MAPPED, occurredAt: 2000 }, LEARNER),
+      ),
     ).rejects.toThrow(/conflict/);
     expect(await db.evidenceEvents.count()).toBe(1);
   });
 
-  it('a mapped commit outside any transaction still works via the same bridge path', async () => {
-    await commitMappedAttempt(db, MAPPED, LEARNER);
-    expect(await db.evidenceEvents.count()).toBe(1);
+  it('a mapped commit outside any transaction is refused — no standalone minting (W2-02R)', async () => {
+    await expect(commitMappedAttempt(db, MAPPED, LEARNER)).rejects.toThrow(/ambient/);
+    expect(await db.evidenceEvents.count()).toBe(0);
+  });
+
+  it('a mapped commit inside a transaction lacking evidenceEvents is refused', async () => {
+    await expect(
+      db.transaction('rw', [db.learningAttempts], () => commitMappedAttempt(db, MAPPED, LEARNER)),
+    ).rejects.toThrow(/evidenceEvents/);
+    expect(await db.evidenceEvents.count()).toBe(0);
   });
 });
 
-describe('learner identity (W2-02 §9)', () => {
-  it('uses the authenticated user id or the stable local anonymous subject', async () => {
-    expect(currentLearnerId()).toBe('local.anonymous');
+describe('learner identity (W2-02 §9, W2-02R)', () => {
+  it('anonymous subject is a persistent unique local.<uuid>, not a constant', async () => {
+    const subject = currentLearnerId();
+    expect(subject).toMatch(/^local\.[0-9a-f-]{36}$/);
+    // Stable across repeated calls — generated once, persisted, not per-call.
+    expect(currentLearnerId()).toBe(subject);
     await switchDatabaseForUser('w2-02-identity-test');
     try {
       expect(currentLearnerId()).toBe('w2-02-identity-test');
@@ -174,7 +253,23 @@ describe('learner identity (W2-02 §9)', () => {
       await db.delete();
       await switchDatabaseForUser(null);
     }
-    expect(currentLearnerId()).toBe('local.anonymous');
+    // Switching back to the anonymous store restores the SAME local subject —
+    // the subject outlives the account transition; events keep it forever.
+    expect(currentLearnerId()).toBe(subject);
+  });
+
+  it('anonymous EvidenceEvent learnerId is never rewritten by an account switch', async () => {
+    const subject = currentLearnerId();
+    await seedEvent({ ...MAPPED, id: 'evt.identity-1', attemptId: 'identity-1' });
+    await switchDatabaseForUser('w2-02-identity-test-2');
+    try {
+      expect(await db.evidenceEvents.count()).toBe(0); // fresh account DB
+    } finally {
+      await db.delete();
+      await switchDatabaseForUser(null);
+    }
+    const event = await db.evidenceEvents.get('evt.identity-1');
+    expect(event?.learnerId).toBe(subject); // immutable, not rebound to the user id
   });
 });
 
@@ -216,11 +311,7 @@ describe('production paths stay history-only while unmapped (W2-02 §8, §24)', 
 
 describe('event-store determinism preserved through the seam', () => {
   it('bridge re-scores deterministic contracts — UI outcome is never trusted', async () => {
-    await commitMappedAttempt(
-      db,
-      { ...MAPPED, id: 'evt.sub-2', attemptId: 'sub-2', outcome: 'success' },
-      LEARNER,
-    );
+    await seedEvent({ ...MAPPED, id: 'evt.sub-2', attemptId: 'sub-2', outcome: 'success' });
     const event = (await db.evidenceEvents.toArray())[0];
     // The evaluator decides; a caller-claimed outcome cannot force success.
     expect(event.evaluation?.authority).not.toBe('self_report');
@@ -234,6 +325,9 @@ describe('wired production path — seam proven end-to-end (W2-02 §13, §24, §
       action: 'vocabulary:meaning',
       status: 'MAPPED_SAFE',
       taskId: 'task.meet.retrieval.ask_name',
+      // Action-specific provenance mapper (W2-02R): carries declared support
+      // facts (revealed) through verbatim — the guard refuses any drop.
+      map: (a: LegacyAction) => ({ response: a.response, support: a.support }),
       reason: 'test-injected mapping — exercises the wired seam on a real registered contract',
     });
   const importAndSubmit = async (id: string, answer = 'có ích') => {
@@ -253,7 +347,7 @@ describe('wired production path — seam proven end-to-end (W2-02 §13, §24, §
       expect(events[0].id).toBe('evt.vocab-mapped-1');
       expect(events[0].attempt?.attemptId).toBe('vocab-mapped-1');
       expect(events[0].taskId).toBe('task.meet.retrieval.ask_name');
-      expect(events[0].learnerId).toBe('local.anonymous');
+      expect(events[0].learnerId).toBe(LEARNER);
     } finally {
       AUDIT.pop();
     }
@@ -263,11 +357,12 @@ describe('wired production path — seam proven end-to-end (W2-02 §13, §24, §
     injectMapping();
     try {
       // Seed a conflicting event under the id this submission would mint.
-      await commitMappedAttempt(
-        db,
-        { taskId: 'task.meet.retrieval.ask_name', occurredAt: 1, id: 'evt.vocab-f1', response: 'earlier' },
-        LEARNER,
-      );
+      await seedEvent({
+        taskId: 'task.meet.retrieval.ask_name',
+        occurredAt: 1,
+        id: 'evt.vocab-f1',
+        response: 'earlier',
+      });
       await expect(importAndSubmit('vocab-f1', 'a different answer')).rejects.toThrow(/conflict/);
       expect(await db.learningAttempts.count()).toBe(0);
       expect(await db.sessions.count()).toBe(0);

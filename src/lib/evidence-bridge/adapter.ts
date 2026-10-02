@@ -14,11 +14,14 @@
  * the vendored kernel covers vocabulary recall, orthography, dictation,
  * application, morphology construction, text-cycle stages, or pronunciation
  * attempts. mapLegacyAttempt therefore returns null for all of them and the
- * adapter mints nothing. When W2-03 registers real contracts, entries flip to
- * MAPPED_SAFE and events flow atomically through the same transaction that
- * writes the legacy history row.
+ * adapter mints nothing.
+ *
+ * W2-03 activation is NOT a status flip. An entry becomes MAPPED_SAFE only
+ * with all of: a registered TaskContract whose capability/modality/purpose
+ * honestly matches the action, an honest evaluator, a complete
+ * action-specific provenance `map`, and mapping regression tests.
  */
-import type { Table } from 'dexie';
+import Dexie, { type Table } from 'dexie';
 import { submitAttempt } from './bridge';
 import { fixtureRegistry } from './registry';
 import { createDexieEventStore } from './store';
@@ -43,14 +46,29 @@ export interface LegacyAction {
 export type MappingStatus = 'MAPPED_SAFE' | 'HISTORY_ONLY' | 'BLOCKED_PENDING_W2_03';
 
 /**
- * One audit row per live legacy action shape. MAPPED_SAFE additionally names
- * the registered taskId it binds to; BLOCKED_PENDING_W2_03 names the contract
- * gap W2-03 must close. Nothing here may invent semantics to force a mapping.
+ * The observed-reality subset an action-specific mapper may author. The
+ * mapper reports what actually happened — response, support genuinely
+ * used, feedback rows, evaluationCtx when the contract legitimately needs
+ * observed context. It may NEVER author capabilityId, purpose, modality,
+ * transfer status, freshness class, evaluation authority, or mastery
+ * state — those remain registered-contract derived inside the bridge.
+ * Event identity (id/attemptId) and taskId stay adapter-owned.
+ */
+export type ObservedAttempt = Pick<MappedAttempt, 'response' | 'support' | 'feedback' | 'occurredAt' | 'evaluationCtx'>;
+
+/**
+ * One audit row per live legacy action shape. MAPPED_SAFE requires BOTH a
+ * registered taskId AND an action-specific provenance `map` — a bare
+ * {status, taskId} flip is not activatable because each legacy shape
+ * carries different support provenance that must survive into the
+ * submission. BLOCKED_PENDING_W2_03 names the contract gap W2-03 must
+ * close. Nothing here may invent semantics to force a mapping.
  */
 export interface LegacyAuditEntry {
   action: string;
   status: MappingStatus;
   taskId?: string;
+  map?: (action: LegacyAction) => ObservedAttempt;
   reason: string;
 }
 
@@ -155,14 +173,28 @@ export function mapLegacyAttempt(action: LegacyAction): MappedAttempt | null {
     (e) => e.action === auditKey(action) && e.status === 'MAPPED_SAFE' && e.taskId,
   );
   if (!entry?.taskId) return null;
+  // A MAPPED_SAFE status without an action-specific provenance mapper is a
+  // misconfiguration — refuse closed rather than mint with bare defaults.
+  if (!entry.map) throw new Error(`MAPPED_SAFE audit entry ${entry.action} has no provenance mapper`);
+  const observed = entry.map(action);
+  // Support-provenance guard: every support fact the caller declared true
+  // on the action (revealed answer, translation used, assisted recall,
+  // sourceRevealed...) must survive into the submission verbatim. A mapper
+  // that drops `assisted` turns assisted recall into apparent independent
+  // evidence — the laundering this seam exists to prevent.
+  const mappedSupport = (observed.support ?? {}) as Record<string, unknown>;
+  const dropped = Object.entries(action.support ?? {})
+    .filter(([, v]) => v === true)
+    .map(([k]) => k)
+    .filter((k) => mappedSupport[k] !== true);
+  if (dropped.length > 0)
+    throw new Error(`mapped submission for ${entry.action} dropped support provenance: ${dropped.join(', ')}`);
   return {
     taskId: entry.taskId,
-    occurredAt: action.occurredAt,
     id: `evt.${action.id}`,
     attemptId: action.id,
-    response: action.response,
-    support: action.support,
-    feedback: action.feedback,
+    ...observed,
+    occurredAt: observed.occurredAt ?? action.occurredAt,
   };
 }
 
@@ -174,15 +206,28 @@ const registry = () => (cachedRegistry ??= fixtureRegistry());
  * ambient transaction — the same Dexie transaction that writes the legacy
  * history row. Design A (W2-02 §5): the Dexie table op joins the ambient
  * transaction, so an event failure rolls back history and vice versa.
+ *
+ * W2-02R: the ambient transaction is MANDATORY, not conventional. A legacy
+ * adapter call with no enclosing semantic/history transaction would mint a
+ * standalone EvidenceEvent — the split-brain path this gate exists to
+ * prevent — so it throws. (submitAttempt itself stays usable standalone
+ * for native mission surfaces; only this legacy seam is restricted.)
  */
 export async function commitMappedAttempt(
   database: { evidenceEvents?: Table<EvidenceEvent, string> },
   mapped: MappedAttempt,
   learnerId: string,
 ): Promise<void> {
+  const tx = Dexie.currentTransaction;
+  if (!tx)
+    throw new Error(
+      'commitMappedAttempt requires an ambient Dexie transaction — legacy evidence commits atomically with history or not at all',
+    );
   if (!database.evidenceEvents) {
     throw new Error('mapped semantic commit requires the evidenceEvents table in scope');
   }
+  if (!tx.storeNames.includes(database.evidenceEvents.name))
+    throw new Error('ambient transaction does not include evidenceEvents — event would not share the history commit');
   await submitAttempt(createDexieEventStore(database.evidenceEvents), registry(), {
     ...mapped,
     learnerId,

@@ -387,15 +387,34 @@ export function getDatabaseNameForUser(userId: string | null): string {
 let activeUserId: string | null = null;
 export let db = new FlashDayDB(getDatabaseNameForUser(activeUserId));
 
+const LOCAL_SUBJECT_KEY = 'flashday.localSubjectId';
+/** Non-DOM runtimes (tests, SSR) get a process-local store — still one
+ * subject per anonymous learner store, just without real persistence. */
+const memorySubjectStore = new Map<string, string>();
+const subjectStore = {
+  get: (key: string) =>
+    typeof localStorage === 'undefined' ? (memorySubjectStore.get(key) ?? null) : localStorage.getItem(key),
+  set: (key: string, value: string) =>
+    typeof localStorage === 'undefined' ? void memorySubjectStore.set(key, value) : localStorage.setItem(key, value),
+};
+
 /**
- * The evidence learner subject: authenticated user id, or the device-local
- * anonymous subject. Events are stored in the per-account database this id
- * selects, so a learnerId is stable and immutable after commit — an
- * anonymous→authenticated transition never rewrites existing events
- * (association is a later replay/sync concern, not a mutation).
+ * The evidence learner subject: authenticated user id, or a persistent
+ * device-local subject `local.<uuid>` — generated once, stored, stable
+ * across reloads, never derived from mutable session/display state.
+ * Events are stored in the per-account database this id selects, so a
+ * learnerId is stable and immutable after commit — an anonymous→
+ * authenticated transition never rewrites existing events (association is
+ * a later replay/sync concern, W2-VR1, not a mutation).
  */
 export function currentLearnerId(): string {
-  return activeUserId ?? 'local.anonymous';
+  if (activeUserId) return activeUserId;
+  let id = subjectStore.get(LOCAL_SUBJECT_KEY);
+  if (!id) {
+    id = `local.${crypto.randomUUID()}`;
+    subjectStore.set(LOCAL_SUBJECT_KEY, id);
+  }
+  return id;
 }
 
 export async function switchDatabaseForUser(userId: string | null): Promise<void> {

@@ -14,6 +14,12 @@ mission-scoped communicative contract — modalities `spoken_production`,
 `partner_turn`, `choice`, `audio_line`, `dialogue`, `cued_prompt`, `none`;
 evaluators score communicative `requiredFunctions`.
 
+Correction (W2-02R review): the capability *graph* also declares
+reading/writing constructs — `reception.read.simple_sign_or_menu_item`,
+`production.write.personal_info_short` — but `fixtures.js` registers no
+TaskContract bound to them. They therefore provide no legal bridge mapping;
+the zero-coverage verdict is unchanged.
+
 No registered contract covers any EchoType legacy action shape. Per §7, a
 mapping is MAPPED_SAFE only when the construct, capability, modality, purpose,
 response shape, and evaluator all honestly match — similarity is not enough.
@@ -45,15 +51,22 @@ Bookkeeping rows (`sessions`, `records`/FSRS fields, `dailyTasks` lifecycle,
 `mediaBlobs`) are not learner actions — they remain history/scheduler state
 under the W2-01 inventory and are not candidates for minting.
 
-## Identity contract
+## Identity contract (W2-02R)
 
-`currentLearnerId()` in `src/lib/db.ts` returns `activeUserId ??
-'local.anonymous'` — the same convention `mission/page.tsx` already uses.
+`currentLearnerId()` in `src/lib/db.ts` returns `activeUserId` or a
+**persistent unique local subject** `local.<uuid>` — generated once, stored
+in `localStorage` (browser) / a process-local store elsewhere, stable across
+reloads, never derived from mutable session/display state, never rewritten.
+The same function now backs `mission/page.tsx` (previously an inline
+`'local.anonymous'` constant — a named constant is not a unique subject and
+two anonymous installs would collide).
+
 Events are stored in the per-account database (`echotype:user:<id>` /
 `echotype:anonymous`), so a stamped `learnerId` is stable for that store and
 **immutable after commit**. An anonymous→authenticated transition swaps
-databases (`switchDatabaseForUser`); existing events are never rewritten —
-association is a W2-09/VR1 replay concern, not a mutation.
+databases (`switchDatabaseForUser`); existing events are never rewritten and
+the anonymous subject stays `local.<uuid>` on return — association is a
+W2-09/VR1 replay concern, not a mutation.
 
 ## Event identity
 
@@ -70,6 +83,13 @@ bridge's `submitAttempt → createDexieEventStore(db.evidenceEvents).append`
 joins the ambient transaction. Unmapped actions keep the exact legacy
 transaction shape — zero behavioral change while every audit entry is
 unmapped.
+
+W2-02R hardening — the ambient transaction is **enforced**, not
+conventional: `commitMappedAttempt` refuses when `Dexie.currentTransaction`
+is null, and refuses when the ambient transaction's `storeNames` do not
+include `evidenceEvents`. A legacy adapter can therefore never mint a
+standalone event; only native mission surfaces may still call
+`submitAttempt` outside a transaction.
 
 | Path | Transaction tables (mapped case) |
 |---|---|
@@ -89,6 +109,10 @@ Remote sync is outside the semantic transaction (F3): no sync call was added;
 | Duplicate submit | `learningAttempts.get(id)` early-return → no-op; or identical event → dedupe | wired-path test |
 | Same id, different content | conflict → refusal, old rows unchanged | store-level + mechanism tests |
 | Account switch mid-tx | `database !== db` / `isCurrent()` guards roll back history AND event | guard runs after the commit call |
+| Legacy commit outside any tx | refused — `commitMappedAttempt` throws before any write | tx-required tests (W2-02R) |
+| Tx without `evidenceEvents` in scope | refused — `storeNames` check throws | tx-required tests (W2-02R) |
+| `MAPPED_SAFE` w/o provenance mapper | `mapLegacyAttempt` throws | mapper-contract tests |
+| Mapper drops declared support fact | `mapLegacyAttempt` throws `dropped support provenance` | laundering-guard test |
 | Unmapped action | history persists, zero EvidenceEvents | production-path test |
 | Pre-cutover row | history exists + no event → retry mints nothing (early-return precedes the commit call) | pre-cutover test |
 
@@ -100,6 +124,32 @@ submission transaction, and the idempotent early-return
 predates the adapter can never gain an event — retries hit the early return,
 and no read path mints (§10, §12, §27: no upgrade/hydration/sync backfill).
 
+## MAPPED_SAFE is a mapper contract, not a flag (W2-02R)
+
+An audit entry is activatable only with an action-specific provenance
+`map(action) → ObservedAttempt`. The mapper authors observed reality only
+(`response`, `support`, `feedback`, `occurredAt`, `evaluationCtx`); event
+identity (`id`/`attemptId`) and `taskId` stay adapter-owned, and capability,
+purpose, transfer, freshness, and evaluation authority remain
+contract-derived inside the bridge.
+
+Two fail-closed guards make the seam honest:
+
+- `MAPPED_SAFE` with no `map` → `mapLegacyAttempt` throws (a bare
+  `{status, taskId}` entry cannot mint).
+- Every support fact declared true on the action (`revealed`,
+  `translation`, `assisted`, `sourceRevealed`) must survive into the mapped
+  submission verbatim; a mapper that drops one throws
+  `dropped support provenance` — an assisted recall can never mint as
+  independent evidence.
+
+### W2-03 unblock condition (reframed)
+
+Activating an action requires **all** of: a registered `TaskContract` whose
+capability/modality/purpose honestly matches the action, an honest
+evaluator, a complete action-specific provenance mapper, and mapping
+regression tests. Anything less remains `BLOCKED_PENDING_W2_03`.
+
 ## What W2-02 did NOT do
 
 No planner/consumer migration, no FSRS semantics change, no placement change,
@@ -110,7 +160,8 @@ changes, no new capability semantics — and no fabricated task contracts.
 
 - `src/lib/evidence-bridge/adapter.ts` — audit table + `mapLegacyAttempt` +
   `commitMappedAttempt` (the single adapter surface)
-- `src/lib/db.ts` — `currentLearnerId()`
+- `src/lib/db.ts` — `currentLearnerId()` (persistent `local.<uuid>` subject)
+- `src/app/(app)/mission/page.tsx` — mission path shares `currentLearnerId()`
 - `src/lib/vocabulary-repository.ts` — tx list + seam call
 - `src/lib/learning-activity-persistence.ts` — tx list + seam call, widened
   `evidenceEvents?` signature (narrow test DBs unchanged; a mapped action on a

@@ -17,7 +17,7 @@ import { Badge } from '@/components/ui/badge';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
-import { db } from '@/lib/db';
+import { currentLearnerId, db } from '@/lib/db';
 import {
   CAP_LABEL,
   FUNCTION_HINT,
@@ -81,7 +81,7 @@ export default function MissionPage() {
   }, []);
 
   useEffect(() => {
-    const learnerId = user?.id ?? 'local.anonymous';
+    const learnerId = currentLearnerId();
     const session = createMissionSession({
       learnerId,
       missionId: MISSION_ID,

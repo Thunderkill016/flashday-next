@@ -31,7 +31,13 @@ export async function persistLearningAttempt(
     mode: attempt.cycle?.stage ?? attempt.activity,
     occurredAt: attempt.createdAt,
     response: attempt.answer,
-    support: attempt.usedTranslation ? { translation: true } : undefined,
+    // Declared support facts — an honest future mapper must carry all of
+    // them into the submission; the adapter refuses closed if any drop.
+    support: {
+      ...(attempt.usedTranslation ? { translation: true } : {}),
+      ...(attempt.cycle?.assisted ? { assisted: true } : {}),
+      ...(attempt.cycle?.sourceRevealed ? { sourceRevealed: true } : {}),
+    },
     feedback: attempt.feedback,
   });
   await database.transaction(
