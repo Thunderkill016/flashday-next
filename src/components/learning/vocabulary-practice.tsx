@@ -35,6 +35,10 @@ export function VocabularyPractice({
   const owner = useRef(db);
   const previous = useRef(record?.lastPracticed);
   const id = useRef(nanoid());
+  // Immutable attempt timestamp — set once when the learner locks the
+  // answer at Compare (or declares "I don't know yet"), reused verbatim
+  // on rating retries so a redelivery carries the same attempt time.
+  const attemptedAt = useRef<number | null>(null);
   const [answer, setAnswer] = useState('');
   const [context, setContext] = useState('');
   const [revealed, setRevealed] = useState(false);
@@ -112,6 +116,7 @@ export function VocabularyPractice({
           revealed,
           rating,
           expectedReview: previous.current,
+          attemptedAt: attemptedAt.current ?? undefined,
         },
         owner.current,
       );
@@ -243,6 +248,7 @@ export function VocabularyPractice({
                   return;
                 }
                 setError('');
+                attemptedAt.current ??= Date.now();
                 setRevealed(true);
               }}
               className={`${VOCAB_CONTROL} bg-indigo-600 text-white`}
@@ -253,6 +259,7 @@ export function VocabularyPractice({
               type="button"
               disabled={!ready || mode === 'application'}
               onClick={() => {
+                attemptedAt.current ??= Date.now();
                 setAnswer('[not recalled]');
                 setRevealed(true);
               }}
