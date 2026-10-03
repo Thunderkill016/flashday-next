@@ -51523,7 +51523,7 @@
     "level": "a2",
     "levelConfidence": 0.77,
     "canonicalUrl": "https://learningenglish.voanews.com/a/early-literacy-comprehension/7155524.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 5,
     "capabilities": [
@@ -51599,7 +51599,7 @@
     "level": "a2",
     "levelConfidence": 0.75,
     "canonicalUrl": "https://learningenglish.voanews.com/a/early-literacy-vocabulary/7155516.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 5,
     "capabilities": [
@@ -51675,7 +51675,7 @@
     "level": "a2",
     "levelConfidence": 0.76,
     "canonicalUrl": "https://learningenglish.voanews.com/a/early-literacy-fluency/7155518.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 5,
     "capabilities": [
@@ -51747,7 +51747,7 @@
     "level": "b1",
     "levelConfidence": 0.64,
     "canonicalUrl": "https://learningenglish.voanews.com/a/early-literacy-letter-sound-connection-phonics/7155512.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 5,
     "capabilities": [
@@ -51826,7 +51826,7 @@
     "level": "a2",
     "levelConfidence": 0.74,
     "canonicalUrl": "https://learningenglish.voanews.com/a/early-literacy-sound-language-awareness/7155504.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 5,
     "capabilities": [
@@ -51898,7 +51898,7 @@
     "level": "a1",
     "levelConfidence": 0.82,
     "canonicalUrl": "https://learningenglish.voanews.com/a/early-literacy-print-awareness/7155499.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 5,
     "capabilities": [
@@ -51973,7 +51973,7 @@
     "level": "a2",
     "levelConfidence": 0.75,
     "canonicalUrl": "https://learningenglish.voanews.com/a/early-literacy-introduction-to-reading-skills/7155496.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 5,
     "capabilities": [
@@ -52047,7 +52047,7 @@
     "level": "a2",
     "levelConfidence": 0.78,
     "canonicalUrl": "https://learningenglish.voanews.com/a/early-literacy-instructional-classroom-language/7165568.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 4,
     "capabilities": [
@@ -61330,7 +61330,7 @@
     "level": "a2",
     "levelConfidence": 0.73,
     "canonicalUrl": "https://learningenglish.voanews.com/a/americas-presidents-washington/3714877.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 4,
     "capabilities": [
@@ -61414,7 +61414,7 @@
     "level": "a2",
     "levelConfidence": 0.75,
     "canonicalUrl": "https://learningenglish.voanews.com/a/joe-biden-oldest/7436052.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 1,
     "capabilities": [
@@ -61476,7 +61476,7 @@
     "level": "a2",
     "levelConfidence": 0.74,
     "canonicalUrl": "https://learningenglish.voanews.com/a/americas-presidents-donald-trump/4188923.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 5,
     "capabilities": [
@@ -61543,7 +61543,7 @@
     "level": "a2",
     "levelConfidence": 0.75,
     "canonicalUrl": "https://learningenglish.voanews.com/a/americas-presidents-barack-obama/4181145.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 4,
     "capabilities": [
@@ -61612,7 +61612,7 @@
     "level": "a2",
     "levelConfidence": 0.76,
     "canonicalUrl": "https://learningenglish.voanews.com/a/americas-presidents-george-w-bush/4172344.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 4,
     "capabilities": [
@@ -61685,7 +61685,7 @@
     "level": "a2",
     "levelConfidence": 0.75,
     "canonicalUrl": "https://learningenglish.voanews.com/a/americas-presidents-bill-clinton/4162320.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 4,
     "capabilities": [
@@ -61768,7 +61768,7 @@
     "level": "a2",
     "levelConfidence": 0.75,
     "canonicalUrl": "https://learningenglish.voanews.com/a/americas-presidents-george-hw-bush/4151649.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 4,
     "capabilities": [
@@ -61854,7 +61854,7 @@
     "level": "a2",
     "levelConfidence": 0.76,
     "canonicalUrl": "https://learningenglish.voanews.com/a/americas-presidents-ronald-reagan/4141828.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 4,
     "capabilities": [
@@ -61932,7 +61932,7 @@
     "level": "a2",
     "levelConfidence": 0.76,
     "canonicalUrl": "https://learningenglish.voanews.com/a/americas-presidents-jimmy-carter/4130227.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 4,
     "capabilities": [
@@ -62014,7 +62014,7 @@
     "level": "a2",
     "levelConfidence": 0.75,
     "canonicalUrl": "https://learningenglish.voanews.com/a/americas-presidents-gerald-ford/4118078.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 4,
     "capabilities": [
@@ -62097,7 +62097,7 @@
     "level": "a2",
     "levelConfidence": 0.75,
     "canonicalUrl": "https://learningenglish.voanews.com/a/americas-presidents-richard-nixon/4107568.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 4,
     "capabilities": [
@@ -62177,7 +62177,7 @@
     "level": "a2",
     "levelConfidence": 0.75,
     "canonicalUrl": "https://learningenglish.voanews.com/a/americas-presidents-lyndon-johnson/4095890.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 4,
     "capabilities": [
@@ -62262,7 +62262,7 @@
     "level": "a2",
     "levelConfidence": 0.75,
     "canonicalUrl": "https://learningenglish.voanews.com/a/americas-presidents-john-kennedy/4085635.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 4,
     "capabilities": [
@@ -62349,7 +62349,7 @@
     "level": "a2",
     "levelConfidence": 0.75,
     "canonicalUrl": "https://learningenglish.voanews.com/a/americas-presidents-dwight-eisenhower/4076083.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 4,
     "capabilities": [
@@ -62423,7 +62423,7 @@
     "level": "a2",
     "levelConfidence": 0.74,
     "canonicalUrl": "https://learningenglish.voanews.com/a/americas-presidents-harry-truman/4067702.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 4,
     "capabilities": [
@@ -62501,7 +62501,7 @@
     "level": "a2",
     "levelConfidence": 0.73,
     "canonicalUrl": "https://learningenglish.voanews.com/a/americas-presidents-franklin-roosevelt-part-2/4056474.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 4,
     "capabilities": [
@@ -62577,7 +62577,7 @@
     "level": "a2",
     "levelConfidence": 0.73,
     "canonicalUrl": "https://learningenglish.voanews.com/a/americas-presidents-franklin-roosevelt/4046663.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 4,
     "capabilities": [
@@ -62646,7 +62646,7 @@
     "level": "a2",
     "levelConfidence": 0.76,
     "canonicalUrl": "https://learningenglish.voanews.com/a/americas-presidents-herbert-hoover/4037382.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 4,
     "capabilities": [
@@ -62716,7 +62716,7 @@
     "level": "a2",
     "levelConfidence": 0.75,
     "canonicalUrl": "https://learningenglish.voanews.com/a/americas-presidents-calvin-coolidge/4027250.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 4,
     "capabilities": [
@@ -62804,7 +62804,7 @@
     "level": "a2",
     "levelConfidence": 0.75,
     "canonicalUrl": "https://learningenglish.voanews.com/a/americas-presidents-warren-harding/4018013.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 4,
     "capabilities": [
@@ -62881,7 +62881,7 @@
     "level": "a2",
     "levelConfidence": 0.75,
     "canonicalUrl": "https://learningenglish.voanews.com/a/americas-president-woodrow-wilson/4001252.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 4,
     "capabilities": [
@@ -62958,7 +62958,7 @@
     "level": "a2",
     "levelConfidence": 0.75,
     "canonicalUrl": "https://learningenglish.voanews.com/a/americans-presidents-william-taft/3997949.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 4,
     "capabilities": [
@@ -63038,7 +63038,7 @@
     "level": "a2",
     "levelConfidence": 0.75,
     "canonicalUrl": "https://learningenglish.voanews.com/a/americas-presidents-theodore-roosevelt/3986653.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 4,
     "capabilities": [
@@ -63105,7 +63105,7 @@
     "level": "a2",
     "levelConfidence": 0.73,
     "canonicalUrl": "https://learningenglish.voanews.com/a/americas-presidents-william-mckinley/3979185.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 4,
     "capabilities": [
@@ -63174,7 +63174,7 @@
     "level": "a2",
     "levelConfidence": 0.74,
     "canonicalUrl": "https://learningenglish.voanews.com/a/americas-presidents-benjamin-harrison/3963345.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 4,
     "capabilities": [
@@ -63244,7 +63244,7 @@
     "level": "a2",
     "levelConfidence": 0.74,
     "canonicalUrl": "https://learningenglish.voanews.com/a/americas-presidents-grover-cleveland/3960447.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 4,
     "capabilities": [
@@ -63320,7 +63320,7 @@
     "level": "a2",
     "levelConfidence": 0.75,
     "canonicalUrl": "https://learningenglish.voanews.com/a/americas-presidents-chester-arthur/3950367.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 4,
     "capabilities": [
@@ -63404,7 +63404,7 @@
     "level": "a2",
     "levelConfidence": 0.75,
     "canonicalUrl": "https://learningenglish.voanews.com/a/americas-presidents-james-garfield/3941284.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 4,
     "capabilities": [
@@ -63488,7 +63488,7 @@
     "level": "a2",
     "levelConfidence": 0.75,
     "canonicalUrl": "https://learningenglish.voanews.com/a/americas-presidents-rutherford-hayes/3929542.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 4,
     "capabilities": [
@@ -63561,7 +63561,7 @@
     "level": "a2",
     "levelConfidence": 0.76,
     "canonicalUrl": "https://learningenglish.voanews.com/a/americas-presidents-ulysses-grant/3920036.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 4,
     "capabilities": [
@@ -63643,7 +63643,7 @@
     "level": "a2",
     "levelConfidence": 0.74,
     "canonicalUrl": "https://learningenglish.voanews.com/a/americas-presidents-andrew-johnson/3913196.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 4,
     "capabilities": [
@@ -63720,7 +63720,7 @@
     "level": "b1",
     "levelConfidence": 0.66,
     "canonicalUrl": "https://learningenglish.voanews.com/a/americas-presidents-abraham-lincoln-part-2/3893816.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 0,
     "capabilities": [
@@ -63800,7 +63800,7 @@
     "level": "a2",
     "levelConfidence": 0.74,
     "canonicalUrl": "https://learningenglish.voanews.com/a/americas-presidents-abraham-lincoln/3884227.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 4,
     "capabilities": [
@@ -63876,7 +63876,7 @@
     "level": "b1",
     "levelConfidence": 0.65,
     "canonicalUrl": "https://learningenglish.voanews.com/a/americas-presidents-james-buchanan/3869752.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 4,
     "capabilities": [
@@ -63952,7 +63952,7 @@
     "level": "b1",
     "levelConfidence": 0.65,
     "canonicalUrl": "https://learningenglish.voanews.com/a/americas-presidents-franklin-pierce/3862019.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 4,
     "capabilities": [
@@ -64021,7 +64021,7 @@
     "level": "a2",
     "levelConfidence": 0.76,
     "canonicalUrl": "https://learningenglish.voanews.com/a/americas-president-millard-fillmore/3836058.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 4,
     "capabilities": [
@@ -64108,7 +64108,7 @@
     "level": "a2",
     "levelConfidence": 0.75,
     "canonicalUrl": "https://learningenglish.voanews.com/a/americas-presidents-zachary-taylor/3836070.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 4,
     "capabilities": [
@@ -64188,7 +64188,7 @@
     "level": "a2",
     "levelConfidence": 0.75,
     "canonicalUrl": "https://learningenglish.voanews.com/a/americas-presidents-james-polk/3826756.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 4,
     "capabilities": [
@@ -64271,7 +64271,7 @@
     "level": "a2",
     "levelConfidence": 0.74,
     "canonicalUrl": "https://learningenglish.voanews.com/a/americas-presidents-john-tyler/3817979.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 4,
     "capabilities": [
@@ -64346,7 +64346,7 @@
     "level": "a2",
     "levelConfidence": 0.74,
     "canonicalUrl": "https://learningenglish.voanews.com/a/americas-presidents-william-henry-harrison/3806092.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 4,
     "capabilities": [
@@ -64419,7 +64419,7 @@
     "level": "a2",
     "levelConfidence": 0.75,
     "canonicalUrl": "https://learningenglish.voanews.com/a/americas-presidents-martin-van-buren/3793825.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 4,
     "capabilities": [
@@ -64498,7 +64498,7 @@
     "level": "a2",
     "levelConfidence": 0.75,
     "canonicalUrl": "https://learningenglish.voanews.com/a/americas-presidents-andrew-jackson/3787327.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 4,
     "capabilities": [
@@ -64579,7 +64579,7 @@
     "level": "a2",
     "levelConfidence": 0.76,
     "canonicalUrl": "https://learningenglish.voanews.com/a/americas-presidents-john-quincy-adams/3777362.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 4,
     "capabilities": [
@@ -64652,7 +64652,7 @@
     "level": "a2",
     "levelConfidence": 0.75,
     "canonicalUrl": "https://learningenglish.voanews.com/a/americas-presidents-james-monroe/3767612.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 4,
     "capabilities": [
@@ -64723,7 +64723,7 @@
     "level": "a2",
     "levelConfidence": 0.75,
     "canonicalUrl": "https://learningenglish.voanews.com/a/americas-presidents-james-madison/3759924.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 4,
     "capabilities": [
@@ -64803,7 +64803,7 @@
     "level": "a2",
     "levelConfidence": 0.75,
     "canonicalUrl": "https://learningenglish.voanews.com/a/americas-presidents-jefferson/3744095.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 4,
     "capabilities": [
@@ -64876,7 +64876,7 @@
     "level": "a2",
     "levelConfidence": 0.75,
     "canonicalUrl": "https://learningenglish.voanews.com/a/john-adams-biography/3735093.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 4,
     "capabilities": [
@@ -64947,7 +64947,7 @@
     "level": "a2",
     "levelConfidence": 0.75,
     "canonicalUrl": "https://learningenglish.voanews.com/a/americas-presidents-overview/4213861.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 0,
     "capabilities": [
@@ -65018,7 +65018,7 @@
     "level": "a2",
     "levelConfidence": 0.72,
     "canonicalUrl": "https://learningenglish.voanews.com/a/a-history-of-presidents-day/4255977.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 0,
     "capabilities": [
@@ -65143,7 +65143,7 @@
     "level": "a2",
     "levelConfidence": 0.74,
     "canonicalUrl": "https://learningenglish.voanews.com/a/americas-national-parks-independence-national-historical-park-/3400911.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 3,
     "capabilities": [
@@ -65199,7 +65199,7 @@
     "level": "a2",
     "levelConfidence": 0.74,
     "canonicalUrl": "https://learningenglish.voanews.com/a/national-parks-southeastern-us/3718409.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 4,
     "capabilities": [
@@ -65266,7 +65266,7 @@
     "level": "a2",
     "levelConfidence": 0.74,
     "canonicalUrl": "https://learningenglish.voanews.com/a/americas-national-parks-theodore-roosevelt-national-park-dakota/3657240.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 1,
     "capabilities": [
@@ -65344,7 +65344,7 @@
     "level": "a2",
     "levelConfidence": 0.73,
     "canonicalUrl": "https://learningenglish.voanews.com/a/theres-something-for-everyone-at-olympic-national-park/3647297.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 0,
     "capabilities": [
@@ -65410,7 +65410,7 @@
     "level": "a2",
     "levelConfidence": 0.73,
     "canonicalUrl": "https://learningenglish.voanews.com/a/voyareurs-national-park-land-of-lakes/3639522.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 0,
     "capabilities": [
@@ -65475,7 +65475,7 @@
     "level": "a2",
     "levelConfidence": 0.72,
     "canonicalUrl": "https://learningenglish.voanews.com/a/americas-national-parks-petrified-forest-arizona/3630365.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 0,
     "capabilities": [
@@ -65544,7 +65544,7 @@
     "level": "b1",
     "levelConfidence": 0.63,
     "canonicalUrl": "https://learningenglish.voanews.com/a/americas-paradise-virgin-islands-national-park/3620669.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 3,
     "capabilities": [
@@ -65616,7 +65616,7 @@
     "level": "a2",
     "levelConfidence": 0.73,
     "canonicalUrl": "https://learningenglish.voanews.com/a/glacier-bay-a-land-reborn/3609056.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 0,
     "capabilities": [
@@ -65689,7 +65689,7 @@
     "level": "a2",
     "levelConfidence": 0.74,
     "canonicalUrl": "https://learningenglish.voanews.com/a/americas-national-parks-zion-national-park-utah/3603057.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 0,
     "capabilities": [
@@ -65756,7 +65756,7 @@
     "level": "a2",
     "levelConfidence": 0.72,
     "canonicalUrl": "https://learningenglish.voanews.com/a/america-national-parks-learning-english-shenandoah/3590982.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 3,
     "capabilities": [
@@ -65837,7 +65837,7 @@
     "level": "a2",
     "levelConfidence": 0.72,
     "canonicalUrl": "https://learningenglish.voanews.com/a/americas-national-parks-biscayne-underwater-explorations/3581334.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 0,
     "capabilities": [
@@ -65907,7 +65907,7 @@
     "level": "a2",
     "levelConfidence": 0.74,
     "canonicalUrl": "https://learningenglish.voanews.com/a/americas-national-parks-mammoth-cave/3570577.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 4,
     "capabilities": [
@@ -65968,7 +65968,7 @@
     "level": "a2",
     "levelConfidence": 0.73,
     "canonicalUrl": "https://learningenglish.voanews.com/a/3560996.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 3,
     "capabilities": [
@@ -66033,7 +66033,7 @@
     "level": "a2",
     "levelConfidence": 0.75,
     "canonicalUrl": "https://learningenglish.voanews.com/a/americas-national-parks-arches/3551240.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 0,
     "capabilities": [
@@ -66101,7 +66101,7 @@
     "level": "a2",
     "levelConfidence": 0.72,
     "canonicalUrl": "https://learningenglish.voanews.com/a/americas-national-parks-black-canyon-of-the-gunnison/3541130.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 0,
     "capabilities": [
@@ -66171,7 +66171,7 @@
     "level": "a2",
     "levelConfidence": 0.73,
     "canonicalUrl": "https://learningenglish.voanews.com/a/grand-tetons-is-for-exploring/3532301.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 0,
     "capabilities": [
@@ -66236,7 +66236,7 @@
     "level": "a2",
     "levelConfidence": 0.73,
     "canonicalUrl": "https://learningenglish.voanews.com/a/relaxing-waters-of-hot-springs-national-park/3522385.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 0,
     "capabilities": [
@@ -66299,7 +66299,7 @@
     "level": "a2",
     "levelConfidence": 0.73,
     "canonicalUrl": "https://learningenglish.voanews.com/a/americas-national-parks-peace-and-solitude-nps-100/3512566.html",
-    "publicDomain": true,
+    "publicDomain": false,
     "audioCount": 2,
     "videoCount": 0,
     "capabilities": [

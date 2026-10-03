@@ -126,7 +126,7 @@ export interface LearningMediaAsset {
   id: string; // voa-media:<hash>
   provider: 'voa';
   sourceResourceId: string;
-  type: 'audio' | 'video';
+  type: 'audio' | 'video' | 'document';
   url: string;
   hash?: string; // content hash when downloaded
   durationMs?: number;
@@ -138,10 +138,25 @@ export interface LearningMediaAsset {
 
 export interface CurriculumLink {
   voaResourceId: string;
-  kind: 'authentic-reencounter' | 'audio-candidate' | 'grammar-support' | 'chunk-recycling' | 'authoring-reference';
+  /* audio-candidate = verified usable real audio: at least one bound
+   * asset is canonical-id resolvable AND VOA_ORIGINAL_PUBLIC_DOMAIN.
+   * audio-discovered = a media URL exists but is unverified/unclear —
+   * pending state, never treatable as usable media (external review,
+   * FD-VOA-CORPUS-01 blocker 2). */
+  kind:
+    | 'authentic-reencounter'
+    | 'audio-candidate'
+    | 'audio-discovered'
+    | 'grammar-support'
+    | 'chunk-recycling'
+    | 'authoring-reference';
   lessonId?: string; // FlashDay lesson id
   targetId?: string; // FlashDay target id
   capabilityId?: string;
+  /* exact LearningMediaAsset ids backing an audio link — the gate is
+   * bound into the row; no consumer needs to reconstruct it. */
+  mediaAssetIds?: string[];
+  rightsVerified: boolean; // source is VOA_ORIGINAL_PUBLIC_DOMAIN verified
   matchedSurface: string; // what matched (chunk text, function, capability)
   level: FlashDayLevel | undefined;
   confidence: number;

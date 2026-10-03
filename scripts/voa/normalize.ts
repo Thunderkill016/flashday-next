@@ -33,7 +33,9 @@ if (process.argv[1]?.endsWith('normalize.ts')) {
     }
     res.pipelineState = 'ENRICHED';
     resources.push(res);
-    for (const a of [...src.audio, ...src.video])
+    /* every ref kind (audio/video/document) must resolve to a registry
+     * row — documents included or documentRefs would dangle */
+    for (const a of [...src.audio, ...src.video, ...src.documents])
       media.push(buildMediaAsset({ asset: a, sourceResourceId: src.id, rightsStatus: src.rightsStatus }));
   }
 

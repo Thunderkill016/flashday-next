@@ -59,6 +59,8 @@ Asset-level, fail-closed. Keyword/credit detection can only **demote**; promotio
 
 Signals detected: AP/Reuters/AFP/Getty credit lines, "X reported this story. Y adapted it for VOA" wire adaptations, courtesy/licensed/copyright lines, non-VOA asset hosts.
 
+Series priors: a prior may be `VOA_ORIGINAL_PUBLIC_DOMAIN` only for reliably VOA-produced formats (authored courses, teaching explainers, VOA-produced video). Zone-fed article archives where wire-derived items are known to occur default `MIXED_RIGHTS_REVIEW_REQUIRED` — a missed credit must never promote an item. A regression test pins this: `kind: article|story` + zone discovery ⇒ no PD prior.
+
 ## Pipeline states (§50)
 
 `RAW → RIGHTS_VERIFIED → NORMALIZED → ENRICHED → REVIEWED → APP_READY`
@@ -77,14 +79,17 @@ Deterministic, no LLM in the path:
 
 ## Media registry (src/lib/voa-corpus/media.ts)
 
-One `LearningMediaAsset` per unique asset URL: `voa-media:<sha256(url)[..16]>`. A `recorded` claim requires `resolvable: true` — HEAD-verified URL. Verification is bounded per run (`RESOLVE_CAP_PER_RUN`); unverified assets stay fail-closed until a later run reaches them.
+One `LearningMediaAsset` per unique asset URL: `voa-media:<sha256(url)[..16]>`. A `recorded` claim requires `resolvable: true` — HEAD-verified URL. Verification is bounded per run (`RESOLVE_CAP_PER_RUN`); unverified assets stay fail-closed until a later run reaches them. Audio, video, **and document** assets register — `audioRefs`/`videoRefs`/`documentRefs` on a resource are these canonical ids (never raw URLs), so every ref resolves to exactly one registry row.
 
 ## Curriculum links (src/lib/voa-corpus/curriculum-links.ts)
 
 - `authentic-reencounter` — V2 target chunk literally occurs in the resource
-- `audio-candidate` — reencounter + resolvable audio
+- `audio-candidate` — reencounter + **verified** audio: at least one bound `mediaAssetIds` entry is `VOA_ORIGINAL_PUBLIC_DOMAIN` + `resolvable: true`
+- `audio-discovered` — reencounter + media URL exists but unverified/unclear (pending kind; never treat as usable media)
 - `chunk-recycling` — matches for the uncovered-chunk gap list (same derivation as the coverage report)
 - `grammar-support` / `authoring-reference` — series-role links
+
+Every link row carries `rightsVerified` (source rights state) and, for audio kinds, `mediaAssetIds` (the exact registry ids that passed the gate) — the gate is bound into the row; consumers never reconstruct it.
 
 Encountering VOA material mints **no** evidence — §41 boundary stands: claims still require a FlashDay TaskContract + evaluator + EvidenceEvent.
 

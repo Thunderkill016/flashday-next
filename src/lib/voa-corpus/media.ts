@@ -25,7 +25,9 @@ export function buildMediaAsset(args: {
     id: mediaAssetId(args.asset.url),
     provider: 'voa',
     sourceResourceId: args.sourceResourceId,
-    type: args.asset.kind === 'video' ? 'video' : 'audio',
+    /* registry covers every ref kind a resource can emit — a document
+     * ref must resolve to a registry row like audio/video do */
+    type: args.asset.kind === 'audio' ? 'audio' : args.asset.kind === 'video' ? 'video' : 'document',
     url: args.asset.url,
     hash: args.hash,
     durationMs: args.durationMs,

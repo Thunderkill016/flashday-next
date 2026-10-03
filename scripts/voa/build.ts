@@ -57,7 +57,7 @@ async function main() {
     const res = normalizeResource(src);
     if (!res) continue;
     resources.push(res);
-    for (const a of [...src.audio, ...src.video])
+    for (const a of [...src.audio, ...src.video, ...src.documents])
       media.push(buildMediaAsset({ asset: a, sourceResourceId: src.id, rightsStatus: src.rightsStatus }));
   }
   const assets = dedupeAssets(media);
@@ -68,7 +68,7 @@ async function main() {
   console.log(`normalize: ${resources.length} resources, ${assets.length} media (${audioOk} newly verified audio)`);
 
   /* 4 — links + search index + §33/§35 reports */
-  const { links, gaps, index, lle1, annaPairs, gapStatus } = linkAndIndex(resources);
+  const { links, gaps, index, lle1, annaPairs, gapStatus } = linkAndIndex(resources, assets);
   writeNdjson('content-corpus/voa/links.ndjson', links);
   writeJson('content-corpus/voa/reports/curriculum-links.json', { links });
   writeJson('content-corpus/voa/reports/recycling.json', {

@@ -7,6 +7,7 @@
  */
 import { enrichText } from './enrich.ts';
 import { inferLevel } from './level.ts';
+import { mediaAssetId } from './media.ts';
 import { SERIES_BY_ID, VOA_ATTRIBUTION } from './series.ts';
 import type { VoaLearningResource, VoaSourceRecord } from './types.ts';
 
@@ -27,9 +28,11 @@ export function normalizeResource(src: VoaSourceRecord): VoaLearningResource | n
     title: src.title,
     text,
     transcript: src.transcript ? norm(src.transcript) : undefined,
-    audioRefs: src.audio.map((a) => `voa-media:${a.url}`),
-    videoRefs: src.video.map((v) => `voa-media:${v.url}`),
-    documentRefs: src.documents.map((d) => `voa-media:${d.url}`),
+    /* refs must equal LearningMediaAsset.id (voa-media:<sha256-16>) —
+     * a raw-URL ref looks valid but resolves to nothing in media.ndjson */
+    audioRefs: src.audio.map((a) => mediaAssetId(a.url)),
+    videoRefs: src.video.map((v) => mediaAssetId(v.url)),
+    documentRefs: src.documents.map((d) => mediaAssetId(d.url)),
     series: src.series,
     level: inferLevel(combined, src.levelHint),
     enrichment,

@@ -225,6 +225,18 @@ describe('normalizeResource (§50 state machine)', () => {
     expect(r?.source.canonicalUrl).toBe(VOA_URL);
     expect(r?.audioRefs.length).toBe(1);
   });
+
+  it('audioRefs/videoRefs/documentRefs resolve to media registry ids (§43 seam)', () => {
+    const doc: VoaAsset = { url: 'https://docs.voanews.eu/x/ws.pdf', kind: 'pdf' };
+    const r = normalizeResource(src({ audio: [mp3], video: [mp4], documents: [doc] }));
+    /* A ref must equal the asset's registry id — a raw-URL ref would
+     * dangle: media.ndjson keys are voa-media:<sha256-16>, not the URL. */
+    expect(r?.audioRefs).toEqual([mediaAssetId(mp3.url)]);
+    expect(r?.videoRefs).toEqual([mediaAssetId(mp4.url)]);
+    expect(r?.documentRefs).toEqual([mediaAssetId(doc.url)]);
+    const registered = buildMediaAsset({ asset: mp3, sourceResourceId: 'voa:1', rightsStatus: 'VOA_ORIGINAL_PUBLIC_DOMAIN' });
+    expect(r?.audioRefs[0]).toBe(registered.id);
+  });
 });
 
 /* ── enrichment probes stay inside the ontology (§21) ──────────── */
@@ -335,5 +347,121 @@ describe('resolveAudioAssets (§43 bounded verification)', () => {
     const a = asset(0);
     expect(await resolveAudioAssets([a], async () => false)).toBe(0);
     expect(a.resolvable).toBe(false);
+  });
+});
+
+/* ── audio link contract (external-review blocker 2) ────────────── */
+import { linkResource } from './curriculum-links';
+import { SERIES } from './series';
+
+const linkableRes = (audioRefs: string[], verified: boolean): VoaLearningResource => ({
+  id: `voa:link-${verified}-${audioRefs.length}`,
+  kind: 'course_lesson', title: 'T', text: 'where are you from i am from italy nice to meet you',
+  audioRefs, videoRefs: [], documentRefs: [], series: 'voa-lle-level1',
+  level: { inferred: 'a1', confidence: 0.8 },
+  enrichment: {
+    knownHeadwords: 0, outOfBandWords: [], oxfordCoverage: {}, lexicalDensity: 0.5,
+    targetCandidates: [], knownChunks: [], newChunks: [], domainChunks: [],
+    communicativeFunctions: [], capabilities: [], grammarFeatures: [],
+    listeningFeatures: [], pronunciationFeatures: [], topicTags: [],
+  },
+  source: {
+    publisher: 'Voice of America', canonicalUrl: VOA_URL,
+    publicDomainVerified: verified, attribution: 'a', contentHash: 'h', sourceRevision: 1,
+  },
+  pipelineState: 'ENRICHED',
+});
+
+const mediaAsset = (url: string, rightsStatus: LearningMediaAsset['rightsStatus'], resolvable: boolean): LearningMediaAsset => {
+  const a = buildMediaAsset({ asset: { url, kind: 'audio' }, sourceResourceId: 'voa:x', rightsStatus });
+  a.resolvable = resolvable;
+  return a;
+};
+
+describe('linkResource audio gating (external-review blocker 2)', () => {
+  const url = 'https://voa-audio.voanews.eu/t/a.mp3';
+  const ref = mediaAssetId(url);
+
+  it('audio-candidate only when a bound asset is canonical-id + rights-clean + resolvable', () => {
+    const res = linkableRes([ref], true);
+    const media = new Map([[ref, mediaAsset(url, 'VOA_ORIGINAL_PUBLIC_DOMAIN', true)]]);
+    const audio = linkResource(res, media).filter((l) => l.kind === 'audio-candidate');
+    expect(audio.length).toBeGreaterThan(0);
+    for (const l of audio) expect(l.mediaAssetIds).toEqual([ref]);
+    expect(linkResource(res, media).every((l) => l.kind !== 'audio-discovered')).toBe(true);
+  });
+
+  it('audio-discovered when audio exists but is unresolved or rights-unclean', () => {
+    const res = linkableRes([ref], true);
+    const unresolved = new Map([[ref, mediaAsset(url, 'VOA_ORIGINAL_PUBLIC_DOMAIN', false)]]);
+    const mixed = new Map([[ref, mediaAsset(url, 'MIXED_RIGHTS_REVIEW_REQUIRED', true)]]);
+    for (const media of [unresolved, mixed, new Map()]) {
+      const kinds = new Set(linkResource(res, media).map((l) => l.kind));
+      expect(kinds.has('audio-candidate')).toBe(false);
+      expect(kinds.has('audio-discovered')).toBe(true);
+    }
+  });
+
+  it('emits no audio link when the resource has no audio refs', () => {
+    const links = linkResource(linkableRes([], true));
+    expect(links.every((l) => l.kind === 'authentic-reencounter')).toBe(true);
+  });
+
+  it('every link row exposes rightsVerified so consumers cannot mistake rights state', () => {
+    const clean = linkResource(linkableRes([ref], true));
+    const mixedRes = linkResource(linkableRes([ref], false));
+    expect(clean.every((l) => l.rightsVerified === true)).toBe(true);
+    expect(mixedRes.every((l) => l.rightsVerified === false)).toBe(true);
+  });
+});
+
+/* ── series prior structural rule (external-review blocker 3) ───── */
+describe('series rightsPrior rule', () => {
+  it('deep zone article archives never default to PUBLIC_DOMAIN prior', () => {
+    /* Zone-fed article series are wire-adaptable archives — a missed
+     * credit must not promote. Authored/teaching kinds keep PD priors. */
+    for (const s of SERIES)
+      if (s.discover.type === 'zone' && (s.kind === 'article' || s.kind === 'story'))
+        expect(s.rightsPrior, `${s.id} must not carry a PD prior`).not.toBe('VOA_ORIGINAL_PUBLIC_DOMAIN');
+  });
+
+  it('flagged series known to carry wire-derived items default MIXED', () => {
+    for (const id of ['voa-early-literacy', 'voa-national-parks', 'voa-presidents'])
+      expect(SERIES.find((s) => s.id === id)?.rightsPrior).toBe('MIXED_RIGHTS_REVIEW_REQUIRED');
+  });
+});
+
+/* ── real-corpus seam pin (external-review blocker 1) ───────────── */
+import { readFileSync } from 'node:fs';
+import { join } from 'node:path';
+
+describe('real corpus ref resolution (blocker 1 — not synthetic only)', () => {
+  const sourceRows = readFileSync(join(process.cwd(), 'content-corpus/voa/source.ndjson'), 'utf8')
+    .split('\n')
+    .filter(Boolean)
+    .map((l) => JSON.parse(l) as VoaSourceRecord);
+  const lle1 = sourceRows.filter((r) => r.series === 'voa-lle-level1');
+
+  it('the committed corpus contains real LLE-1 records with all three ref kinds', () => {
+    /* guards against this pin silently degrading to zero coverage */
+    expect(lle1.length).toBeGreaterThan(0);
+    expect(lle1.some((r) => r.audio.length && r.video.length && r.documents.length)).toBe(true);
+  });
+
+  it('every ref a real LLE-1 resource emits resolves to exactly one registry row', () => {
+    for (const src of lle1) {
+      const res = normalizeResource(src);
+      if (!res) continue;
+      const registry = new Map<string, LearningMediaAsset>();
+      for (const a of [...src.audio, ...src.video, ...src.documents]) {
+        const asset = buildMediaAsset({ asset: a, sourceResourceId: src.id, rightsStatus: src.rightsStatus });
+        registry.set(asset.id, asset);
+      }
+      for (const ref of [...res.audioRefs, ...res.videoRefs, ...res.documentRefs]) {
+        /* ref must be a canonical registry id — a raw-URL ref dangles */
+        expect(ref.startsWith('voa-media:http')).toBe(false);
+        expect(registry.has(ref), `dangling ref ${ref} on ${src.id}`).toBe(true);
+      }
+    }
   });
 });

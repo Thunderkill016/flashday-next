@@ -1221,14 +1221,14 @@
 {"id":"voa:3993224","series":"voa-what-it-takes","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
 {"id":"voa:3985231","series":"voa-what-it-takes","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
 {"id":"voa:3985188","series":"voa-what-it-takes","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
-{"id":"voa:7155524","series":"voa-early-literacy","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:7155516","series":"voa-early-literacy","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:7155518","series":"voa-early-literacy","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:7155512","series":"voa-early-literacy","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:7155504","series":"voa-early-literacy","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:7155499","series":"voa-early-literacy","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:7155496","series":"voa-early-literacy","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:7165568","series":"voa-early-literacy","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
+{"id":"voa:7155524","series":"voa-early-literacy","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:7155516","series":"voa-early-literacy","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:7155518","series":"voa-early-literacy","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:7155512","series":"voa-early-literacy","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:7155504","series":"voa-early-literacy","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:7155499","series":"voa-early-literacy","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:7155496","series":"voa-early-literacy","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:7165568","series":"voa-early-literacy","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
 {"id":"voa:7504521","series":"voa-american-stories","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
 {"id":"voa:2572601","series":"voa-american-stories","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
 {"id":"voa:2615957","series":"voa-american-stories","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
@@ -1329,126 +1329,126 @@
 {"id":"voa:4307437","series":"voa-american-stories","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
 {"id":"voa:4307359","series":"voa-american-stories","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":["We present the second of four parts of the short story \"The Blue Hotel,\" by Stephen Crane. The story was originally adapted by the U.S. Department of State. The audio was recorded and produce by VOA Learning English."],"reasons":["third-party credits detected: adapted third-party material","credit line: \"We present the second of four parts of the short story \"The Blue Hotel,\" by Stephen Crane. The story was originally adapted by the U.S. Department of State. The audio was recorded and produce by VOA Learning English.\""]}
 {"id":"voa:4307353","series":"voa-american-stories","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":["We present the first of four parts of the short story \"The Blue Hotel,\" by Stephen Crane. The story was originally adapted by the U.S. Department of State. The audio was recorded and produce by VOA Learning English."],"reasons":["third-party credits detected: adapted third-party material","credit line: \"We present the first of four parts of the short story \"The Blue Hotel,\" by Stephen Crane. The story was originally adapted by the U.S. Department of State. The audio was recorded and produce by VOA Learning English.\""]}
-{"id":"voa:7637544","series":"voa-presidents","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:3714877","series":"voa-presidents","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:7436052","series":"voa-presidents","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:7437985","series":"voa-presidents","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:7434081","series":"voa-presidents","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:4188923","series":"voa-presidents","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:4181145","series":"voa-presidents","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:4172344","series":"voa-presidents","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:4162320","series":"voa-presidents","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:7393696","series":"voa-presidents","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:4151649","series":"voa-presidents","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:4141828","series":"voa-presidents","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:4130227","series":"voa-presidents","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:4118078","series":"voa-presidents","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:4107568","series":"voa-presidents","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:4095890","series":"voa-presidents","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:4085635","series":"voa-presidents","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:4076083","series":"voa-presidents","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:4067702","series":"voa-presidents","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:4056474","series":"voa-presidents","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:4046663","series":"voa-presidents","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:4037382","series":"voa-presidents","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:4027250","series":"voa-presidents","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:4018013","series":"voa-presidents","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:4001252","series":"voa-presidents","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:3997949","series":"voa-presidents","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:3986653","series":"voa-presidents","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:3979185","series":"voa-presidents","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:3963345","series":"voa-presidents","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:3960447","series":"voa-presidents","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:3950367","series":"voa-presidents","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:3941284","series":"voa-presidents","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:3929542","series":"voa-presidents","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:3920036","series":"voa-presidents","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:3913196","series":"voa-presidents","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:3893816","series":"voa-presidents","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:3884227","series":"voa-presidents","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:3869752","series":"voa-presidents","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:3862019","series":"voa-presidents","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:3836058","series":"voa-presidents","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:3836070","series":"voa-presidents","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:3826756","series":"voa-presidents","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:3817979","series":"voa-presidents","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:3806092","series":"voa-presidents","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:3793825","series":"voa-presidents","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:3787327","series":"voa-presidents","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:3777362","series":"voa-presidents","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:3767612","series":"voa-presidents","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:3759924","series":"voa-presidents","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:3744095","series":"voa-presidents","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:3735093","series":"voa-presidents","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:4213861","series":"voa-presidents","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:4340851","series":"voa-presidents","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:4255977","series":"voa-presidents","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:4213879","series":"voa-presidents","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:4181800","series":"voa-presidents","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:4172373","series":"voa-presidents","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:4164034","series":"voa-presidents","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:4152401","series":"voa-presidents","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:4142976","series":"voa-presidents","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:8002539","series":"voa-national-parks","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:8000985","series":"voa-national-parks","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
+{"id":"voa:7637544","series":"voa-presidents","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:3714877","series":"voa-presidents","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:7436052","series":"voa-presidents","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:7437985","series":"voa-presidents","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:7434081","series":"voa-presidents","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:4188923","series":"voa-presidents","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:4181145","series":"voa-presidents","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:4172344","series":"voa-presidents","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:4162320","series":"voa-presidents","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:7393696","series":"voa-presidents","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:4151649","series":"voa-presidents","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:4141828","series":"voa-presidents","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:4130227","series":"voa-presidents","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:4118078","series":"voa-presidents","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:4107568","series":"voa-presidents","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:4095890","series":"voa-presidents","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:4085635","series":"voa-presidents","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:4076083","series":"voa-presidents","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:4067702","series":"voa-presidents","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:4056474","series":"voa-presidents","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:4046663","series":"voa-presidents","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:4037382","series":"voa-presidents","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:4027250","series":"voa-presidents","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:4018013","series":"voa-presidents","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:4001252","series":"voa-presidents","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:3997949","series":"voa-presidents","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:3986653","series":"voa-presidents","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:3979185","series":"voa-presidents","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:3963345","series":"voa-presidents","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:3960447","series":"voa-presidents","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:3950367","series":"voa-presidents","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:3941284","series":"voa-presidents","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:3929542","series":"voa-presidents","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:3920036","series":"voa-presidents","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:3913196","series":"voa-presidents","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:3893816","series":"voa-presidents","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:3884227","series":"voa-presidents","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:3869752","series":"voa-presidents","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:3862019","series":"voa-presidents","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:3836058","series":"voa-presidents","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:3836070","series":"voa-presidents","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:3826756","series":"voa-presidents","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:3817979","series":"voa-presidents","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:3806092","series":"voa-presidents","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:3793825","series":"voa-presidents","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:3787327","series":"voa-presidents","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:3777362","series":"voa-presidents","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:3767612","series":"voa-presidents","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:3759924","series":"voa-presidents","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:3744095","series":"voa-presidents","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:3735093","series":"voa-presidents","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:4213861","series":"voa-presidents","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:4340851","series":"voa-presidents","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:4255977","series":"voa-presidents","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:4213879","series":"voa-presidents","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:4181800","series":"voa-presidents","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:4172373","series":"voa-presidents","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:4164034","series":"voa-presidents","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:4152401","series":"voa-presidents","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:4142976","series":"voa-presidents","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:8002539","series":"voa-national-parks","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:8000985","series":"voa-national-parks","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
 {"id":"voa:4769313","series":"voa-national-parks","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":["The Associated Press reported this story. Ashley Thompson adapted it for VOA Learning English, with additional materials from Smithsonian.com. Caty Weaver was the editor.","The Associated Press reported this story. Ashley Thompson adapted it for VOA Learning English, with additional materials from Smithsonian.com. Caty Weaver was the editor."],"reasons":["third-party credits detected: Associated Press, wire source: The Associated Press","credit line: \"The Associated Press reported this story. Ashley Thompson adapted it for VOA Learning English, with additional materials from Smithsonian.com. Caty Weaver was the editor.\"","credit line: \"The Associated Press reported this story. Ashley Thompson adapted it for VOA Learning English, with additional materials from Smithsonian.com. Caty Weaver was the editor.\""]}
-{"id":"voa:4771982","series":"voa-national-parks","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:4394539","series":"voa-national-parks","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:4394533","series":"voa-national-parks","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:4382761","series":"voa-national-parks","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:4382759","series":"voa-national-parks","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:4382758","series":"voa-national-parks","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:4382756","series":"voa-national-parks","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:4382754","series":"voa-national-parks","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:4382753","series":"voa-national-parks","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:4382752","series":"voa-national-parks","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:4386211","series":"voa-national-parks","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:4386208","series":"voa-national-parks","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:4386209","series":"voa-national-parks","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:4386213","series":"voa-national-parks","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:4386215","series":"voa-national-parks","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:4377492","series":"voa-national-parks","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:3400911","series":"voa-national-parks","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:4377490","series":"voa-national-parks","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:4458575","series":"voa-national-parks","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:4377498","series":"voa-national-parks","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:4377494","series":"voa-national-parks","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:4377501","series":"voa-national-parks","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:4377504","series":"voa-national-parks","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:4364138","series":"voa-national-parks","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:4364137","series":"voa-national-parks","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:4364141","series":"voa-national-parks","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:4361176","series":"voa-national-parks","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:4361178","series":"voa-national-parks","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:4364445","series":"voa-national-parks","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:3718409","series":"voa-national-parks","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:3657240","series":"voa-national-parks","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:3657563","series":"voa-national-parks","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:3647297","series":"voa-national-parks","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:3647133","series":"voa-national-parks","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:3639975","series":"voa-national-parks","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:3639522","series":"voa-national-parks","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:3630365","series":"voa-national-parks","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:3630333","series":"voa-national-parks","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:3620669","series":"voa-national-parks","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:3620795","series":"voa-national-parks","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:3609056","series":"voa-national-parks","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:3603092","series":"voa-national-parks","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:3603057","series":"voa-national-parks","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:3590982","series":"voa-national-parks","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:3581334","series":"voa-national-parks","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:3581328","series":"voa-national-parks","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:3570577","series":"voa-national-parks","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:3570555","series":"voa-national-parks","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:3560996","series":"voa-national-parks","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:3551240","series":"voa-national-parks","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:3551249","series":"voa-national-parks","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:3541130","series":"voa-national-parks","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:3541124","series":"voa-national-parks","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:3532301","series":"voa-national-parks","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:3522385","series":"voa-national-parks","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:3522389","series":"voa-national-parks","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
-{"id":"voa:3512566","series":"voa-national-parks","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
+{"id":"voa:4771982","series":"voa-national-parks","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:4394539","series":"voa-national-parks","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:4394533","series":"voa-national-parks","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:4382761","series":"voa-national-parks","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:4382759","series":"voa-national-parks","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:4382758","series":"voa-national-parks","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:4382756","series":"voa-national-parks","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:4382754","series":"voa-national-parks","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:4382753","series":"voa-national-parks","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:4382752","series":"voa-national-parks","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:4386211","series":"voa-national-parks","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:4386208","series":"voa-national-parks","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:4386209","series":"voa-national-parks","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:4386213","series":"voa-national-parks","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:4386215","series":"voa-national-parks","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:4377492","series":"voa-national-parks","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:3400911","series":"voa-national-parks","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:4377490","series":"voa-national-parks","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:4458575","series":"voa-national-parks","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:4377498","series":"voa-national-parks","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:4377494","series":"voa-national-parks","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:4377501","series":"voa-national-parks","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:4377504","series":"voa-national-parks","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:4364138","series":"voa-national-parks","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:4364137","series":"voa-national-parks","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:4364141","series":"voa-national-parks","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:4361176","series":"voa-national-parks","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:4361178","series":"voa-national-parks","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:4364445","series":"voa-national-parks","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:3718409","series":"voa-national-parks","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:3657240","series":"voa-national-parks","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:3657563","series":"voa-national-parks","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:3647297","series":"voa-national-parks","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:3647133","series":"voa-national-parks","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:3639975","series":"voa-national-parks","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:3639522","series":"voa-national-parks","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:3630365","series":"voa-national-parks","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:3630333","series":"voa-national-parks","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:3620669","series":"voa-national-parks","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:3620795","series":"voa-national-parks","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:3609056","series":"voa-national-parks","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:3603092","series":"voa-national-parks","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:3603057","series":"voa-national-parks","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:3590982","series":"voa-national-parks","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:3581334","series":"voa-national-parks","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:3581328","series":"voa-national-parks","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:3570577","series":"voa-national-parks","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:3570555","series":"voa-national-parks","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:3560996","series":"voa-national-parks","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:3551240","series":"voa-national-parks","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:3551249","series":"voa-national-parks","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:3541130","series":"voa-national-parks","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:3541124","series":"voa-national-parks","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:3532301","series":"voa-national-parks","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:3522385","series":"voa-national-parks","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:3522389","series":"voa-national-parks","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
+{"id":"voa:3512566","series":"voa-national-parks","status":"MIXED_RIGHTS_REVIEW_REQUIRED","externalCredits":[],"reasons":["no credits detected but series prior is MIXED_RIGHTS_REVIEW_REQUIRED — kept conservative"]}
 {"id":"voa:2913973","series":"voa-us-history","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
 {"id":"voa:2921282","series":"voa-us-history","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}
 {"id":"voa:2929346","series":"voa-us-history","status":"VOA_ORIGINAL_PUBLIC_DOMAIN","externalCredits":[],"reasons":["no third-party credits + VOA-original series"]}

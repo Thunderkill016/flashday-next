@@ -279,7 +279,10 @@ export const SERIES: SeriesEntry[] = [
     tier: 'C',
     kind: 'article',
     discover: { type: 'zone', zoneId: 7467 },
-    rightsPrior: 'VOA_ORIGINAL_PUBLIC_DOMAIN',
+    /* news-style zone archive; AP-adapted stories known to occur (e.g.
+     * "Home Visiting Programs Aim to Support Early Education" — AP copy
+     * + AP photo). Prior must not promote on detection misses. */
+    rightsPrior: 'MIXED_RIGHTS_REVIEW_REQUIRED',
     mapsTo: ['extensive-reading'],
   },
 
@@ -299,7 +302,8 @@ export const SERIES: SeriesEntry[] = [
     tier: 'D',
     kind: 'article',
     discover: { type: 'zone', zoneId: 5091 },
-    rightsPrior: 'VOA_ORIGINAL_PUBLIC_DOMAIN',
+    /* zone article archive — feature format can carry wire adaptations */
+    rightsPrior: 'MIXED_RIGHTS_REVIEW_REQUIRED',
     mapsTo: ['extensive-input'],
   },
   {
@@ -308,7 +312,8 @@ export const SERIES: SeriesEntry[] = [
     tier: 'D',
     kind: 'article',
     discover: { type: 'zone', zoneId: 4791 },
-    rightsPrior: 'VOA_ORIGINAL_PUBLIC_DOMAIN',
+    /* zone article archive — wire-derived items detected in corpus */
+    rightsPrior: 'MIXED_RIGHTS_REVIEW_REQUIRED',
     mapsTo: ['extensive-input'],
   },
   {

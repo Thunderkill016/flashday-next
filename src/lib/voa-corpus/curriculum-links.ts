@@ -8,7 +8,7 @@
 import { ALL_KNOWLEDGE } from '../content-factory/knowledge/index.ts';
 import { recyclingReport } from '../content-factory/recycling.ts';
 import { V2_LESSONS } from '../fd-content-v2/index.ts';
-import type { CurriculumLink, RecyclingMatch, VoaLearningResource } from './types.ts';
+import type { CurriculumLink, LearningMediaAsset, RecyclingMatch, VoaLearningResource } from './types.ts';
 
 const norm = (s: string) => s.trim().replace(/\s+/g, ' ').toLowerCase();
 
@@ -37,11 +37,30 @@ export function curriculumGaps(): GapEntry[] {
  *  - known-chunk hits → authentic reencounter for that lesson/target
  *  - capability hits  → capability-level reencounter
  *  - grammar series   → grammar-support reference
- *  - audio present    → audio candidate for matching lessons          */
-export function linkResource(res: VoaLearningResource): CurriculumLink[] {
+ *  - audio: `audio-candidate` only when a bound media asset is canonical-
+ *    id resolvable AND rights-clean (VOA_ORIGINAL_PUBLIC_DOMAIN);
+ *    otherwise `audio-discovered` — a pending kind that no consumer may
+ *    treat as usable media (§43/§44, external-review blocker 2).        */
+export function linkResource(
+  res: VoaLearningResource,
+  mediaById: Map<string, LearningMediaAsset> = new Map(),
+): CurriculumLink[] {
   const links: CurriculumLink[] = [];
   const ntext = ` ${norm(`${res.text} ${res.transcript ?? ''}`)} `;
-  const hasAudio = res.audioRefs.length > 0;
+  const rightsVerified = res.source.publicDomainVerified;
+
+  /* audio gate bound to the registry row: ref must resolve to a real
+   * LearningMediaAsset that is rights-clean AND resolvable. */
+  const verifiedAudio = res.audioRefs.filter((id) => {
+    const a = mediaById.get(id);
+    return a?.rightsStatus === 'VOA_ORIGINAL_PUBLIC_DOMAIN' && a.resolvable;
+  });
+  const audioKind = verifiedAudio.length
+    ? ('audio-candidate' as const)
+    : res.audioRefs.length
+      ? ('audio-discovered' as const)
+      : null;
+  const audioAssetIds = verifiedAudio.length ? verifiedAudio : res.audioRefs;
 
   for (const lesson of V2_LESSONS) {
     let lessonLinked = false;
@@ -53,6 +72,7 @@ export function linkResource(res: VoaLearningResource): CurriculumLink[] {
           kind: 'authentic-reencounter',
           lessonId: lesson.id,
           targetId: t.id,
+          rightsVerified,
           matchedSurface: t.chunk,
           level: res.level.inferred,
           confidence: res.level.confidence,
@@ -68,6 +88,7 @@ export function linkResource(res: VoaLearningResource): CurriculumLink[] {
           kind: 'authentic-reencounter',
           lessonId: lesson.id,
           capabilityId: sharedCaps[0],
+          rightsVerified,
           matchedSurface: `capability:${sharedCaps.join(',')}`,
           level: res.level.inferred,
           confidence: res.level.confidence * 0.7,
@@ -75,9 +96,9 @@ export function linkResource(res: VoaLearningResource): CurriculumLink[] {
     }
   }
 
-  if (hasAudio)
+  if (audioKind)
     for (const l of links.filter((x) => x.kind === 'authentic-reencounter'))
-      links.push({ ...l, kind: 'audio-candidate' });
+      links.push({ ...l, kind: audioKind, mediaAssetIds: audioAssetIds });
 
   return links;
 }

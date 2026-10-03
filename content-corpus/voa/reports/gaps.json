@@ -118,7 +118,7 @@
     "homeLesson": "ev12",
     "matched": true,
     "voaResourceId": "voa:7165568",
-    "usable": true
+    "usable": false
   },
   {
     "chunk": "a reservation under",
@@ -2130,7 +2130,7 @@
     "homeLesson": "dv20",
     "matched": true,
     "voaResourceId": "voa:7165568",
-    "usable": true
+    "usable": false
   },
   {
     "chunk": "What we learned",
