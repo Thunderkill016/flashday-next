@@ -1,0 +1,299 @@
+{
+  "voaOriginal": 852,
+  "mixed": 711,
+  "restricted": 0,
+  "unknown": 0,
+  "bySeries": {
+    "voa-lle-level1": {
+      "original": 60,
+      "mixed": 0,
+      "other": 0
+    },
+    "voa-lle-level2": {
+      "original": 41,
+      "mixed": 0,
+      "other": 0
+    },
+    "voa-anna": {
+      "original": 15,
+      "mixed": 0,
+      "other": 0
+    },
+    "voa-anna-vietnamese": {
+      "original": 5,
+      "mixed": 0,
+      "other": 0
+    },
+    "voa-anna-multilingual": {
+      "original": 19,
+      "mixed": 0,
+      "other": 0
+    },
+    "voa-lets-teach": {
+      "original": 13,
+      "mixed": 0,
+      "other": 0
+    },
+    "voa-everyday-grammar": {
+      "original": 79,
+      "mixed": 1,
+      "other": 0
+    },
+    "voa-everyday-grammar-tv": {
+      "original": 60,
+      "mixed": 0,
+      "other": 0
+    },
+    "voa-english-minute": {
+      "original": 80,
+      "mixed": 0,
+      "other": 0
+    },
+    "voa-news-words": {
+      "original": 80,
+      "mixed": 0,
+      "other": 0
+    },
+    "voa-words-stories": {
+      "original": 0,
+      "mixed": 80,
+      "other": 0
+    },
+    "voa-ask-teacher": {
+      "original": 60,
+      "mixed": 0,
+      "other": 0
+    },
+    "voa-pronunciation": {
+      "original": 80,
+      "mixed": 0,
+      "other": 0
+    },
+    "voa-english-movies": {
+      "original": 0,
+      "mixed": 60,
+      "other": 0
+    },
+    "voa-talk2us": {
+      "original": 60,
+      "mixed": 0,
+      "other": 0
+    },
+    "voa-learning-podcast": {
+      "original": 60,
+      "mixed": 0,
+      "other": 0
+    },
+    "voa-as-it-is": {
+      "original": 0,
+      "mixed": 60,
+      "other": 0
+    },
+    "voa-arts-culture": {
+      "original": 0,
+      "mixed": 60,
+      "other": 0
+    },
+    "voa-education": {
+      "original": 0,
+      "mixed": 58,
+      "other": 0
+    },
+    "voa-science-tech": {
+      "original": 0,
+      "mixed": 60,
+      "other": 0
+    },
+    "voa-health": {
+      "original": 0,
+      "mixed": 60,
+      "other": 0
+    },
+    "voa-trending": {
+      "original": 0,
+      "mixed": 60,
+      "other": 0
+    },
+    "voa-what-it-takes": {
+      "original": 0,
+      "mixed": 51,
+      "other": 0
+    },
+    "voa-early-literacy": {
+      "original": 8,
+      "mixed": 0,
+      "other": 0
+    },
+    "voa-american-stories": {
+      "original": 0,
+      "mixed": 100,
+      "other": 0
+    },
+    "voa-presidents": {
+      "original": 60,
+      "mixed": 0,
+      "other": 0
+    },
+    "voa-national-parks": {
+      "original": 59,
+      "mixed": 1,
+      "other": 0
+    },
+    "voa-us-history": {
+      "original": 6,
+      "mixed": 0,
+      "other": 0
+    },
+    "voa-voa60": {
+      "original": 0,
+      "mixed": 60,
+      "other": 0
+    },
+    "voa-news-literacy": {
+      "original": 7,
+      "mixed": 0,
+      "other": 0
+    }
+  },
+  "externalCreditExamples": [
+    {
+      "id": "voa:7751232",
+      "credits": [
+        "Associated Press Stylebook",
+        "Holly Ramer reported this story for the Associated Press. Hai Do adapted it for VOA Learning English with additional sources.",
+        "Holly Ramer reported this story for the Associated Press. Hai Do adapted it for VOA Learning English with additional sources."
+      ]
+    },
+    {
+      "id": "voa:7414766",
+      "credits": ["Hai Do adapted this Associated Press report for VOA Learning English."]
+    },
+    {
+      "id": "voa:7372257",
+      "credits": [
+        "The Associated Press,",
+        "Dan Friedell adapted this story for Learning English based on The Associated Press story."
+      ]
+    },
+    {
+      "id": "voa:7354659",
+      "credits": [
+        "Mike Schneider reported this story for the Associated Press. Gena Bennett adapted it for VOA Learning English.",
+        "Mike Schneider reported this story for the Associated Press. Gena Bennett adapted it for VOA Learning English."
+      ]
+    },
+    {
+      "id": "voa:7997203",
+      "credits": [
+        "Hyung-Jin Kim reported on this story for the Associated Press. John Russell adapted it for VOA Learning English."
+      ]
+    },
+    {
+      "id": "voa:8002695",
+      "credits": ["Rod McGuirk reported this story for the Associated Press."]
+    },
+    {
+      "id": "voa:7983265",
+      "credits": [
+        "Andrew Smith adapted this story for VOA Learning English based on reporting from Agence France-Presse."
+      ]
+    },
+    {
+      "id": "voa:7972239",
+      "credits": [
+        "Malick Rokhy Ba reported this story for Agence France-Presse. Anna Matteo adapted it for VOA Learning English.",
+        "Malick Rokhy Ba reported this story for Agence France-Presse. Anna Matteo adapted it for VOA Learning English."
+      ]
+    },
+    {
+      "id": "voa:7972396",
+      "credits": [
+        "Robin Millard reported on this story for Agence France-Presse. John Russell adapted it for VOA Learning English."
+      ]
+    },
+    {
+      "id": "voa:7966513",
+      "credits": [
+        "Todd Richmond reported this story for the Associated Press. Jill Robbins adapted it for Learning English."
+      ]
+    },
+    {
+      "id": "voa:7967044",
+      "credits": [
+        "Andrew Smith adapted this story for VOA Learning English based on reporting from Agence France-Presse."
+      ]
+    },
+    {
+      "id": "voa:7969789",
+      "credits": ["Agence France-Presse reported this story. Bryan Lynn adapted the report for VOA Learning English."]
+    },
+    {
+      "id": "voa:7963018",
+      "credits": ["Pierre-Henry Deshayes reported this story for Agence France-Presse."]
+    },
+    {
+      "id": "voa:7963028",
+      "credits": [
+        "Mari Yamaguchi reported this story for the Associated Press. Jill Robbins adapted it for Learning English."
+      ]
+    },
+    {
+      "id": "voa:7962441",
+      "credits": [
+        "Charlotte Graham-McLay wrote this story for The Associated Press. Andrew Smith adapted it for VOA Learning English."
+      ]
+    },
+    {
+      "id": "voa:7948119",
+      "credits": [
+        "Lauran Neergaard wrote this story for The Associated Press. Andrew Smith adapted it for VOA Learning English."
+      ]
+    },
+    {
+      "id": "voa:7958185",
+      "credits": [
+        "Michael Hill reported on this story for the Associated Press. John Russell adapted it for VOA Learning English."
+      ]
+    },
+    {
+      "id": "voa:7958149",
+      "credits": [
+        "Ruth Eglash reported this story for Agence France-Presse (AFP). John Russell adapted it for VOA Learning English."
+      ]
+    },
+    {
+      "id": "voa:7957322",
+      "credits": ["This story was reported by staff of the Associated Press."]
+    },
+    {
+      "id": "voa:7948198",
+      "credits": ["Sibi Arasu reported this story for the Associated Press."]
+    },
+    {
+      "id": "voa:7949518",
+      "credits": ["Huw Griffith and Sarah Titterton reported this story for Agence France-Presse."]
+    },
+    {
+      "id": "voa:7951912",
+      "credits": [
+        "Taijing Wu reported this story for the Associated Press. Caty Weaver adapted it for VOA Learning English.",
+        "Taijing Wu reported this story for the Associated Press. Caty Weaver adapted it for VOA Learning English."
+      ]
+    },
+    {
+      "id": "voa:7951724",
+      "credits": ["The Associated Press reported this story. Bryan Lynn adapted the report for VOA Learning English."]
+    },
+    {
+      "id": "voa:7948893",
+      "credits": [
+        "The Associated Press reported this story. Caty Weaver adapted it for VOA Learning English.",
+        "The Associated Press reported this story. Caty Weaver adapted it for VOA Learning English."
+      ]
+    },
+    {
+      "id": "voa:7949361",
+      "credits": ["Jill Robbins adapted this story from Associated Press reports for Learning English."]
+    }
+  ]
+}

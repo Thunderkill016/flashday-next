@@ -10,6 +10,8 @@
  *     recycling            chunk lifecycle report
  *     build                all of the above -> content-corpus/reports/
  *     extract              re-derive knowledge layer from the corpus
+ *     voa <subcmd> [args]  VOA corpus pipeline (FD-VOA-CORPUS-01):
+ *       discover|fetch|normalize|links|report|build
  */
 import { execFileSync } from 'node:child_process';
 import { mkdirSync, writeFileSync } from 'node:fs';
@@ -140,9 +142,23 @@ async function main() {
       execFileSync('node', [join(ROOT, 'scripts/extract-knowledge.mjs')], { stdio: 'inherit' });
       break;
     }
+    case 'voa': {
+      const sub = args[0];
+      const valid = new Set(['discover', 'fetch', 'normalize', 'links', 'report', 'build']);
+      if (!sub || !valid.has(sub)) {
+        /* no silent default — `build` rewrites the whole corpus */
+        console.error(`usage: voa <${[...valid].join(' | ')}> [args]`);
+        process.exitCode = 1;
+        break;
+      }
+      execFileSync('node', [join(ROOT, `scripts/voa/${sub}.ts`), ...args.slice(1)], {
+        stdio: 'inherit',
+      });
+      break;
+    }
     default:
       console.log(
-        'commands: inventory | validate | compile | coverage | inspect <id> | quality | recycling | build | extract',
+        'commands: inventory | validate | compile | coverage | inspect <id> | quality | recycling | build | extract | voa <sub>',
       );
       process.exitCode = cmd ? 1 : 0;
   }

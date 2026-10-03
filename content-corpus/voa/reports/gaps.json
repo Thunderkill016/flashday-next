@@ -1,0 +1,2376 @@
+[
+  {
+    "chunk": "I am a software developer",
+    "homeLesson": "sv04",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "Do you like your job",
+    "homeLesson": "sv04",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "a small company",
+    "homeLesson": "sv04",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "my wife",
+    "homeLesson": "sv13",
+    "matched": true,
+    "voaResourceId": "voa:7601370",
+    "usable": true
+  },
+  {
+    "chunk": "our two kids",
+    "homeLesson": "sv13",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "How old are they",
+    "homeLesson": "sv13",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "brothers or sisters",
+    "homeLesson": "sv13",
+    "matched": true,
+    "voaResourceId": "voa:7414766",
+    "usable": false
+  },
+  {
+    "chunk": "older brother",
+    "homeLesson": "sv13",
+    "matched": true,
+    "voaResourceId": "voa:4414093",
+    "usable": false
+  },
+  {
+    "chunk": "He lives in",
+    "homeLesson": "sv13",
+    "matched": true,
+    "voaResourceId": "voa:7963018",
+    "usable": false
+  },
+  {
+    "chunk": "No, thank you",
+    "homeLesson": "sv18",
+    "matched": true,
+    "voaResourceId": "voa:4154981",
+    "usable": false
+  },
+  {
+    "chunk": "Do you take",
+    "homeLesson": "sv18",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "Help yourself",
+    "homeLesson": "sv18",
+    "matched": true,
+    "voaResourceId": "voa:4220576",
+    "usable": true
+  },
+  {
+    "chunk": "anything for allergies",
+    "homeLesson": "ev11",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "itchy eyes",
+    "homeLesson": "ev11",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "one tablet a day",
+    "homeLesson": "ev11",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "With food or without",
+    "homeLesson": "ev11",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "Do not take more than one",
+    "homeLesson": "ev11",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "Either is fine",
+    "homeLesson": "ev11",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "Checking in",
+    "homeLesson": "ev12",
+    "matched": true,
+    "voaResourceId": "voa:7165568",
+    "usable": false
+  },
+  {
+    "chunk": "a reservation under",
+    "homeLesson": "ev12",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "a double room",
+    "homeLesson": "ev12",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "Is breakfast included",
+    "homeLesson": "ev12",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "the wifi password",
+    "homeLesson": "ev12",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "on the card sleeve",
+    "homeLesson": "ev12",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "Checkout is at noon",
+    "homeLesson": "ev12",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "To Riverside Apartments",
+    "homeLesson": "ev14",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "about twenty minutes",
+    "homeLesson": "ev14",
+    "matched": true,
+    "voaResourceId": "voa:4656570",
+    "usable": false
+  },
+  {
+    "chunk": "the main road",
+    "homeLesson": "ev14",
+    "matched": true,
+    "voaResourceId": "voa:7897363",
+    "usable": false
+  },
+  {
+    "chunk": "Meter is running",
+    "homeLesson": "ev14",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "drop me at the entrance",
+    "homeLesson": "ev14",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "Keep the change",
+    "homeLesson": "ev14",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "sorry to bother you",
+    "homeLesson": "ev15",
+    "matched": true,
+    "voaResourceId": "voa:3723588",
+    "usable": true
+  },
+  {
+    "chunk": "from downstairs",
+    "homeLesson": "ev15",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "Is everything okay",
+    "homeLesson": "ev15",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "quite loud after midnight",
+    "homeLesson": "ev15",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "I did not realize",
+    "homeLesson": "ev15",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "keep it down",
+    "homeLesson": "ev15",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "I appreciate it",
+    "homeLesson": "ev15",
+    "matched": true,
+    "voaResourceId": "voa:7575872",
+    "usable": false
+  },
+  {
+    "chunk": "this is Anh from apartment 4B",
+    "homeLesson": "ev19",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "what is up",
+    "homeLesson": "ev19",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "is leaking",
+    "homeLesson": "ev19",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "it has been dripping all night",
+    "homeLesson": "ev19",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "Is it serious",
+    "homeLesson": "ev19",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "a small puddle",
+    "homeLesson": "ev19",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "I turned the water off",
+    "homeLesson": "ev19",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "send a plumber",
+    "homeLesson": "ev19",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "Here is your bill",
+    "homeLesson": "ev20",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "split it",
+    "homeLesson": "ev20",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "three ways",
+    "homeLesson": "ev20",
+    "matched": true,
+    "voaResourceId": "voa:2913973",
+    "usable": false
+  },
+  {
+    "chunk": "How much is each",
+    "homeLesson": "ev20",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "add a tip",
+    "homeLesson": "ev20",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "It is already included",
+    "homeLesson": "ev20",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "Could I speak to",
+    "homeLesson": "ev22",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "I am afraid",
+    "homeLesson": "ev22",
+    "matched": true,
+    "voaResourceId": "voa:4480407",
+    "usable": false
+  },
+  {
+    "chunk": "with a patient",
+    "homeLesson": "ev22",
+    "matched": true,
+    "voaResourceId": "voa:4226596",
+    "usable": false
+  },
+  {
+    "chunk": "call me back",
+    "homeLesson": "ev22",
+    "matched": true,
+    "voaResourceId": "voa:3457316",
+    "usable": true
+  },
+  {
+    "chunk": "take your number",
+    "homeLesson": "ev22",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "I think this one is fine",
+    "homeLesson": "ch01",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "The reviews look good",
+    "homeLesson": "ch01",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "a bit pricey",
+    "homeLesson": "ch01",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "the portions are big",
+    "homeLesson": "ch01",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "I think so too",
+    "homeLesson": "ch01",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "Let me see",
+    "homeLesson": "ch04",
+    "matched": true,
+    "voaResourceId": "voa:3323771",
+    "usable": true
+  },
+  {
+    "chunk": "I think it is Thursday",
+    "homeLesson": "ch04",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "Hold on",
+    "homeLesson": "ch04",
+    "matched": true,
+    "voaResourceId": "voa:7742927",
+    "usable": false
+  },
+  {
+    "chunk": "let me check my calendar",
+    "homeLesson": "ch04",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "Thursday at three",
+    "homeLesson": "ch04",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "that is a good question",
+    "homeLesson": "ch05",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "Let me think",
+    "homeLesson": "ch05",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "it depends on",
+    "homeLesson": "ch05",
+    "matched": true,
+    "voaResourceId": "voa:7676088",
+    "usable": false
+  },
+  {
+    "chunk": "Noodle soup, mostly",
+    "homeLesson": "ch05",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "probably Hanoi",
+    "homeLesson": "ch05",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "do not quote me on that",
+    "homeLesson": "ch05",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "that green thing",
+    "homeLesson": "ch06",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "kind of a pancake",
+    "homeLesson": "ch06",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "Was it sweet",
+    "homeLesson": "ch06",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "more savory",
+    "homeLesson": "ch06",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "Did you like it",
+    "homeLesson": "ch06",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "I would eat it again",
+    "homeLesson": "ch06",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "Does the market close at six",
+    "homeLesson": "ch08",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "As far as I know",
+    "homeLesson": "ch08",
+    "matched": true,
+    "voaResourceId": "voa:3993229",
+    "usable": false
+  },
+  {
+    "chunk": "in a while",
+    "homeLesson": "ch08",
+    "matched": true,
+    "voaResourceId": "voa:5174083",
+    "usable": false
+  },
+  {
+    "chunk": "check online",
+    "homeLesson": "ch08",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "If I remember correctly",
+    "homeLesson": "ch08",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "It says seven",
+    "homeLesson": "ch08",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "Good thing we checked",
+    "homeLesson": "ch08",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "great for running",
+    "homeLesson": "ch11",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "Like what",
+    "homeLesson": "ch11",
+    "matched": true,
+    "voaResourceId": "voa:7966513",
+    "usable": false
+  },
+  {
+    "chunk": "For example",
+    "homeLesson": "ch11",
+    "matched": true,
+    "voaResourceId": "voa:3343720",
+    "usable": true
+  },
+  {
+    "chunk": "a water fountain",
+    "homeLesson": "ch11",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "for instance",
+    "homeLesson": "ch11",
+    "matched": true,
+    "voaResourceId": "voa:5651046",
+    "usable": false
+  },
+  {
+    "chunk": "there are lights everywhere",
+    "homeLesson": "ch11",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "you convinced me",
+    "homeLesson": "ch11",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "lend me fifty",
+    "homeLesson": "ch12",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "a bit tight",
+    "homeLesson": "ch12",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "rent just went up",
+    "homeLesson": "ch12",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "Otherwise I would",
+    "homeLesson": "ch12",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "Totally understand",
+    "homeLesson": "ch12",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "she might be able to",
+    "homeLesson": "ch12",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "look heavy",
+    "homeLesson": "ch18",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "Want a hand",
+    "homeLesson": "ch18",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "that would be great",
+    "homeLesson": "ch18",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "down the hall",
+    "homeLesson": "ch18",
+    "matched": true,
+    "voaResourceId": "voa:4155002",
+    "usable": false
+  },
+  {
+    "chunk": "do me a favor",
+    "homeLesson": "ch18",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "water my plant",
+    "homeLesson": "ch18",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "while I am away",
+    "homeLesson": "ch18",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "the least I can do",
+    "homeLesson": "ch18",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "This is my friend",
+    "homeLesson": "gr01",
+    "matched": true,
+    "voaResourceId": "voa:3343720",
+    "usable": true
+  },
+  {
+    "chunk": "is a student",
+    "homeLesson": "gr01",
+    "matched": true,
+    "voaResourceId": "voa:7899165",
+    "usable": false
+  },
+  {
+    "chunk": "We are in the same class",
+    "homeLesson": "gr01",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "Are you new",
+    "homeLesson": "gr01",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "my first month",
+    "homeLesson": "gr01",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "Do you live near here",
+    "homeLesson": "gr02",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "Yes, I do",
+    "homeLesson": "gr02",
+    "matched": true,
+    "voaResourceId": "voa:3457316",
+    "usable": true
+  },
+  {
+    "chunk": "I live downtown",
+    "homeLesson": "gr02",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "Does your family live here",
+    "homeLesson": "gr02",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "Do you visit them often",
+    "homeLesson": "gr02",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "twice a year",
+    "homeLesson": "gr02",
+    "matched": true,
+    "voaResourceId": "voa:7888946",
+    "usable": false
+  },
+  {
+    "chunk": "works at a hospital",
+    "homeLesson": "gr03",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "What does she do",
+    "homeLesson": "gr03",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "checks patients in",
+    "homeLesson": "gr03",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "starts at seven",
+    "homeLesson": "gr03",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "Does she like it",
+    "homeLesson": "gr03",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "She loves it",
+    "homeLesson": "gr03",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "finishes at three",
+    "homeLesson": "gr03",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "It was great",
+    "homeLesson": "gr04",
+    "matched": true,
+    "voaResourceId": "voa:4074883",
+    "usable": true
+  },
+  {
+    "chunk": "right on the beach",
+    "homeLesson": "gr04",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "Were the people friendly",
+    "homeLesson": "gr04",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "They were lovely",
+    "homeLesson": "gr04",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "Was it expensive",
+    "homeLesson": "gr04",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "cheaper than I expected",
+    "homeLesson": "gr04",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "What are you going to do",
+    "homeLesson": "gr05",
+    "matched": true,
+    "voaResourceId": "voa:7940837",
+    "usable": false
+  },
+  {
+    "chunk": "take an English course",
+    "homeLesson": "gr05",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "study online",
+    "homeLesson": "gr05",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "two days a week",
+    "homeLesson": "gr05",
+    "matched": true,
+    "voaResourceId": "voa:7966564",
+    "usable": true
+  },
+  {
+    "chunk": "take a test",
+    "homeLesson": "gr05",
+    "matched": true,
+    "voaResourceId": "voa:3406732",
+    "usable": true
+  },
+  {
+    "chunk": "the B1 exam",
+    "homeLesson": "gr05",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "What is happening",
+    "homeLesson": "gr06",
+    "matched": true,
+    "voaResourceId": "voa:3723588",
+    "usable": true
+  },
+  {
+    "chunk": "A band is setting up",
+    "homeLesson": "gr06",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "taking photos",
+    "homeLesson": "gr06",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "studying or just watching",
+    "homeLesson": "gr06",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "pretending to study",
+    "homeLesson": "gr06",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "Is anyone dancing",
+    "homeLesson": "gr06",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "handing out free coffee",
+    "homeLesson": "gr06",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "have to wear badges",
+    "homeLesson": "gr08",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "Security checks them",
+    "homeLesson": "gr08",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "Should I get one",
+    "homeLesson": "gr08",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "You should",
+    "homeLesson": "gr08",
+    "matched": true,
+    "voaResourceId": "voa:3431138",
+    "usable": true
+  },
+  {
+    "chunk": "ask for ID",
+    "homeLesson": "gr08",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "pay for parking",
+    "homeLesson": "gr08",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "free for guests",
+    "homeLesson": "gr08",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "a new lamp",
+    "homeLesson": "gr09",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "Where did you put it",
+    "homeLesson": "gr09",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "On the desk",
+    "homeLesson": "gr09",
+    "matched": true,
+    "voaResourceId": "voa:3628393",
+    "usable": true
+  },
+  {
+    "chunk": "an old photo",
+    "homeLesson": "gr09",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "The photo of your family",
+    "homeLesson": "gr09",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "the one from last summer",
+    "homeLesson": "gr09",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "work well",
+    "homeLesson": "gr09",
+    "matched": true,
+    "voaResourceId": "voa:3397314",
+    "usable": true
+  },
+  {
+    "chunk": "In July",
+    "homeLesson": "gr10",
+    "matched": true,
+    "voaResourceId": "voa:3357760",
+    "usable": true
+  },
+  {
+    "chunk": "On the fifth",
+    "homeLesson": "gr10",
+    "matched": true,
+    "voaResourceId": "voa:4414089",
+    "usable": false
+  },
+  {
+    "chunk": "on the weekend",
+    "homeLesson": "gr10",
+    "matched": true,
+    "voaResourceId": "voa:7930227",
+    "usable": false
+  },
+  {
+    "chunk": "two boxes",
+    "homeLesson": "gr11",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "three brushes",
+    "homeLesson": "gr11",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "children's toothbrushes",
+    "homeLesson": "gr11",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "the men's section",
+    "homeLesson": "gr11",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "two knives",
+    "homeLesson": "gr11",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "the top shelf",
+    "homeLesson": "gr11",
+    "matched": true,
+    "voaResourceId": "voa:4302226",
+    "usable": false
+  },
+  {
+    "chunk": "pays better",
+    "homeLesson": "gr12",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "the hours are longer",
+    "homeLesson": "gr12",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "Which one is closer",
+    "homeLesson": "gr12",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "more flexible",
+    "homeLesson": "gr12",
+    "matched": true,
+    "voaResourceId": "voa:2935173",
+    "usable": true
+  },
+  {
+    "chunk": "more stable",
+    "homeLesson": "gr12",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "Tough call",
+    "homeLesson": "gr12",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "just moved in next door",
+    "homeLesson": "rv01",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "Are you from here",
+    "homeLesson": "rv01",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "I am from Da Nang, actually",
+    "homeLesson": "rv01",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "welcome to the building",
+    "homeLesson": "rv01",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "Grab a towel",
+    "homeLesson": "rv02",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "scan your band",
+    "homeLesson": "rv02",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "a bit fast",
+    "homeLesson": "rv02",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "So I scan it after",
+    "homeLesson": "rv02",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "behind the desk",
+    "homeLesson": "rv02",
+    "matched": true,
+    "voaResourceId": "voa:4489441",
+    "usable": false
+  },
+  {
+    "chunk": "it is not working",
+    "homeLesson": "rv03",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "a rattling noise",
+    "homeLesson": "rv03",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "a replacement or a refund",
+    "homeLesson": "rv03",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "a different model",
+    "homeLesson": "rv03",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "goes back to your card",
+    "homeLesson": "rv03",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "Maybe a hike",
+    "homeLesson": "rv04",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "the trail near the lake",
+    "homeLesson": "rv04",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "it gets hot later",
+    "homeLesson": "rv04",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "Eight works",
+    "homeLesson": "rv04",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "Just water",
+    "homeLesson": "rv04",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "I will pack snacks",
+    "homeLesson": "rv04",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "Deal",
+    "homeLesson": "rv04",
+    "matched": true,
+    "voaResourceId": "voa:3459324",
+    "usable": true
+  },
+  {
+    "chunk": "this happened last month",
+    "homeLesson": "rv05",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "a work trip",
+    "homeLesson": "rv05",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "I lost my wallet",
+    "homeLesson": "rv05",
+    "matched": true,
+    "voaResourceId": "voa:3666458",
+    "usable": true
+  },
+  {
+    "chunk": "my phone died",
+    "homeLesson": "rv05",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "a taxi driver helped me",
+    "homeLesson": "rv05",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "drove me to the embassy",
+    "homeLesson": "rv05",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "a backup card",
+    "homeLesson": "rv05",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "the whole time",
+    "homeLesson": "rv05",
+    "matched": true,
+    "voaResourceId": "voa:7780542",
+    "usable": false
+  },
+  {
+    "chunk": "turn it off",
+    "homeLesson": "li03",
+    "matched": true,
+    "voaResourceId": "voa:4242927",
+    "usable": true
+  },
+  {
+    "chunk": "check it out",
+    "homeLesson": "li03",
+    "matched": true,
+    "voaResourceId": "voa:4226600",
+    "usable": false
+  },
+  {
+    "chunk": "not at all",
+    "homeLesson": "li03",
+    "matched": true,
+    "voaResourceId": "voa:4139015",
+    "usable": true
+  },
+  {
+    "chunk": "one long word",
+    "homeLesson": "li03",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "thirteen",
+    "homeLesson": "li06",
+    "matched": true,
+    "voaResourceId": "voa:7918704",
+    "usable": false
+  },
+  {
+    "chunk": "fifteen fifty",
+    "homeLesson": "li06",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "digit by digit",
+    "homeLesson": "li06",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "B or D",
+    "homeLesson": "li07",
+    "matched": true,
+    "voaResourceId": "voa:3206680",
+    "usable": true
+  },
+  {
+    "chunk": "S-M-I-T-H",
+    "homeLesson": "li07",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "each letter clearly",
+    "homeLesson": "li07",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "Attention passengers",
+    "homeLesson": "li09",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "the 9:15 service",
+    "homeLesson": "li09",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "Due to track work",
+    "homeLesson": "li09",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "depart from platform three",
+    "homeLesson": "li09",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "check the boards",
+    "homeLesson": "li09",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "your connecting services",
+    "homeLesson": "li09",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "this is Dr. Tran's office",
+    "homeLesson": "li10",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "moving your appointment",
+    "homeLesson": "li10",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "Friday, May ninth",
+    "homeLesson": "li10",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "ask for Nurse Kelly",
+    "homeLesson": "li10",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "the fourth floor",
+    "homeLesson": "li10",
+    "matched": true,
+    "voaResourceId": "voa:4017535",
+    "usable": false
+  },
+  {
+    "chunk": "tap your card",
+    "homeLesson": "li15",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "select your ticket type",
+    "homeLesson": "li15",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "on the screen",
+    "homeLesson": "li15",
+    "matched": true,
+    "voaResourceId": "voa:6976225",
+    "usable": false
+  },
+  {
+    "chunk": "pay by card or cash",
+    "homeLesson": "li15",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "take your ticket",
+    "homeLesson": "li15",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "waited an hour",
+    "homeLesson": "li16",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "the role was filled",
+    "homeLesson": "li16",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "last week",
+    "homeLesson": "li16",
+    "matched": true,
+    "voaResourceId": "voa:3457316",
+    "usable": true
+  },
+  {
+    "chunk": "No email, no call",
+    "homeLesson": "li16",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "took the day off",
+    "homeLesson": "li16",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "for nothing",
+    "homeLesson": "li16",
+    "matched": true,
+    "voaResourceId": "voa:4364300",
+    "usable": false
+  },
+  {
+    "chunk": "cats",
+    "homeLesson": "pr01",
+    "matched": true,
+    "voaResourceId": "voa:3635015",
+    "usable": true
+  },
+  {
+    "chunk": "dogs",
+    "homeLesson": "pr01",
+    "matched": true,
+    "voaResourceId": "voa:4074883",
+    "usable": true
+  },
+  {
+    "chunk": "walked",
+    "homeLesson": "pr02",
+    "matched": true,
+    "voaResourceId": "voa:3439164",
+    "usable": true
+  },
+  {
+    "chunk": "played",
+    "homeLesson": "pr02",
+    "matched": true,
+    "voaResourceId": "voa:3439164",
+    "usable": true
+  },
+  {
+    "chunk": "wanted",
+    "homeLesson": "pr02",
+    "matched": true,
+    "voaResourceId": "voa:3439164",
+    "usable": true
+  },
+  {
+    "chunk": "a full extra syllable",
+    "homeLesson": "pr02",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "breathe",
+    "homeLesson": "pr04",
+    "matched": true,
+    "voaResourceId": "voa:4035571",
+    "usable": true
+  },
+  {
+    "chunk": "breath",
+    "homeLesson": "pr04",
+    "matched": true,
+    "voaResourceId": "voa:3763537",
+    "usable": false
+  },
+  {
+    "chunk": "mother",
+    "homeLesson": "pr04",
+    "matched": true,
+    "voaResourceId": "voa:3301733",
+    "usable": true
+  },
+  {
+    "chunk": "pray",
+    "homeLesson": "pr06",
+    "matched": true,
+    "voaResourceId": "voa:3598920",
+    "usable": true
+  },
+  {
+    "chunk": "berry",
+    "homeLesson": "pr07",
+    "matched": true,
+    "voaResourceId": "voa:4396849",
+    "usable": true
+  },
+  {
+    "chunk": "van",
+    "homeLesson": "pr07",
+    "matched": true,
+    "voaResourceId": "voa:3966541",
+    "usable": true
+  },
+  {
+    "chunk": "vest",
+    "homeLesson": "pr07",
+    "matched": true,
+    "voaResourceId": "voa:7660423",
+    "usable": true
+  },
+  {
+    "chunk": "bed",
+    "homeLesson": "pr09",
+    "matched": true,
+    "voaResourceId": "voa:3168971",
+    "usable": true
+  },
+  {
+    "chunk": "fool",
+    "homeLesson": "pr10",
+    "matched": true,
+    "voaResourceId": "voa:3628393",
+    "usable": true
+  },
+  {
+    "chunk": "Luke",
+    "homeLesson": "pr10",
+    "matched": true,
+    "voaResourceId": "voa:7515878",
+    "usable": true
+  },
+  {
+    "chunk": "pool",
+    "homeLesson": "pr10",
+    "matched": true,
+    "voaResourceId": "voa:4064553",
+    "usable": true
+  },
+  {
+    "chunk": "sip",
+    "homeLesson": "pr11",
+    "matched": true,
+    "voaResourceId": "voa:3960391",
+    "usable": true
+  },
+  {
+    "chunk": "truce",
+    "homeLesson": "pr12",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "chair",
+    "homeLesson": "pr12",
+    "matched": true,
+    "voaResourceId": "voa:3710209",
+    "usable": true
+  },
+  {
+    "chunk": "beGIN",
+    "homeLesson": "pr13",
+    "matched": true,
+    "voaResourceId": "voa:3630341",
+    "usable": true
+  },
+  {
+    "chunk": "PICture",
+    "homeLesson": "pr13",
+    "matched": true,
+    "voaResourceId": "voa:3301733",
+    "usable": true
+  },
+  {
+    "chunk": "forGET",
+    "homeLesson": "pr13",
+    "matched": true,
+    "voaResourceId": "voa:3343720",
+    "usable": true
+  },
+  {
+    "chunk": "the loud beat",
+    "homeLesson": "pr13",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "Rising = checking",
+    "homeLesson": "pr15",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "asking for info",
+    "homeLesson": "pr15",
+    "matched": true,
+    "voaResourceId": "voa:4058114",
+    "usable": true
+  },
+  {
+    "chunk": "the last word",
+    "homeLesson": "pr15",
+    "matched": true,
+    "voaResourceId": "voa:7813583",
+    "usable": true
+  },
+  {
+    "chunk": "falling flat",
+    "homeLesson": "pr16",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "the emotion",
+    "homeLesson": "pr16",
+    "matched": true,
+    "voaResourceId": "voa:7566464",
+    "usable": false
+  },
+  {
+    "chunk": "Whaddya wanna do tonight",
+    "homeLesson": "rv08",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "I dunno",
+    "homeLesson": "rv08",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "grab a bite",
+    "homeLesson": "rv08",
+    "matched": true,
+    "voaResourceId": "voa:7497663",
+    "usable": false
+  },
+  {
+    "chunk": "Gotta finish work first",
+    "homeLesson": "rv08",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "then I am free",
+    "homeLesson": "rv08",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "Quick question on ticket",
+    "homeLesson": "dv03",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "what is unclear",
+    "homeLesson": "dv03",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "make the button better",
+    "homeLesson": "dv03",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "what does better mean",
+    "homeLesson": "dv03",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "higher contrast",
+    "homeLesson": "dv03",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "a design mock",
+    "homeLesson": "dv03",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "send a screenshot",
+    "homeLesson": "dv03",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "Steps to reproduce",
+    "homeLesson": "dv05",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "Log in as",
+    "homeLesson": "dv05",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "a free-tier user",
+    "homeLesson": "dv05",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "then Billing",
+    "homeLesson": "dv05",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "Click Upgrade Plan",
+    "homeLesson": "dv05",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "the modal opens blank",
+    "homeLesson": "dv05",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "only repros on free tier",
+    "homeLesson": "dv05",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "Nice work overall",
+    "homeLesson": "dv08",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "could be a map lookup",
+    "homeLesson": "dv08",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "for clarity",
+    "homeLesson": "dv08",
+    "matched": true,
+    "voaResourceId": "voa:4226621",
+    "usable": false
+  },
+  {
+    "chunk": "is vague",
+    "homeLesson": "dv08",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "looks duplicated",
+    "homeLesson": "dv08",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "worth extracting",
+    "homeLesson": "dv08",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "LGTM",
+    "homeLesson": "dv08",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "once the naming is fixed",
+    "homeLesson": "dv08",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "adds a dark mode toggle",
+    "homeLesson": "dv09",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "users asked for it",
+    "homeLesson": "dv09",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "reduces eye strain",
+    "homeLesson": "dv09",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "stored in local storage",
+    "homeLesson": "dv09",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "applied on load",
+    "homeLesson": "dv09",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "toggle it on settings page",
+    "homeLesson": "dv09",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "the print stylesheet",
+    "homeLesson": "dv09",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "Handing off",
+    "homeLesson": "dv14",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "while I am out",
+    "homeLesson": "dv14",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "Where are things at",
+    "homeLesson": "dv14",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "half-finished",
+    "homeLesson": "dv14",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "Any gotchas",
+    "homeLesson": "dv14",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "Watch out for",
+    "homeLesson": "dv14",
+    "matched": true,
+    "voaResourceId": "voa:2989386",
+    "usable": true
+  },
+  {
+    "chunk": "it bit me twice",
+    "homeLesson": "dv14",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "a short loom video",
+    "homeLesson": "dv14",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "Is there a doc for",
+    "homeLesson": "dv15",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "a bit outdated",
+    "homeLesson": "dv15",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "the token flow",
+    "homeLesson": "dv15",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "last sprint",
+    "homeLesson": "dv15",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "Nobody wrote it up",
+    "homeLesson": "dv15",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "point me to",
+    "homeLesson": "dv15",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "as you go",
+    "homeLesson": "dv15",
+    "matched": true,
+    "voaResourceId": "voa:3208388",
+    "usable": false
+  },
+  {
+    "chunk": "find thirty minutes",
+    "homeLesson": "dv17",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "for a sync",
+    "homeLesson": "dv17",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "Wednesday afternoon works",
+    "homeLesson": "dv17",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "your time or mine",
+    "homeLesson": "dv17",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "two hours ahead",
+    "homeLesson": "dv17",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "push it to Thursday",
+    "homeLesson": "dv17",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "is stacked",
+    "homeLesson": "dv17",
+    "matched": true,
+    "voaResourceId": "voa:7886988",
+    "usable": false
+  },
+  {
+    "chunk": "Sending the invite",
+    "homeLesson": "dv17",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "when you get a sec",
+    "homeLesson": "dv18",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "need a decision on",
+    "homeLesson": "dv18",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "two options in Figma",
+    "homeLesson": "dv18",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "My rec",
+    "homeLesson": "dv18",
+    "matched": true,
+    "voaResourceId": "voa:7786483",
+    "usable": false
+  },
+  {
+    "chunk": "more standard",
+    "homeLesson": "dv18",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "No rush",
+    "homeLesson": "dv18",
+    "matched": true,
+    "voaResourceId": "voa:4226587",
+    "usable": false
+  },
+  {
+    "chunk": "it blocks the nav PR",
+    "homeLesson": "dv18",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "sharing my screen",
+    "homeLesson": "dv19",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "can everyone see it",
+    "homeLesson": "dv19",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "I open the dropdown",
+    "homeLesson": "dv19",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "a date range",
+    "homeLesson": "dv19",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "updates live",
+    "homeLesson": "dv19",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "the edge case",
+    "homeLesson": "dv19",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "a friendly message",
+    "homeLesson": "dv19",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "should I keep going",
+    "homeLesson": "dv19",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "for ninety minutes",
+    "homeLesson": "dv20",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "a bad migration",
+    "homeLesson": "dv20",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "Root cause",
+    "homeLesson": "dv20",
+    "matched": true,
+    "voaResourceId": "voa:4155015",
+    "usable": false
+  },
+  {
+    "chunk": "a missing index check",
+    "homeLesson": "dv20",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "slowed queries to timeout",
+    "homeLesson": "dv20",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "What went well",
+    "homeLesson": "dv20",
+    "matched": true,
+    "voaResourceId": "voa:7165568",
+    "usable": false
+  },
+  {
+    "chunk": "What we learned",
+    "homeLesson": "dv20",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "Action items",
+    "homeLesson": "dv20",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "I need to escalate something",
+    "homeLesson": "dv22",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "the vendor API",
+    "homeLesson": "dv22",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "still down",
+    "homeLesson": "dv22",
+    "matched": true,
+    "voaResourceId": "voa:4769313",
+    "usable": false
+  },
+  {
+    "chunk": "I opened a ticket",
+    "homeLesson": "dv22",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "no response yet",
+    "homeLesson": "dv22",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "The sync job fails nightly",
+    "homeLesson": "dv22",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "two days stale",
+    "homeLesson": "dv22",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "their account manager",
+    "homeLesson": "dv22",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "How are things in Da Nang",
+    "homeLesson": "dv23",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "Hot, honestly",
+    "homeLesson": "dv23",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "still cold",
+    "homeLesson": "dv23",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "living on coffee",
+    "homeLesson": "dv23",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "did you see the game",
+    "homeLesson": "dv23",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "worth watching",
+    "homeLesson": "dv23",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "Skip it",
+    "homeLesson": "dv23",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "just joined",
+    "homeLesson": "dv23",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "the dashboard faster",
+    "homeLesson": "dv24",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "We added caching",
+    "homeLesson": "dv24",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "keeping a copy on your desk",
+    "homeLesson": "dv24",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "walking to the library",
+    "homeLesson": "dv24",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "expires after a while",
+    "homeLesson": "dv24",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "fetch fresh",
+    "homeLesson": "dv24",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "stale data",
+    "homeLesson": "dv24",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "the trade-off for speed",
+    "homeLesson": "dv24",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "broke after yesterday's deploy",
+    "homeLesson": "rv06",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "empty files",
+    "homeLesson": "rv06",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "instead of the report",
+    "homeLesson": "rv06",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "a dozen tickets",
+    "homeLesson": "rv06",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "a fix in mind",
+    "homeLesson": "rv06",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "my patch",
+    "homeLesson": "rv06",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "Send it over",
+    "homeLesson": "rv06",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "Let us go back to",
+    "homeLesson": "rv07",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "I see the appeal",
+    "homeLesson": "rv07",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "just okay",
+    "homeLesson": "rv07",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "The noodles were great",
+    "homeLesson": "rv07",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "The service was slow though",
+    "homeLesson": "rv07",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "that new place by the river",
+    "homeLesson": "rv07",
+    "matched": false,
+    "usable": false
+  },
+  {
+    "chunk": "better reviews",
+    "homeLesson": "rv07",
+    "matched": false,
+    "usable": false
+  }
+]
