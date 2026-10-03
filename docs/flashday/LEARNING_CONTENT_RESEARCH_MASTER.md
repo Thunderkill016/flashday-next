@@ -570,3 +570,25 @@ It is not the curriculum itself.
 FlashDay should become:
 
 > a system that combines independently authored curriculum, structured linguistic knowledge, rights-cleared authentic material, Vietnamese learner-specific support and trustworthy evidence — rather than a repository of copied English-learning PDFs.
+
+## 23. Technical research library - Tech-Books
+
+A review of FatoomRe/Tech-Books identified a small relevant subset rather than treating the entire repository as useful.
+
+Highest-value references:
+- Speech and Language Processing for speech/NLP architecture;
+- Human-Centered Design / HCI for learner interaction;
+- selected software-product engineering books for process benchmarking.
+
+The repository itself is reference-only because many PDFs are redistributed commercial works or mirror-derived.
+
+Durable technical additions:
+- ASR transcript accuracy and pronunciation quality are separate;
+- benchmark Vietnamese-accented speech, realistic noise and latency;
+- prosody should be decomposed into pitch/F0, energy, duration/stress/rhythm/intonation dimensions;
+- articulatory phonetics can drive specific corrective instructions;
+- acoustic features are evaluator inputs, not mastery scores;
+- conversation should model turn-taking, grounding and repair;
+- retrieval/RAG is candidate/context retrieval, never learner-state authority.
+
+See TECH_BOOKS_RESEARCH_AUDIT.md.
