@@ -1,0 +1,34 @@
+[
+  {
+    "packId": "flashday-core-a1-v1",
+    "version": "content/2.0.0",
+    "lessons": 48,
+    "targets": 300,
+    "items": 348,
+    "collections": 4
+  },
+  {
+    "packId": "flashday-core-a2-v1",
+    "version": "content/2.0.0",
+    "lessons": 35,
+    "targets": 234,
+    "items": 269,
+    "collections": 6
+  },
+  {
+    "packId": "flashday-listening-v1",
+    "version": "content/2.0.0",
+    "lessons": 33,
+    "targets": 160,
+    "items": 193,
+    "collections": 4
+  },
+  {
+    "packId": "flashday-developer-v1",
+    "version": "content/2.0.0",
+    "lessons": 26,
+    "targets": 199,
+    "items": 225,
+    "collections": 4
+  }
+]

@@ -1,0 +1,6666 @@
+[
+  {
+    "chunk": "Good morning",
+    "homeLesson": "sv01",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["sv19", "sv24", "ev22", "ch16", "rv01"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "How are you",
+    "homeLesson": "sv01",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["sv19", "sv24", "ch16", "rv01"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "I am fine, thank you",
+    "homeLesson": "sv01",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["sv19", "sv24", "ch16", "rv01"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Have a nice day",
+    "homeLesson": "sv01",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["sv19", "sv24", "ch16", "rv01"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "See you later",
+    "homeLesson": "sv01",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["sv19", "sv24", "ch16", "rv01"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "I am",
+    "homeLesson": "sv02",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": [
+      "sv01",
+      "sv03",
+      "sv04",
+      "sv09",
+      "sv18",
+      "sv20",
+      "sv24",
+      "ev15",
+      "ev22",
+      "ch02",
+      "ch07",
+      "ch12",
+      "ch14",
+      "ch17",
+      "ch18",
+      "gr01",
+      "gr05",
+      "gr06",
+      "gr10",
+      "rv01",
+      "li04",
+      "li13",
+      "rv08",
+      "dv01",
+      "dv06",
+      "dv12",
+      "dv14",
+      "dv23"
+    ],
+    "transferredIn": []
+  },
+  {
+    "chunk": "What is your name",
+    "homeLesson": "sv02",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["sv04", "sv20", "rv01"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Nice to meet you",
+    "homeLesson": "sv02",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["sv04", "sv20", "rv01"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Nice to meet you too",
+    "homeLesson": "sv02",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["sv04", "sv20", "rv01"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "How do you spell",
+    "homeLesson": "sv02",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["sv04", "sv20", "rv01"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Where are you from",
+    "homeLesson": "sv03",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["sv19", "rv01"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "I am from",
+    "homeLesson": "sv03",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["sv19", "rv01"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "And you",
+    "homeLesson": "sv03",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["sv01", "sv02", "sv05", "sv19", "gr02", "rv01"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Which city",
+    "homeLesson": "sv03",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["sv19", "ch05", "rv01"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "what do you do",
+    "homeLesson": "sv04",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev01"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "I am a software developer",
+    "homeLesson": "sv04",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Do you like your job",
+    "homeLesson": "sv04",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "I love it",
+    "homeLesson": "sv04",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["sv12"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "a small company",
+    "homeLesson": "sv04",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Can I have your phone number",
+    "homeLesson": "sv05",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["sv20", "ev22", "li06"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "It is zero nine",
+    "homeLesson": "sv05",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["sv20", "ev22", "li06"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "at gmail dot com",
+    "homeLesson": "sv05",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["sv20", "ev22", "li06"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Let me confirm",
+    "homeLesson": "sv05",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["sv20", "ev22", "li06"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "That is correct",
+    "homeLesson": "sv05",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["sv20", "ev22", "li06"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Sorry, could you say that again",
+    "homeLesson": "sv06",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ch15", "rv02"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Could you speak more slowly",
+    "homeLesson": "sv06",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ch15", "rv02"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Of course",
+    "homeLesson": "sv06",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["sv08", "ev08", "ev22", "ch15", "gr07", "rv02"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Got it",
+    "homeLesson": "sv06",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["sv20", "ev11", "ch09", "ch15", "rv02", "dv03"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "I do not understand",
+    "homeLesson": "sv07",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["rv02"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "What does postponed mean",
+    "homeLesson": "sv07",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["rv02"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "It means",
+    "homeLesson": "sv07",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["rv02"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "I see",
+    "homeLesson": "sv07",
+    "stages": ["introduced", "practiced", "retrieved", "recycled", "transferred"],
+    "recycledBy": ["ev21", "ch17", "rv02", "dv12", "rv07"],
+    "transferredIn": ["ch17"]
+  },
+  {
+    "chunk": "Thank you for explaining",
+    "homeLesson": "sv07",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["rv02"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Excuse me",
+    "homeLesson": "sv08",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["sv10", "sv17", "sv21", "sv23", "ev06", "ch18", "gr07", "rv03"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Can I borrow",
+    "homeLesson": "sv08",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["sv10", "ch18", "gr07"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "here you go",
+    "homeLesson": "sv08",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["sv10", "ch18", "gr07"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Thank you very much",
+    "homeLesson": "sv08",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["sv10", "ch18", "gr07"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "You are welcome",
+    "homeLesson": "sv08",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["sv10", "sv17", "ch18", "gr07"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Could you help me find",
+    "homeLesson": "sv08",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["sv10", "ch18", "gr07"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "I am so sorry",
+    "homeLesson": "sv09",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev15"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "No problem",
+    "homeLesson": "sv09",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["sv23", "ev09", "ev15", "ch18", "gr07", "rv03"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "I did not see you",
+    "homeLesson": "sv09",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev15"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "do not worry about it",
+    "homeLesson": "sv09",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev15"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "I am sorry I am late",
+    "homeLesson": "sv09",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev15"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "That is fine",
+    "homeLesson": "sv09",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev15", "li12"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Is this seat free",
+    "homeLesson": "sv10",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["gr02"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Yes, it is",
+    "homeLesson": "sv10",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["gr02"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Do you have wifi",
+    "homeLesson": "sv10",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["gr02"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Yes, we do",
+    "homeLesson": "sv10",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["gr02"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "the best in the neighborhood",
+    "homeLesson": "sv10",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["gr02"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "How much is this",
+    "homeLesson": "sv11",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["sv15", "sv23", "ev06"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "this one",
+    "homeLesson": "sv11",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["sv15", "sv23", "ev06", "ev11", "ch01"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "that one",
+    "homeLesson": "sv11",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["sv15", "sv23", "ev06"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "more expensive",
+    "homeLesson": "sv11",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["sv15", "sv23", "ev06"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "I will take this one",
+    "homeLesson": "sv11",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["sv15", "sv23", "ev06"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Good choice",
+    "homeLesson": "sv11",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["sv15", "sv23", "ev06"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Do you like",
+    "homeLesson": "sv12",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["sv04", "ev18"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "What about",
+    "homeLesson": "sv12",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev18"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "I like tea too",
+    "homeLesson": "sv12",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev18"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Not really",
+    "homeLesson": "sv12",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev18", "gr02"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "I prefer",
+    "homeLesson": "sv12",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev18"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Me too",
+    "homeLesson": "sv12",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev18"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "my wife",
+    "homeLesson": "sv13",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "our two kids",
+    "homeLesson": "sv13",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "How old are they",
+    "homeLesson": "sv13",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "brothers or sisters",
+    "homeLesson": "sv13",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "older brother",
+    "homeLesson": "sv13",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "He lives in",
+    "homeLesson": "sv13",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "make an appointment",
+    "homeLesson": "sv14",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["sv22", "ev02", "gr10"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "How about",
+    "homeLesson": "sv14",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["sv19", "sv22", "ev02", "ev03", "ev17", "ev24", "ch17", "gr10", "rv04", "rv07"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "is difficult",
+    "homeLesson": "sv14",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["sv22", "ev02", "gr10"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Do you have Wednesday",
+    "homeLesson": "sv14",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["sv22", "ev02", "gr10"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "That works for me",
+    "homeLesson": "sv14",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["sv22", "ev02", "gr10"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "How much is the water",
+    "homeLesson": "sv15",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["sv23", "ev20"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "It is ten thousand",
+    "homeLesson": "sv15",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["sv23", "ev20"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "And the sandwich",
+    "homeLesson": "sv15",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["sv23", "ev20"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "altogether",
+    "homeLesson": "sv15",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["sv23", "ev20"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Here you are",
+    "homeLesson": "sv15",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["sv23", "ev20"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "what can I get you",
+    "homeLesson": "sv16",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev08"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Can I have",
+    "homeLesson": "sv16",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["sv05", "ev08"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Anything to drink",
+    "homeLesson": "sv16",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev08"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "for here or to go",
+    "homeLesson": "sv16",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev08"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "To go, please",
+    "homeLesson": "sv16",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev08"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "That will be",
+    "homeLesson": "sv16",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev08", "ev14"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "where is the restroom",
+    "homeLesson": "sv17",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev07"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "on the second floor",
+    "homeLesson": "sv17",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["sv08", "ev07"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "next to",
+    "homeLesson": "sv17",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev07", "gr09", "gr11"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "turn left",
+    "homeLesson": "sv17",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev07"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Go up",
+    "homeLesson": "sv17",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev07"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Would you like",
+    "homeLesson": "sv18",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["rv03"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Yes, please",
+    "homeLesson": "sv18",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["sv23", "ev20"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "No, thank you",
+    "homeLesson": "sv18",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Do you take",
+    "homeLesson": "sv18",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "A little",
+    "homeLesson": "sv18",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev16"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Help yourself",
+    "homeLesson": "sv18",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "How was your weekend",
+    "homeLesson": "sv19",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["sv24", "ev04", "rv01", "dv23"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Pretty quiet",
+    "homeLesson": "sv19",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["sv24", "ev04", "rv01", "dv23"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "How about you",
+    "homeLesson": "sv19",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["sv24", "ev04", "rv01", "dv23"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "That sounds nice",
+    "homeLesson": "sv19",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["sv24", "ev04", "rv01", "dv23"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Are you ready for",
+    "homeLesson": "sv19",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["sv24", "ev04", "rv01", "dv23"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "five more minutes",
+    "homeLesson": "sv19",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["sv24", "ev04", "rv01", "dv23"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Your name for the booking",
+    "homeLesson": "sv20",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["li07"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "was that G or J",
+    "homeLesson": "sv20",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["li07"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "G as in green",
+    "homeLesson": "sv20",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["li07"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "first name",
+    "homeLesson": "sv20",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["li07"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "I need help",
+    "homeLesson": "sv21",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev15", "ev19", "rv05"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "I lost my bag",
+    "homeLesson": "sv21",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev15", "ev19", "rv05"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "stay calm",
+    "homeLesson": "sv21",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev15", "ev19", "rv05"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Where did you last see it",
+    "homeLesson": "sv21",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev15", "ev19", "rv05"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "a black backpack",
+    "homeLesson": "sv21",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev15", "ev19", "rv05"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "lost and found",
+    "homeLesson": "sv21",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev15", "ev19", "rv05"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "What time is it",
+    "homeLesson": "sv22",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev02", "ch04", "gr10"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "almost three",
+    "homeLesson": "sv22",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev02", "ch04", "gr10"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "What time does",
+    "homeLesson": "sv22",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev02", "ch04", "gr10"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "At four thirty",
+    "homeLesson": "sv22",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev02", "ch04", "gr10"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "We should leave",
+    "homeLesson": "sv22",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev02", "ch04", "gr10"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "four it is",
+    "homeLesson": "sv22",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev02", "ch04", "gr10"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "in front of",
+    "homeLesson": "sv22",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev02", "ch04", "gr10"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "I bought this",
+    "homeLesson": "sv23",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev06", "ev21", "rv03"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Is there a problem with it",
+    "homeLesson": "sv23",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev06", "ev21", "rv03"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "the tag says",
+    "homeLesson": "sv23",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev06", "ev21", "rv03"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "exchange it",
+    "homeLesson": "sv23",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev06", "ev21", "rv03"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "that actually fits",
+    "homeLesson": "sv23",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev06", "ev21", "rv03"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "the right size",
+    "homeLesson": "sv23",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev06", "ev21", "rv03"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "What are you doing this weekend",
+    "homeLesson": "sv24",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev03", "ev16", "gr05", "rv04"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "I am going to visit",
+    "homeLesson": "sv24",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev03", "ev16", "gr05", "rv04"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Nothing yet",
+    "homeLesson": "sv24",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev03", "ev16", "gr05", "rv04"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Do you want to join us",
+    "homeLesson": "sv24",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev03", "ev16", "gr05", "rv04"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "I would love to",
+    "homeLesson": "sv24",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev03", "ev16", "gr05", "rv04"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Around noon",
+    "homeLesson": "sv24",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev03", "ev16", "gr05", "rv04"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "What time do you usually",
+    "homeLesson": "ev01",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["gr03"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "I usually get up",
+    "homeLesson": "ev01",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["gr03"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "around six thirty",
+    "homeLesson": "ev01",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["gr03"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "What do you do first",
+    "homeLesson": "ev01",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["gr03"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "First I make coffee",
+    "homeLesson": "ev01",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["gr03"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "then I check my messages",
+    "homeLesson": "ev01",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["gr03"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "I leave for work",
+    "homeLesson": "ev01",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["gr03"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Are you free on",
+    "homeLesson": "ev02",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev23", "dv17"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "are busy",
+    "homeLesson": "ev02",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev23", "dv17"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "a late meeting",
+    "homeLesson": "ev02",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev23", "dv17"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Thursdays work",
+    "homeLesson": "ev02",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev23", "dv17"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "I finish at five",
+    "homeLesson": "ev02",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev23", "dv17"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Every Thursday then",
+    "homeLesson": "ev02",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev23", "dv17"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Want to do something",
+    "homeLesson": "ev03",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev24", "rv04"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "It might rain",
+    "homeLesson": "ev03",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev24", "rv04"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "instead",
+    "homeLesson": "ev03",
+    "stages": ["introduced", "practiced", "retrieved", "transferred", "recycled"],
+    "recycledBy": ["ev17", "ev24", "rv04", "dv07", "dv21", "dv24", "rv06"],
+    "transferredIn": ["ev01", "ev21", "ch01", "dv02"]
+  },
+  {
+    "chunk": "Let us meet at ten",
+    "homeLesson": "ev03",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev24", "rv04"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Where exactly",
+    "homeLesson": "ev03",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev24", "rv04"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "the main entrance",
+    "homeLesson": "ev03",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev24", "rv04"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "I will text you",
+    "homeLesson": "ev03",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev24", "rv04"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "How was your Sunday",
+    "homeLesson": "ev04",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ch03", "gr04", "rv05"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "I slept in",
+    "homeLesson": "ev04",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ch03", "gr04", "rv05"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "I went to the market",
+    "homeLesson": "ev04",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ch03", "gr04", "rv05"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Did you buy anything",
+    "homeLesson": "ev04",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ch03", "gr04", "rv05"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "I cooked lunch",
+    "homeLesson": "ev04",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ch03", "gr04", "rv05"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Sounds relaxing",
+    "homeLesson": "ev04",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ch03", "gr04", "rv05"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "I did not leave the house",
+    "homeLesson": "ev04",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ch03", "gr04", "rv05"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "A or B",
+    "homeLesson": "ev05",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ch13", "gr12"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "is cheaper",
+    "homeLesson": "ev05",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ch13", "gr12"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "closer to work",
+    "homeLesson": "ev05",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ch13", "gr12"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Which matters more",
+    "homeLesson": "ev05",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ch13", "gr12"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "the commute",
+    "homeLesson": "ev05",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ch13", "gr12"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "I would rather",
+    "homeLesson": "ev05",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ch13", "gr12"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "do you have this in a medium",
+    "homeLesson": "ev06",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["rv03"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Let me check",
+    "homeLesson": "ev06",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ch04", "rv03"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "try the blue one on",
+    "homeLesson": "ev06",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["rv03"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "the fitting room",
+    "homeLesson": "ev06",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["rv03"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "It fits well",
+    "homeLesson": "ev06",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["rv03"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "on sale",
+    "homeLesson": "ev06",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["rv03"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "twenty percent off",
+    "homeLesson": "ev06",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["rv03"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "How do I get to",
+    "homeLesson": "ev07",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev14"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Take bus nine",
+    "homeLesson": "ev07",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev14"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Where do I get off",
+    "homeLesson": "ev07",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev14"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "the post office",
+    "homeLesson": "ev07",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev14"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "it takes about fifteen minutes",
+    "homeLesson": "ev07",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev14"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "across the street",
+    "homeLesson": "ev07",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev14"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "You cannot miss it",
+    "homeLesson": "ev07",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev14"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Are you ready to order",
+    "homeLesson": "ev08",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev09"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "What do you recommend",
+    "homeLesson": "ev08",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev09"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "very popular",
+    "homeLesson": "ev08",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev09"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "I will have that",
+    "homeLesson": "ev08",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev09"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "with rice",
+    "homeLesson": "ev08",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev09"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Anything for dessert",
+    "homeLesson": "ev08",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev09"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "the bill",
+    "homeLesson": "ev08",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev09"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "What can I make for you",
+    "homeLesson": "ev09",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev23"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "a medium latte",
+    "homeLesson": "ev09",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev23"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "with oat milk",
+    "homeLesson": "ev09",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev23"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Hot or iced",
+    "homeLesson": "ev09",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev23"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Not too sweet",
+    "homeLesson": "ev09",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev23"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "half the syrup",
+    "homeLesson": "ev09",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev23"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "That is everything",
+    "homeLesson": "ev09",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev23"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "What brings you in",
+    "homeLesson": "ev10",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev11"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "I have had a headache",
+    "homeLesson": "ev10",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev11"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "a sore throat",
+    "homeLesson": "ev10",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev11"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "since Monday",
+    "homeLesson": "ev10",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev11"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Any fever",
+    "homeLesson": "ev10",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev11"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "plenty of water",
+    "homeLesson": "ev10",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev11"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "painkillers",
+    "homeLesson": "ev10",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev11"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "if it gets worse",
+    "homeLesson": "ev10",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev11"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "anything for allergies",
+    "homeLesson": "ev11",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "itchy eyes",
+    "homeLesson": "ev11",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "one tablet a day",
+    "homeLesson": "ev11",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "With food or without",
+    "homeLesson": "ev11",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Do not take more than one",
+    "homeLesson": "ev11",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Either is fine",
+    "homeLesson": "ev11",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Checking in",
+    "homeLesson": "ev12",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "a reservation under",
+    "homeLesson": "ev12",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "a double room",
+    "homeLesson": "ev12",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Is breakfast included",
+    "homeLesson": "ev12",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "the wifi password",
+    "homeLesson": "ev12",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "on the card sleeve",
+    "homeLesson": "ev12",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Checkout is at noon",
+    "homeLesson": "ev12",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "checking any bags",
+    "homeLesson": "ev13",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev24"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "one suitcase",
+    "homeLesson": "ev13",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev24"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "on the scale",
+    "homeLesson": "ev13",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev24"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Window or aisle",
+    "homeLesson": "ev13",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev24"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Aisle, please",
+    "homeLesson": "ev13",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev24"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "boarding pass",
+    "homeLesson": "ev13",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev24"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Boarding starts at",
+    "homeLesson": "ev13",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev24"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "gate twelve",
+    "homeLesson": "ev13",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev24"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "To Riverside Apartments",
+    "homeLesson": "ev14",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "about twenty minutes",
+    "homeLesson": "ev14",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "the main road",
+    "homeLesson": "ev14",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Meter is running",
+    "homeLesson": "ev14",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "drop me at the entrance",
+    "homeLesson": "ev14",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Keep the change",
+    "homeLesson": "ev14",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "sorry to bother you",
+    "homeLesson": "ev15",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "from downstairs",
+    "homeLesson": "ev15",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Is everything okay",
+    "homeLesson": "ev15",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "quite loud after midnight",
+    "homeLesson": "ev15",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "I did not realize",
+    "homeLesson": "ev15",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "keep it down",
+    "homeLesson": "ev15",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "I appreciate it",
+    "homeLesson": "ev15",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "come over for dinner",
+    "homeLesson": "ev16",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev17", "rv04"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "What time should I come",
+    "homeLesson": "ev16",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev17", "rv04"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Can you eat spicy food",
+    "homeLesson": "ev16",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev17", "rv04"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Should I bring anything",
+    "homeLesson": "ev16",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev17", "rv04"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Just yourself",
+    "homeLesson": "ev16",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev17", "rv04"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Can you come",
+    "homeLesson": "ev17",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ch12", "rv07"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "I wish I could",
+    "homeLesson": "ev17",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ch12", "rv07"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "I already have plans",
+    "homeLesson": "ev17",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ch12", "rv07"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "That is too bad",
+    "homeLesson": "ev17",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ch12", "rv07"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Another time",
+    "homeLesson": "ev17",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ch12", "rv07"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "by the way",
+    "homeLesson": "ev17",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ch09", "ch12", "dv23", "rv07"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "what did you think of",
+    "homeLesson": "ev18",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ch07", "ch17", "rv07"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "a bit slow",
+    "homeLesson": "ev18",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ch07", "ch17", "rv07"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "I thought it was",
+    "homeLesson": "ev18",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ch07", "ch17", "rv07"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "The ending was great",
+    "homeLesson": "ev18",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ch07", "ch17", "rv07"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "the middle dragged",
+    "homeLesson": "ev18",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ch07", "ch17", "rv07"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Fair enough",
+    "homeLesson": "ev18",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ch07", "ch17", "rv07"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "not for everyone",
+    "homeLesson": "ev18",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ch07", "ch17", "rv07"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "though",
+    "homeLesson": "ev18",
+    "stages": ["introduced", "practiced", "retrieved", "recycled", "transferred"],
+    "recycledBy": ["ch01", "ch07", "ch13", "ch17", "gr06", "dv12", "dv15", "dv17", "rv07"],
+    "transferredIn": ["li13"]
+  },
+  {
+    "chunk": "this is Anh from apartment 4B",
+    "homeLesson": "ev19",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "what is up",
+    "homeLesson": "ev19",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "is leaking",
+    "homeLesson": "ev19",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "it has been dripping all night",
+    "homeLesson": "ev19",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Is it serious",
+    "homeLesson": "ev19",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "a small puddle",
+    "homeLesson": "ev19",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "I turned the water off",
+    "homeLesson": "ev19",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "send a plumber",
+    "homeLesson": "ev19",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Here is your bill",
+    "homeLesson": "ev20",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "split it",
+    "homeLesson": "ev20",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "three ways",
+    "homeLesson": "ev20",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "How much is each",
+    "homeLesson": "ev20",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "pay by card",
+    "homeLesson": "ev20",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["li15"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "add a tip",
+    "homeLesson": "ev20",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "It is already included",
+    "homeLesson": "ev20",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "How can I help",
+    "homeLesson": "ev21",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["sv14", "rv03"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "return an order",
+    "homeLesson": "ev21",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["rv03"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "the wrong color",
+    "homeLesson": "ev21",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["rv03"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "your order number",
+    "homeLesson": "ev21",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["rv03"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "a return label",
+    "homeLesson": "ev21",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["rv03"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "get the refund",
+    "homeLesson": "ev21",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["rv03"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "five business days",
+    "homeLesson": "ev21",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["rv03"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Could I speak to",
+    "homeLesson": "ev22",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "I am afraid",
+    "homeLesson": "ev22",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "with a patient",
+    "homeLesson": "ev22",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "call me back",
+    "homeLesson": "ev22",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "take your number",
+    "homeLesson": "ev22",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "this afternoon",
+    "homeLesson": "ev22",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv13"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Running a bit late",
+    "homeLesson": "ev23",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv17"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "push coffee to four",
+    "homeLesson": "ev23",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv17"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Same place",
+    "homeLesson": "ev23",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv17"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "four ten",
+    "homeLesson": "ev23",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv17"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "No worries",
+    "homeLesson": "ev23",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ch12", "dv17"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "grab us a table",
+    "homeLesson": "ev23",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv17"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "the usual",
+    "homeLesson": "ev23",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv17"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "no sugar",
+    "homeLesson": "ev23",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv17"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "get away",
+    "homeLesson": "ev24",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["rv04"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Any ideas",
+    "homeLesson": "ev24",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["rv04"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "It is cooler there",
+    "homeLesson": "ev24",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["rv04"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "fly or take the bus",
+    "homeLesson": "ev24",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["rv04"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "the sleeper bus",
+    "homeLesson": "ev24",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["rv04"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "eight hours overnight",
+    "homeLesson": "ev24",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["rv04"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "What should we do there",
+    "homeLesson": "ev24",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["rv04"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Book it",
+    "homeLesson": "ev24",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["rv04"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "I think this one is fine",
+    "homeLesson": "ch01",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "The reviews look good",
+    "homeLesson": "ch01",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "a bit pricey",
+    "homeLesson": "ch01",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "I guess",
+    "homeLesson": "ch01",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev18"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "the portions are big",
+    "homeLesson": "ch01",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "I think so too",
+    "homeLesson": "ch01",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Well, actually",
+    "homeLesson": "ch02",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv24"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "more of a designer",
+    "homeLesson": "ch02",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv24"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Basically, yes",
+    "homeLesson": "ch02",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv24"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "I design how apps look",
+    "homeLesson": "ch02",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv24"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "that sounds more interesting",
+    "homeLesson": "ch02",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv24"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "problem-solving with colors",
+    "homeLesson": "ch02",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv24"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "kind of a disaster",
+    "homeLesson": "ch03",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ch10", "rv05"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "What happened",
+    "homeLesson": "ch03",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ch10", "rv05"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "the bus broke down",
+    "homeLesson": "ch03",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ch10", "rv05"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "it rained all day",
+    "homeLesson": "ch03",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ch10", "rv05"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "you know what",
+    "homeLesson": "ch03",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ch10", "rv05"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "The food was amazing",
+    "homeLesson": "ch03",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ch10", "gr04", "rv05"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Let me see",
+    "homeLesson": "ch04",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "I think it is Thursday",
+    "homeLesson": "ch04",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Hold on",
+    "homeLesson": "ch04",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "let me check my calendar",
+    "homeLesson": "ch04",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Thursday at three",
+    "homeLesson": "ch04",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "that is a good question",
+    "homeLesson": "ch05",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Let me think",
+    "homeLesson": "ch05",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "it depends on",
+    "homeLesson": "ch05",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Noodle soup, mostly",
+    "homeLesson": "ch05",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "probably Hanoi",
+    "homeLesson": "ch05",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "do not quote me on that",
+    "homeLesson": "ch05",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "that green thing",
+    "homeLesson": "ch06",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "kind of a pancake",
+    "homeLesson": "ch06",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Was it sweet",
+    "homeLesson": "ch06",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "more savory",
+    "homeLesson": "ch06",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Did you like it",
+    "homeLesson": "ch06",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "I would eat it again",
+    "homeLesson": "ch06",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "what do you think of my haircut",
+    "homeLesson": "ch07",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["rv07"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "To be honest",
+    "homeLesson": "ch07",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["rv07"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "I liked it longer",
+    "homeLesson": "ch07",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["rv07"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "It is not bad",
+    "homeLesson": "ch07",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["rv07"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "just different",
+    "homeLesson": "ch07",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["rv07"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "getting used to it",
+    "homeLesson": "ch07",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["rv07"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "To be fair",
+    "homeLesson": "ch07",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["rv07"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "suit your face",
+    "homeLesson": "ch07",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["rv07"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Does the market close at six",
+    "homeLesson": "ch08",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "As far as I know",
+    "homeLesson": "ch08",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "in a while",
+    "homeLesson": "ch08",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "check online",
+    "homeLesson": "ch08",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "If I remember correctly",
+    "homeLesson": "ch08",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "It says seven",
+    "homeLesson": "ch08",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Good thing we checked",
+    "homeLesson": "ch08",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "the meeting moved to Friday",
+    "homeLesson": "ch09",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["li08", "dv23"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "the new cafe downstairs",
+    "homeLesson": "ch09",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["li08", "dv23"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Anyway",
+    "homeLesson": "ch09",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ch16", "gr08", "li08", "dv23"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "back to the report",
+    "homeLesson": "ch09",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["li08", "dv23"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "it is due Thursday",
+    "homeLesson": "ch09",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["li08", "dv23"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "after the deadline",
+    "homeLesson": "ch09",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["li08", "dv23"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "You look tired",
+    "homeLesson": "ch10",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ch14", "rv05", "li16"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "I missed the bus",
+    "homeLesson": "ch10",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ch14", "rv05", "li16"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "it started raining",
+    "homeLesson": "ch10",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ch14", "rv05", "li16"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "I spilled coffee on my shirt",
+    "homeLesson": "ch10",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ch14", "rv05", "li16"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "forty minutes late",
+    "homeLesson": "ch10",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ch14", "rv05", "li16"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "What a morning",
+    "homeLesson": "ch10",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ch14", "rv05", "li16"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "At least it is over",
+    "homeLesson": "ch10",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ch14", "rv05", "li16"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "I need a nap",
+    "homeLesson": "ch10",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ch14", "rv05", "li16"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "great for running",
+    "homeLesson": "ch11",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Like what",
+    "homeLesson": "ch11",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "For example",
+    "homeLesson": "ch11",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "a water fountain",
+    "homeLesson": "ch11",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "for instance",
+    "homeLesson": "ch11",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "there are lights everywhere",
+    "homeLesson": "ch11",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "you convinced me",
+    "homeLesson": "ch11",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "lend me fifty",
+    "homeLesson": "ch12",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "The thing is",
+    "homeLesson": "ch12",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["rv05"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "a bit tight",
+    "homeLesson": "ch12",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "rent just went up",
+    "homeLesson": "ch12",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Otherwise I would",
+    "homeLesson": "ch12",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Totally understand",
+    "homeLesson": "ch12",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "she might be able to",
+    "homeLesson": "ch12",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "The new place is bigger",
+    "homeLesson": "ch13",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["gr12"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "On the other hand",
+    "homeLesson": "ch13",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["gr12"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "farther from work",
+    "homeLesson": "ch13",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["gr12"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "I want the space",
+    "homeLesson": "ch13",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["gr12"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "the commute kills me",
+    "homeLesson": "ch13",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["gr12"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "work from home",
+    "homeLesson": "ch13",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["gr12"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "That changes things",
+    "homeLesson": "ch13",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["gr12"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "on balance",
+    "homeLesson": "ch13",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["gr12"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "find your keys",
+    "homeLesson": "ch14",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["rv05"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "In the end",
+    "homeLesson": "ch14",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["rv05"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "my jacket pocket",
+    "homeLesson": "ch14",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["rv05"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "all along",
+    "homeLesson": "ch14",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["rv05"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "the day turned out okay",
+    "homeLesson": "ch14",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["rv05"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "after all",
+    "homeLesson": "ch14",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["rv05"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "a key hook",
+    "homeLesson": "ch14",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["rv05"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "the new office",
+    "homeLesson": "ch15",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["rv02"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "So you mean",
+    "homeLesson": "ch15",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["rv02"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "the one on Nguyen Hue street",
+    "homeLesson": "ch15",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["rv02"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "is that right",
+    "homeLesson": "ch15",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["rv02"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "nine sharp",
+    "homeLesson": "ch15",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["rv02"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "I should get going",
+    "homeLesson": "ch16",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["rv01"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "nice catching up",
+    "homeLesson": "ch16",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["rv01"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Say hi to Lan for me",
+    "homeLesson": "ch16",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["rv01"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Will do",
+    "homeLesson": "ch16",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["rv01"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "have coffee sometime",
+    "homeLesson": "ch16",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["rv01"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Take care",
+    "homeLesson": "ch16",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["rv01"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "See you around",
+    "homeLesson": "ch16",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["rv01"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Let us get burgers",
+    "homeLesson": "ch17",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv12", "rv07"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "I am with you",
+    "homeLesson": "ch17",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv12", "rv07"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Burgers sound good",
+    "homeLesson": "ch17",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv12", "rv07"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "I see your point",
+    "homeLesson": "ch17",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv12", "rv07"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "I had burgers yesterday",
+    "homeLesson": "ch17",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv12", "rv07"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "What are you thinking",
+    "homeLesson": "ch17",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv12", "rv07"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Same price, faster",
+    "homeLesson": "ch17",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv12", "rv07"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Noodles it is",
+    "homeLesson": "ch17",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv12", "rv07"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "look heavy",
+    "homeLesson": "ch18",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Want a hand",
+    "homeLesson": "ch18",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "that would be great",
+    "homeLesson": "ch18",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "down the hall",
+    "homeLesson": "ch18",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "do me a favor",
+    "homeLesson": "ch18",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "water my plant",
+    "homeLesson": "ch18",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "while I am away",
+    "homeLesson": "ch18",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "the least I can do",
+    "homeLesson": "ch18",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "I am Anh",
+    "homeLesson": "gr01",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev15", "rv01"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "This is my friend",
+    "homeLesson": "gr01",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "is a student",
+    "homeLesson": "gr01",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "We are in the same class",
+    "homeLesson": "gr01",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Are you new",
+    "homeLesson": "gr01",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "my first month",
+    "homeLesson": "gr01",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Do you live near here",
+    "homeLesson": "gr02",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Yes, I do",
+    "homeLesson": "gr02",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "I live downtown",
+    "homeLesson": "gr02",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Does your family live here",
+    "homeLesson": "gr02",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "they do not",
+    "homeLesson": "gr02",
+    "stages": ["introduced", "practiced", "retrieved", "transferred"],
+    "recycledBy": [],
+    "transferredIn": ["ev14"]
+  },
+  {
+    "chunk": "Do you visit them often",
+    "homeLesson": "gr02",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "twice a year",
+    "homeLesson": "gr02",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "works at a hospital",
+    "homeLesson": "gr03",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "What does she do",
+    "homeLesson": "gr03",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "checks patients in",
+    "homeLesson": "gr03",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "starts at seven",
+    "homeLesson": "gr03",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Does she like it",
+    "homeLesson": "gr03",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "She loves it",
+    "homeLesson": "gr03",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "finishes at three",
+    "homeLesson": "gr03",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "How was the trip",
+    "homeLesson": "gr04",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ch03"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "It was great",
+    "homeLesson": "gr04",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "right on the beach",
+    "homeLesson": "gr04",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Were the people friendly",
+    "homeLesson": "gr04",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "They were lovely",
+    "homeLesson": "gr04",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Was it expensive",
+    "homeLesson": "gr04",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "cheaper than I expected",
+    "homeLesson": "gr04",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "What are you going to do",
+    "homeLesson": "gr05",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "take an English course",
+    "homeLesson": "gr05",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "study online",
+    "homeLesson": "gr05",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "two days a week",
+    "homeLesson": "gr05",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "take a test",
+    "homeLesson": "gr05",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "the B1 exam",
+    "homeLesson": "gr05",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "What is happening",
+    "homeLesson": "gr06",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "A band is setting up",
+    "homeLesson": "gr06",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "taking photos",
+    "homeLesson": "gr06",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "studying or just watching",
+    "homeLesson": "gr06",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "pretending to study",
+    "homeLesson": "gr06",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Is anyone dancing",
+    "homeLesson": "gr06",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "handing out free coffee",
+    "homeLesson": "gr06",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Can I use your charger",
+    "homeLesson": "gr07",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["gr08"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Could you show me",
+    "homeLesson": "gr07",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["gr08"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "how this app works",
+    "homeLesson": "gr07",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["gr08"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "hold this for a second",
+    "homeLesson": "gr07",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["gr08"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "send me the file",
+    "homeLesson": "gr07",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["gr08"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "I will send it tonight",
+    "homeLesson": "gr07",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["gr08"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "have to wear badges",
+    "homeLesson": "gr08",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Security checks them",
+    "homeLesson": "gr08",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Should I get one",
+    "homeLesson": "gr08",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "You should",
+    "homeLesson": "gr08",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "ask for ID",
+    "homeLesson": "gr08",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "pay for parking",
+    "homeLesson": "gr08",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "free for guests",
+    "homeLesson": "gr08",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "a new lamp",
+    "homeLesson": "gr09",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Where did you put it",
+    "homeLesson": "gr09",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "On the desk",
+    "homeLesson": "gr09",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "an old photo",
+    "homeLesson": "gr09",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "The photo of your family",
+    "homeLesson": "gr09",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "the one from last summer",
+    "homeLesson": "gr09",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "work well",
+    "homeLesson": "gr09",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "In July",
+    "homeLesson": "gr10",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "On the fifth",
+    "homeLesson": "gr10",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "on the weekend",
+    "homeLesson": "gr10",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "at noon",
+    "homeLesson": "gr10",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev12"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "on Saturday",
+    "homeLesson": "gr10",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["sv24", "ev16"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "at three",
+    "homeLesson": "gr10",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ch04", "gr03"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "in the afternoon",
+    "homeLesson": "gr10",
+    "stages": ["introduced", "practiced", "retrieved", "transferred"],
+    "recycledBy": [],
+    "transferredIn": ["sv01"]
+  },
+  {
+    "chunk": "two boxes",
+    "homeLesson": "gr11",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "three brushes",
+    "homeLesson": "gr11",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "children's toothbrushes",
+    "homeLesson": "gr11",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "the men's section",
+    "homeLesson": "gr11",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "two knives",
+    "homeLesson": "gr11",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "the top shelf",
+    "homeLesson": "gr11",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "pays better",
+    "homeLesson": "gr12",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "the hours are longer",
+    "homeLesson": "gr12",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Which one is closer",
+    "homeLesson": "gr12",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "more flexible",
+    "homeLesson": "gr12",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "more interesting",
+    "homeLesson": "gr12",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ch02"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "more stable",
+    "homeLesson": "gr12",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Tough call",
+    "homeLesson": "gr12",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "just moved in next door",
+    "homeLesson": "rv01",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Are you from here",
+    "homeLesson": "rv01",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "I am from Da Nang, actually",
+    "homeLesson": "rv01",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "welcome to the building",
+    "homeLesson": "rv01",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Grab a towel",
+    "homeLesson": "rv02",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "scan your band",
+    "homeLesson": "rv02",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "a bit fast",
+    "homeLesson": "rv02",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "So I scan it after",
+    "homeLesson": "rv02",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "behind the desk",
+    "homeLesson": "rv02",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "it is not working",
+    "homeLesson": "rv03",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "the receipt",
+    "homeLesson": "rv03",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["li15"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "a rattling noise",
+    "homeLesson": "rv03",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "a replacement or a refund",
+    "homeLesson": "rv03",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "a different model",
+    "homeLesson": "rv03",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "goes back to your card",
+    "homeLesson": "rv03",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Maybe a hike",
+    "homeLesson": "rv04",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "the trail near the lake",
+    "homeLesson": "rv04",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "it gets hot later",
+    "homeLesson": "rv04",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Eight works",
+    "homeLesson": "rv04",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Just water",
+    "homeLesson": "rv04",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "I will pack snacks",
+    "homeLesson": "rv04",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Deal",
+    "homeLesson": "rv04",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "this happened last month",
+    "homeLesson": "rv05",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "a work trip",
+    "homeLesson": "rv05",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "I lost my wallet",
+    "homeLesson": "rv05",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "my phone died",
+    "homeLesson": "rv05",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "a taxi driver helped me",
+    "homeLesson": "rv05",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "drove me to the embassy",
+    "homeLesson": "rv05",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "a backup card",
+    "homeLesson": "rv05",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "the whole time",
+    "homeLesson": "rv05",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "an apple",
+    "homeLesson": "li01",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["li13", "rv08"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "a cup of tea",
+    "homeLesson": "li01",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["li13", "rv08"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "I need it",
+    "homeLesson": "li01",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["li13", "rv08"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "the rhythm",
+    "homeLesson": "li01",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["li13", "rv08"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "to the store",
+    "homeLesson": "li02",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["li04", "pr14", "rv08"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "a glass of water",
+    "homeLesson": "li02",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["li04", "pr14", "rv08"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "going to",
+    "homeLesson": "li02",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["sv24", "gr05", "li04", "li13", "pr14", "rv08"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "the full word",
+    "homeLesson": "li02",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["li04", "pr14", "rv08"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "turn it off",
+    "homeLesson": "li03",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "check it out",
+    "homeLesson": "li03",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "not at all",
+    "homeLesson": "li03",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "one long word",
+    "homeLesson": "li03",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "gonna go",
+    "homeLesson": "li04",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["li11", "rv08"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "wanna come",
+    "homeLesson": "li04",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["li11", "rv08"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "gotta run",
+    "homeLesson": "li04",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["li11", "rv08"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "the reduction",
+    "homeLesson": "li04",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["li11", "rv08"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "last night",
+    "homeLesson": "li05",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev10", "pr08", "dv23"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "next day",
+    "homeLesson": "li05",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["pr08"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "most people",
+    "homeLesson": "li05",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["pr08"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "the context",
+    "homeLesson": "li05",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["pr08"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "thirteen",
+    "homeLesson": "li06",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "thirty",
+    "homeLesson": "li06",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["sv11", "sv14", "sv15", "sv22", "ev01", "ev10", "ch09", "li10", "dv17"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "fifteen fifty",
+    "homeLesson": "li06",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "digit by digit",
+    "homeLesson": "li06",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "B or D",
+    "homeLesson": "li07",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "S-M-I-T-H",
+    "homeLesson": "li07",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "each letter clearly",
+    "homeLesson": "li07",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "First",
+    "homeLesson": "li08",
+    "stages": ["introduced", "practiced", "retrieved", "transferred", "recycled"],
+    "recycledBy": ["sv20", "ev01", "ch03", "ch10", "gr01", "rv02", "rv05", "li06", "li15", "pr13", "rv08", "dv19"],
+    "transferredIn": ["sv14", "ev01", "ch10", "gr09", "rv01"]
+  },
+  {
+    "chunk": "But",
+    "homeLesson": "li08",
+    "stages": ["introduced", "practiced", "retrieved", "recycled", "transferred"],
+    "recycledBy": [
+      "sv12",
+      "sv18",
+      "sv23",
+      "ev05",
+      "ev15",
+      "ev17",
+      "ev18",
+      "ch01",
+      "ch03",
+      "ch05",
+      "ch08",
+      "ch17",
+      "gr12",
+      "li05",
+      "pr04",
+      "dv03",
+      "dv07",
+      "dv12",
+      "dv18",
+      "rv07"
+    ],
+    "transferredIn": ["ch07", "ch17", "dv19"]
+  },
+  {
+    "chunk": "So",
+    "homeLesson": "li08",
+    "stages": ["introduced", "practiced", "retrieved", "transferred", "recycled"],
+    "recycledBy": [
+      "sv04",
+      "sv06",
+      "sv07",
+      "sv09",
+      "sv13",
+      "sv18",
+      "sv19",
+      "sv20",
+      "sv23",
+      "ev03",
+      "ev04",
+      "ev05",
+      "ev10",
+      "ev15",
+      "ev16",
+      "ev18",
+      "ev21",
+      "ev23",
+      "ch01",
+      "ch02",
+      "ch03",
+      "ch05",
+      "ch06",
+      "ch07",
+      "ch09",
+      "ch12",
+      "ch13",
+      "ch14",
+      "ch15",
+      "ch16",
+      "ch17",
+      "gr11",
+      "rv02",
+      "rv04",
+      "rv05",
+      "li01",
+      "li03",
+      "li05",
+      "li14",
+      "li15",
+      "li16",
+      "pr01",
+      "pr02",
+      "pr08",
+      "pr11",
+      "pr12",
+      "dv04",
+      "dv06",
+      "dv12",
+      "dv15",
+      "dv16",
+      "dv21",
+      "dv22",
+      "dv24"
+    ],
+    "transferredIn": [
+      "sv02",
+      "sv09",
+      "sv24",
+      "ev11",
+      "ev17",
+      "ev22",
+      "ch04",
+      "ch06",
+      "ch11",
+      "ch12",
+      "ch14",
+      "gr03",
+      "gr05",
+      "li02",
+      "li03",
+      "li06",
+      "li13",
+      "pr01",
+      "pr02",
+      "pr03",
+      "pr05",
+      "pr06",
+      "pr07",
+      "pr08",
+      "pr09",
+      "pr10",
+      "pr11",
+      "pr12",
+      "dv07",
+      "dv12",
+      "dv17"
+    ]
+  },
+  {
+    "chunk": "Attention passengers",
+    "homeLesson": "li09",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "the 9:15 service",
+    "homeLesson": "li09",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Due to track work",
+    "homeLesson": "li09",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "depart from platform three",
+    "homeLesson": "li09",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "check the boards",
+    "homeLesson": "li09",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "your connecting services",
+    "homeLesson": "li09",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "this is Dr. Tran's office",
+    "homeLesson": "li10",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "moving your appointment",
+    "homeLesson": "li10",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Friday, May ninth",
+    "homeLesson": "li10",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "at two thirty",
+    "homeLesson": "li10",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["sv14"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "ask for Nurse Kelly",
+    "homeLesson": "li10",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "the fourth floor",
+    "homeLesson": "li10",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "What are you doing",
+    "homeLesson": "li11",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["sv24", "gr10", "pr15", "rv08"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Do you want to go",
+    "homeLesson": "li11",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["pr15", "rv08"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Have you eaten",
+    "homeLesson": "li11",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["pr15", "rv08"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Where are you going",
+    "homeLesson": "li11",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["pr15", "rv08"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Whatever",
+    "homeLesson": "li12",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["pr15", "pr16"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Really",
+    "homeLesson": "li12",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["sv09", "sv12", "ev15", "ev18", "ch07", "ch09", "gr02", "pr15", "pr16", "rv07"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "the feeling",
+    "homeLesson": "li12",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["pr15", "pr16"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "After work today",
+    "homeLesson": "li13",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["pr14"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "I am going to the gym",
+    "homeLesson": "li13",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["pr14"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "with my friend Sara",
+    "homeLesson": "li13",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["pr14"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "the meaning-groups",
+    "homeLesson": "li13",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["pr14"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "street",
+    "homeLesson": "li14",
+    "stages": ["introduced", "practiced", "retrieved", "transferred", "recycled"],
+    "recycledBy": ["ev07", "ch15", "pr08"],
+    "transferredIn": ["sv20", "ev14"]
+  },
+  {
+    "chunk": "texts",
+    "homeLesson": "li14",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["pr08"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "asked",
+    "homeLesson": "li14",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["pr08", "dv09"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "speed it up",
+    "homeLesson": "li14",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["pr08"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "tap your card",
+    "homeLesson": "li15",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "select your ticket type",
+    "homeLesson": "li15",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "on the screen",
+    "homeLesson": "li15",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "pay by card or cash",
+    "homeLesson": "li15",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "take your ticket",
+    "homeLesson": "li15",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "waited an hour",
+    "homeLesson": "li16",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "the role was filled",
+    "homeLesson": "li16",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "last week",
+    "homeLesson": "li16",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "No email, no call",
+    "homeLesson": "li16",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "took the day off",
+    "homeLesson": "li16",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "for nothing",
+    "homeLesson": "li16",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "cats",
+    "homeLesson": "pr01",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "dogs",
+    "homeLesson": "pr01",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "days",
+    "homeLesson": "pr01",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev02", "ev21", "gr05", "rv03", "dv13", "dv22"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "books",
+    "homeLesson": "pr01",
+    "stages": ["introduced", "practiced", "retrieved", "transferred"],
+    "recycledBy": [],
+    "transferredIn": ["ev24"]
+  },
+  {
+    "chunk": "walked",
+    "homeLesson": "pr02",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "played",
+    "homeLesson": "pr02",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "wanted",
+    "homeLesson": "pr02",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "a full extra syllable",
+    "homeLesson": "pr02",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "think",
+    "homeLesson": "pr03",
+    "stages": ["introduced", "practiced", "retrieved", "recycled", "transferred"],
+    "recycledBy": ["sv21", "ev18", "ch01", "ch04", "ch05", "ch07", "ch17", "pr04", "dv12", "dv24", "rv06"],
+    "transferredIn": ["ch01"]
+  },
+  {
+    "chunk": "sink",
+    "homeLesson": "pr03",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["pr04"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "three",
+    "homeLesson": "pr03",
+    "stages": ["introduced", "practiced", "retrieved", "recycled", "transferred"],
+    "recycledBy": [
+      "sv05",
+      "sv22",
+      "ev04",
+      "ev20",
+      "ev22",
+      "ch04",
+      "gr03",
+      "gr10",
+      "gr11",
+      "rv03",
+      "li06",
+      "li09",
+      "li14",
+      "pr04",
+      "dv13",
+      "dv17",
+      "dv21"
+    ],
+    "transferredIn": ["ev01", "gr02", "gr03", "gr05", "gr06", "gr07", "gr09", "dv17"]
+  },
+  {
+    "chunk": "tree",
+    "homeLesson": "pr03",
+    "stages": ["introduced", "practiced", "retrieved", "transferred", "recycled"],
+    "recycledBy": ["ev07", "ch15", "li14", "pr04", "pr12"],
+    "transferredIn": ["sv20", "ev14"]
+  },
+  {
+    "chunk": "bath",
+    "homeLesson": "pr03",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["pr04"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "this",
+    "homeLesson": "pr04",
+    "stages": ["introduced", "practiced", "retrieved", "recycled", "transferred"],
+    "recycledBy": [
+      "sv10",
+      "sv11",
+      "sv13",
+      "sv23",
+      "sv24",
+      "ev03",
+      "ev06",
+      "ev11",
+      "ev19",
+      "ev22",
+      "ch01",
+      "ch12",
+      "ch14",
+      "ch18",
+      "gr01",
+      "gr05",
+      "gr07",
+      "rv03",
+      "rv05",
+      "li09",
+      "li10",
+      "li16",
+      "rv08",
+      "dv06",
+      "dv07",
+      "dv08",
+      "dv12",
+      "dv13",
+      "dv17",
+      "dv19"
+    ],
+    "transferredIn": ["ev04"]
+  },
+  {
+    "chunk": "that",
+    "homeLesson": "pr04",
+    "stages": ["introduced", "practiced", "retrieved", "transferred", "recycled"],
+    "recycledBy": [
+      "sv05",
+      "sv06",
+      "sv09",
+      "sv11",
+      "sv14",
+      "sv15",
+      "sv16",
+      "sv19",
+      "sv20",
+      "sv23",
+      "ev01",
+      "ev07",
+      "ev08",
+      "ev09",
+      "ev12",
+      "ev14",
+      "ev17",
+      "ev19",
+      "ev21",
+      "ch02",
+      "ch05",
+      "ch06",
+      "ch11",
+      "ch13",
+      "ch15",
+      "ch16",
+      "ch17",
+      "ch18",
+      "rv02",
+      "rv05",
+      "li12",
+      "li15",
+      "pr12",
+      "dv01",
+      "dv15",
+      "dv16",
+      "dv24",
+      "rv07"
+    ],
+    "transferredIn": ["sv03", "sv23", "ch10", "ch14", "dv20", "dv21"]
+  },
+  {
+    "chunk": "breathe",
+    "homeLesson": "pr04",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "breath",
+    "homeLesson": "pr04",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "mother",
+    "homeLesson": "pr04",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "sheep",
+    "homeLesson": "pr05",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["pr09", "pr10"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "ship",
+    "homeLesson": "pr05",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["pr09", "pr10", "pr11", "dv21"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "leave",
+    "homeLesson": "pr05",
+    "stages": ["introduced", "practiced", "retrieved", "recycled", "transferred"],
+    "recycledBy": ["sv22", "ev01", "ev04", "pr09", "pr10"],
+    "transferredIn": ["ev22"]
+  },
+  {
+    "chunk": "live",
+    "homeLesson": "pr05",
+    "stages": ["introduced", "practiced", "retrieved", "recycled", "transferred"],
+    "recycledBy": ["sv13", "ev05", "ch05", "gr02", "pr09", "pr10", "dv19"],
+    "transferredIn": ["sv13", "sv20", "ch14", "ch15", "gr06", "gr12", "li10", "dv14"]
+  },
+  {
+    "chunk": "eat",
+    "homeLesson": "pr05",
+    "stages": ["introduced", "practiced", "retrieved", "transferred", "recycled"],
+    "recycledBy": [
+      "sv10",
+      "ev01",
+      "ev02",
+      "ev06",
+      "ev09",
+      "ev16",
+      "ev18",
+      "ch01",
+      "ch06",
+      "ch11",
+      "ch18",
+      "gr04",
+      "li11",
+      "pr04",
+      "pr08",
+      "pr09",
+      "pr10",
+      "pr13",
+      "pr14",
+      "dv14",
+      "dv21",
+      "rv06",
+      "rv07"
+    ],
+    "transferredIn": ["sv06", "sv17", "ev03", "ev13", "rv02", "dv19", "dv23", "rv06"]
+  },
+  {
+    "chunk": "it",
+    "homeLesson": "pr05",
+    "stages": ["introduced", "practiced", "retrieved", "transferred", "recycled"],
+    "recycledBy": [
+      "sv03",
+      "sv04",
+      "sv05",
+      "sv06",
+      "sv07",
+      "sv08",
+      "sv09",
+      "sv10",
+      "sv11",
+      "sv12",
+      "sv14",
+      "sv15",
+      "sv17",
+      "sv18",
+      "sv19",
+      "sv20",
+      "sv21",
+      "sv22",
+      "sv23",
+      "sv24",
+      "ev03",
+      "ev04",
+      "ev06",
+      "ev07",
+      "ev08",
+      "ev09",
+      "ev10",
+      "ev11",
+      "ev12",
+      "ev13",
+      "ev15",
+      "ev16",
+      "ev17",
+      "ev18",
+      "ev19",
+      "ev20",
+      "ev21",
+      "ev22",
+      "ev23",
+      "ev24",
+      "ch01",
+      "ch02",
+      "ch03",
+      "ch04",
+      "ch05",
+      "ch06",
+      "ch07",
+      "ch08",
+      "ch09",
+      "ch10",
+      "ch11",
+      "ch12",
+      "ch13",
+      "ch15",
+      "ch16",
+      "ch17",
+      "ch18",
+      "gr01",
+      "gr02",
+      "gr03",
+      "gr04",
+      "gr06",
+      "gr07",
+      "gr08",
+      "gr09",
+      "gr10",
+      "gr11",
+      "rv02",
+      "rv03",
+      "rv04",
+      "li01",
+      "li03",
+      "li04",
+      "li06",
+      "li07",
+      "li13",
+      "li14",
+      "li16",
+      "pr01",
+      "pr04",
+      "pr06",
+      "pr07",
+      "pr08",
+      "pr09",
+      "pr10",
+      "pr15",
+      "pr16",
+      "rv08",
+      "dv01",
+      "dv03",
+      "dv04",
+      "dv07",
+      "dv08",
+      "dv09",
+      "dv11",
+      "dv12",
+      "dv13",
+      "dv14",
+      "dv15",
+      "dv17",
+      "dv18",
+      "dv19",
+      "dv20",
+      "dv22",
+      "dv23",
+      "dv24",
+      "rv06",
+      "rv07"
+    ],
+    "transferredIn": [
+      "sv01",
+      "sv03",
+      "sv04",
+      "sv06",
+      "sv07",
+      "sv08",
+      "sv09",
+      "sv10",
+      "sv11",
+      "sv12",
+      "sv15",
+      "sv16",
+      "sv18",
+      "sv21",
+      "sv23",
+      "sv24",
+      "ev01",
+      "ev08",
+      "ev09",
+      "ev10",
+      "ev11",
+      "ev16",
+      "ev17",
+      "ev19",
+      "ev20",
+      "ev21",
+      "ev24",
+      "ch01",
+      "ch04",
+      "ch05",
+      "ch06",
+      "ch07",
+      "ch10",
+      "ch11",
+      "ch12",
+      "ch13",
+      "ch14",
+      "ch16",
+      "ch17",
+      "ch18",
+      "gr01",
+      "gr03",
+      "gr04",
+      "gr09",
+      "gr10",
+      "gr11",
+      "gr12",
+      "rv03",
+      "rv04",
+      "li01",
+      "li02",
+      "li03",
+      "li06",
+      "li07",
+      "li08",
+      "li09",
+      "li12",
+      "li14",
+      "li16",
+      "pr08",
+      "rv08",
+      "dv01",
+      "dv02",
+      "dv05",
+      "dv06",
+      "dv07",
+      "dv08",
+      "dv09",
+      "dv10",
+      "dv11",
+      "dv12",
+      "dv17",
+      "dv18",
+      "dv20",
+      "dv21",
+      "dv22",
+      "dv23",
+      "dv24"
+    ]
+  },
+  {
+    "chunk": "right",
+    "homeLesson": "pr06",
+    "stages": ["introduced", "practiced", "retrieved", "recycled", "transferred"],
+    "recycledBy": ["sv23", "ev05", "ev07", "ev12", "ev22", "ch02", "ch10", "ch11", "ch15", "gr04", "rv02"],
+    "transferredIn": ["sv23", "ch03", "gr06"]
+  },
+  {
+    "chunk": "light",
+    "homeLesson": "pr06",
+    "stages": ["introduced", "practiced", "retrieved", "transferred", "recycled"],
+    "recycledBy": ["ch11", "gr12"],
+    "transferredIn": ["ev13", "li16", "dv23"]
+  },
+  {
+    "chunk": "road",
+    "homeLesson": "pr06",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ev14"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "load",
+    "homeLesson": "pr06",
+    "stages": ["introduced", "practiced", "retrieved", "recycled", "transferred"],
+    "recycledBy": ["dv04", "dv09", "dv10"],
+    "transferredIn": ["dv05"]
+  },
+  {
+    "chunk": "pray",
+    "homeLesson": "pr06",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "play",
+    "homeLesson": "pr06",
+    "stages": ["introduced", "practiced", "retrieved", "transferred", "recycled"],
+    "recycledBy": ["pr02"],
+    "transferredIn": ["rv01"]
+  },
+  {
+    "chunk": "very",
+    "homeLesson": "pr07",
+    "stages": ["introduced", "practiced", "retrieved", "recycled", "transferred"],
+    "recycledBy": [
+      "sv01",
+      "sv03",
+      "sv08",
+      "ev02",
+      "ev08",
+      "ev09",
+      "ev15",
+      "ev18",
+      "ch11",
+      "dv04",
+      "dv11",
+      "dv12",
+      "dv19",
+      "dv24"
+    ],
+    "transferredIn": ["sv20", "ch14", "ch15", "li05", "li10", "pr04", "pr08"]
+  },
+  {
+    "chunk": "berry",
+    "homeLesson": "pr07",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "van",
+    "homeLesson": "pr07",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "ban",
+    "homeLesson": "pr07",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["gr06", "rv02"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "vest",
+    "homeLesson": "pr07",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "best",
+    "homeLesson": "pr07",
+    "stages": ["introduced", "practiced", "retrieved", "recycled", "transferred"],
+    "recycledBy": ["sv10", "ev23"],
+    "transferredIn": ["ch05"]
+  },
+  {
+    "chunk": "test",
+    "homeLesson": "pr08",
+    "stages": ["introduced", "practiced", "retrieved", "recycled", "transferred"],
+    "recycledBy": ["gr05", "dv09", "dv20"],
+    "transferredIn": ["dv06"]
+  },
+  {
+    "chunk": "hand",
+    "homeLesson": "pr08",
+    "stages": ["introduced", "practiced", "retrieved", "recycled", "transferred"],
+    "recycledBy": ["ch13", "ch18", "gr06", "dv14"],
+    "transferredIn": ["rv03", "dv14", "rv06"]
+  },
+  {
+    "chunk": "work",
+    "homeLesson": "pr08",
+    "stages": ["introduced", "practiced", "retrieved", "transferred", "recycled"],
+    "recycledBy": [
+      "sv04",
+      "sv14",
+      "ev01",
+      "ev02",
+      "ev05",
+      "ev11",
+      "ev15",
+      "ev17",
+      "ev19",
+      "ev23",
+      "ch13",
+      "gr03",
+      "gr07",
+      "gr09",
+      "gr12",
+      "rv03",
+      "rv04",
+      "rv05",
+      "li09",
+      "li13",
+      "rv08",
+      "dv08",
+      "dv17"
+    ],
+    "transferredIn": ["sv03", "sv04", "ev16", "ch09", "ch16", "gr01", "rv01", "dv12", "rv06"]
+  },
+  {
+    "chunk": "help",
+    "homeLesson": "pr08",
+    "stages": ["introduced", "practiced", "retrieved", "recycled", "transferred"],
+    "recycledBy": ["sv08", "sv14", "sv18", "sv21", "ev21", "ch12", "rv05", "li11"],
+    "transferredIn": ["ch18", "dv06", "rv06"]
+  },
+  {
+    "chunk": "last",
+    "homeLesson": "pr08",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["sv21", "ev10", "gr09", "rv05", "li05", "li16", "pr13", "pr15", "dv15", "dv23"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "bed",
+    "homeLesson": "pr09",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "bad",
+    "homeLesson": "pr09",
+    "stages": ["introduced", "practiced", "retrieved", "transferred", "recycled"],
+    "recycledBy": ["ev17", "ch07", "gr04", "gr08", "dv20"],
+    "transferredIn": ["ev04", "ch03"]
+  },
+  {
+    "chunk": "pen",
+    "homeLesson": "pr09",
+    "stages": ["introduced", "practiced", "retrieved", "recycled", "transferred"],
+    "recycledBy": [
+      "sv08",
+      "sv11",
+      "ch03",
+      "ch05",
+      "ch10",
+      "gr04",
+      "gr06",
+      "rv05",
+      "pr07",
+      "dv04",
+      "dv05",
+      "dv12",
+      "dv19",
+      "dv22"
+    ],
+    "transferredIn": ["ch05", "gr06", "dv21"]
+  },
+  {
+    "chunk": "pan",
+    "homeLesson": "pr09",
+    "stages": ["introduced", "practiced", "retrieved", "recycled", "transferred"],
+    "recycledBy": ["sv04", "ch06", "li04"],
+    "transferredIn": ["sv21", "li04", "li11"]
+  },
+  {
+    "chunk": "men",
+    "homeLesson": "pr09",
+    "stages": ["introduced", "practiced", "retrieved", "recycled", "transferred"],
+    "recycledBy": [
+      "sv14",
+      "ev05",
+      "ev08",
+      "ev14",
+      "ev19",
+      "ch01",
+      "ch04",
+      "gr11",
+      "rv03",
+      "li09",
+      "li10",
+      "dv04",
+      "dv08"
+    ],
+    "transferredIn": ["ev08", "ev19", "ev20", "ev21", "gr09", "li09", "dv11"]
+  },
+  {
+    "chunk": "man",
+    "homeLesson": "pr09",
+    "stages": ["introduced", "practiced", "retrieved", "recycled", "transferred"],
+    "recycledBy": ["sv09", "sv10", "sv11", "li16", "dv10", "dv22"],
+    "transferredIn": ["sv13"]
+  },
+  {
+    "chunk": "fool",
+    "homeLesson": "pr10",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "full",
+    "homeLesson": "pr10",
+    "stages": ["introduced", "practiced", "retrieved", "transferred", "recycled"],
+    "recycledBy": ["li02", "pr02"],
+    "transferredIn": ["rv03", "rv04", "li02", "li04", "li11", "rv08"]
+  },
+  {
+    "chunk": "Luke",
+    "homeLesson": "pr10",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "look",
+    "homeLesson": "pr10",
+    "stages": ["introduced", "practiced", "retrieved", "transferred", "recycled"],
+    "recycledBy": ["ev24", "ch01", "ch02", "ch10", "ch18", "li16", "dv06", "dv07", "dv08", "dv10", "dv21", "rv06"],
+    "transferredIn": ["sv21"]
+  },
+  {
+    "chunk": "pool",
+    "homeLesson": "pr10",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "pull",
+    "homeLesson": "pr10",
+    "stages": ["introduced", "practiced", "retrieved", "transferred", "recycled"],
+    "recycledBy": ["pr11", "dv16"],
+    "transferredIn": ["ch09"]
+  },
+  {
+    "chunk": "see",
+    "homeLesson": "pr11",
+    "stages": ["introduced", "practiced", "retrieved", "recycled", "transferred"],
+    "recycledBy": [
+      "sv01",
+      "sv07",
+      "sv09",
+      "sv21",
+      "sv22",
+      "ev02",
+      "ev16",
+      "ev21",
+      "ev23",
+      "ch04",
+      "ch09",
+      "ch16",
+      "ch17",
+      "rv01",
+      "rv04",
+      "dv12",
+      "dv19",
+      "dv23",
+      "rv07"
+    ],
+    "transferredIn": ["ch17"]
+  },
+  {
+    "chunk": "she",
+    "homeLesson": "pr11",
+    "stages": ["introduced", "practiced", "retrieved", "transferred", "recycled"],
+    "recycledBy": ["ev22", "ch12", "gr03", "gr11", "pr05", "pr10", "dv01", "dv04", "dv09", "dv14"],
+    "transferredIn": ["ev08", "li13"]
+  },
+  {
+    "chunk": "sip",
+    "homeLesson": "pr11",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "sort",
+    "homeLesson": "pr11",
+    "stages": ["introduced", "practiced", "retrieved", "recycled", "transferred"],
+    "recycledBy": ["ch06"],
+    "transferredIn": ["ch06", "pr01", "pr02", "pr03", "pr05", "pr06", "pr07", "pr09", "pr10", "pr12"]
+  },
+  {
+    "chunk": "short",
+    "homeLesson": "pr11",
+    "stages": ["introduced", "practiced", "retrieved", "recycled", "transferred"],
+    "recycledBy": ["ev05", "pr05", "pr10", "pr16", "dv14"],
+    "transferredIn": ["gr02", "li08", "pr05", "pr16"]
+  },
+  {
+    "chunk": "cheap",
+    "homeLesson": "pr12",
+    "stages": ["introduced", "practiced", "retrieved", "transferred", "recycled"],
+    "recycledBy": ["ev05", "ev24", "gr04"],
+    "transferredIn": ["sv11"]
+  },
+  {
+    "chunk": "trip",
+    "homeLesson": "pr12",
+    "stages": ["introduced", "practiced", "retrieved", "transferred", "recycled"],
+    "recycledBy": ["ch03", "gr04", "rv05"],
+    "transferredIn": ["ev17", "ev24"]
+  },
+  {
+    "chunk": "choose",
+    "homeLesson": "pr12",
+    "stages": ["introduced", "practiced", "retrieved", "transferred"],
+    "recycledBy": [],
+    "transferredIn": ["ev20"]
+  },
+  {
+    "chunk": "truce",
+    "homeLesson": "pr12",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "chair",
+    "homeLesson": "pr12",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "TAble",
+    "homeLesson": "pr13",
+    "stages": ["introduced", "practiced", "retrieved", "recycled", "transferred"],
+    "recycledBy": ["ev04", "ev11", "ev23", "gr12"],
+    "transferredIn": ["dv13"]
+  },
+  {
+    "chunk": "beGIN",
+    "homeLesson": "pr13",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "PICture",
+    "homeLesson": "pr13",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "forGET",
+    "homeLesson": "pr13",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "the loud beat",
+    "homeLesson": "pr13",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "I WANT to GO",
+    "homeLesson": "pr14",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["rv08"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Small words shrink",
+    "homeLesson": "pr14",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["rv08"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "nouns, verbs, adjectives",
+    "homeLesson": "pr14",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["rv08"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Are you ready",
+    "homeLesson": "pr15",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["sv19", "ev08"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Rising = checking",
+    "homeLesson": "pr15",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "asking for info",
+    "homeLesson": "pr15",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "the last word",
+    "homeLesson": "pr15",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "falling flat",
+    "homeLesson": "pr16",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Fine",
+    "homeLesson": "pr16",
+    "stages": ["introduced", "practiced", "retrieved", "recycled", "transferred"],
+    "recycledBy": ["sv01", "sv09", "ev11", "ch01", "ch03", "li12", "dv17"],
+    "transferredIn": ["sv09"]
+  },
+  {
+    "chunk": "the emotion",
+    "homeLesson": "pr16",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Whaddya wanna do tonight",
+    "homeLesson": "rv08",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "I dunno",
+    "homeLesson": "rv08",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "grab a bite",
+    "homeLesson": "rv08",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Gotta finish work first",
+    "homeLesson": "rv08",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "then I am free",
+    "homeLesson": "rv08",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "you are up",
+    "homeLesson": "dv01",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv02", "rv06"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "I finished the login form",
+    "homeLesson": "dv01",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv02", "rv06"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "wiring up the API",
+    "homeLesson": "dv01",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv02", "rv06"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Any blockers",
+    "homeLesson": "dv01",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv02", "rv06"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "waiting on the auth token spec",
+    "homeLesson": "dv01",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv02", "rv06"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "I will ping them",
+    "homeLesson": "dv01",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv02", "rv06"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "I should be done by Friday",
+    "homeLesson": "dv01",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv02", "rv06"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "EOD update",
+    "homeLesson": "dv02",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv18"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "is merged",
+    "homeLesson": "dv02",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv18"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "token refresh logic",
+    "homeLesson": "dv02",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv18"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "about 70 percent",
+    "homeLesson": "dv02",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv18"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "staging env is down",
+    "homeLesson": "dv02",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv18"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "flagged in infra channel",
+    "homeLesson": "dv02",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv18"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "finish refresh logic",
+    "homeLesson": "dv02",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv18"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Quick question on ticket",
+    "homeLesson": "dv03",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "what is unclear",
+    "homeLesson": "dv03",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "make the button better",
+    "homeLesson": "dv03",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "what does better mean",
+    "homeLesson": "dv03",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "higher contrast",
+    "homeLesson": "dv03",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "a design mock",
+    "homeLesson": "dv03",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "send a screenshot",
+    "homeLesson": "dv03",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "checkout crashes on submit",
+    "homeLesson": "dv04",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv05", "rv06"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "order confirmation page",
+    "homeLesson": "dv04",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv05", "rv06"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "a 500 error",
+    "homeLesson": "dv04",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv05", "rv06"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "go to checkout",
+    "homeLesson": "dv04",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv05", "rv06"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "staging build",
+    "homeLesson": "dv04",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv05", "rv06"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "every time",
+    "homeLesson": "dv04",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv05", "dv24", "rv06"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "not intermittent",
+    "homeLesson": "dv04",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv05", "rv06"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Steps to reproduce",
+    "homeLesson": "dv05",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Log in as",
+    "homeLesson": "dv05",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "a free-tier user",
+    "homeLesson": "dv05",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "then Billing",
+    "homeLesson": "dv05",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Click Upgrade Plan",
+    "homeLesson": "dv05",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "the modal opens blank",
+    "homeLesson": "dv05",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "only repros on free tier",
+    "homeLesson": "dv05",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "got a minute",
+    "homeLesson": "dv06",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv22", "rv06"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "I am stuck on",
+    "homeLesson": "dv06",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv22", "rv06"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "this import error",
+    "homeLesson": "dv06",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv22", "rv06"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "What have you tried",
+    "homeLesson": "dv06",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv22", "rv06"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "cleared the cache",
+    "homeLesson": "dv06",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv22", "rv06"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "check the env variables",
+    "homeLesson": "dv06",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv22", "rv06"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "take a quick look",
+    "homeLesson": "dv06",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv22", "rv06"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "the stack trace",
+    "homeLesson": "dv06",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv22", "rv06"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Why did you use a map",
+    "homeLesson": "dv07",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv08", "dv12"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "instead of a list",
+    "homeLesson": "dv07",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv08", "dv12"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Lookups are faster",
+    "homeLesson": "dv07",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv08", "dv12"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "thousands of times",
+    "homeLesson": "dv07",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv08", "dv12"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "does order matter",
+    "homeLesson": "dv07",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv08", "dv12"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Makes sense",
+    "homeLesson": "dv07",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv08", "dv12"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Memory overhead",
+    "homeLesson": "dv07",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv08", "dv12"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "fifty entries max",
+    "homeLesson": "dv07",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv08", "dv12"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Nice work overall",
+    "homeLesson": "dv08",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "could be a map lookup",
+    "homeLesson": "dv08",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "for clarity",
+    "homeLesson": "dv08",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "is vague",
+    "homeLesson": "dv08",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "looks duplicated",
+    "homeLesson": "dv08",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "worth extracting",
+    "homeLesson": "dv08",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "LGTM",
+    "homeLesson": "dv08",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "once the naming is fixed",
+    "homeLesson": "dv08",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "adds a dark mode toggle",
+    "homeLesson": "dv09",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "users asked for it",
+    "homeLesson": "dv09",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "reduces eye strain",
+    "homeLesson": "dv09",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "stored in local storage",
+    "homeLesson": "dv09",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "applied on load",
+    "homeLesson": "dv09",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "toggle it on settings page",
+    "homeLesson": "dv09",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "the print stylesheet",
+    "homeLesson": "dv09",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Deploy notice",
+    "homeLesson": "dv10",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv11"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "going out now",
+    "homeLesson": "dv10",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv11"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "checkout crash fix",
+    "homeLesson": "dv10",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv11"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "faster image loading",
+    "homeLesson": "dv10",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv11"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Expected downtime",
+    "homeLesson": "dv10",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv11"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "rolling deploy",
+    "homeLesson": "dv10",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv11"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "error rate on checkout",
+    "homeLesson": "dv10",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv11"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "if anything looks off",
+    "homeLesson": "dv10",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv11"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Incident update",
+    "homeLesson": "dv11",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv20"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "returning five-hundreds",
+    "homeLesson": "dv11",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv20"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "unable to sign in",
+    "homeLesson": "dv11",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv20"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "since 14:05",
+    "homeLesson": "dv11",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv20"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "the database migration",
+    "homeLesson": "dv11",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv20"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "rolling back the migration",
+    "homeLesson": "dv11",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv20"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "within twenty minutes",
+    "homeLesson": "dv11",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv20"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "rewrite this module",
+    "homeLesson": "dv12",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["rv07"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "I see why",
+    "homeLesson": "dv12",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["rv07"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "a rewrite is worth it",
+    "homeLesson": "dv12",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["rv07"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "The code is a mess",
+    "homeLesson": "dv12",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["rv07"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "breaks everything else",
+    "homeLesson": "dv12",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["rv07"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "depending on it",
+    "homeLesson": "dv12",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["rv07"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Refactor it piece by piece",
+    "homeLesson": "dv12",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["rv07"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "less risky",
+    "homeLesson": "dv12",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["rv07"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "How long will the search filter take",
+    "homeLesson": "dv13",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv21"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Rough guess",
+    "homeLesson": "dv13",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv21"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "if the API cooperates",
+    "homeLesson": "dv13",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv21"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "closer to a week",
+    "homeLesson": "dv13",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv21"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "The unknown is",
+    "homeLesson": "dv13",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv21"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "a firmer date",
+    "homeLesson": "dv13",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv21"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "spike it",
+    "homeLesson": "dv13",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv21"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "report back",
+    "homeLesson": "dv13",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv21"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Handing off",
+    "homeLesson": "dv14",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "while I am out",
+    "homeLesson": "dv14",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Where are things at",
+    "homeLesson": "dv14",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "half-finished",
+    "homeLesson": "dv14",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Any gotchas",
+    "homeLesson": "dv14",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Watch out for",
+    "homeLesson": "dv14",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "it bit me twice",
+    "homeLesson": "dv14",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "a short loom video",
+    "homeLesson": "dv14",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Is there a doc for",
+    "homeLesson": "dv15",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "a bit outdated",
+    "homeLesson": "dv15",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "the token flow",
+    "homeLesson": "dv15",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "at all",
+    "homeLesson": "dv15",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["ch18", "li03"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "last sprint",
+    "homeLesson": "dv15",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Nobody wrote it up",
+    "homeLesson": "dv15",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "point me to",
+    "homeLesson": "dv15",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "as you go",
+    "homeLesson": "dv15",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "leaning toward option B",
+    "homeLesson": "dv16",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv19", "rv06"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Sorry to jump in",
+    "homeLesson": "dv16",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv19", "rv06"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "can I add something",
+    "homeLesson": "dv16",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv19", "rv06"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Go ahead",
+    "homeLesson": "dv16",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv03", "dv19", "rv06"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Just a heads-up",
+    "homeLesson": "dv16",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv19", "rv06"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "doubles our API calls",
+    "homeLesson": "dv16",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv19", "rv06"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Good catch",
+    "homeLesson": "dv16",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv19", "rv06"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "pull the metrics",
+    "homeLesson": "dv16",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv19", "rv06"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "find thirty minutes",
+    "homeLesson": "dv17",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "for a sync",
+    "homeLesson": "dv17",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Wednesday afternoon works",
+    "homeLesson": "dv17",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "your time or mine",
+    "homeLesson": "dv17",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "two hours ahead",
+    "homeLesson": "dv17",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "push it to Thursday",
+    "homeLesson": "dv17",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "is stacked",
+    "homeLesson": "dv17",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Sending the invite",
+    "homeLesson": "dv17",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "when you get a sec",
+    "homeLesson": "dv18",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "need a decision on",
+    "homeLesson": "dv18",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "two options in Figma",
+    "homeLesson": "dv18",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "My rec",
+    "homeLesson": "dv18",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "more standard",
+    "homeLesson": "dv18",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "No rush",
+    "homeLesson": "dv18",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "it blocks the nav PR",
+    "homeLesson": "dv18",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "sharing my screen",
+    "homeLesson": "dv19",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "can everyone see it",
+    "homeLesson": "dv19",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "I open the dropdown",
+    "homeLesson": "dv19",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "a date range",
+    "homeLesson": "dv19",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "updates live",
+    "homeLesson": "dv19",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "the edge case",
+    "homeLesson": "dv19",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "a friendly message",
+    "homeLesson": "dv19",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "should I keep going",
+    "homeLesson": "dv19",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "for ninety minutes",
+    "homeLesson": "dv20",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "a bad migration",
+    "homeLesson": "dv20",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Root cause",
+    "homeLesson": "dv20",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "a missing index check",
+    "homeLesson": "dv20",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "slowed queries to timeout",
+    "homeLesson": "dv20",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "What went well",
+    "homeLesson": "dv20",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "What we learned",
+    "homeLesson": "dv20",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Action items",
+    "homeLesson": "dv20",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Flagging something early",
+    "homeLesson": "dv21",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv22", "rv06"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "looks tight",
+    "homeLesson": "dv21",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv22", "rv06"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "How tight are we talking",
+    "homeLesson": "dv21",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv22", "rv06"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "three features left",
+    "homeLesson": "dv21",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv22", "rv06"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Realistically we ship two",
+    "homeLesson": "dv21",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv22", "rv06"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "cut scope",
+    "homeLesson": "dv21",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv22", "rv06"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "slip to May safely",
+    "homeLesson": "dv21",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv22", "rv06"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "update the plan",
+    "homeLesson": "dv21",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv22", "rv06"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "I need to escalate something",
+    "homeLesson": "dv22",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "the vendor API",
+    "homeLesson": "dv22",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "still down",
+    "homeLesson": "dv22",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "I opened a ticket",
+    "homeLesson": "dv22",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "no response yet",
+    "homeLesson": "dv22",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "The sync job fails nightly",
+    "homeLesson": "dv22",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "two days stale",
+    "homeLesson": "dv22",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "their account manager",
+    "homeLesson": "dv22",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "How are things in Da Nang",
+    "homeLesson": "dv23",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Hot, honestly",
+    "homeLesson": "dv23",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "still cold",
+    "homeLesson": "dv23",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "living on coffee",
+    "homeLesson": "dv23",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "did you see the game",
+    "homeLesson": "dv23",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "worth watching",
+    "homeLesson": "dv23",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Skip it",
+    "homeLesson": "dv23",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "just joined",
+    "homeLesson": "dv23",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "the dashboard faster",
+    "homeLesson": "dv24",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "We added caching",
+    "homeLesson": "dv24",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "keeping a copy on your desk",
+    "homeLesson": "dv24",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "walking to the library",
+    "homeLesson": "dv24",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "expires after a while",
+    "homeLesson": "dv24",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "fetch fresh",
+    "homeLesson": "dv24",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "stale data",
+    "homeLesson": "dv24",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "the trade-off for speed",
+    "homeLesson": "dv24",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "broke after yesterday's deploy",
+    "homeLesson": "rv06",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "What is the impact",
+    "homeLesson": "rv06",
+    "stages": ["introduced", "practiced", "retrieved", "recycled"],
+    "recycledBy": ["dv22"],
+    "transferredIn": []
+  },
+  {
+    "chunk": "empty files",
+    "homeLesson": "rv06",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "instead of the report",
+    "homeLesson": "rv06",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "a dozen tickets",
+    "homeLesson": "rv06",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "a fix in mind",
+    "homeLesson": "rv06",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "my patch",
+    "homeLesson": "rv06",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Send it over",
+    "homeLesson": "rv06",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "Let us go back to",
+    "homeLesson": "rv07",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "I see the appeal",
+    "homeLesson": "rv07",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "just okay",
+    "homeLesson": "rv07",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "The noodles were great",
+    "homeLesson": "rv07",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "The service was slow though",
+    "homeLesson": "rv07",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "that new place by the river",
+    "homeLesson": "rv07",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  },
+  {
+    "chunk": "better reviews",
+    "homeLesson": "rv07",
+    "stages": ["introduced", "practiced", "retrieved"],
+    "recycledBy": [],
+    "transferredIn": []
+  }
+]

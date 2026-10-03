@@ -40,11 +40,16 @@ export interface ContentMetadata {
     packId: string;
     lessonId: string;
     trackId: string;
+    version?: string;
+    capabilities?: string[];
     supportLadder?: string[];
     reviewVariants?: string[];
     productionPattern?: string;
     transferContext?: string;
     sourceRefId?: string;
+    contrastVi?: string;
+    audioSource?: string;
+    audioRef?: string;
   };
 }
 
