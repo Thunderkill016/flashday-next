@@ -13,6 +13,7 @@ Status: rights/provenance guidance for lexical research.
 | My Topics/OALD-inspired PDF | Semantic taxonomy/data-model research | Reference only unless separately licensed |
 | UNLOCK YOUR VOCABULARY PDF | Morphology / word-family pedagogy research | Reference only unless separately licensed |
 | Thematic Vocabulary in Use reviewed PDF | Context-first thematic reading + lexical practice architecture | Reference only unless separately licensed |
+| Aggregated English-materials research corpus (255-item catalog) | Discovery index across grammar, vocab, pronunciation/listening, IELTS/TOEIC, IT English | Per-item review only; corpus membership never implies approval |
 | Commercial dictionaries/textbooks | Research/reference | No bulk learner-facing copying without license |
 | Unknown/scraped/pirate sources | None | Reject |
 
