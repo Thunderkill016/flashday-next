@@ -41,7 +41,7 @@
 
 import { projectLearnerState } from './projection.js';
 import { answerBearing, conditionsViolated, unionSupport } from './evidence.js';
-import { effectiveAllowedSupport, verifyEventTask } from './contracts.js';
+import { effectiveAllowedSupport, isIndependentSuccess, verifyEventTask } from './contracts.js';
 import { contractAttributesFunctions } from './evaluators.js';
 import { resolvePolicy } from './policy.js';
 import { deriveSupportLifecycle } from './planner.js';
@@ -62,8 +62,6 @@ const ATTEMPT_TYPES = new Set([
   'checkpoint'
 ]);
 
-const INDEPENDENT_AUTHORITIES = new Set(['deterministic', 'human']);
-const isSuccess = (e) => e.attempt?.outcome === 'success';
 const isMiss = (e) => e.attempt?.outcome === 'fail' || e.attempt?.outcome === 'partial';
 
 function emptyCapView() {
@@ -98,13 +96,32 @@ function emptyCapView() {
       servedEpisodes: 0,
       cancelledEpisodes: 0,
       lastDemandAt: null,
+      /* W2-PC1 support_dependency: dependency is demand-lifecycle-bound,
+       * never "support happened". A function that generated a support
+       * demand and still lacks independent covering recovery is a
+       * dependent function; `dependent` is the state alias. States:
+       *   UNMODELED — no mission roles: the demand lifecycle cannot be
+       *               computed, so the honest answer is "not modeled",
+       *               never a fake CLEAR;
+       *   CLEAR     — modeled, and no demanded function is unresolved;
+       *   DEPENDENT — ≥1 demanded function still unresolved. */
+      dependency: {
+        state: 'UNMODELED',
+        demandedFunctions: [],
+        dependentFunctions: []
+      },
       dependent: false
     },
     failures: {
       /* Lifetime verified miss count — honestly named: there is no
-       * recency window on this counter, callers read `consecutiveFailures`
-       * or `lastFailureAt` for recency. */
+       * recency window on this counter, callers read the consecutive
+       * streak or `lastFailureAt` for recency. */
       failureCount: 0,
+      /* W2-PC1 verified_consecutive_failure: consecutive VERIFIED,
+       * observed fail/partial outcomes on registered exact revisions.
+       * `consecutiveFailures` aliases it — the pre-PC1 loose counter
+       * (unobserved/stale outcomes counted) was removed. */
+      verifiedConsecutiveFailures: 0,
       consecutiveFailures: 0,
       lastFailureAt: null,
       unresolvedFunctions: [],
@@ -164,13 +181,29 @@ export function buildLearnerModel({ learnerId, events, capabilities, tasks, poli
   // never disagree with the router about what is still outstanding.
   // Roles are optional: without mission context there is no routed
   // demand history, and function gaps still surface evidence-level.
-  const lifecycle = roles?.supports?.size
+  /* Modeled iff the mission's SUPPORT MAPPING is provided — even an
+   * empty `supports` set is an available mapping (this mission declares
+   * no substrate, so no demand can ever exist → CLEAR, not UNMODELED).
+   * Roles absent or mapping field missing → UNMODELED. */
+  const demandModeled = roles?.supports instanceof Set;
+  const lifecycle = demandModeled
     ? deriveSupportLifecycle(learnerId, events, { capabilities, tasks, roles, policy: pol })
     : { pending: [], resolved: [] };
+  /* Functions that generated a support demand on each target — pending
+   * AND resolved (consumed/cancelled) episodes both count: a consumed
+   * probe does not clear the dependency, only independent covering
+   * recovery does. */
+  const demandedByCap = new Map();
+  const noteDemand = (d) => {
+    const v = view.get(d.targetCapabilityId);
+    if (!v) return;
+    demandedByCap.set(d.targetCapabilityId, (demandedByCap.get(d.targetCapabilityId) ?? new Set()).add(d.missingFunction));
+  };
   for (const d of lifecycle.pending) {
     const v = view.get(d.targetCapabilityId);
     if (!v) continue;
     v.support.pendingFunctions.push(d.missingFunction);
+    noteDemand(d);
     // An outstanding demand is itself a reliance signal.
     if (v.support.lastDemandAt == null || d.issuedAt > v.support.lastDemandAt) {
       v.support.lastDemandAt = d.issuedAt;
@@ -179,6 +212,7 @@ export function buildLearnerModel({ learnerId, events, capabilities, tasks, poli
   for (const d of lifecycle.resolved) {
     const v = view.get(d.targetCapabilityId);
     if (!v) continue;
+    noteDemand(d);
     if (d.status === 'consumed') {
       v.support.servedEpisodes += 1;
       if (v.support.lastSupportAt == null || d.resolvedAt > v.support.lastSupportAt) {
@@ -269,11 +303,7 @@ export function buildLearnerModel({ learnerId, events, capabilities, tasks, poli
       v.assessment.attempted += 1;
     }
 
-    const independent = isSuccess(e) &&
-      e.attempt?.observed === true &&
-      !answerBearing(effSupport) &&
-      !conditionsViolated(effSupport, effectiveAllowedSupport(cap, task)) &&
-      INDEPENDENT_AUTHORITIES.has(e.evaluation?.authority);
+    const independent = isIndependentSuccess(e, cap, task, effSupport);
 
     // Assessment status is evidence-barred: only OBSERVED verified
     // outcomes set latestStatus, and only an independent-bar success
@@ -356,7 +386,8 @@ export function buildLearnerModel({ learnerId, events, capabilities, tasks, poli
     const p = projection.byCapability.get(c.id);
     v.achievement.state = p.state;
     v.achievement.milestones = p.milestones;
-    v.failures.consecutiveFailures = p.consecutiveFailures;
+    v.failures.verifiedConsecutiveFailures = p.verifiedConsecutiveFailures;
+    v.failures.consecutiveFailures = p.verifiedConsecutiveFailures;
     v.retention.demonstrated = p.milestones.retained;
     v.transfer.demonstrated = p.milestones.transferred;
     v.transfer.promptFamilies = [...p.transferPromptFamilies];
@@ -382,17 +413,20 @@ export function buildLearnerModel({ learnerId, events, capabilities, tasks, poli
     v.failures.resolvedFunctions = resolvedFns.sort();
     v.failures.recurringFunctions = recurring.sort();
 
-    /* Support dependency: support was used or demanded AND the learner
-     * has no clean unaided success later than the last reliance. A
-     * pending demand's issuedAt counts as reliance — an open substrate
-     * gap is evidence the capability currently needs support. */
-    const lastRelianceAt = Math.max(
-      v.support.lastSupportAt ?? 0,
-      v.support.lastDemandAt ?? 0
-    ) || null;
-    const relied = v.support.everUsed || v.support.servedEpisodes > 0 || v.support.pendingFunctions.length > 0;
-    v.support.dependent = relied &&
-      (v.evidence.lastIndependentAt == null || (lastRelianceAt ?? 0) > v.evidence.lastIndependentAt);
+    /* W2-PC1 support_dependency: a demanded function that still lacks
+     * independent covering recovery is a dependent function. Support
+     * USAGE alone (a one-off hint, even five) is a historical fact —
+     * `everUsed` — never a dependency. Consumed demands stay demanded:
+     * only an independent covering success retires the function's gap
+     * and clears it here. */
+    const demandedFunctions = [...(demandedByCap.get(c.id) ?? [])].sort();
+    const dependentFunctions = demandedFunctions.filter((f) => unresolved.includes(f));
+    v.support.dependency = {
+      state: !demandModeled ? 'UNMODELED' : dependentFunctions.length ? 'DEPENDENT' : 'CLEAR',
+      demandedFunctions,
+      dependentFunctions
+    };
+    v.support.dependent = v.support.dependency.state === 'DEPENDENT';
 
     /* Recency is exposed as FACT (sinceLastIndependentMs), never as an
      * inference: `retention.minLagMs` is the minimum spacing needed to
@@ -418,7 +452,7 @@ export function buildLearnerModel({ learnerId, events, capabilities, tasks, poli
         if (v.assessment.latestStatus == null) reasons.push(reason('no_assessment_evidence'));
         else if (!v.assessment.demonstrated) reasons.push(reason('assessment_not_demonstrated'));
       }
-      if (v.failures.consecutiveFailures > 0) reasons.push(reason('currently_failing', { consecutive: v.failures.consecutiveFailures }));
+      if (v.failures.verifiedConsecutiveFailures > 0) reasons.push(reason('currently_failing', { consecutive: v.failures.verifiedConsecutiveFailures }));
       if (v.failures.unresolvedFunctions.length) reasons.push(reason('unresolved_function_gap', { functions: [...v.failures.unresolvedFunctions] }));
       if (v.support.dependent) reasons.push(reason('support_dependent'));
     }
@@ -434,9 +468,10 @@ export function buildLearnerModel({ learnerId, events, capabilities, tasks, poli
     } else {
       profile.demonstrated.push(c.id);
       /* Fragile = currently failing — a live contradiction between
-       * earlier ability and latest evidence. Silence/age alone is not
-       * fragility (see the recency note above). */
-      if (v.failures.consecutiveFailures > 0) profile.fragile.push(c.id);
+       * earlier ability and latest VERIFIED evidence. Silence/age alone
+       * is not fragility (see the recency note above), and neither is a
+       * self-reported or unverifiable outcome. */
+      if (v.failures.verifiedConsecutiveFailures > 0) profile.fragile.push(c.id);
       if (v.retention.demonstrated) profile.retained.push(c.id);
       if (v.transfer.demonstrated) {
         profile.transferProven.push(c.id);

@@ -56,8 +56,8 @@
  * next-for-you/repair-proof.js — never inferred from the full task
  * registry here.
  */
-import { answerBearing, conditionsViolated, unionSupport } from './evidence.js';
-import { effectiveAllowedSupport, verifyEventTask } from './contracts.js';
+import { unionSupport } from './evidence.js';
+import { isIndependentSuccess, verifyEventTask } from './contracts.js';
 import { contractAttributesFunctions } from './evaluators.js';
 import { resolvePolicy } from './policy.js';
 import { sha256 } from './next-for-you/canonical.js';
@@ -88,7 +88,6 @@ const ATTEMPT_TYPES = new Set([
   'interaction_turn', 'retry', 'delayed_retrieval',
   'transfer_attempt', 'checkpoint'
 ]);
-const INDEPENDENT_AUTHORITIES = new Set(['deterministic', 'human']);
 const isSuccess = (e) => e.attempt?.outcome === 'success';
 const isMiss = (e) => e.attempt?.outcome === 'fail' || e.attempt?.outcome === 'partial';
 
@@ -243,11 +242,7 @@ export function deriveCorrectionEpisodes({ learnerId, events, capabilities, task
 
     if (!ATTEMPT_TYPES.has(e.eventType) || e.attempt?.outcome == null) continue;
 
-    const independent = isSuccess(e) &&
-      e.attempt?.observed === true &&
-      !answerBearing(effSupport) &&
-      !conditionsViolated(effSupport, effectiveAllowedSupport(cap, task)) &&
-      INDEPENDENT_AUTHORITIES.has(e.evaluation?.authority);
+    const independent = isIndependentSuccess(e, cap, task, effSupport);
 
     const ep = openByCap.get(e.capabilityId);
 

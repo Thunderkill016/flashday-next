@@ -31,9 +31,10 @@
  *   - canonical order is (occurredAt, id) — arrival order can never
  *     change the projection; replay of the same event set is identical.
  */
-import { answerBearing, conditionsViolated, unionSupport } from './evidence.js';
-import { effectiveAllowedSupport, verifyEventTask } from './contracts.js';
+import { unionSupport } from './evidence.js';
+import { isIndependentSuccess, verifyEventTask } from './contracts.js';
 import { resolvePolicy } from './policy.js';
+import { deriveVerifiedAttemptFacts } from './verified-attempts.js';
 
 export const CAPABILITY_STATES = [
   'NOT_SEEN',
@@ -70,8 +71,6 @@ const isSuccess = (e) => e.attempt?.outcome === 'success';
  *   ai_llm      — feedback/secondary signal only, never proficiency;
  *   absent      — no evaluator provenance = no credit.
  */
-const INDEPENDENT_AUTHORITIES = new Set(['deterministic', 'human']);
-
 /* Support revealed during an attempt belongs permanently to that
  * attempt — the union semantics live in evidence.js so the projection
  * and the pilot oracle apply the SAME accumulation rule without sharing
@@ -83,14 +82,11 @@ const INDEPENDENT_AUTHORITIES = new Set(['deterministic', 'human']);
 // is not trusted on its own: verifyEventTask re-derives purpose,
 // family, context, evaluator and effective support from the registry
 // task, so a forged `binding` on a raw makeEvent() cannot mint
-// independent evidence.
+// independent evidence. The evidence bar itself lives in contracts.js
+// so the projection, learner model, correction episodes and the
+// support-demand lifecycle can never drift apart.
 const isIndependent = (e, cap, support, task) =>
-  isSuccess(e) &&
-  e.attempt?.observed === true &&
-  !answerBearing(support) &&
-  !conditionsViolated(support, effectiveAllowedSupport(cap, task)) &&
-  INDEPENDENT_AUTHORITIES.has(e.evaluation?.authority) &&
-  verifyEventTask(e, task, cap);
+  isIndependentSuccess(e, cap, task, support) && verifyEventTask(e, task, cap);
 
 function emptyCapability() {
   return {
@@ -105,6 +101,15 @@ function emptyCapability() {
     },
     lastEventAt: null,
     lastAttemptOutcome: null,
+    /* verifiedConsecutiveFailures is the authoritative failure streak
+     * (W2-PC1): only verified, OBSERVED, attempt-typed outcomes on
+     * registered exact task revisions enter the stream — self-reported
+     * or stale-revision outcomes are context and can neither advance
+     * nor break it. `consecutiveFailures` is a legacy alias of that
+     * verified streak — the pre-PC1 loose counter (unobserved and
+     * unverifiable outcomes counted as failures) no longer exists. */
+    verifiedConsecutiveFailures: 0,
+    lastVerifiedObservedOutcome: null,
     consecutiveFailures: 0,
     firstIndependentAt: null,
     lastIndependentSuccessAt: null,
@@ -199,12 +204,6 @@ export function projectLearnerState(learnerId, events, capabilities, tasks, { re
     // performance, and must not advance state.
     if (!ATTEMPT_TYPES.has(e.eventType) || e.attempt?.outcome == null) continue;
     slot.lastAttemptOutcome = e.attempt.outcome;
-    // Engine fact: how many consecutive fail/partial outcomes end this
-    // capability's attempt trail. Whether N failures trigger remediation
-    // is the policy's call, not the projection's.
-    slot.consecutiveFailures = (e.attempt.outcome === 'fail' || e.attempt.outcome === 'partial')
-      ? slot.consecutiveFailures + 1
-      : 0;
     if (!isSuccess(e)) continue;
 
     if (!isIndependent(e, cap, effSupport, taskByRev.get(`${e.taskId}@${e.taskRevision}`))) {
@@ -229,6 +228,19 @@ export function projectLearnerState(learnerId, events, capabilities, tasks, { re
       }
       if (slot.transferPromptFamilies.length >= 1) slot.milestones.transferred = true;
     }
+  }
+
+  /* Verified attempt stream — the shared strict derivation the whole
+   * authority surface consumes (W2-PC1). Recomputed from the same
+   * canonical event order as the milestone loop above, so replay,
+   * dedupe, foreign learners and stale revisions behave identically. */
+  const verified = deriveVerifiedAttemptFacts({ learnerId, events: mine, capabilities, taskByRev });
+  for (const [capId, f] of verified) {
+    const slot = byCapability.get(capId);
+    if (!slot) continue;
+    slot.verifiedConsecutiveFailures = f.verifiedConsecutiveFailures;
+    slot.lastVerifiedObservedOutcome = f.lastVerifiedObservedOutcome;
+    slot.consecutiveFailures = f.verifiedConsecutiveFailures;
   }
 
   for (const slot of byCapability.values()) {
