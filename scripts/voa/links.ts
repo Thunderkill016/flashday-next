@@ -6,6 +6,7 @@
  * containing X" is answerable offline (§39).
  */
 import { curriculumGaps, linkResource, matchGaps } from '../../src/lib/voa-corpus/curriculum-links.ts';
+import { isVerifiedUsableMedia } from '../../src/lib/voa-corpus/media.ts';
 import { SERIES_BY_ID } from '../../src/lib/voa-corpus/series.ts';
 import type { LearningMediaAsset, RecyclingMatch, VoaLearningResource } from '../../src/lib/voa-corpus/types.ts';
 import { readNdjson, writeJson, writeNdjson } from './ndjson.ts';
@@ -19,40 +20,52 @@ export function linkAndIndex(resources: VoaLearningResource[], media: LearningMe
   const links = resources.flatMap((r) => linkResource(r, mediaById));
   const gaps = matchGaps(resources);
 
-  /* search index: per-resource searchable projection (§39) */
-  const index = resources.map((r) => ({
-    id: r.id,
-    series: r.series,
-    seriesName: SERIES_BY_ID.get(r.series)?.name,
-    kind: r.kind,
-    title: r.title,
-    level: r.level.inferred,
-    levelConfidence: r.level.confidence,
-    canonicalUrl: r.source.canonicalUrl,
-    publicDomain: r.source.publicDomainVerified,
-    audioCount: r.audioRefs.length,
-    videoCount: r.videoRefs.length,
-    capabilities: r.enrichment.capabilities,
-    functions: r.enrichment.communicativeFunctions,
-    grammar: r.enrichment.grammarFeatures,
-    listening: r.enrichment.listeningFeatures,
-    pronunciation: r.enrichment.pronunciationFeatures,
-    topics: r.enrichment.topicTags,
-    knownChunks: r.enrichment.knownChunks,
-    lexicalDensity: r.enrichment.lexicalDensity,
-    estimatedMinutes: r.text ? Math.round((r.text.split(/\s+/).length / READING_WPM) * 10) / 10 : undefined,
-  }));
+  /* search index: per-resource searchable projection (§39). Audio is
+   * split discovery vs verified usability through the exact
+   * audio-candidate predicate — a raw ref count must never read as
+   * usable audio (external-review blocker). */
+  const index = resources.map((r) => {
+    const verifiedAudioAssetIds = r.audioRefs.filter((id) => isVerifiedUsableMedia(mediaById.get(id)));
+    return {
+      id: r.id,
+      series: r.series,
+      seriesName: SERIES_BY_ID.get(r.series)?.name,
+      kind: r.kind,
+      title: r.title,
+      level: r.level.inferred,
+      levelConfidence: r.level.confidence,
+      canonicalUrl: r.source.canonicalUrl,
+      publicDomain: r.source.publicDomainVerified,
+      discoveredAudioCount: r.audioRefs.length,
+      verifiedAudioCount: verifiedAudioAssetIds.length,
+      verifiedAudioAssetIds,
+      hasUsableAudio: verifiedAudioAssetIds.length > 0,
+      discoveredVideoCount: r.videoRefs.length,
+      capabilities: r.enrichment.capabilities,
+      functions: r.enrichment.communicativeFunctions,
+      grammar: r.enrichment.grammarFeatures,
+      listening: r.enrichment.listeningFeatures,
+      pronunciation: r.enrichment.pronunciationFeatures,
+      topics: r.enrichment.topicTags,
+      knownChunks: r.enrichment.knownChunks,
+      lexicalDensity: r.enrichment.lexicalDensity,
+      estimatedMinutes: r.text ? Math.round((r.text.split(/\s+/).length / READING_WPM) * 10) / 10 : undefined,
+    };
+  });
 
   /* §33 — LLE Level-1 mapping: each course lesson vs the FlashDay
-   * lessons/capabilities it authentically reencounters. */
+   * lessons/capabilities it authentically reencounters. Audio counts
+   * split discovery vs verified usability — same predicate as the
+   * index, so a report cannot overstate usable audio. */
   const lle1 = resources
     .filter((r) => r.series === 'voa-lle-level1')
     .map((r) => ({
       resourceId: r.id,
       title: r.title,
       level: r.level,
-      audioRefs: r.audioRefs.length,
-      videoRefs: r.videoRefs.length,
+      discoveredAudioCount: r.audioRefs.length,
+      verifiedAudioCount: r.audioRefs.filter((id) => isVerifiedUsableMedia(mediaById.get(id))).length,
+      discoveredVideoCount: r.videoRefs.length,
       capabilities: r.enrichment.capabilities,
       grammar: r.enrichment.grammarFeatures,
       knownChunks: r.enrichment.knownChunks,

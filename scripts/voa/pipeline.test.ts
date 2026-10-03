@@ -3,9 +3,11 @@ import { mkdtempSync, readFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { describe, expect, it } from 'vitest';
-import type { VoaSourceRecord } from '../../src/lib/voa-corpus/types.ts';
+import type { LearningMediaAsset, VoaLearningResource, VoaSourceRecord } from '../../src/lib/voa-corpus/types.ts';
+import { buildMediaAsset, mediaAssetId } from '../../src/lib/voa-corpus/media.ts';
 import type { ManifestRow } from './discover.ts';
 import { fetchRecords, SERIES_CAP } from './fetch.ts';
+import { linkAndIndex } from './links.ts';
 import { readNdjson, writeJson, writeNdjson } from './ndjson.ts';
 
 const TMP = mkdtempSync(join(tmpdir(), 'voa-pipeline-'));
@@ -85,5 +87,85 @@ describe('fetchRecords (§10 incremental, §28 caps)', () => {
     });
     expect(records.map((r) => r.id)).toEqual(['voa:a1']);
     expect(failures).toEqual([manifest[2].canonicalUrl]);
+  });
+});
+
+/* FD-VOA-CORPUS-01 R2 — the offline search index must not bypass the
+ * verified-audio gate: raw ref counts are "discovered", never usable. */
+describe('linkAndIndex search projection (external-review blocker 1)', () => {
+  const AUDIO_URL = 'https://voa-audio.voanews.eu/t/x.mp3';
+  const res = (audioRefs: string[], verified: boolean): VoaLearningResource => ({
+    id: `voa:idx-${audioRefs.length}-${verified}`,
+    kind: 'course_lesson',
+    series: 'voa-lle-level1',
+    title: 't',
+    text: 'hello where are you from',
+    audioRefs,
+    videoRefs: [],
+    documentRefs: [],
+    level: { inferred: 'a1', confidence: 0.8 },
+    enrichment: {
+      knownHeadwords: 0,
+      outOfBandWords: [],
+      oxfordCoverage: {},
+      lexicalDensity: 0.5,
+      targetCandidates: [],
+      knownChunks: [],
+      newChunks: [],
+      domainChunks: [],
+      communicativeFunctions: [],
+      capabilities: [],
+      grammarFeatures: [],
+      listeningFeatures: [],
+      pronunciationFeatures: [],
+      topicTags: [],
+    },
+    source: {
+      publisher: 'Voice of America',
+      canonicalUrl: 'https://learningenglish.voanews.com/a/x/1.html',
+      publicDomainVerified: verified,
+      attribution: 'a',
+      contentHash: 'h',
+      sourceRevision: 1,
+    },
+    pipelineState: 'ENRICHED',
+  });
+  const asset = (rights: LearningMediaAsset['rightsStatus'], resolvable: boolean): LearningMediaAsset => {
+    const a = buildMediaAsset({ asset: { url: AUDIO_URL, kind: 'audio' }, sourceResourceId: 'voa:src', rightsStatus: rights });
+    a.resolvable = resolvable;
+    return a;
+  };
+  const ref = mediaAssetId(AUDIO_URL);
+
+  it('unresolved PD audio => discovered > 0, verified = 0, hasUsableAudio = false', () => {
+    const { index } = linkAndIndex([res([ref], true)], [asset('VOA_ORIGINAL_PUBLIC_DOMAIN', false)]);
+    expect(index[0].discoveredAudioCount).toBe(1);
+    expect(index[0].verifiedAudioCount).toBe(0);
+    expect(index[0].verifiedAudioAssetIds).toEqual([]);
+    expect(index[0].hasUsableAudio).toBe(false);
+  });
+
+  it('MIXED audio => verified = 0 even when resolvable', () => {
+    const { index } = linkAndIndex([res([ref], false)], [asset('MIXED_RIGHTS_REVIEW_REQUIRED', true)]);
+    expect(index[0].verifiedAudioCount).toBe(0);
+    expect(index[0].hasUsableAudio).toBe(false);
+  });
+
+  it('resolvable PD audio => verified > 0 with the exact media ids', () => {
+    const { index } = linkAndIndex([res([ref], true)], [asset('VOA_ORIGINAL_PUBLIC_DOMAIN', true)]);
+    expect(index[0].verifiedAudioCount).toBe(1);
+    expect(index[0].verifiedAudioAssetIds).toEqual([ref]);
+    expect(index[0].hasUsableAudio).toBe(true);
+    /* source-level rights state stays labelled separately — a PD source
+     * with unresolved audio is discoverable but not "usable audio" */
+    expect(index[0].publicDomain).toBe(true);
+    expect(index[0].discoveredAudioCount).toBe(1);
+  });
+
+  it('no audio => zero across both projections, never a phantom usable claim', () => {
+    const { index } = linkAndIndex([res([], true)], []);
+    expect(index[0].discoveredAudioCount).toBe(0);
+    expect(index[0].verifiedAudioCount).toBe(0);
+    expect(index[0].hasUsableAudio).toBe(false);
   });
 });

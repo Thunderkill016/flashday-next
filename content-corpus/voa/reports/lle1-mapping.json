@@ -8,8 +8,9 @@
       "confidence": 0.85,
       "basis": "oxford-coverage known=0.76 cumA1=0.68 cumA2=0.70 cumB1=0.70"
     },
-    "audioRefs": 1,
-    "videoRefs": 11,
+    "discoveredAudioCount": 1,
+    "verifiedAudioCount": 1,
+    "discoveredVideoCount": 11,
     "capabilities": ["greet-leave"],
     "grammar": ["yes-no-questions", "articles", "imperatives"],
     "knownChunks": ["i am", "nice to meet you", "that"],
@@ -24,8 +25,9 @@
       "confidence": 0.86,
       "basis": "oxford-coverage known=0.78 cumA1=0.73 cumA2=0.75 cumB1=0.78"
     },
-    "audioRefs": 2,
-    "videoRefs": 11,
+    "discoveredAudioCount": 2,
+    "verifiedAudioCount": 2,
+    "discoveredVideoCount": 11,
     "capabilities": ["greet-leave", "introduce-self", "decode-weak-forms"],
     "grammar": ["wh-questions", "yes-no-questions", "articles"],
     "knownChunks": ["i am", "i am from", "where are you from", "nice to meet you", "she"],
@@ -40,8 +42,9 @@
       "confidence": 0.89,
       "basis": "oxford-coverage known=0.84 cumA1=0.74 cumA2=0.80 cumB1=0.81"
     },
-    "audioRefs": 1,
-    "videoRefs": 10,
+    "discoveredAudioCount": 1,
+    "verifiedAudioCount": 1,
+    "discoveredVideoCount": 10,
     "capabilities": ["decode-weak-forms", "track-signposts"],
     "grammar": ["wh-questions", "articles", "imperatives", "there-is-are"],
     "knownChunks": ["i am", "excuse me", "this", "that", "live", "it", "work"],
@@ -56,8 +59,9 @@
       "confidence": 0.92,
       "basis": "oxford-coverage known=0.89 cumA1=0.83 cumA2=0.87 cumB1=0.89"
     },
-    "audioRefs": 2,
-    "videoRefs": 10,
+    "discoveredAudioCount": 2,
+    "verifiedAudioCount": 2,
+    "discoveredVideoCount": 10,
     "capabilities": ["greet-leave"],
     "grammar": ["present-simple", "wh-questions", "yes-no-questions", "articles", "imperatives"],
     "knownChunks": ["i am", "book it", "how are you", "a little", "but", "it", "pen"],
@@ -72,8 +76,9 @@
       "confidence": 0.91,
       "basis": "oxford-coverage known=0.89 cumA1=0.67 cumA2=0.82 cumB1=0.89"
     },
-    "audioRefs": 2,
-    "videoRefs": 10,
+    "discoveredAudioCount": 2,
+    "verifiedAudioCount": 2,
+    "discoveredVideoCount": 10,
     "capabilities": ["ask-directions", "decode-weak-forms"],
     "grammar": ["wh-questions", "yes-no-questions", "articles", "prepositions-place"],
     "knownChunks": ["i am", "this", "eat", "it", "see", "she"],
@@ -88,8 +93,9 @@
       "confidence": 0.87,
       "basis": "oxford-coverage known=0.79 cumA1=0.61 cumA2=0.64 cumB1=0.73"
     },
-    "audioRefs": 2,
-    "videoRefs": 10,
+    "discoveredAudioCount": 2,
+    "verifiedAudioCount": 2,
+    "discoveredVideoCount": 10,
     "capabilities": ["describe-routine", "ask-directions", "decode-weak-forms", "track-signposts"],
     "grammar": ["present-simple", "wh-questions", "yes-no-questions", "articles", "prepositions-place"],
     "knownChunks": ["next to", "what are you doing", "this", "that", "live", "it", "work", "see"],
@@ -104,8 +110,9 @@
       "confidence": 0.87,
       "basis": "oxford-coverage known=0.80 cumA1=0.67 cumA2=0.76 cumB1=0.80"
     },
-    "audioRefs": 2,
-    "videoRefs": 10,
+    "discoveredAudioCount": 2,
+    "verifiedAudioCount": 2,
+    "discoveredVideoCount": 10,
     "capabilities": ["greet-leave", "express-thanks", "ask-directions", "decode-weak-forms", "track-signposts"],
     "grammar": [
       "present-continuous",
@@ -141,8 +148,9 @@
       "confidence": 0.85,
       "basis": "oxford-coverage known=0.76 cumA1=0.61 cumA2=0.66 cumB1=0.73"
     },
-    "audioRefs": 2,
-    "videoRefs": 10,
+    "discoveredAudioCount": 2,
+    "verifiedAudioCount": 2,
+    "discoveredVideoCount": 10,
     "capabilities": [
       "greet-leave",
       "describe-routine",
@@ -202,8 +210,9 @@
       "confidence": 0.86,
       "basis": "oxford-coverage known=0.78 cumA1=0.61 cumA2=0.72 cumB1=0.72"
     },
-    "audioRefs": 2,
-    "videoRefs": 10,
+    "discoveredAudioCount": 2,
+    "verifiedAudioCount": 2,
+    "discoveredVideoCount": 10,
     "capabilities": ["express-thanks", "small-talk", "describe-routine", "track-signposts"],
     "grammar": ["present-simple", "wh-questions", "yes-no-questions", "articles"],
     "knownChunks": ["next day", "excuse me", "i see", "but", "that", "it", "right"],
@@ -218,8 +227,9 @@
       "confidence": 0.92,
       "basis": "oxford-coverage known=0.92 cumA1=0.76 cumA2=0.86 cumB1=0.89"
     },
-    "audioRefs": 2,
-    "videoRefs": 12,
+    "discoveredAudioCount": 2,
+    "verifiedAudioCount": 2,
+    "discoveredVideoCount": 12,
     "capabilities": ["greet-leave", "introduce-self", "ask-directions"],
     "grammar": ["present-continuous", "wh-questions", "articles", "prepositions-place", "there-is-are"],
     "knownChunks": ["i am", "turn left", "i see", "three", "this", "it", "right", "see"],
@@ -249,8 +259,9 @@
       "confidence": 0.9,
       "basis": "oxford-coverage known=0.86 cumA1=0.60 cumA2=0.77 cumB1=0.85"
     },
-    "audioRefs": 2,
-    "videoRefs": 12,
+    "discoveredAudioCount": 2,
+    "verifiedAudioCount": 2,
+    "discoveredVideoCount": 12,
     "capabilities": ["introduce-self", "express-thanks", "ask-directions", "track-signposts"],
     "grammar": ["wh-questions", "yes-no-questions", "articles", "prepositions-place", "imperatives", "there-is-are"],
     "knownChunks": ["the post office", "but", "so", "street", "books", "three", "this", "that", "it"],
@@ -279,8 +290,9 @@
       "confidence": 0.87,
       "basis": "oxford-coverage known=0.79 cumA1=0.61 cumA2=0.70 cumB1=0.73"
     },
-    "audioRefs": 2,
-    "videoRefs": 12,
+    "discoveredAudioCount": 2,
+    "verifiedAudioCount": 2,
+    "discoveredVideoCount": 12,
     "capabilities": ["introduce-self", "clarify-meaning", "express-thanks", "decode-weak-forms"],
     "grammar": ["wh-questions", "yes-no-questions", "articles", "prepositions-place"],
     "knownChunks": ["but", "really", "tree", "this", "that", "mother", "sheep", "live", "very", "she"],
@@ -314,8 +326,9 @@
       "confidence": 0.89,
       "basis": "oxford-coverage known=0.84 cumA1=0.55 cumA2=0.66 cumB1=0.77"
     },
-    "audioRefs": 2,
-    "videoRefs": 13,
+    "discoveredAudioCount": 2,
+    "verifiedAudioCount": 2,
+    "discoveredVideoCount": 13,
     "capabilities": ["describe-routine", "schedule-appointment", "give-reason", "make-offer"],
     "grammar": ["present-simple", "present-continuous", "wh-questions", "articles", "there-is-are"],
     "knownChunks": ["i am", "how about", "but", "this", "it", "very", "look"],
@@ -344,8 +357,9 @@
       "confidence": 0.92,
       "basis": "oxford-coverage known=0.92 cumA1=0.73 cumA2=0.83 cumB1=0.88"
     },
-    "audioRefs": 2,
-    "videoRefs": 13,
+    "discoveredAudioCount": 2,
+    "verifiedAudioCount": 2,
+    "discoveredVideoCount": 13,
     "capabilities": [
       "make-plans",
       "schedule-appointment",
@@ -419,8 +433,9 @@
       "confidence": 0.89,
       "basis": "oxford-coverage known=0.86 cumA1=0.64 cumA2=0.79 cumB1=0.83"
     },
-    "audioRefs": 2,
-    "videoRefs": 13,
+    "discoveredAudioCount": 2,
+    "verifiedAudioCount": 2,
+    "discoveredVideoCount": 13,
     "capabilities": [
       "greet-leave",
       "introduce-self",
@@ -492,8 +507,9 @@
       "confidence": 0.9,
       "basis": "oxford-coverage known=0.86 cumA1=0.63 cumA2=0.70 cumB1=0.81"
     },
-    "audioRefs": 2,
-    "videoRefs": 13,
+    "discoveredAudioCount": 2,
+    "verifiedAudioCount": 2,
+    "discoveredVideoCount": 13,
     "capabilities": [
       "introduce-self",
       "ask-personal-info",
@@ -551,8 +567,9 @@
       "confidence": 0.86,
       "basis": "oxford-coverage known=0.79 cumA1=0.60 cumA2=0.69 cumB1=0.73"
     },
-    "audioRefs": 2,
-    "videoRefs": 13,
+    "discoveredAudioCount": 2,
+    "verifiedAudioCount": 2,
+    "discoveredVideoCount": 13,
     "capabilities": [
       "describe-routine",
       "make-plans",
@@ -638,8 +655,9 @@
       "confidence": 0.85,
       "basis": "oxford-coverage known=0.75 cumA1=0.59 cumA2=0.66 cumB1=0.70"
     },
-    "audioRefs": 2,
-    "videoRefs": 13,
+    "discoveredAudioCount": 2,
+    "verifiedAudioCount": 2,
+    "discoveredVideoCount": 13,
     "capabilities": [
       "ask-repetition",
       "describe-routine",
@@ -715,8 +733,9 @@
       "confidence": 0.9,
       "basis": "oxford-coverage known=0.87 cumA1=0.76 cumA2=0.82 cumB1=0.85"
     },
-    "audioRefs": 2,
-    "videoRefs": 13,
+    "discoveredAudioCount": 2,
+    "verifiedAudioCount": 2,
+    "discoveredVideoCount": 13,
     "capabilities": ["clarify-meaning", "describe-routine", "decode-weak-forms", "track-signposts"],
     "grammar": [
       "present-simple",
@@ -758,8 +777,9 @@
       "confidence": 0.91,
       "basis": "oxford-coverage known=0.90 cumA1=0.70 cumA2=0.84 cumB1=0.86"
     },
-    "audioRefs": 2,
-    "videoRefs": 12,
+    "discoveredAudioCount": 2,
+    "verifiedAudioCount": 2,
+    "discoveredVideoCount": 12,
     "capabilities": [
       "request-help",
       "describe-routine",
@@ -847,8 +867,9 @@
       "confidence": 0.9,
       "basis": "oxford-coverage known=0.86 cumA1=0.68 cumA2=0.74 cumB1=0.83"
     },
-    "audioRefs": 2,
-    "videoRefs": 13,
+    "discoveredAudioCount": 2,
+    "verifiedAudioCount": 2,
+    "discoveredVideoCount": 13,
     "capabilities": [
       "request-help",
       "describe-routine",
@@ -920,8 +941,9 @@
       "confidence": 0.89,
       "basis": "oxford-coverage known=0.85 cumA1=0.59 cumA2=0.75 cumB1=0.82"
     },
-    "audioRefs": 2,
-    "videoRefs": 11,
+    "discoveredAudioCount": 2,
+    "verifiedAudioCount": 2,
+    "discoveredVideoCount": 11,
     "capabilities": ["make-plans", "decode-weak-forms", "estimate-uncertainty", "give-reason", "track-signposts"],
     "grammar": [
       "past-simple",
@@ -990,8 +1012,9 @@
       "confidence": 0.87,
       "basis": "oxford-coverage known=0.80 cumA1=0.60 cumA2=0.72 cumB1=0.75"
     },
-    "audioRefs": 2,
-    "videoRefs": 13,
+    "discoveredAudioCount": 2,
+    "verifiedAudioCount": 2,
+    "discoveredVideoCount": 13,
     "capabilities": [
       "make-plans",
       "narrate-past",
@@ -1052,8 +1075,9 @@
       "confidence": 0.92,
       "basis": "oxford-coverage known=0.93 cumA1=0.67 cumA2=0.88 cumB1=0.93"
     },
-    "audioRefs": 2,
-    "videoRefs": 13,
+    "discoveredAudioCount": 2,
+    "verifiedAudioCount": 2,
+    "discoveredVideoCount": 13,
     "capabilities": ["describe-routine", "narrate-past", "decode-weak-forms", "hedge-statement", "track-signposts"],
     "grammar": [
       "present-simple",
@@ -1098,8 +1122,9 @@
       "confidence": 0.7,
       "basis": "oxford-coverage known=0.75 cumA1=0.48 cumA2=0.64 cumB1=0.71"
     },
-    "audioRefs": 2,
-    "videoRefs": 13,
+    "discoveredAudioCount": 2,
+    "verifiedAudioCount": 2,
+    "discoveredVideoCount": 13,
     "capabilities": ["narrate-past", "ask-directions", "decode-weak-forms", "hedge-statement", "track-signposts"],
     "grammar": [
       "past-simple",
@@ -1159,8 +1184,9 @@
       "confidence": 0.73,
       "basis": "oxford-coverage known=0.83 cumA1=0.55 cumA2=0.74 cumB1=0.79"
     },
-    "audioRefs": 2,
-    "videoRefs": 13,
+    "discoveredAudioCount": 2,
+    "verifiedAudioCount": 2,
+    "discoveredVideoCount": 13,
     "capabilities": [
       "ask-directions",
       "decode-weak-forms",
@@ -1202,8 +1228,9 @@
       "confidence": 0.84,
       "basis": "oxford-coverage known=0.74 cumA1=0.55 cumA2=0.68 cumB1=0.71"
     },
-    "audioRefs": 2,
-    "videoRefs": 13,
+    "discoveredAudioCount": 2,
+    "verifiedAudioCount": 2,
+    "discoveredVideoCount": 13,
     "capabilities": [
       "describe-routine",
       "make-plans",
@@ -1286,8 +1313,9 @@
       "confidence": 0.74,
       "basis": "oxford-coverage known=0.86 cumA1=0.53 cumA2=0.75 cumB1=0.79"
     },
-    "audioRefs": 2,
-    "videoRefs": 13,
+    "discoveredAudioCount": 2,
+    "verifiedAudioCount": 2,
+    "discoveredVideoCount": 13,
     "capabilities": [
       "introduce-self",
       "narrate-past",
@@ -1361,8 +1389,9 @@
       "confidence": 0.88,
       "basis": "oxford-coverage known=0.83 cumA1=0.58 cumA2=0.69 cumB1=0.80"
     },
-    "audioRefs": 2,
-    "videoRefs": 13,
+    "discoveredAudioCount": 2,
+    "verifiedAudioCount": 2,
+    "discoveredVideoCount": 13,
     "capabilities": ["greet-leave", "make-plans", "narrate-past", "decode-weak-forms", "tell-story", "track-signposts"],
     "grammar": [
       "present-simple",
@@ -1432,8 +1461,9 @@
       "confidence": 0.86,
       "basis": "oxford-coverage known=0.78 cumA1=0.63 cumA2=0.70 cumB1=0.74"
     },
-    "audioRefs": 2,
-    "videoRefs": 12,
+    "discoveredAudioCount": 2,
+    "verifiedAudioCount": 2,
+    "discoveredVideoCount": 12,
     "capabilities": [
       "greet-leave",
       "request-help",
@@ -1526,8 +1556,9 @@
       "confidence": 0.91,
       "basis": "oxford-coverage known=0.90 cumA1=0.66 cumA2=0.84 cumB1=0.88"
     },
-    "audioRefs": 2,
-    "videoRefs": 14,
+    "discoveredAudioCount": 2,
+    "verifiedAudioCount": 2,
+    "discoveredVideoCount": 14,
     "capabilities": [
       "greet-leave",
       "express-thanks",
@@ -1609,8 +1640,9 @@
       "confidence": 0.68,
       "basis": "oxford-coverage known=0.71 cumA1=0.52 cumA2=0.64 cumB1=0.67"
     },
-    "audioRefs": 2,
-    "videoRefs": 13,
+    "discoveredAudioCount": 2,
+    "verifiedAudioCount": 2,
+    "discoveredVideoCount": 13,
     "capabilities": [
       "introduce-self",
       "express-thanks",
@@ -1676,8 +1708,9 @@
       "confidence": 0.71,
       "basis": "oxford-coverage known=0.77 cumA1=0.42 cumA2=0.61 cumB1=0.70"
     },
-    "audioRefs": 2,
-    "videoRefs": 13,
+    "discoveredAudioCount": 2,
+    "verifiedAudioCount": 2,
+    "discoveredVideoCount": 13,
     "capabilities": ["decode-weak-forms", "track-signposts"],
     "grammar": ["past-simple", "yes-no-questions", "articles", "prepositions-place", "imperatives", "there-is-are"],
     "knownChunks": [
@@ -1706,8 +1739,9 @@
       "confidence": 0.72,
       "basis": "oxford-coverage known=0.80 cumA1=0.51 cumA2=0.68 cumB1=0.76"
     },
-    "audioRefs": 2,
-    "videoRefs": 12,
+    "discoveredAudioCount": 2,
+    "verifiedAudioCount": 2,
+    "discoveredVideoCount": 12,
     "capabilities": ["request-help", "make-plans", "decode-weak-forms", "track-signposts"],
     "grammar": [
       "present-continuous",
@@ -1772,8 +1806,9 @@
       "confidence": 0.87,
       "basis": "oxford-coverage known=0.81 cumA1=0.65 cumA2=0.73 cumB1=0.78"
     },
-    "audioRefs": 2,
-    "videoRefs": 13,
+    "discoveredAudioCount": 2,
+    "verifiedAudioCount": 2,
+    "discoveredVideoCount": 13,
     "capabilities": [
       "greet-leave",
       "clarify-meaning",
@@ -1825,8 +1860,9 @@
       "confidence": 0.73,
       "basis": "oxford-coverage known=0.82 cumA1=0.54 cumA2=0.69 cumB1=0.80"
     },
-    "audioRefs": 2,
-    "videoRefs": 13,
+    "discoveredAudioCount": 2,
+    "verifiedAudioCount": 2,
+    "discoveredVideoCount": 13,
     "capabilities": ["describe-routine", "make-plans", "ask-directions", "decode-weak-forms", "track-signposts"],
     "grammar": [
       "present-simple",
@@ -1869,8 +1905,9 @@
       "confidence": 0.88,
       "basis": "oxford-coverage known=0.82 cumA1=0.61 cumA2=0.68 cumB1=0.77"
     },
-    "audioRefs": 2,
-    "videoRefs": 12,
+    "discoveredAudioCount": 2,
+    "verifiedAudioCount": 2,
+    "discoveredVideoCount": 12,
     "capabilities": [
       "introduce-self",
       "describe-routine",
@@ -1950,8 +1987,9 @@
       "confidence": 0.88,
       "basis": "oxford-coverage known=0.83 cumA1=0.66 cumA2=0.71 cumB1=0.77"
     },
-    "audioRefs": 2,
-    "videoRefs": 13,
+    "discoveredAudioCount": 2,
+    "verifiedAudioCount": 2,
+    "discoveredVideoCount": 13,
     "capabilities": ["small-talk", "describe-routine", "decode-reductions", "track-signposts"],
     "grammar": [
       "present-simple",
@@ -2012,8 +2050,9 @@
       "confidence": 0.71,
       "basis": "oxford-coverage known=0.78 cumA1=0.51 cumA2=0.63 cumB1=0.71"
     },
-    "audioRefs": 2,
-    "videoRefs": 13,
+    "discoveredAudioCount": 2,
+    "verifiedAudioCount": 2,
+    "discoveredVideoCount": 13,
     "capabilities": ["express-thanks", "small-talk", "track-signposts"],
     "grammar": ["present-continuous", "wh-questions", "yes-no-questions", "articles"],
     "knownChunks": [
@@ -2058,8 +2097,9 @@
       "confidence": 0.74,
       "basis": "oxford-coverage known=0.86 cumA1=0.51 cumA2=0.73 cumB1=0.76"
     },
-    "audioRefs": 2,
-    "videoRefs": 13,
+    "discoveredAudioCount": 2,
+    "verifiedAudioCount": 2,
+    "discoveredVideoCount": 13,
     "capabilities": ["introduce-self", "express-opinion", "decode-weak-forms", "track-signposts"],
     "grammar": [
       "present-simple",
@@ -2124,8 +2164,9 @@
       "confidence": 0.85,
       "basis": "oxford-coverage known=0.75 cumA1=0.57 cumA2=0.68 cumB1=0.72"
     },
-    "audioRefs": 2,
-    "videoRefs": 13,
+    "discoveredAudioCount": 2,
+    "verifiedAudioCount": 2,
+    "discoveredVideoCount": 13,
     "capabilities": ["introduce-self", "express-opinion", "decode-weak-forms", "give-reason", "track-signposts"],
     "grammar": [
       "present-continuous",
@@ -2193,8 +2234,9 @@
       "confidence": 0.7,
       "basis": "oxford-coverage known=0.76 cumA1=0.51 cumA2=0.68 cumB1=0.72"
     },
-    "audioRefs": 2,
-    "videoRefs": 13,
+    "discoveredAudioCount": 2,
+    "verifiedAudioCount": 2,
+    "discoveredVideoCount": 13,
     "capabilities": ["narrate-past", "decode-weak-forms", "track-signposts", "ask-help"],
     "grammar": [
       "present-continuous",
@@ -2246,8 +2288,9 @@
       "confidence": 0.89,
       "basis": "oxford-coverage known=0.86 cumA1=0.58 cumA2=0.76 cumB1=0.81"
     },
-    "audioRefs": 2,
-    "videoRefs": 13,
+    "discoveredAudioCount": 2,
+    "verifiedAudioCount": 2,
+    "discoveredVideoCount": 13,
     "capabilities": [
       "request-help",
       "express-thanks",
@@ -2316,8 +2359,9 @@
       "confidence": 0.72,
       "basis": "oxford-coverage known=0.81 cumA1=0.52 cumA2=0.67 cumB1=0.78"
     },
-    "audioRefs": 2,
-    "videoRefs": 13,
+    "discoveredAudioCount": 2,
+    "verifiedAudioCount": 2,
+    "discoveredVideoCount": 13,
     "capabilities": ["greet-leave", "make-plans", "decode-weak-forms", "give-reason", "track-signposts"],
     "grammar": [
       "present-continuous",
@@ -2389,8 +2433,9 @@
       "confidence": 0.88,
       "basis": "oxford-coverage known=0.81 cumA1=0.58 cumA2=0.69 cumB1=0.73"
     },
-    "audioRefs": 2,
-    "videoRefs": 13,
+    "discoveredAudioCount": 2,
+    "verifiedAudioCount": 2,
+    "discoveredVideoCount": 13,
     "capabilities": ["clarify-meaning", "decode-weak-forms", "give-reason", "track-signposts", "clarify-requirements"],
     "grammar": [
       "present-continuous",
@@ -2449,8 +2494,9 @@
       "confidence": 0.72,
       "basis": "oxford-coverage known=0.80 cumA1=0.54 cumA2=0.65 cumB1=0.73"
     },
-    "audioRefs": 2,
-    "videoRefs": 13,
+    "discoveredAudioCount": 2,
+    "verifiedAudioCount": 2,
+    "discoveredVideoCount": 13,
     "capabilities": [
       "greet-leave",
       "small-talk",
@@ -2518,8 +2564,9 @@
       "confidence": 0.74,
       "basis": "oxford-coverage known=0.85 cumA1=0.48 cumA2=0.68 cumB1=0.73"
     },
-    "audioRefs": 2,
-    "videoRefs": 13,
+    "discoveredAudioCount": 2,
+    "verifiedAudioCount": 2,
+    "discoveredVideoCount": 13,
     "capabilities": ["describe-routine", "express-opinion", "decode-linking", "decode-numbers", "track-signposts"],
     "grammar": [
       "present-simple",
@@ -2578,8 +2625,9 @@
       "confidence": 0.85,
       "basis": "oxford-coverage known=0.75 cumA1=0.56 cumA2=0.62 cumB1=0.70"
     },
-    "audioRefs": 2,
-    "videoRefs": 13,
+    "discoveredAudioCount": 2,
+    "verifiedAudioCount": 2,
+    "discoveredVideoCount": 13,
     "capabilities": ["introduce-self", "describe-routine", "express-opinion", "decode-weak-forms", "track-signposts"],
     "grammar": ["present-simple", "wh-questions", "yes-no-questions", "articles", "prepositions-place", "there-is-are"],
     "knownChunks": [
@@ -2633,8 +2681,9 @@
       "confidence": 0.6,
       "basis": "oxford-coverage known=0.73 cumA1=0.41 cumA2=0.54 cumB1=0.59"
     },
-    "audioRefs": 2,
-    "videoRefs": 13,
+    "discoveredAudioCount": 2,
+    "verifiedAudioCount": 2,
+    "discoveredVideoCount": 13,
     "capabilities": ["greet-leave", "express-thanks", "decode-weak-forms", "give-reason", "track-signposts"],
     "grammar": [
       "present-simple",
@@ -2674,8 +2723,9 @@
       "confidence": 0.73,
       "basis": "oxford-coverage known=0.82 cumA1=0.50 cumA2=0.68 cumB1=0.74"
     },
-    "audioRefs": 2,
-    "videoRefs": 13,
+    "discoveredAudioCount": 2,
+    "verifiedAudioCount": 2,
+    "discoveredVideoCount": 13,
     "capabilities": ["introduce-self", "express-thanks", "narrate-past", "express-opinion", "track-signposts"],
     "grammar": [
       "past-simple",
@@ -2739,8 +2789,9 @@
       "confidence": 0.74,
       "basis": "oxford-coverage known=0.86 cumA1=0.50 cumA2=0.72 cumB1=0.76"
     },
-    "audioRefs": 2,
-    "videoRefs": 13,
+    "discoveredAudioCount": 2,
+    "verifiedAudioCount": 2,
+    "discoveredVideoCount": 13,
     "capabilities": [
       "request-help",
       "express-thanks",
@@ -2814,8 +2865,9 @@
       "confidence": 0.91,
       "basis": "oxford-coverage known=0.90 cumA1=0.72 cumA2=0.80 cumB1=0.86"
     },
-    "audioRefs": 2,
-    "videoRefs": 13,
+    "discoveredAudioCount": 2,
+    "verifiedAudioCount": 2,
+    "discoveredVideoCount": 13,
     "capabilities": [
       "greet-leave",
       "express-thanks",

@@ -8,6 +8,7 @@
 import { ALL_KNOWLEDGE } from '../content-factory/knowledge/index.ts';
 import { recyclingReport } from '../content-factory/recycling.ts';
 import { V2_LESSONS } from '../fd-content-v2/index.ts';
+import { isVerifiedUsableMedia } from './media.ts';
 import type { CurriculumLink, LearningMediaAsset, RecyclingMatch, VoaLearningResource } from './types.ts';
 
 const norm = (s: string) => s.trim().replace(/\s+/g, ' ').toLowerCase();
@@ -49,12 +50,10 @@ export function linkResource(
   const ntext = ` ${norm(`${res.text} ${res.transcript ?? ''}`)} `;
   const rightsVerified = res.source.publicDomainVerified;
 
-  /* audio gate bound to the registry row: ref must resolve to a real
-   * LearningMediaAsset that is rights-clean AND resolvable. */
-  const verifiedAudio = res.audioRefs.filter((id) => {
-    const a = mediaById.get(id);
-    return a?.rightsStatus === 'VOA_ORIGINAL_PUBLIC_DOMAIN' && a.resolvable;
-  });
+  /* audio gate bound to the registry row via the shared
+   * isVerifiedUsableMedia predicate — the same predicate the search
+   * index uses, so no projection can diverge from the link gate */
+  const verifiedAudio = res.audioRefs.filter((id) => isVerifiedUsableMedia(mediaById.get(id)));
   const audioKind = verifiedAudio.length
     ? ('audio-candidate' as const)
     : res.audioRefs.length

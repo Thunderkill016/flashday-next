@@ -3,7 +3,7 @@ import { detectExternalCredits, auditAsset, auditResource } from './rights';
 import { parseArticle } from './parse';
 import { headword, properNouns, inferLevel } from './level';
 import { normalizeResource } from './normalize';
-import { mediaAssetId, buildMediaAsset, dedupeAssets, resolveAudioAssets } from './media';
+import { mediaAssetId, buildMediaAsset, dedupeAssets, isVerifiedUsableMedia, resolveAudioAssets } from './media';
 import type { LearningMediaAsset, VoaAsset, VoaSourceRecord } from './types';
 
 const mp3: VoaAsset = { url: 'https://voa-audio.voanews.eu/2024/01/01/test.mp3', kind: 'audio' };
@@ -309,10 +309,54 @@ describe('media registry (§43/§44)', () => {
     expect(a.provider).toBe('voa');
   });
 
-  it('dedupes assets shared across pages', () => {
+  it('dedupes assets shared across pages and keeps all provenance', () => {
     const a = buildMediaAsset({ asset: mp3, sourceResourceId: 'voa:1', rightsStatus: 'VOA_ORIGINAL_PUBLIC_DOMAIN' });
     const b = buildMediaAsset({ asset: mp3, sourceResourceId: 'voa:2', rightsStatus: 'VOA_ORIGINAL_PUBLIC_DOMAIN' });
+    const [merged] = dedupeAssets([a, b]);
     expect(dedupeAssets([a, b])).toHaveLength(1);
+    expect(merged.rightsStatus).toBe('VOA_ORIGINAL_PUBLIC_DOMAIN');
+    expect(merged.sourceResourceIds).toEqual(['voa:1', 'voa:2']);
+    expect(merged.observations).toEqual([
+      { sourceResourceId: 'voa:1', rightsStatus: 'VOA_ORIGINAL_PUBLIC_DOMAIN' },
+      { sourceResourceId: 'voa:2', rightsStatus: 'VOA_ORIGINAL_PUBLIC_DOMAIN' },
+    ]);
+  });
+
+  it('merged rights are order-independent + fail-closed (external-review blocker)', () => {
+    /* same asset URL observed from a PD page and a MIXED page must
+     * yield the same non-PD shipping decision in either corpus order —
+     * first-write-wins would make rights a function of row order. */
+    const clean = () => buildMediaAsset({ asset: mp3, sourceResourceId: 'voa:clean', rightsStatus: 'VOA_ORIGINAL_PUBLIC_DOMAIN' });
+    const mixed = () => buildMediaAsset({ asset: mp3, sourceResourceId: 'voa:mixed', rightsStatus: 'MIXED_RIGHTS_REVIEW_REQUIRED' });
+    const fwd = dedupeAssets([clean(), mixed()])[0];
+    const rev = dedupeAssets([mixed(), clean()])[0];
+    expect(fwd.rightsStatus).toBe('MIXED_RIGHTS_REVIEW_REQUIRED');
+    expect(rev.rightsStatus).toBe('MIXED_RIGHTS_REVIEW_REQUIRED');
+    expect(fwd.sourceResourceIds).toEqual(rev.sourceResourceIds);
+    expect(fwd.observations).toEqual(rev.observations);
+    /* both observations survive — the uncertain one is never discarded */
+    expect(fwd.observations).toEqual([
+      { sourceResourceId: 'voa:clean', rightsStatus: 'VOA_ORIGINAL_PUBLIC_DOMAIN' },
+      { sourceResourceId: 'voa:mixed', rightsStatus: 'MIXED_RIGHTS_REVIEW_REQUIRED' },
+    ]);
+  });
+
+  it('a PD observation cannot promote an asset with a restrictive observation (no laundering)', () => {
+    const thirdParty = buildMediaAsset({ asset: mp3, sourceResourceId: 'voa:tp', rightsStatus: 'THIRD_PARTY_RESTRICTED' });
+    const clean = buildMediaAsset({ asset: mp3, sourceResourceId: 'voa:clean', rightsStatus: 'VOA_ORIGINAL_PUBLIC_DOMAIN' });
+    const unknown = buildMediaAsset({ asset: mp3, sourceResourceId: 'voa:unk', rightsStatus: 'UNKNOWN' });
+    expect(dedupeAssets([clean, unknown, thirdParty])[0].rightsStatus).toBe('THIRD_PARTY_RESTRICTED');
+    expect(dedupeAssets([clean, unknown])[0].rightsStatus).toBe('UNKNOWN');
+  });
+
+  it('a resolvable proof from any observation survives the merge', () => {
+    const verified = buildMediaAsset({ asset: mp3, sourceResourceId: 'voa:1', rightsStatus: 'MIXED_RIGHTS_REVIEW_REQUIRED', resolvable: true });
+    const pending = buildMediaAsset({ asset: mp3, sourceResourceId: 'voa:2', rightsStatus: 'VOA_ORIGINAL_PUBLIC_DOMAIN' });
+    const [merged] = dedupeAssets([pending, verified]);
+    expect(merged.resolvable).toBe(true);
+    /* resolvable alone is not usable audio — rights still fail-closed */
+    expect(merged.rightsStatus).toBe('MIXED_RIGHTS_REVIEW_REQUIRED');
+    expect(isVerifiedUsableMedia(merged)).toBe(false);
   });
 });
 

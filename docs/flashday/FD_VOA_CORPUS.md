@@ -81,6 +81,8 @@ Deterministic, no LLM in the path:
 
 One `LearningMediaAsset` per unique asset URL: `voa-media:<sha256(url)[..16]>`. A `recorded` claim requires `resolvable: true` — HEAD-verified URL. Verification is bounded per run (`RESOLVE_CAP_PER_RUN`); unverified assets stay fail-closed until a later run reaches them. Audio, video, **and document** assets register — `audioRefs`/`videoRefs`/`documentRefs` on a resource are these canonical ids (never raw URLs), so every ref resolves to exactly one registry row.
 
+The same asset URL can be observed from multiple source records with different rights states. `dedupeAssets` therefore merges order-independently and fail-closed: `sourceResourceIds[]` + `observations[]` keep full provenance, and merged `rightsStatus` is `VOA_ORIGINAL_PUBLIC_DOMAIN` only when **every** observation is clean — any restrictive observation wins regardless of corpus order (no rights laundering). `resolvable` is a property of the URL, so any prior verification proof survives the merge.
+
 ## Curriculum links (src/lib/voa-corpus/curriculum-links.ts)
 
 - `authentic-reencounter` — V2 target chunk literally occurs in the resource
@@ -90,6 +92,8 @@ One `LearningMediaAsset` per unique asset URL: `voa-media:<sha256(url)[..16]>`. 
 - `grammar-support` / `authoring-reference` — series-role links
 
 Every link row carries `rightsVerified` (source rights state) and, for audio kinds, `mediaAssetIds` (the exact registry ids that passed the gate) — the gate is bound into the row; consumers never reconstruct it.
+
+The offline search index (`search-index.json`) and the LLE-1 mapping report use the same `isVerifiedUsableMedia` predicate, split into `discoveredAudioCount` vs `verifiedAudioCount` + `verifiedAudioAssetIds` + `hasUsableAudio`. A raw ref count can never read as usable audio — the verified gate cannot be bypassed by a parallel projection.
 
 Encountering VOA material mints **no** evidence — §41 boundary stands: claims still require a FlashDay TaskContract + evaluator + EvidenceEvent.
 

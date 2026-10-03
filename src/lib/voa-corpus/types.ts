@@ -122,15 +122,29 @@ export interface VoaLearningResource {
   pipelineState: 'RAW' | 'RIGHTS_VERIFIED' | 'NORMALIZED' | 'ENRICHED' | 'REVIEWED' | 'APP_READY';
 }
 
+export interface MediaRightsObservation {
+  sourceResourceId: string;
+  rightsStatus: VoaRightsStatus;
+}
+
 export interface LearningMediaAsset {
   id: string; // voa-media:<hash>
   provider: 'voa';
-  sourceResourceId: string;
+  /* every source record that referenced this canonical asset — a
+   * shared asset must never silently keep only the first page that
+   * referenced it (dedupeAssets merges, order-independent). */
+  sourceResourceIds: string[];
+  /* per-source rights observations behind the merged rightsStatus —
+   * conflicting/uncertain observations are never silently discarded. */
+  observations: MediaRightsObservation[];
   type: 'audio' | 'video' | 'document';
   url: string;
   hash?: string; // content hash when downloaded
   durationMs?: number;
   mimeType?: string;
+  /* merged over all observations, conservative: PD only when every
+   * observation is PD; any restrictive observation wins regardless
+   * of corpus order (external-review blocker). */
   rightsStatus: VoaRightsStatus;
   attribution: string;
   resolvable: boolean; // URL verified with HEAD request
