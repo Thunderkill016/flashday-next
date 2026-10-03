@@ -2902,6 +2902,16 @@
       "classification": "LEGIT_HISTORY",
       "reason": "safety-contract doc comment pinning that the V2 seeder writes contents/collections only — never records/FSRS scheduling state",
       "migrationNode": null
+    },
+    {
+      "id": "lib-seed.fsrs",
+      "file": "src/lib/seed.ts",
+      "source": "fsrs",
+      "anchor": "v2-seeder-comment",
+      "occurrences": ["* write, and learner state (records/FSRS/deletions) is never touched. */"],
+      "classification": "LEGIT_HISTORY",
+      "reason": "doc comment pinning that V2 pack seeding writes contents/collections only — never records/FSRS scheduling state",
+      "migrationNode": null
     }
   ]
 }
