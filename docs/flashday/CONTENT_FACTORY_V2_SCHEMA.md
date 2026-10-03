@@ -24,9 +24,11 @@ Full types: `src/lib/content-factory/types.ts`.
 | reviewVariants | ReviewVariantV2[] | carried-contract | maps to vocab modes |
 | transferTask | {prompt,promptVi,changesDimension} | compile→text + validator | changed-context requirement |
 | truePrerequisites | string[] | graph/validator | hard ordering edges |
+| prerequisiteRationale | Record<string,string>? | validator | authored evidence per hard edge — never auto-generated |
 | recommendedAfter | string[] | graph | soft ordering edges |
 | recyclingFrom | string[] | graph/recycling | chunk reuse edges |
 | audioSource | `'tts-synthetic'|'recorded'|'source-audio'` | carried-contract | required on audio tracks |
+| audioRef | string? | carried-contract | real asset backing recorded/source-audio; forbidden on tts-synthetic |
 | sourceRefs | string[] | validator/coverage | registered source ids |
 | researchRefs | string[] | validator/coverage | registered research ids |
 

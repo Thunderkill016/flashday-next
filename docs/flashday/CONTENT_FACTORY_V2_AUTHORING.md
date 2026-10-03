@@ -48,8 +48,12 @@ spec({
 | cue-leaks-answer / support-leaks-answer | cueVi, pronunciationNote, contrastVi may not contain the chunk |
 | derived-source-missing | `origin:'derived'` requires `sourceRefId` |
 | derived-source-not-cited / derived-from-restricted | sourceRefId must be in sourceRefs and derivable class |
+| unknown-capability | every `capabilities` id must exist in `capabilities.ts` — fail closed |
+| missing-prerequisite-rationale | each `truePrerequisites` edge needs authored `prerequisiteRationale[id]` |
 | audio-outside-listening | `audio`/`transcript` ladder steps only on listening/pronunciation |
 | audio-source-undeclared | audio tracks must declare `audioSource` (default `tts-synthetic`) |
+| audio-source-unbacked | `recorded`/`source-audio` requires a real `audioRef` |
+| audio-ref-on-synthetic | `audioRef` forbidden on `tts-synthetic` — no fake assets |
 | target-count | 3–8 targets per lesson |
 | graph-* / recycle-loop | no prerequisite cycles; recycling loops ≤4 |
 | missing-track | library gate — every track present |

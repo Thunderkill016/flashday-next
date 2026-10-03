@@ -6,9 +6,14 @@ Gate: `node scripts/content-cli.ts validate` — prints PASS or `id code message
 
 | fn | scope |
 |---|---|
-| `validateLesson(l)` | one spec: structure, leakage, provenance, audio rules |
-| `validatePack(ls, id)` | duplicate ids, per-lesson issues, graph issues, recycle loops |
-| `validateLibrary(ls, id)` | pack rules + required-track presence (the fd02 spine) |
+| `validateLesson(l, ctx?)` | one spec: structure, leakage, provenance, audio rules, capability + rationale checks |
+| `validatePack(ls, id, ctx)` | duplicate ids, per-lesson issues, graph issues, recycle loops |
+| `validateLibrary(ls, id, ctx)` | pack rules + required-track presence (the fd02 spine) |
+
+`ctx` (`PackValidationContext`) is required at pack/library level:
+
+- `knownCapabilities` — ontology ids; ghost capabilities fail closed (`unknown-capability`)
+- `externalIds` — lesson ids in declared dependency packs; legitimate edge targets, still fails on anything else
 
 Per-pack seeding calls `validatePack` — required tracks are a library property, not a pack property (split after the a1 pack failed seeding on missing-track).
 
@@ -18,8 +23,9 @@ Per-pack seeding calls `validatePack` — required tracks are a library property
 **retrieval/leakage**: `chunk-not-in-source`, `source-not-in-input`, `answer-visible`, `cue-leaks-answer`, `support-leaks-answer`
 **production/transfer**: `no-production-pattern`, `transfer-missing`, `transfer-no-change`
 **provenance/rights**: `derived-source-missing`, `derived-source-not-cited`, `derived-from-restricted`, `rejected-source`, `unknown-source`, `unknown-research`
-**audio**: `audio-outside-listening`, `audio-source-undeclared`, `missing-audio-path`
-**graph**: `graph-self-edge`, `graph-missing-node`, `graph-cycle`, `recycle-loop`
+**audio**: `audio-outside-listening`, `audio-source-undeclared`, `audio-source-unbacked`, `audio-ref-on-synthetic`, `missing-audio-path`
+**ontology/evidence**: `unknown-capability`, `missing-prerequisite-rationale`
+**graph**: `graph-self-edge`, `graph-unknown-node`, `graph-cycle`, `recycle-loop`
 **library**: `missing-track`
 
 ## What the validator proved during authoring

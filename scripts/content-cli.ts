@@ -20,8 +20,8 @@ const REPORTS = join(ROOT, 'content-corpus/reports');
 
 async function main() {
   const [cmd, ...args] = process.argv.slice(2);
-  const { V2_PACKS, V2_LESSONS } = await import('../src/lib/fd-content-v2/index.ts');
-  const { validatePack, validateLesson, validateLibrary } = await import('../src/lib/content-factory/validate.ts');
+  const { V2_PACKS, V2_LESSONS, CAPABILITIES } = await import('../src/lib/fd-content-v2/index.ts');
+  const { validateLesson, validateLibrary } = await import('../src/lib/content-factory/validate.ts');
   const { compilePack } = await import('../src/lib/content-factory/compile.ts');
   const { coverageReport, coverageMarkdown } = await import('../src/lib/content-factory/coverage.ts');
   const { analyzeQuality } = await import('../src/lib/content-factory/quality.ts');
@@ -33,6 +33,7 @@ async function main() {
   const { lessonOrder } = await import('../src/lib/content-factory/graph.ts');
 
   const allLessons = V2_LESSONS;
+  const vctx = { knownCapabilities: new Set(Object.keys(CAPABILITIES)) };
 
   switch (cmd) {
     case 'inventory': {
@@ -49,7 +50,7 @@ async function main() {
       break;
     }
     case 'validate': {
-      const issues = validateLibrary(allLessons, 'fd02');
+      const issues = validateLibrary(allLessons, 'fd02', vctx);
       for (const i of issues) console.log(`${i.id}  ${i.code}  ${i.message}`);
       console.log(issues.length ? `FAIL ${issues.length} issues` : 'PASS');
       process.exitCode = issues.length ? 1 : 0;
@@ -79,7 +80,7 @@ async function main() {
         break;
       }
       console.log(JSON.stringify(lesson, null, 2));
-      const issues = validateLesson(lesson);
+      const issues = validateLesson(lesson, vctx);
       console.log(
         issues.length
           ? `\nISSUES:\n${issues.map((i) => `  ${i.code}: ${i.message}`).join('\n')}`
@@ -107,7 +108,7 @@ async function main() {
     }
     case 'build': {
       mkdirSync(REPORTS, { recursive: true });
-      const issues = validateLibrary(allLessons, 'fd02');
+      const issues = validateLibrary(allLessons, 'fd02', vctx);
       const cov = coverageReport(allLessons, ALL_KNOWLEDGE, 'fd02');
       const qs = analyzeQuality(allLessons);
       const rc = recyclingReport(allLessons);

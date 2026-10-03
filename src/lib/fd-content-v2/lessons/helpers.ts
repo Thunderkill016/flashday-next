@@ -108,11 +108,15 @@ export interface LessonInit {
   /** Lesson-level L1 contrast — applied to every target (never quote target words). */
   contrastVi?: string;
   truePrerequisites?: string[];
+  /** Authored evidence per hard gate — required when truePrerequisites set. */
+  prerequisiteRationale?: Record<string, string>;
   recommendedAfter?: string[];
   recyclingFrom?: string[];
   sourceRefs?: string[];
   researchRefs?: string[];
   audioSource?: LessonSpec['audioSource'];
+  /** Real asset ref — required for recorded/source-audio, forbidden on tts-synthetic. */
+  audioRef?: string;
 }
 
 const TRACK_TARGET_KIND: Partial<Record<TrackIdV2, LessonTarget['kind']>> = {

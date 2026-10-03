@@ -19,16 +19,23 @@ export interface V2SeedResult {
   skippedDeleted: number;
 }
 
+export interface V2SeedContext {
+  /** Lessons living in declared dependency packs — legitimate edge targets. */
+  dependencyLessons?: LessonSpec[];
+  /** Capability ontology — required so ghost capabilities fail closed. */
+  knownCapabilities: ReadonlySet<string>;
+}
+
 export async function seedV2Pack(
   pack: PackManifest,
   lessons: LessonSpec[],
   now: number,
-  dependencyLessons: LessonSpec[] = [],
+  ctx: V2SeedContext,
 ): Promise<V2SeedResult> {
   /* Edges into declared dependency packs are legal — resolve them against
    * the dependency lessons the caller supplies instead of rejecting. */
-  const externalIds = new Set(dependencyLessons.map((l) => l.id));
-  const issues = validatePack(lessons, pack.packId, externalIds);
+  const externalIds = new Set((ctx.dependencyLessons ?? []).map((l) => l.id));
+  const issues = validatePack(lessons, pack.packId, { externalIds, knownCapabilities: ctx.knownCapabilities });
   if (issues.length) {
     const summary = issues.map((i) => `${i.id}:${i.code}`).join(', ');
     throw new Error(`pack ${pack.packId} failed validation (${issues.length}): ${summary.slice(0, 2000)}`);

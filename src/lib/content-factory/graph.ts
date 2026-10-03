@@ -19,8 +19,10 @@ export interface GraphIssue {
 export function buildEdges(lessons: LessonSpec[]): CurriculumEdge[] {
   const edges: CurriculumEdge[] = [];
   for (const l of lessons) {
+    /* Rationale comes from the author — a hard gate must carry real
+     * evidence, never a fabricated "cannot run reliably without" line. */
     for (const to of l.truePrerequisites)
-      edges.push({ from: l.id, to, kind: 'true-prerequisite', rationale: `${l.id} cannot run reliably without ${to}` });
+      edges.push({ from: l.id, to, kind: 'true-prerequisite', rationale: l.prerequisiteRationale?.[to] });
     for (const to of l.recommendedAfter) edges.push({ from: l.id, to, kind: 'recommended-sequence' });
     for (const to of l.recyclingFrom) edges.push({ from: l.id, to, kind: 'recycles' });
   }

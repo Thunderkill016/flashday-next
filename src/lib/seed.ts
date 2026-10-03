@@ -4,7 +4,7 @@ import { DEFAULT_FOLDERS } from '@/types/favorite';
 import { seedV2Pack } from './content-factory/seed.ts';
 import { db } from './db';
 import { seedFdContentPack } from './fd-content/seed';
-import { V2_LESSONS, V2_PACKS } from './fd-content-v2/index.ts';
+import { CAPABILITIES, V2_LESSONS, V2_PACKS } from './fd-content-v2/index.ts';
 import { builtinArticles } from './seed-data/articles';
 import { builtinCommunityScenarios } from './seed-data/community-scenarios';
 import { builtinPhrases } from './seed-data/phrases';
@@ -143,6 +143,9 @@ export async function seedDatabase() {
   for (const pack of V2_PACKS) {
     const lessons = v2LessonsByPack.get(pack.packId) ?? [];
     const dependencyLessons = pack.dependencies.flatMap((dep) => v2LessonsByPack.get(dep) ?? []);
-    await seedV2Pack(pack, lessons, now, dependencyLessons);
+    await seedV2Pack(pack, lessons, now, {
+      dependencyLessons,
+      knownCapabilities: new Set(Object.keys(CAPABILITIES)),
+    });
   }
 }

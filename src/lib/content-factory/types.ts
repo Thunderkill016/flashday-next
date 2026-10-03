@@ -182,12 +182,16 @@ export interface LessonSpec {
   transferTask: LessonTransferTask;
   /** Relation edges OUT of this lesson (dependency graph, Part 4). */
   truePrerequisites: string[]; // lesson ids — hard gates
+  /** Authored evidence for each hard gate — never auto-generated. */
+  prerequisiteRationale?: Record<string, string>;
   recommendedAfter: string[]; // lesson ids — soft order
   recyclingFrom: string[]; // lesson ids — language reuse edges
   sourceRefs: string[];
   researchRefs: string[];
   /** Audio modality claim for listening lessons (Part 8 audio rule). */
   audioSource?: 'tts-synthetic' | 'recorded' | 'source-audio';
+  /** Real asset backing recorded/source-audio claims — forbidden on tts-synthetic. */
+  audioRef?: string;
 }
 
 /* ---- Field consumer map (Part 6 + 17) ----
@@ -223,11 +227,13 @@ export const FIELD_CONSUMERS: Record<string, FieldConsumer> = {
   'transferTask.promptVi': 'runtime-consumed',
   'transferTask.changesDimension': 'validator-consumed',
   truePrerequisites: 'validator-consumed',
+  prerequisiteRationale: 'validator-consumed',
   recommendedAfter: 'validator-consumed',
   recyclingFrom: 'validator-consumed',
   sourceRefs: 'validator-consumed',
   researchRefs: 'validator-consumed',
   audioSource: 'carried-contract',
+  audioRef: 'carried-contract',
 };
 
 /* ---- Compiler outputs (Part 7) ---- */

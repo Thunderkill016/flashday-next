@@ -25,6 +25,9 @@ vi.mock('@/lib/db', () => ({
 }));
 
 const ALL = V2_LESSONS;
+const CAPS = new Set(Object.keys(CAPABILITIES));
+const VCTX = { knownCapabilities: CAPS };
+const SEED_CTX = { knownCapabilities: CAPS };
 
 describe('v2 curriculum shape', () => {
   it('contains 142 lessons across 8 tracks', () => {
@@ -36,7 +39,7 @@ describe('v2 curriculum shape', () => {
   });
 
   it('passes the full validator with zero issues', () => {
-    expect(validateLibrary(ALL, 'fd02')).toEqual([]);
+    expect(validateLibrary(ALL, 'fd02', VCTX)).toEqual([]);
   });
 
   it('has unique lesson and target ids', () => {
@@ -114,6 +117,23 @@ describe('compiler', () => {
     expect(text).toContain(lesson.transferTask.promptVi);
   });
 
+  it('carries the full declared contract into fd metadata', () => {
+    const { items } = compilePack(pack, lessons, 1000);
+    for (const item of items.filter((i) => i.type === 'article')) {
+      const lesson = lessons.find((l) => item.metadata?.fd?.lessonId === l.id)!;
+      const fd = item.metadata!.fd!;
+      expect(fd.version, `${lesson.id}:version`).toBe(lesson.version);
+      expect(fd.capabilities, `${lesson.id}:capabilities`).toEqual(lesson.capabilities);
+      if (lesson.audioSource) expect(fd.audioSource, `${lesson.id}:audioSource`).toBe(lesson.audioSource);
+      if (lesson.audioRef) expect(fd.audioRef, `${lesson.id}:audioRef`).toBe(lesson.audioRef);
+    }
+    for (const item of items.filter((i) => i.type === 'word')) {
+      const target = lessons.flatMap((l) => l.targets).find((t) => t.id === item.id)!;
+      const fd = item.metadata!.fd!;
+      if (target.contrastVi) expect(fd.contrastVi, `${target.id}:contrastVi`).toBe(target.contrastVi);
+    }
+  });
+
   it('builds stable manifests — wording edits keep ids', () => {
     const m1 = packManifest('p', 'content/2.0.0', lessons, [], 0);
     const edited = lessons.map((l) => ({ ...l, title: `${l.title}!` }));
@@ -158,6 +178,47 @@ describe('validator — fails closed on real violations', () => {
     const broken = { ...spoken, supportLadder: [...spoken.supportLadder, 'audio' as const] };
     expect(validateLesson(broken).some((i) => i.code === 'audio-outside-listening')).toBe(true);
   });
+
+  it('rejects a ghost capability id', () => {
+    const broken = bad({ capabilities: ['no-such-capability'] });
+    expect(validateLesson(broken, VCTX).some((i) => i.code === 'unknown-capability')).toBe(true);
+  });
+
+  it('rejects recorded/source audio claimed without an asset ref', () => {
+    const listen = ALL.find((l) => l.track === 'listening')!;
+    for (const source of ['recorded', 'source-audio'] as const) {
+      const broken = { ...listen, audioSource: source, audioRef: undefined };
+      expect(validateLesson(broken).some((i) => i.code === 'audio-source-unbacked')).toBe(true);
+    }
+    const withRef = { ...listen, audioSource: 'recorded' as const, audioRef: 'nep-dialogues:li01-scene' };
+    expect(validateLesson(withRef).some((i) => i.code === 'audio-source-unbacked')).toBe(false);
+  });
+
+  it('rejects an audioRef on synthetic audio (fake asset)', () => {
+    const listen = ALL.find((l) => l.track === 'listening')!;
+    const broken = { ...listen, audioSource: 'tts-synthetic' as const, audioRef: 'fake-asset.mp3' };
+    expect(validateLesson(broken).some((i) => i.code === 'audio-ref-on-synthetic')).toBe(true);
+  });
+
+  it('rejects a true prerequisite without an authored rationale', () => {
+    const other = ALL.find((l) => l.id !== base.id)!;
+    const broken = bad({ truePrerequisites: [other.id] });
+    expect(validateLesson(broken).some((i) => i.code === 'missing-prerequisite-rationale')).toBe(true);
+    const reasoned = bad({
+      truePrerequisites: [other.id],
+      prerequisiteRationale: { [other.id]: 'needs the greeting frames before asking follow-ups' },
+    });
+    expect(validateLesson(reasoned).some((i) => i.code === 'missing-prerequisite-rationale')).toBe(false);
+  });
+
+  it('graph edges carry the authored rationale, never a fabricated one', () => {
+    const l = bad({
+      truePrerequisites: ['other-lesson'],
+      prerequisiteRationale: { 'other-lesson': 'authored reason' },
+    });
+    const edge = buildEdges([l]).find((e) => e.kind === 'true-prerequisite')!;
+    expect(edge.rationale).toBe('authored reason');
+  });
 });
 
 describe('seeder — migration/progress safety', () => {
@@ -167,7 +228,7 @@ describe('seeder — migration/progress safety', () => {
   it('seeds items + collections on an empty db', async () => {
     contentsBulkGetMock.mockResolvedValueOnce([]);
     collectionsBulkGetMock.mockResolvedValueOnce([]);
-    const res = await seedV2Pack(pack, lessons, 1000);
+    const res = await seedV2Pack(pack, lessons, 1000, SEED_CTX);
     expect(res.contentsAdded).toBeGreaterThan(0);
     expect(res.collectionsAdded).toBeGreaterThan(0);
     expect(contentsBulkPutMock).toHaveBeenCalledOnce();
@@ -178,7 +239,7 @@ describe('seeder — migration/progress safety', () => {
     const { items, collections } = compilePack(pack, lessons, 1000);
     contentsBulkGetMock.mockResolvedValueOnce(items);
     collectionsBulkGetMock.mockResolvedValueOnce(collections);
-    const res = await seedV2Pack(pack, lessons, 1000);
+    const res = await seedV2Pack(pack, lessons, 1000, SEED_CTX);
     expect(res.contentsAdded).toBe(0);
     expect(res.collectionsAdded).toBe(0);
     expect(contentsBulkPutMock).not.toHaveBeenCalled();
@@ -190,7 +251,7 @@ describe('seeder — migration/progress safety', () => {
     const first = items[0];
     contentsBulkGetMock.mockResolvedValueOnce(items.map((r) => (r.id === first.id ? { ...r, deletedAt: 1 } : r)));
     collectionsBulkGetMock.mockResolvedValueOnce(collections);
-    const res = await seedV2Pack(pack, lessons, 1000);
+    const res = await seedV2Pack(pack, lessons, 1000, SEED_CTX);
     expect(res.skippedDeleted).toBe(1);
     const written = contentsBulkPutMock.mock.calls[0]?.[0] ?? [];
     expect(written.some((i: { id: string }) => i.id === first.id)).toBe(false);
@@ -201,7 +262,7 @@ describe('seeder — migration/progress safety', () => {
       { ...lessons[0], targets: [{ ...lessons[0].targets[0], chunk: 'not in the source text at all' }, ...lessons[0].targets.slice(1)] },
       ...lessons.slice(1),
     ];
-    await expect(seedV2Pack(pack, broken, 1000)).rejects.toThrow('failed validation');
+    await expect(seedV2Pack(pack, broken, 1000, SEED_CTX)).rejects.toThrow('failed validation');
     expect(contentsBulkPutMock).not.toHaveBeenCalled();
   });
 });

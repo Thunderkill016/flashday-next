@@ -16,7 +16,12 @@ const MAX_TARGETS = 8;
 
 const issue = (id: string, code: string, message: string): ValidationIssue => ({ id, code, message });
 
-export function validateLesson(lesson: LessonSpec): ValidationIssue[] {
+export interface LessonValidationContext {
+  /** Capability ontology ids — when given, unknown ids fail closed. */
+  knownCapabilities?: ReadonlySet<string>;
+}
+
+export function validateLesson(lesson: LessonSpec, ctx: LessonValidationContext = {}): ValidationIssue[] {
   const issues: ValidationIssue[] = [];
   const at = (code: string, message: string, id = lesson.id) => issues.push(issue(id, code, message));
 
@@ -28,6 +33,9 @@ export function validateLesson(lesson: LessonSpec): ValidationIssue[] {
   if (!lesson.outcome.trim()) at('missing-outcome', 'lesson has no communicative outcome');
   if (!lesson.input.text.trim() || !lesson.title.trim()) at('missing-input', 'lesson has no input text/title');
   if (!lesson.capabilities.length) at('no-capabilities', 'lesson trains no declared capability');
+  if (ctx.knownCapabilities)
+    for (const cap of lesson.capabilities)
+      if (!ctx.knownCapabilities.has(cap)) at('unknown-capability', `capability "${cap}" is not in the ontology`);
   if (lesson.targets.length < MIN_TARGETS || lesson.targets.length > MAX_TARGETS)
     at('target-count', `lesson has ${lesson.targets.length} targets (allowed ${MIN_TARGETS}-${MAX_TARGETS})`);
   if (!lesson.supportLadder.length) at('empty-support-ladder', 'lesson has no support ladder');
@@ -98,6 +106,11 @@ export function validateLesson(lesson: LessonSpec): ValidationIssue[] {
   else if (normalize(lesson.transferTask.prompt) === normalize(lesson.input.title))
     at('fake-transfer', 'transfer prompt duplicates the input title — same situation is not transfer');
 
+  /* ---- Hard-gate evidence — never fabricated ---- */
+  for (const to of lesson.truePrerequisites)
+    if (!lesson.prerequisiteRationale?.[to]?.trim())
+      at('missing-prerequisite-rationale', `true prerequisite on "${to}" lacks an authored rationale`);
+
   /* ---- Audio/listening claims (Part 8 audio rule) ---- */
   const audioSteps = lesson.supportLadder.filter((s) => s === 'audio' || s === 'transcript');
   const claimsListening = lesson.track === 'listening' || lesson.track === 'pronunciation';
@@ -122,6 +135,13 @@ export function validateLesson(lesson: LessonSpec): ValidationIssue[] {
   } else if (lesson.audioSource) {
     at('audio-source-outside-listening', 'audioSource declared on a non-listening lesson');
   }
+  /* Audio truth — a real-asset claim must name the asset; a synthetic
+   * claim must not pretend one exists. */
+  if ((lesson.audioSource === 'recorded' || lesson.audioSource === 'source-audio') && !lesson.audioRef?.trim())
+    at('audio-source-unbacked', `audioSource "${lesson.audioSource}" declared without audioRef`);
+  if (lesson.audioSource === 'tts-synthetic' && lesson.audioRef)
+    at('audio-ref-on-synthetic', 'audioRef set on tts-synthetic audio — synthetic audio has no asset');
+  if (lesson.audioRef && !lesson.audioSource) at('audio-source-undeclared', 'audioRef present without audioSource');
 
   /* ---- VN support must not hand over the answer (Part 16) ---- */
   for (const target of lesson.targets)
@@ -131,11 +151,14 @@ export function validateLesson(lesson: LessonSpec): ValidationIssue[] {
   return issues;
 }
 
-export function validatePack(
-  lessons: LessonSpec[],
-  packId: string,
-  externalIds?: ReadonlySet<string>,
-): ValidationIssue[] {
+export interface PackValidationContext {
+  /** Lesson ids living in declared dependency packs — legitimate edge targets. */
+  externalIds?: ReadonlySet<string>;
+  /** Capability ontology — required so ghost capabilities fail closed. */
+  knownCapabilities: ReadonlySet<string>;
+}
+
+export function validatePack(lessons: LessonSpec[], packId: string, ctx: PackValidationContext): ValidationIssue[] {
   const issues: ValidationIssue[] = [];
   const lessonIds = new Set<string>();
   const targetIds = new Set<string>();
@@ -148,9 +171,9 @@ export function validatePack(
         issues.push(issue('pack', 'duplicate-target-id', `duplicate target id "${target.id}"`));
       targetIds.add(target.id);
     }
-    issues.push(...validateLesson(lesson));
+    issues.push(...validateLesson(lesson, ctx));
   }
-  for (const gi of validateGraph(lessons, externalIds)) issues.push(issue('pack', `graph-${gi.code}`, gi.message));
+  for (const gi of validateGraph(lessons, ctx.externalIds)) issues.push(issue('pack', `graph-${gi.code}`, gi.message));
   /* Recycling cycles are legal (a<->b reuses both ways) but flag big loops. */
   for (const cyc of findCycles(
     lessons.flatMap((l) => l.recyclingFrom.map((to) => ({ from: l.id, to, kind: 'recycles' as const }))),
@@ -161,8 +184,12 @@ export function validatePack(
 
 /* Library-level check: the full V2 spine needs every declared track.
  * Per-pack seeding legitimately holds a subset — do not run this there. */
-export function validateLibrary(lessons: LessonSpec[], libraryId: string): ValidationIssue[] {
-  const issues = validatePack(lessons, libraryId);
+export function validateLibrary(
+  lessons: LessonSpec[],
+  libraryId: string,
+  ctx: PackValidationContext,
+): ValidationIssue[] {
+  const issues = validatePack(lessons, libraryId, ctx);
   const present = new Set(lessons.map((l) => l.track));
   const expected: TrackIdV2[] = ['survival', 'everyday', 'chunks', 'listening', 'pronunciation', 'developer'];
   for (const t of expected)
