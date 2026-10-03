@@ -1,6 +1,6 @@
 {
   "mission": "W2-01R",
-  "description": "Site-level inventory of authority-sensitive legacy reads. Each site owns an occurrences list of normalized sensitive lines WITH MULTIPLICITY PRESERVED \u2014 per (file, source) the claimed multiset must equal the detected multiset exactly. Added, removed, duplicated, or edited sensitive lines all fail until a human re-classifies.",
+  "description": "Site-level inventory of authority-sensitive legacy reads. Each site owns an occurrences list of normalized sensitive lines WITH MULTIPLICITY PRESERVED — per (file, source) the claimed multiset must equal the detected multiset exactly. Added, removed, duplicated, or edited sensitive lines all fail until a human re-classifies.",
   "baseCommit": "c2ef466",
   "classifications": [
     "LEGIT_SCHEDULING",
@@ -19,7 +19,7 @@
       "anchor": "read-page:word-match-results",
       "occurrences": ["db.records.toArray(),"],
       "classification": "LEGIT_PRESENTATION",
-      "reason": "wordResults r.accuracy categorical (correct/close/wrong/missing/extra) \u2014 word-level ASR match output, NOT the records table",
+      "reason": "wordResults r.accuracy categorical (correct/close/wrong/missing/extra) — word-level ASR match output, NOT the records table",
       "migrationNode": "W2-CS1"
     },
     {
@@ -32,7 +32,7 @@
         "const forecast = buildReviewForecast(records, 7);"
       ],
       "classification": "LEGIT_SCHEDULING",
-      "reason": "buildReviewForecast \u2014 upcoming-due forecast",
+      "reason": "buildReviewForecast — upcoming-due forecast",
       "migrationNode": "W2-MB1"
     },
     {
@@ -53,7 +53,7 @@
         "session: TypingSession;"
       ],
       "classification": "LEGIT_ANALYTICS",
-      "reason": "sessions \u2192 streak/words/avgAccuracy aggregate stats",
+      "reason": "sessions → streak/words/avgAccuracy aggregate stats",
       "migrationNode": "W2-CS1"
     },
     {
@@ -67,7 +67,7 @@
         "accuracy: s.accuracy,",
         "const mod = s.module || 'write';",
         "href: `/${s.module === 'speak' ? 'read' : s.module || 'write'}/${s.contentId}`,",
-        "subtitle: `${mod?.label ?? dashboard.modules.write.label} \u00b7 ${timeAgo(s.endTime ?? s.startTime, common)}`,"
+        "subtitle: `${mod?.label ?? dashboard.modules.write.label} · ${timeAgo(s.endTime ?? s.startTime, common)}`,"
       ],
       "classification": "LEGIT_PRESENTATION",
       "reason": "recent session rows rendered as activity items (title, href, accuracy, time)",
@@ -141,7 +141,7 @@
         "onClick={() => setStepIndex(progress.steps.findIndex((s) => s.module === module))}"
       ],
       "classification": "LEGIT_PRESENTATION",
-      "reason": "lessonProgress \u2192 step completion display",
+      "reason": "lessonProgress → step completion display",
       "migrationNode": "W2-CS1"
     },
     {
@@ -170,7 +170,7 @@
         "{deriveTextCycle(l.id, l.exercises.map((item) => item.text).join('\\n\\n'), attempts, Date.now())"
       ],
       "classification": "LEGIT_PRESENTATION",
-      "reason": "deriveTextCycle \u2192 cycle step display",
+      "reason": "deriveTextCycle → cycle step display",
       "migrationNode": "W2-CS1"
     },
     {
@@ -183,7 +183,7 @@
         "import { lessonProgress } from '@/lib/learning-units';"
       ],
       "classification": "LEGIT_PRESENTATION",
-      "reason": "lessonProgress \u2192 lesson completion display",
+      "reason": "lessonProgress → lesson completion display",
       "migrationNode": "W2-CS1"
     },
     {
@@ -197,7 +197,7 @@
         "import { deriveTextCycle } from '@/lib/text-learning-cycle';"
       ],
       "classification": "LEGIT_PRESENTATION",
-      "reason": "deriveTextCycle \u2192 cycle state display",
+      "reason": "deriveTextCycle → cycle state display",
       "migrationNode": "W2-CS1"
     },
     {
@@ -225,7 +225,7 @@
         "{sessionCompleted && isDailyPlanPractice && <PracticeCompleteBanner module=\"listen\" />}"
       ],
       "classification": "LEGIT_SCHEDULING",
-      "reason": "isDailyPlanPractice \u2192 task completion wiring",
+      "reason": "isDailyPlanPractice → task completion wiring",
       "migrationNode": "W2-PL1"
     },
     {
@@ -238,7 +238,7 @@
         "const total = wordResults.filter((r) => r.accuracy !== 'extra').length;"
       ],
       "classification": "LEGIT_PRESENTATION",
-      "reason": "wordResults r.accuracy categorical (correct/close/wrong/missing/extra) \u2014 word-level ASR match output, NOT the records table",
+      "reason": "wordResults r.accuracy categorical (correct/close/wrong/missing/extra) — word-level ASR match output, NOT the records table",
       "migrationNode": "W2-CS1"
     },
     {
@@ -252,7 +252,7 @@
         "{phase === 'completed' && isDailyPlanPractice && <PracticeCompleteBanner module=\"read\" />}"
       ],
       "classification": "LEGIT_SCHEDULING",
-      "reason": "isDailyPlanPractice \u2192 task completion wiring",
+      "reason": "isDailyPlanPractice → task completion wiring",
       "migrationNode": "W2-PL1"
     },
     {
@@ -306,7 +306,7 @@
         "{state.mode === 'finished' && isDailyPlanPractice && <PracticeCompleteBanner module=\"write\" />}"
       ],
       "classification": "LEGIT_SCHEDULING",
-      "reason": "isDailyPlanPractice \u2192 task completion wiring",
+      "reason": "isDailyPlanPractice → task completion wiring",
       "migrationNode": "W2-PL1"
     },
     {
@@ -330,7 +330,7 @@
         "console.log('[Assessment] Generating questions for level estimate:', levelEstimate || 'first-time');"
       ],
       "classification": "LEGIT_CANDIDATE_SIGNAL",
-      "reason": "adaptive question distribution input \u2014 advisory placement use",
+      "reason": "adaptive question distribution input — advisory placement use",
       "migrationNode": "W2-AS1"
     },
     {
@@ -371,7 +371,7 @@
         "previous: (prev: CEFRLevel, current: CEFRLevel, comparison: AssessmentComparison) =>",
         "const { placement, history, setResult } = useAssessmentStore();",
         "const levelEstimate = placement?.levelEstimate ?? null;",
-        "levelEstimate, // Advisory estimate \u2014 adapts the next test's question mix",
+        "levelEstimate, // Advisory estimate — adapts the next test's question mix",
         "}, [providerStore, levelEstimate, copy]);",
         "{levelEstimate && phase === 'idle' && (",
         "className={cn('ml-auto px-2.5 py-0.5 rounded-full text-xs font-bold border', LEVEL_COLORS[levelEstimate])}",
@@ -398,7 +398,7 @@
         "updateUserLevel: (level) => setPlacementEstimate(level as CEFRLevel),"
       ],
       "classification": "LEGIT_CANDIDATE_SIGNAL",
-      "reason": "updateUserLevel chat tool \u2192 setPlacementEstimate(level) advisory claim writer only; no placement read (W2-G03 R3 cut userLevel + difficulty fallback)",
+      "reason": "updateUserLevel chat tool → setPlacementEstimate(level) advisory claim writer only; no placement read (W2-G03 R3 cut userLevel + difficulty fallback)",
       "migrationNode": "W2-AS1"
     },
     {
@@ -435,7 +435,7 @@
       "anchor": "see reason",
       "occurrences": ["db.records.orderBy('lastPracticed').last(),"],
       "classification": "LEGIT_HISTORY",
-      "reason": "latest lastPracticed \u2192 activity signature for plan refresh",
+      "reason": "latest lastPracticed → activity signature for plan refresh",
       "migrationNode": "W2-PL1"
     },
     {
@@ -451,7 +451,7 @@
         "const sessions = await db.sessions.toArray();"
       ],
       "classification": "LEGIT_HISTORY",
-      "reason": "latest session \u2192 signature + per-task session summaries",
+      "reason": "latest session → signature + per-task session summaries",
       "migrationNode": "W2-PL1"
     },
     {
@@ -574,7 +574,7 @@
         "for (const item of data.favorites.filter((item) => (item.fsrsCard?.due ?? item.nextReview ?? Infinity) <= now)) {"
       ],
       "classification": "LEGIT_SCHEDULING",
-      "reason": "favorites fsrsCard.due \u2192 review task candidate",
+      "reason": "favorites fsrsCard.due → review task candidate",
       "migrationNode": "W2-MB1"
     },
     {
@@ -597,7 +597,7 @@
       "anchor": "see reason",
       "occurrences": ["const weak = data.weakSpots[0];", "weakSpots: data.weakSpots,"],
       "classification": "LEGIT_CANDIDATE_SIGNAL",
-      "reason": "weakSpots[0] \u2192 weak-spot task candidate",
+      "reason": "weakSpots[0] → weak-spot task candidate",
       "migrationNode": "W2-PL1"
     },
     {
@@ -657,9 +657,9 @@
         "extra: Partial<DailyTask> = {},",
         "id: 'preferences:daily',",
         "if (changed.length) await database.dailyTasks.bulkPut(changed);",
-        "if (task.kind === 'favorite') return t('Saved phrases', '\u6536\u85cf\u8868\u8fbe', 'C\u1ee5m t\u1eeb \u0111\u00e3 l\u01b0u');",
-        "if (task.kind === 'pronunciation') return t('Pronunciation', '\u53d1\u97f3', 'Ph\u00e1t \u00e2m');",
-        "if (task.kind === 'weak-spot') return t('Weak spots', '\u8584\u5f31\u9879', '\u0110i\u1ec3m y\u1ebfu');",
+        "if (task.kind === 'favorite') return t('Saved phrases', '收藏表达', 'Cụm từ đã lưu');",
+        "if (task.kind === 'pronunciation') return t('Pronunciation', '发音', 'Phát âm');",
+        "if (task.kind === 'weak-spot') return t('Weak spots', '薄弱项', 'Điểm yếu');",
         "import type { DailyTask } from '@/types/daily-task';",
         "kind: DailyTask['kind'],",
         "reconcileDailyTasks,",
@@ -678,7 +678,7 @@
       "file": "src/components/learning/learning-section-nav.tsx",
       "source": "weakSpots",
       "anchor": "see reason",
-      "occurrences": ["['/weak-spots', 'Weak spots', '\u8584\u5f31\u9879', '\u0110i\u1ec3m y\u1ebfu'],"],
+      "occurrences": ["['/weak-spots', 'Weak spots', '薄弱项', 'Điểm yếu'],"],
       "classification": "LEGIT_PRESENTATION",
       "reason": "nav link/section routing to weak-spots",
       "migrationNode": "W2-WS2"
@@ -712,7 +712,7 @@
         "const weakSpot = weakSpots.find((item) => item.id === sourceWeakSpotId);",
         "if (!current || !canResolveTransfer(current.id, current.lastSeenAt, evidence)) throw new Error('No evidence');",
         "if (!weakSpot || !confirm) return;",
-        "{t('Targeted weak spot', '\u9488\u5bf9\u8584\u5f31\u9879', '\u0110i\u1ec3m y\u1ebfu c\u1ea7n luy\u1ec7n')}: {weakSpot.text}",
+        "{t('Targeted weak spot', '针对薄弱项', 'Điểm yếu cần luyện')}: {weakSpot.text}",
         "{weakSpot && (",
         "{weakSpot.resolved ? ("
       ],
@@ -803,7 +803,7 @@
         "import { persistLearningAttempt } from '@/lib/learning-activity-persistence';"
       ],
       "classification": "LEGIT_HISTORY",
-      "reason": "attempts \u2192 deriveTextCycle + persistLearningAttempt writer",
+      "reason": "attempts → deriveTextCycle + persistLearningAttempt writer",
       "migrationNode": "W2-AT1"
     },
     {
@@ -841,7 +841,7 @@
         "record={data.records.find((r) => r.id === vocabularyRecordId(active.id, mode))}"
       ],
       "classification": "LEGIT_SCHEDULING",
-      "reason": "records \u2192 vocab practice data",
+      "reason": "records → vocab practice data",
       "migrationNode": "W2-MB1"
     },
     {
@@ -869,7 +869,7 @@
         "settings: await data.database.dailyTasks.get('preferences:vocabulary'),"
       ],
       "classification": "LEGIT_HISTORY",
-      "reason": "preferences:vocabulary row \u2014 settings, not evidence",
+      "reason": "preferences:vocabulary row — settings, not evidence",
       "migrationNode": "W2-PL1"
     },
     {
@@ -879,7 +879,7 @@
       "anchor": "see reason",
       "occurrences": ["times.set(s.contentId, Math.max(times.get(s.contentId) || 0, s.endTime || s.startTime));"],
       "classification": "LEGIT_PRESENTATION",
-      "reason": "sessions \u2192 lessonProgress per-unit completion",
+      "reason": "sessions → lessonProgress per-unit completion",
       "migrationNode": "W2-CS1"
     },
     {
@@ -941,7 +941,7 @@
         "{isIOSNativeHost ? <span className={IOS_PILL_CLASS}>FSRS rating</span> : null}"
       ],
       "classification": "LEGIT_SCHEDULING",
-      "reason": "previewRatings \u2192 grade write path",
+      "reason": "previewRatings → grade write path",
       "migrationNode": "W2-MB1"
     },
     {
@@ -1001,7 +1001,7 @@
         "practicedIds: limit > 0 ? new Set((await db.records.toArray()).map((record) => record.contentId)) : undefined,"
       ],
       "classification": "LEGIT_SCHEDULING",
-      "reason": "records \u2192 practiced set / due selection",
+      "reason": "records → practiced set / due selection",
       "migrationNode": "W2-MB1"
     },
     {
@@ -1018,7 +1018,7 @@
         "{isDailyPlanPractice && <PracticeCompleteBanner module={module as 'listen' | 'speak' | 'read' | 'write'} />}"
       ],
       "classification": "LEGIT_SCHEDULING",
-      "reason": "isDailyPlanPractice \u2192 task completion wiring",
+      "reason": "isDailyPlanPractice → task completion wiring",
       "migrationNode": "W2-PL1"
     },
     {
@@ -1032,7 +1032,7 @@
         "const style = accuracyStyle[r.accuracy];"
       ],
       "classification": "LEGIT_PRESENTATION",
-      "reason": "results r.accuracy categorical word-match display \u2014 NOT the records table",
+      "reason": "results r.accuracy categorical word-match display — NOT the records table",
       "migrationNode": "W2-PR1"
     },
     {
@@ -1253,7 +1253,7 @@
         "accuracy: Math.round(r.accuracy),"
       ],
       "classification": "CAPABILITY_CLAIM",
-      "reason": "records accuracy<70 \u2192 \"weaknesses\" injected into AI tutor context \u2014 capability-shaped claim from raw accuracy",
+      "reason": "records accuracy<70 → \"weaknesses\" injected into AI tutor context — capability-shaped claim from raw accuracy",
       "migrationNode": "W2-CS1"
     },
     {
@@ -1326,7 +1326,7 @@
         "import type { PlanTask } from '@/stores/daily-plan-store';"
       ],
       "classification": "LEGIT_SCHEDULING",
-      "reason": "PlanTask\u2192route linking helper",
+      "reason": "PlanTask→route linking helper",
       "migrationNode": "W2-PL1"
     },
     {
@@ -1355,7 +1355,7 @@
         "wpm: session.module === 'write' ? session.wpm : existingRecord?.wpm,"
       ],
       "classification": "LEGIT_SCHEDULING",
-      "reason": "writer: session.accuracy \u2192 accuracyToRating \u2192 record+fsrsCard write (fact-preserving write path)",
+      "reason": "writer: session.accuracy → accuracyToRating → record+fsrsCard write (fact-preserving write path)",
       "migrationNode": "W2-AT1"
     },
     {
@@ -1376,7 +1376,7 @@
         "nextReview,"
       ],
       "classification": "LEGIT_SCHEDULING",
-      "reason": "writer: gradeCard \u2192 fsrsCard/nextReview",
+      "reason": "writer: gradeCard → fsrsCard/nextReview",
       "migrationNode": "W2-MB1"
     },
     {
@@ -1428,7 +1428,7 @@
         "task: PlanTask,"
       ],
       "classification": "LEGIT_SCHEDULING",
-      "reason": "syncPlanTasks \u2192 task completion propagation",
+      "reason": "syncPlanTasks → task completion propagation",
       "migrationNode": "W2-PL1"
     },
     {
@@ -1460,7 +1460,7 @@
         "const moduleRecords = records.filter((record) => record.module === module);"
       ],
       "classification": "CAPABILITY_CLAIM",
-      "reason": "moduleRecords avg accuracy \u2192 weakness score drives module priority \u2014 capability-shaped claim from raw accuracy",
+      "reason": "moduleRecords avg accuracy → weakness score drives module priority — capability-shaped claim from raw accuracy",
       "migrationNode": "W2-PL1"
     },
     {
@@ -1526,7 +1526,7 @@
         "records?: { id: string; contentId: string; module: string; fsrsCard?: { last_review?: number } }[];"
       ],
       "classification": "LEGIT_SCHEDULING",
-      "reason": "fsrsCard.last_review \u2192 task-completion detection",
+      "reason": "fsrsCard.last_review → task-completion detection",
       "migrationNode": "W2-PL1"
     },
     {
@@ -1665,7 +1665,7 @@
         "import type { ContentItem, TypingSession } from '@/types/content';"
       ],
       "classification": "LEGIT_ANALYTICS",
-      "reason": "completed-today \u2192 words/minutes progress",
+      "reason": "completed-today → words/minutes progress",
       "migrationNode": "W2-CS1"
     },
     {
@@ -1807,7 +1807,7 @@
         "* Build an FSRSCardData for an existing record that was created before FSRS.",
         "/** Create a brand-new FSRS card (New state). */",
         "/** Map an accuracy percentage (0-100) to an FSRS Rating. */",
-        "// \u2500\u2500\u2500 FSRS Scheduler Singleton \u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500\u2500",
+        "// ─── FSRS Scheduler Singleton ────────────────────────────────────────────────",
         "cardData: FSRSCardData | undefined,",
         "cardData: FSRSCardData | undefined,",
         "const card = cardData ? dataToCard(cardData) : createNewCard(now);",
@@ -1837,7 +1837,7 @@
         "return { cardData: updated, nextReview: updated.due };"
       ],
       "classification": "LEGIT_SCHEDULING",
-      "reason": "FSRS algorithm implementation \u2014 scheduling authority",
+      "reason": "FSRS algorithm implementation — scheduling authority",
       "migrationNode": "W2-MB1"
     },
     {
@@ -1850,7 +1850,7 @@
         "[owner.contents, owner.dailyTasks, owner.learningAttempts, owner.records],"
       ],
       "classification": "LEGIT_SCHEDULING",
-      "reason": "owner.records \u2192 import-task scheduling inputs",
+      "reason": "owner.records → import-task scheduling inputs",
       "migrationNode": "W2-PL1"
     },
     {
@@ -1863,7 +1863,7 @@
         "const attempts = await owner.learningAttempts.toArray();"
       ],
       "classification": "LEGIT_SCHEDULING",
-      "reason": "attempts \u2192 import-task generation",
+      "reason": "attempts → import-task generation",
       "migrationNode": "W2-PL1"
     },
     {
@@ -2032,7 +2032,7 @@
         "next: steps.find((s) => !s.completed),"
       ],
       "classification": "LEGIT_PRESENTATION",
-      "reason": "lessonProgress \u2014 sessions.completed \u2192 step completion",
+      "reason": "lessonProgress — sessions.completed → step completion",
       "migrationNode": "W2-CS1"
     },
     {
@@ -2049,7 +2049,7 @@
         "const wrong = results.filter((r) => r.accuracy === 'wrong').length;"
       ],
       "classification": "LEGIT_PRESENTATION",
-      "reason": "word-match categorical counts (correct/close/wrong/missing/extra) \u2014 NOT the records table",
+      "reason": "word-match categorical counts (correct/close/wrong/missing/extra) — NOT the records table",
       "migrationNode": null
     },
     {
@@ -2069,7 +2069,7 @@
         "r.accuracy === 'correct'"
       ],
       "classification": "LEGIT_PRESENTATION",
-      "reason": "wordResults r.accuracy categorical scoring \u2014 NOT the records table",
+      "reason": "wordResults r.accuracy categorical scoring — NOT the records table",
       "migrationNode": "W2-PR1"
     },
     {
@@ -2086,7 +2086,7 @@
         "recent: records.slice(0, 3),"
       ],
       "classification": "LEGIT_PRESENTATION",
-      "reason": "local `records` var holds PronunciationProgress rows \u2014 not the records table",
+      "reason": "local `records` var holds PronunciationProgress rows — not the records table",
       "migrationNode": "W2-PR1"
     },
     {
@@ -2099,7 +2099,7 @@
         "import type { PronunciationProgress } from '@/types/pronunciation';"
       ],
       "classification": "LEGIT_PRESENTATION",
-      "reason": "progress rows \u2192 SoundEvidenceStatus derivation",
+      "reason": "progress rows → SoundEvidenceStatus derivation",
       "migrationNode": "W2-PR1"
     },
     {
@@ -2248,7 +2248,7 @@
         "import { deriveTextCycle } from './text-learning-cycle';"
       ],
       "classification": "LEGIT_SCHEDULING",
-      "reason": "attempts \u2192 text-course task generation",
+      "reason": "attempts → text-course task generation",
       "migrationNode": "W2-PL1"
     },
     {
@@ -2315,7 +2315,7 @@
         "successfulRecallAt = attempt.createdAt;"
       ],
       "classification": "LEGIT_SCHEDULING",
-      "reason": "deriveTextCycle \u2014 attempt history \u2192 next cycle step",
+      "reason": "deriveTextCycle — attempt history → next cycle step",
       "migrationNode": "W2-AT1"
     },
     {
@@ -2330,7 +2330,7 @@
         "import type { ContentItem, FSRSCardData, LearningRecord } from '@/types/content';",
         "module: LearningRecord['module'];",
         "records: LearningRecord[],",
-        "subtitle: `${labelForModule(record.module)} review \u00b7 ${record.accuracy}% accuracy \u00b7 ${record.attempts} attempts`,"
+        "subtitle: `${labelForModule(record.module)} review · ${record.accuracy}% accuracy · ${record.attempts} attempts`,"
       ],
       "classification": "LEGIT_HISTORY",
       "reason": "type/import plumbing + db.records load for due-queue input",
@@ -2353,7 +2353,7 @@
       "anchor": "buildTodayReviewItems:weakest-first-sort",
       "occurrences": ["if (a.accuracy !== b.accuracy) return a.accuracy - b.accuracy;"],
       "classification": "LEGIT_CANDIDATE_SIGNAL",
-      "reason": "weakest-first ordering over records.accuracy is a review-surface consumer heuristic, not a planner decision \u2014 consolidated under consumer migration at W2-CS1 (FSRS due/nextReview stays with W2-MB1)",
+      "reason": "weakest-first ordering over records.accuracy is a review-surface consumer heuristic, not a planner decision — consolidated under consumer migration at W2-CS1 (FSRS due/nextReview stays with W2-MB1)",
       "migrationNode": "W2-CS1"
     },
     {
@@ -2373,7 +2373,7 @@
         "return (a.nextReview ?? 0) - (b.nextReview ?? 0);"
       ],
       "classification": "LEGIT_SCHEDULING",
-      "reason": "fsrsCard.due/nextReview \u2192 due-queue filter",
+      "reason": "fsrsCard.due/nextReview → due-queue filter",
       "migrationNode": "W2-MB1"
     },
     {
@@ -2465,7 +2465,7 @@
         "return r?.attempts === 1 && toLocalDateKey(r.lastPracticed) === toLocalDateKey(now);"
       ],
       "classification": "LEGIT_SCHEDULING",
-      "reason": "records \u2192 due/learned vocab queries",
+      "reason": "records → due/learned vocab queries",
       "migrationNode": "W2-MB1"
     },
     {
@@ -2564,7 +2564,7 @@
         "export const CEFR_DESCRIPTIONS: Record<CEFRLevel, { summary: string; canDo: string; tip: string }> = {",
         "export const CEFR_ORDER: CEFRLevel[] = ['A1', 'A2', 'B1', 'B2', 'C1', 'C2'];",
         "level: CEFRLevel;",
-        "* W2-G03 \u2014 PlacementEstimate.",
+        "* W2-G03 — PlacementEstimate.",
         "* or any evaluator. `levelEstimate` answers \"where to aim content\", never",
         "export interface PlacementEstimate {",
         "levelEstimate: CEFRLevel;",
@@ -2644,7 +2644,7 @@
       "anchor": "journal-store:comment",
       "occurrences": ["// Highlight: push into Favorites so it enters the FSRS review queue."],
       "classification": "LEGIT_HISTORY",
-      "reason": "comment mentions FSRS review queue \u2014 no runtime read",
+      "reason": "comment mentions FSRS review queue — no runtime read",
       "migrationNode": null
     },
     {
@@ -2783,7 +2783,7 @@
         "await database.transaction('rw', [database.learningAttempts, database.mediaBlobs], writeHistory);"
       ],
       "classification": "LEGIT_HISTORY",
-      "reason": "W2-02 adapter input: attempt fields \u2192 LegacyAction for contract-audited mapping; mints nothing without a MAPPED_SAFE contract (W2-03 gap)",
+      "reason": "W2-02 adapter input: attempt fields → LegacyAction for contract-audited mapping; mints nothing without a MAPPED_SAFE contract (W2-03 gap)",
       "migrationNode": "W2-AT1"
     },
     {
@@ -2793,7 +2793,7 @@
       "anchor": "see reason",
       "occurrences": ["* Both producers persist `learningAttempts` keyed by the submission /"],
       "classification": "LEGIT_HISTORY",
-      "reason": "doc comment naming the canonical history table the W2-02R3 seam verifies \u2014 no read or claim",
+      "reason": "doc comment naming the canonical history table the W2-02R3 seam verifies — no read or claim",
       "migrationNode": "W2-AT1"
     },
     {
@@ -2802,11 +2802,11 @@
       "source": "fsrs",
       "anchor": "see reason",
       "occurrences": [
-        "* MEMORY_ITEM \u2014 item-scoped retention knowledge (vocabulary FSRS",
+        "* MEMORY_ITEM — item-scoped retention knowledge (vocabulary FSRS",
         "// domain (FSRS item state), not LearnerProjection."
       ],
       "classification": "LEGIT_HISTORY",
-      "reason": "W2-02.5 doc comments naming FSRS as the memory-domain owner \u2014 no runtime read, no scheduling decision",
+      "reason": "W2-02.5 doc comments naming FSRS as the memory-domain owner — no runtime read, no scheduling decision",
       "migrationNode": "W2-AT1"
     },
     {
@@ -2814,9 +2814,9 @@
       "file": "src/components/shared/word-book-practice.tsx",
       "source": "fsrs",
       "anchor": "miss-history-comment",
-      "occurrences": ["/* VS01 only: persist the miss as history \u2014 no FSRS grade, no"],
+      "occurrences": ["/* VS01 only: persist the miss as history — no FSRS grade, no"],
       "classification": "LEGIT_HISTORY",
-      "reason": "doc comment on the FD-VS01 miss path: failed exact-typing recalls persist via recordFailedPracticeSession for VS01 targets only \u2014 explicitly no FSRS grade or record mutation",
+      "reason": "doc comment on the FD-VS01 miss path: failed exact-typing recalls persist via recordFailedPracticeSession for VS01 targets only — explicitly no FSRS grade or record mutation",
       "migrationNode": null
     },
     {
@@ -2826,7 +2826,7 @@
       "anchor": "see reason",
       "occurrences": ["db.sessions.toArray(),"],
       "classification": "LEGIT_ANALYTICS",
-      "reason": "dev-only VS01 inspection: session rows are read-model input for window.__vs01 debug derivation \u2014 no writes, no claims",
+      "reason": "dev-only VS01 inspection: session rows are read-model input for window.__vs01 debug derivation — no writes, no claims",
       "migrationNode": null
     },
     {
@@ -2836,7 +2836,7 @@
       "anchor": "see reason",
       "occurrences": ["db.learningAttempts.toArray(),"],
       "classification": "LEGIT_ANALYTICS",
-      "reason": "dev-only VS01 inspection: attempt rows are read-model input for window.__vs01 debug derivation \u2014 no writes, no claims",
+      "reason": "dev-only VS01 inspection: attempt rows are read-model input for window.__vs01 debug derivation — no writes, no claims",
       "migrationNode": null
     },
     {
@@ -2862,7 +2862,7 @@
         "const firstSuccess = targetSessions.find((s) => s.completed);"
       ],
       "classification": "LEGIT_ANALYTICS",
-      "reason": "FD-VS01 derived read model: write-module TypingSession rows (including history-only misses) \u2192 per-target immediate-recall outcome",
+      "reason": "FD-VS01 derived read model: write-module TypingSession rows (including history-only misses) → per-target immediate-recall outcome",
       "migrationNode": null
     },
     {
@@ -2890,7 +2890,17 @@
         ": input.attempts.filter((a) => a.sourceText.includes(target.sourceSentence));"
       ],
       "classification": "LEGIT_ANALYTICS",
-      "reason": "FD-VS01 derived read model: LearningAttempt rows replayed through deriveTextCycle \u2192 per-target understanding/production/delayed-recall/transfer outcome; mints nothing",
+      "reason": "FD-VS01 derived read model: LearningAttempt rows replayed through deriveTextCycle → per-target understanding/production/delayed-recall/transfer outcome; mints nothing",
+      "migrationNode": null
+    },
+    {
+      "id": "lib-content-factory-seed.fsrs",
+      "file": "src/lib/content-factory/seed.ts",
+      "source": "fsrs",
+      "anchor": "no-fsrs-comment",
+      "occurrences": ["* - records/FSRS tables are never touched — scheduler state survives"],
+      "classification": "LEGIT_HISTORY",
+      "reason": "safety-contract doc comment pinning that the V2 seeder writes contents/collections only — never records/FSRS scheduling state",
       "migrationNode": null
     }
   ]

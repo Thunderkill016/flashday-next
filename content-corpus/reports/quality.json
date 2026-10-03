@@ -1,0 +1,288 @@
+[
+  {
+    "kind": "near-duplicate-chunk",
+    "message": "chunks 100% overlap: \"I see\" ~ \"see\"",
+    "ids": ["sv07.t4", "pr11.t1"]
+  },
+  {
+    "kind": "near-duplicate-chunk",
+    "message": "chunks 100% overlap: \"Yes, we do\" ~ \"Yes, I do\"",
+    "ids": ["sv10.t4", "gr02.t2"]
+  },
+  {
+    "kind": "near-duplicate-chunk",
+    "message": "chunks 100% overlap: \"How about\" ~ \"How about you\"",
+    "ids": ["sv14.t2", "sv19.t3"]
+  },
+  {
+    "kind": "near-duplicate-chunk",
+    "message": "chunks 100% overlap: \"Are you ready for\" ~ \"Are you ready\"",
+    "ids": ["sv19.t5", "pr15.t1"]
+  },
+  {
+    "kind": "near-duplicate-chunk",
+    "message": "chunks 100% overlap: \"A or B\" ~ \"B or D\"",
+    "ids": ["ev05.t1", "li07.t1"]
+  },
+  {
+    "kind": "near-duplicate-chunk",
+    "message": "chunks 100% overlap: \"back to the report\" ~ \"report back\"",
+    "ids": ["ch09.t5", "dv13.t8"]
+  },
+  {
+    "kind": "over-repeated-sentence",
+    "message": "source sentence reused by 3 targets: \"anh: i have had a headache and a sore throat since monday.\"",
+    "ids": ["ev10.t2", "ev10.t3", "ev10.t4"]
+  },
+  {
+    "kind": "over-repeated-sentence",
+    "message": "source sentence reused by 3 targets: \"agent: here is your boarding pass. boarding starts at nine forty-five, gate twel\"",
+    "ids": ["ev13.t6", "ev13.t7", "ev13.t8"]
+  },
+  {
+    "kind": "over-repeated-sentence",
+    "message": "source sentence reused by 3 targets: \"anh: the new place is bigger. on the other hand, it is farther from work.\"",
+    "ids": ["ch13.t1", "ch13.t2", "ch13.t3"]
+  },
+  {
+    "kind": "over-repeated-sentence",
+    "message": "source sentence reused by 3 targets: \"anh: in the end, yes — they were in my jacket pocket all along.\"",
+    "ids": ["ch14.t2", "ch14.t3", "ch14.t4"]
+  },
+  {
+    "kind": "over-repeated-sentence",
+    "message": "source sentence reused by 3 targets: \"\"we are moving your appointment to friday, may ninth, at two thirty.\"\"",
+    "ids": ["li10.t2", "li10.t3", "li10.t4"]
+  },
+  {
+    "kind": "over-repeated-sentence",
+    "message": "source sentence reused by 3 targets: \"\"after work today / i am going to the gym / with my friend sara.\"\"",
+    "ids": ["li13.t1", "li13.t2", "li13.t3"]
+  },
+  {
+    "kind": "over-repeated-sentence",
+    "message": "source sentence reused by 3 targets: \"\"no email, no call. i just took the day off for nothing.\"\"",
+    "ids": ["li16.t4", "li16.t5", "li16.t6"]
+  },
+  {
+    "kind": "over-repeated-sentence",
+    "message": "source sentence reused by 4 targets: \"practice pairs: right/light, road/load, pray/play.\"",
+    "ids": ["pr06.t3", "pr06.t4", "pr06.t5", "pr06.t6"]
+  },
+  {
+    "kind": "over-repeated-sentence",
+    "message": "source sentence reused by 4 targets: \"van vs ban, vest vs best — same contrast.\"",
+    "ids": ["pr07.t3", "pr07.t4", "pr07.t5", "pr07.t6"]
+  },
+  {
+    "kind": "over-repeated-sentence",
+    "message": "source sentence reused by 4 targets: \"pen vs pan, men vs man, set vs sat.\"",
+    "ids": ["pr09.t3", "pr09.t4", "pr09.t5", "pr09.t6"]
+  },
+  {
+    "kind": "over-repeated-sentence",
+    "message": "source sentence reused by 4 targets: \"luke vs look, pool vs pull.\"",
+    "ids": ["pr10.t3", "pr10.t4", "pr10.t5", "pr10.t6"]
+  },
+  {
+    "kind": "over-repeated-sentence",
+    "message": "source sentence reused by 4 targets: \"sip vs ship, sort vs short, save vs shave.\"",
+    "ids": ["pr11.t3", "pr11.t4", "pr11.t5", "pr11.t6"]
+  },
+  {
+    "kind": "over-repeated-sentence",
+    "message": "source sentence reused by 3 targets: \"minh: hey sara, got a minute? i am stuck on this import error.\"",
+    "ids": ["dv06.t1", "dv06.t2", "dv06.t3"]
+  },
+  {
+    "kind": "over-repeated-sentence",
+    "message": "source sentence reused by 3 targets: \"root cause: a missing index check slowed queries to timeout.\"",
+    "ids": ["dv20.t4", "dv20.t5", "dv20.t6"]
+  },
+  {
+    "kind": "over-repeated-sentence",
+    "message": "source sentence reused by 3 targets: \"minh: i need to escalate something — the vendor api is still down.\"",
+    "ids": ["dv22.t1", "dv22.t2", "dv22.t3"]
+  },
+  {
+    "kind": "over-repeated-sentence",
+    "message": "source sentence reused by 3 targets: \"you: users get empty files instead of the report. about a dozen tickets.\"",
+    "ids": ["rv06.t3", "rv06.t4", "rv06.t5"]
+  },
+  {
+    "kind": "overloaded-lesson",
+    "message": "ev10 carries 8 targets",
+    "ids": ["ev10"]
+  },
+  {
+    "kind": "overloaded-lesson",
+    "message": "ev13 carries 8 targets",
+    "ids": ["ev13"]
+  },
+  {
+    "kind": "overloaded-lesson",
+    "message": "ev18 carries 8 targets",
+    "ids": ["ev18"]
+  },
+  {
+    "kind": "overloaded-lesson",
+    "message": "ev19 carries 8 targets",
+    "ids": ["ev19"]
+  },
+  {
+    "kind": "overloaded-lesson",
+    "message": "ev23 carries 8 targets",
+    "ids": ["ev23"]
+  },
+  {
+    "kind": "overloaded-lesson",
+    "message": "ev24 carries 8 targets",
+    "ids": ["ev24"]
+  },
+  {
+    "kind": "overloaded-lesson",
+    "message": "ch07 carries 8 targets",
+    "ids": ["ch07"]
+  },
+  {
+    "kind": "overloaded-lesson",
+    "message": "ch10 carries 8 targets",
+    "ids": ["ch10"]
+  },
+  {
+    "kind": "overloaded-lesson",
+    "message": "ch13 carries 8 targets",
+    "ids": ["ch13"]
+  },
+  {
+    "kind": "overloaded-lesson",
+    "message": "ch17 carries 8 targets",
+    "ids": ["ch17"]
+  },
+  {
+    "kind": "overloaded-lesson",
+    "message": "ch18 carries 8 targets",
+    "ids": ["ch18"]
+  },
+  {
+    "kind": "overloaded-lesson",
+    "message": "gr12 carries 8 targets",
+    "ids": ["gr12"]
+  },
+  {
+    "kind": "overloaded-lesson",
+    "message": "rv05 carries 8 targets",
+    "ids": ["rv05"]
+  },
+  {
+    "kind": "overloaded-lesson",
+    "message": "dv06 carries 8 targets",
+    "ids": ["dv06"]
+  },
+  {
+    "kind": "overloaded-lesson",
+    "message": "dv07 carries 8 targets",
+    "ids": ["dv07"]
+  },
+  {
+    "kind": "overloaded-lesson",
+    "message": "dv08 carries 8 targets",
+    "ids": ["dv08"]
+  },
+  {
+    "kind": "overloaded-lesson",
+    "message": "dv10 carries 8 targets",
+    "ids": ["dv10"]
+  },
+  {
+    "kind": "overloaded-lesson",
+    "message": "dv12 carries 8 targets",
+    "ids": ["dv12"]
+  },
+  {
+    "kind": "overloaded-lesson",
+    "message": "dv13 carries 8 targets",
+    "ids": ["dv13"]
+  },
+  {
+    "kind": "overloaded-lesson",
+    "message": "dv14 carries 8 targets",
+    "ids": ["dv14"]
+  },
+  {
+    "kind": "overloaded-lesson",
+    "message": "dv15 carries 8 targets",
+    "ids": ["dv15"]
+  },
+  {
+    "kind": "overloaded-lesson",
+    "message": "dv16 carries 8 targets",
+    "ids": ["dv16"]
+  },
+  {
+    "kind": "overloaded-lesson",
+    "message": "dv17 carries 8 targets",
+    "ids": ["dv17"]
+  },
+  {
+    "kind": "overloaded-lesson",
+    "message": "dv19 carries 8 targets",
+    "ids": ["dv19"]
+  },
+  {
+    "kind": "overloaded-lesson",
+    "message": "dv20 carries 8 targets",
+    "ids": ["dv20"]
+  },
+  {
+    "kind": "overloaded-lesson",
+    "message": "dv21 carries 8 targets",
+    "ids": ["dv21"]
+  },
+  {
+    "kind": "overloaded-lesson",
+    "message": "dv22 carries 8 targets",
+    "ids": ["dv22"]
+  },
+  {
+    "kind": "overloaded-lesson",
+    "message": "dv23 carries 8 targets",
+    "ids": ["dv23"]
+  },
+  {
+    "kind": "overloaded-lesson",
+    "message": "dv24 carries 8 targets",
+    "ids": ["dv24"]
+  },
+  {
+    "kind": "overloaded-lesson",
+    "message": "rv06 carries 8 targets",
+    "ids": ["rv06"]
+  },
+  {
+    "kind": "chunk-never-recycled",
+    "message": "426 targets belong to lessons never recycled downstream",
+    "ids": [
+      "sv04.t1",
+      "sv04.t2",
+      "sv04.t3",
+      "sv04.t4",
+      "sv04.t5",
+      "sv13.t1",
+      "sv13.t2",
+      "sv13.t3",
+      "sv13.t4",
+      "sv13.t5",
+      "sv13.t6",
+      "sv18.t1",
+      "sv18.t2",
+      "sv18.t3",
+      "sv18.t4",
+      "sv18.t5",
+      "sv18.t6",
+      "ev11.t1",
+      "ev11.t2",
+      "ev11.t3"
+    ]
+  }
+]

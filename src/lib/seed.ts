@@ -1,8 +1,10 @@
 import { nanoid } from 'nanoid';
 import type { ContentItem } from '@/types/content';
 import { DEFAULT_FOLDERS } from '@/types/favorite';
+import { seedV2Pack } from './content-factory/seed.ts';
 import { db } from './db';
 import { seedFdContentPack } from './fd-content/seed';
+import { V2_LESSONS, V2_PACKS } from './fd-content-v2/index.ts';
 import { builtinArticles } from './seed-data/articles';
 import { builtinCommunityScenarios } from './seed-data/community-scenarios';
 import { builtinPhrases } from './seed-data/phrases';
@@ -132,4 +134,15 @@ export async function seedDatabase() {
    * not a fixture — so it seeds unconditionally for every install. The
    * seeder validates the pack first and fails closed on any issue. */
   await seedFdContentPack(now);
+  /* V2 curriculum packs ship product content the same way: deterministic
+   * ids keep reseeds self-idempotent, validation fails closed before any
+   * write, and learner state (records/FSRS/deletions) is never touched. */
+  const v2LessonsByPack = new Map(
+    V2_PACKS.map((p) => [p.packId, V2_LESSONS.filter((l) => p.lessonIds.includes(l.id))]),
+  );
+  for (const pack of V2_PACKS) {
+    const lessons = v2LessonsByPack.get(pack.packId) ?? [];
+    const dependencyLessons = pack.dependencies.flatMap((dep) => v2LessonsByPack.get(dep) ?? []);
+    await seedV2Pack(pack, lessons, now, dependencyLessons);
+  }
 }
