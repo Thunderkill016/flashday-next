@@ -34,6 +34,7 @@
 import { answerBearing, conditionsViolated, unionSupport } from './evidence.js';
 import { effectiveAllowedSupport, verifyEventTask } from './contracts.js';
 import { resolvePolicy } from './policy.js';
+import { deriveVerifiedAttemptFacts } from './verified-attempts.js';
 
 export const CAPABILITY_STATES = [
   'NOT_SEEN',
@@ -105,6 +106,15 @@ function emptyCapability() {
     },
     lastEventAt: null,
     lastAttemptOutcome: null,
+    /* verifiedConsecutiveFailures is the authoritative failure streak
+     * (W2-PC1): only verified, OBSERVED, attempt-typed outcomes on
+     * registered exact task revisions enter the stream — self-reported
+     * or stale-revision outcomes are context and can neither advance
+     * nor break it. `consecutiveFailures` is a legacy alias of that
+     * verified streak — the pre-PC1 loose counter (unobserved and
+     * unverifiable outcomes counted as failures) no longer exists. */
+    verifiedConsecutiveFailures: 0,
+    lastVerifiedObservedOutcome: null,
     consecutiveFailures: 0,
     firstIndependentAt: null,
     lastIndependentSuccessAt: null,
@@ -199,12 +209,6 @@ export function projectLearnerState(learnerId, events, capabilities, tasks, { re
     // performance, and must not advance state.
     if (!ATTEMPT_TYPES.has(e.eventType) || e.attempt?.outcome == null) continue;
     slot.lastAttemptOutcome = e.attempt.outcome;
-    // Engine fact: how many consecutive fail/partial outcomes end this
-    // capability's attempt trail. Whether N failures trigger remediation
-    // is the policy's call, not the projection's.
-    slot.consecutiveFailures = (e.attempt.outcome === 'fail' || e.attempt.outcome === 'partial')
-      ? slot.consecutiveFailures + 1
-      : 0;
     if (!isSuccess(e)) continue;
 
     if (!isIndependent(e, cap, effSupport, taskByRev.get(`${e.taskId}@${e.taskRevision}`))) {
@@ -229,6 +233,19 @@ export function projectLearnerState(learnerId, events, capabilities, tasks, { re
       }
       if (slot.transferPromptFamilies.length >= 1) slot.milestones.transferred = true;
     }
+  }
+
+  /* Verified attempt stream — the shared strict derivation the whole
+   * authority surface consumes (W2-PC1). Recomputed from the same
+   * canonical event order as the milestone loop above, so replay,
+   * dedupe, foreign learners and stale revisions behave identically. */
+  const verified = deriveVerifiedAttemptFacts({ learnerId, events: mine, capabilities, taskByRev });
+  for (const [capId, f] of verified) {
+    const slot = byCapability.get(capId);
+    if (!slot) continue;
+    slot.verifiedConsecutiveFailures = f.verifiedConsecutiveFailures;
+    slot.lastVerifiedObservedOutcome = f.lastVerifiedObservedOutcome;
+    slot.consecutiveFailures = f.verifiedConsecutiveFailures;
   }
 
   for (const slot of byCapability.values()) {

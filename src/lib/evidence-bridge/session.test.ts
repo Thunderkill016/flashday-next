@@ -570,4 +570,23 @@ describe('planner auditability on the servable surface', () => {
     expect(reasons.length).toBeGreaterThan(0);
     for (const r of reasons) expect(r).toBeTruthy();
   });
+
+  it('W2-PC1: the standing decision retains REFERENCE provenance under the live-task lock', async () => {
+    const s = sessionFor();
+    await s.init();
+    const screen = taskScreen(s.start());
+    // The served selection is a provenance-bearing REFERENCE decision:
+    // session.decision() exposes the nested record the selector minted.
+    const standing = s.decision();
+    expect(standing?.inputDigest).toMatch(/^sha256:[0-9a-f]{64}$/);
+    expect(standing?.decision?.selectionPolicyVersion).toBe('production.nextMissionTask');
+    expect(standing?.decision?.chosen?.taskId).toBe(screen.taskId);
+    expect(standing?.decision?.decisionId).toContain(
+      (standing?.inputDigest ?? '').slice('sha256:'.length, 'sha256:'.length + 16),
+    );
+    // Live-task lock: re-rendering the same prompt does not re-select —
+    // the standing decision (and its provenance) is the one being served.
+    taskScreen(s.screen());
+    expect(s.decision()?.decision?.decisionId).toBe(standing?.decision?.decisionId);
+  });
 });

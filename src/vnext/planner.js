@@ -224,7 +224,11 @@ export function planNext(learnerId, events, { capabilities, tasks = [], riskPrio
     if (skipped(c.id, 'delayed_retrieval') || isSupportCap(c.id)) continue;
     const s = byCapability.get(c.id);
     if (!s.milestones.independent || s.lastIndependentSuccessAt == null) continue;
-    if (s.lastAttemptOutcome === 'fail' || s.lastAttemptOutcome === 'partial') continue;
+    /* W2-PC1: only a VERIFIED observed failure suppresses the due check
+     * (remediation, rule 4, picks that up). A self-reported or stale
+     * outcome is context — it can never gate a capability out of its
+     * scheduled re-measurement. */
+    if (s.lastVerifiedObservedOutcome === 'fail' || s.lastVerifiedObservedOutcome === 'partial') continue;
     const dueAt = s.lastIndependentSuccessAt + lag;
     if (now >= dueAt && (!due || dueAt < due.dueAt)) {
       due = { kind: 'delayed_retrieval', capabilityId: c.id, dueAt, reason: 'independent success is due for a delayed check' };
@@ -248,16 +252,19 @@ export function planNext(learnerId, events, { capabilities, tasks = [], riskPrio
     };
   }
 
-  /* 4. Remediation: enough consecutive failures on a capability that
-   *    was previously taught (supported or independent success exists).
-   *    The threshold is policy — a baseline probe failure still does
-   *    NOT land here; untaught work routes to introduction below. */
+  /* 4. Remediation: enough consecutive VERIFIED failures on a capability
+   *    that was previously taught (supported or independent success
+   *    exists). W2-PC1: the gate reads the verified streak — self-
+   *    reported and stale-revision outcomes are context, never
+   *    remediation evidence. The threshold is policy — a baseline probe
+   *    failure still does NOT land here; untaught work routes to
+   *    introduction below. */
   for (const c of capabilities) {
     if (skipped(c.id, 'retry') || isSupportCap(c.id)) continue;
     const s = byCapability.get(c.id);
     if ((s.milestones.supported || s.milestones.independent) &&
-        s.consecutiveFailures >= pol.remediation.minConsecutiveFailures) {
-      return { kind: 'retry', capabilityId: c.id, reason: `${s.consecutiveFailures} consecutive ${s.lastAttemptOutcome} outcome(s) — feedback and self-repair first` };
+        s.verifiedConsecutiveFailures >= pol.remediation.minConsecutiveFailures) {
+      return { kind: 'retry', capabilityId: c.id, reason: `${s.verifiedConsecutiveFailures} consecutive verified ${s.lastVerifiedObservedOutcome} outcome(s) — feedback and self-repair first` };
     }
   }
 

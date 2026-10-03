@@ -46,7 +46,7 @@ const canonCtx = (ctx) => !ctx ? null : ({
  * id, different content) is a registry violation — it is recorded in
  * the snapshot so it changes the digest AND surfaces to fail-closed
  * integrity instead of being silently swallowed. */
-export function decisionInputSnapshot({ events, learnerId, decisionContext, now, policy, selection, mission, tasks, roles, capabilities }) {
+export function decisionInputSnapshot({ events, learnerId, decisionContext, now, policy, selection, mission, tasks, roles, capabilities, riskPriors }) {
   const scoped = [...(events ?? [])]
     .filter((e) => e.learnerId === learnerId)
     .sort((a, b) => (a.occurredAt ?? 0) - (b.occurredAt ?? 0) || ((a.id ?? '') < (b.id ?? '') ? -1 : 1));
@@ -75,6 +75,10 @@ export function decisionInputSnapshot({ events, learnerId, decisionContext, now,
     mission: mission ?? null,
     tasks: [...(tasks ?? [])]
       .sort((a, b) => { const ka = `${a.id}@${a.revision ?? 1}`, kb = `${b.id}@${b.revision ?? 1}`; return ka < kb ? -1 : 1; }),
+    /* W2-PC1: risk priors are decision-relevant (the planner reads them
+     * for probe routing), so they belong in the digest — canon-sorted
+     * because their ordering never affects the decision. */
+    riskPriors: [...(riskPriors ?? [])].sort((a, b) => (canon(a) < canon(b) ? -1 : 1)),
     roles: roles ? {
       targets: [...(roles.targets ?? [])].sort(),
       supports: [...(roles.supports ?? [])].sort(),

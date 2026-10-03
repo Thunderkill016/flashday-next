@@ -97,6 +97,14 @@ export interface CapabilitySlot {
   };
   lastEventAt: number | null;
   lastAttemptOutcome: string | null;
+  /** W2-PC1 verified_consecutive_failure: consecutive VERIFIED, observed
+   *  fail/partial outcomes on registered exact task revisions. The
+   *  authoritative failure streak — self-reported and stale-revision
+   *  outcomes can neither advance nor break it. */
+  verifiedConsecutiveFailures: number;
+  lastVerifiedObservedOutcome: string | null;
+  /** Legacy alias of verifiedConsecutiveFailures — the pre-PC1 loose
+   *  counter (unobserved/unverifiable outcomes) was removed. */
   consecutiveFailures: number;
   firstIndependentAt: number | null;
   lastIndependentSuccessAt: number | null;
@@ -111,6 +119,32 @@ export interface LearnerProjection {
   policyVersion: string;
 }
 
+/** W2-PC1 selection_decision_provenance: the digest-bound decision
+ *  record attached to every selection mode, REFERENCE included. The
+ *  decisionId binds the canonical decision-input digest — provenance
+ *  is replay-verifiable, never caller-asserted. */
+export interface SelectionDecision {
+  decisionId: string;
+  selectionPolicyVersion: string | null;
+  learnerModelVersion: string | null;
+  missionId: string | null;
+  missionRevision: number | null;
+  chosen: {
+    kind: string;
+    capabilityId: string | null;
+    taskId: string | null;
+    taskRevision: number | null;
+    tier?: string;
+  };
+  production?: { status: string; reason: string; skippedIntents: string[] };
+  explanation?: Record<string, unknown>;
+  candidates?: unknown[];
+  integrityViolations?: unknown[];
+  blocked?: boolean;
+  shadow?: unknown;
+  [key: string]: unknown;
+}
+
 export interface NextTaskDecision {
   status: 'ready' | 'blocked' | string;
   taskId: string | null;
@@ -119,6 +153,15 @@ export interface NextTaskDecision {
   purpose?: string | null;
   reason: string;
   skippedIntents?: string[];
+  /** Digest-bound decision record — present on every selection mode
+   *  since W2-PC1 (previously B0/B1/shadow only). */
+  decision?: SelectionDecision;
+  /** `sha256:`-prefixed canonical digest of the complete decision input
+   *  (events, tasks@rev, capabilities, mission@rev, roles, policy,
+   *  selection config, decision context, risk priors, now). */
+  inputDigest?: string;
+  /** The exact engine-facing input state the digest covers. */
+  engineInput?: unknown;
   [key: string]: unknown;
 }
 

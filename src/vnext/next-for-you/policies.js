@@ -606,7 +606,7 @@ function pickOrdinal(eligible, ctx, selection) {
   const tieFields = [
     ['score', (c) => -score(c)],
     ['dueAt', (c) => c.dueAt ?? Infinity],
-    ['consecutiveFailures', (c) => -(c.facts?.consecutiveFailures ?? 0)],
+    ['verifiedConsecutiveFailures', (c) => -(c.facts?.verifiedConsecutiveFailures ?? c.facts?.consecutiveFailures ?? 0)],
     ['thread', (c) => -(ctx?.currentThreadCapabilityId === c.capabilityId ? 1 : 0)],
     ['capabilityId', (c) => c.capabilityId],
     ['kind', (c) => c.kind],
