@@ -14,6 +14,7 @@ Status: rights/provenance guidance for lexical research.
 | UNLOCK YOUR VOCABULARY PDF | Morphology / word-family pedagogy research | Reference only unless separately licensed |
 | Thematic Vocabulary in Use reviewed PDF | Context-first thematic reading + lexical practice architecture | Reference only unless separately licensed |
 | Aggregated English-materials research corpus (255-item catalog) | Discovery index across grammar, vocab, pronunciation/listening, IELTS/TOEIC, IT English | Per-item review only; corpus membership never implies approval |
+| FatoomRe/Tech-Books | Technical title discovery for speech/NLP/HCI/software architecture | REFERENCE_ONLY / per-work; never learner-facing by repository presence alone |
 | Commercial dictionaries/textbooks | Research/reference | No bulk learner-facing copying without license |
 | Unknown/scraped/pirate sources | None | Reject |
 
