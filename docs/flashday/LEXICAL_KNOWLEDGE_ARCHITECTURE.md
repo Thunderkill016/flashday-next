@@ -621,3 +621,129 @@ browse by semantic domain
 ```
 
 without duplicating lexical truth across vocabulary, reading, writing and speech systems.
+
+
+## 22. Context-first lexical learning units
+
+Thematic Vocabulary in Use adds a fourth important authoring pattern:
+
+```
+semantic domain
+→ contextual carrier passage
+→ target occurrences
+→ lexical unpacking
+→ retrieval / word formation / collocation work
+→ later production and transfer
+```
+
+### 22.1 New concept: contextual occurrence
+
+A lexical concept should be linkable to exact authored/authentic occurrences.
+
+```ts
+interface LexicalOccurrence {
+  id: string
+
+  conceptId: string
+  senseId?: string
+
+  resourceId: string
+
+  span?: {
+    start: number
+    end: number
+  }
+
+  sentenceId?: string
+
+  role:
+    | 'incidental'
+    | 'target'
+    | 'recycling'
+    | 'contrast'
+
+  sourceRefs: SourceRef[]
+}
+```
+
+Purpose:
+
+- highlight target language in reading/listening;
+- trace a target from passage to task;
+- count genuine re-encounters;
+- distinguish target exposure from incidental exposure.
+
+### 22.2 Encounter semantics
+
+An occurrence may support an exposure event only when the learning surface actually presents it to the learner.
+
+It must not directly set lexical competence.
+
+```
+occurrence exists in content != learner encountered it
+learner saw occurrence != learner can recall it
+```
+
+### 22.3 Context-first authoring pattern
+
+Content Factory should eventually support an authored lexical unit shaped like:
+
+```ts
+interface ContextualLexicalUnit {
+  id: string
+
+  domainId: string
+  carrierResourceId: string
+
+  targetConceptIds: string[]
+  occurrenceIds: string[]
+
+  exercisePlan: LexicalExercisePlan[]
+
+  recyclingPlan?: {
+    laterLessonIds?: string[]
+    authenticEncounterIds?: string[]
+  }
+}
+```
+
+This is an authoring/content structure, not a learner-state object.
+
+### 22.4 Exercise progression for contextual units
+
+Recommended progression:
+
+```
+comprehend passage
+→ notice target
+→ inspect meaning/usage
+→ recognition
+→ contextual completion
+→ word-family/word-formation
+→ collocation
+→ constrained production
+→ free production
+→ delayed re-encounter
+```
+
+The planner may skip or reorder stages based on evidence; React must not hard-code this as a universal sequence.
+
+### 22.5 Reading-first does not imply reading-only
+
+The same lexical concepts should later surface in:
+
+- listening;
+- writing;
+- speaking;
+- authentic VOA material;
+- changed-domain transfer.
+
+A thematic reading is a carrier for lexical learning, not the endpoint.
+
+### 22.6 B1–C1 positioning
+
+Context-first thematic reading is especially suitable for B1+ because learners can use discourse context to infer and refine meaning.
+
+For lower levels, use shorter controlled passages and fewer lexical targets.
+
+Do not import a fixed B1–C1 claim from a reference book as learner ability evidence.
