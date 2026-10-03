@@ -429,3 +429,24 @@ The 255-item research corpus is valuable and should be retained.
 Its highest value is not the 32 downloaded PDFs. Its value is the **map of what materials, methods, topics and commercial benchmarks exist**.
 
 FlashDay should use it as an evidence-informed authoring research library while sourcing actual learner-facing content from rights-cleared or independently authored material.
+
+
+## 12. Processed corpus report linkage
+
+A recovered processing report for the source library adds several facts that should remain authoritative for this research phase:
+
+- 255 catalog sources across 5 categories;
+- 30 search queries;
+- 100 resolved domains;
+- 5,237 external links;
+- 32 PDF associations but only 30 unique PDF filenames;
+- 146 records point to guide Markdown paths, but path existence alone does not mean those guides were analyzed;
+- 290 unique direct-audio URLs were discovered;
+- downloaded audio count was 0 in that corpus phase.
+
+Consequences:
+
+1. do not claim all 146 guides were read from catalog metadata alone;
+2. do not claim the 290 audio URLs form an ingested listening corpus;
+3. treat audio discovery and audio verification/ingestion as separate states;
+4. source-library completeness must be measured by canonical underlying works, not raw link count.
