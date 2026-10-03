@@ -118,20 +118,29 @@ describe('compiler', () => {
   });
 
   it('carries the full declared contract into fd metadata', () => {
-    const { items } = compilePack(pack, lessons, 1000);
-    for (const item of items.filter((i) => i.type === 'article')) {
-      const lesson = lessons.find((l) => item.metadata?.fd?.lessonId === l.id)!;
-      const fd = item.metadata!.fd!;
-      expect(fd.version, `${lesson.id}:version`).toBe(lesson.version);
-      expect(fd.capabilities, `${lesson.id}:capabilities`).toEqual(lesson.capabilities);
-      if (lesson.audioSource) expect(fd.audioSource, `${lesson.id}:audioSource`).toBe(lesson.audioSource);
-      if (lesson.audioRef) expect(fd.audioRef, `${lesson.id}:audioRef`).toBe(lesson.audioRef);
+    let audioChecked = 0;
+    for (const p of V2_PACKS) {
+      const packLessons = ALL.filter((l) => p.lessonIds.includes(l.id));
+      const { items } = compilePack(p, packLessons, 1000);
+      for (const item of items) {
+        const lesson = packLessons.find((l) => item.metadata?.fd?.lessonId === l.id)!;
+        const fd = item.metadata!.fd!;
+        expect(fd.version, `${lesson.id}:version`).toBe(lesson.version);
+        expect(fd.capabilities, `${lesson.id}:capabilities`).toEqual(lesson.capabilities);
+        if (lesson.audioSource) {
+          audioChecked++;
+          expect(fd.audioSource, `${lesson.id}:audioSource`).toBe(lesson.audioSource);
+        }
+        if (lesson.audioRef) expect(fd.audioRef, `${lesson.id}:audioRef`).toBe(lesson.audioRef);
+        if (item.type === 'word') {
+          const target = lesson.targets.find((t) => t.id === item.id)!;
+          if (target.contrastVi) expect(fd.contrastVi, `${target.id}:contrastVi`).toBe(target.contrastVi);
+        }
+      }
     }
-    for (const item of items.filter((i) => i.type === 'word')) {
-      const target = lessons.flatMap((l) => l.targets).find((t) => t.id === item.id)!;
-      const fd = item.metadata!.fd!;
-      if (target.contrastVi) expect(fd.contrastVi, `${target.id}:contrastVi`).toBe(target.contrastVi);
-    }
+    /* the assertions above are only honest if the audio fields were
+     * actually exercised — the listening pack guarantees coverage */
+    expect(audioChecked).toBeGreaterThan(0);
   });
 
   it('builds stable manifests — wording edits keep ids', () => {
@@ -184,14 +193,21 @@ describe('validator — fails closed on real violations', () => {
     expect(validateLesson(broken, VCTX).some((i) => i.code === 'unknown-capability')).toBe(true);
   });
 
-  it('rejects recorded/source audio claimed without an asset ref', () => {
+  it('rejects recorded/source audio entirely — no asset registry exists to verify', () => {
     const listen = ALL.find((l) => l.track === 'listening')!;
     for (const source of ['recorded', 'source-audio'] as const) {
-      const broken = { ...listen, audioSource: source, audioRef: undefined };
-      expect(validateLesson(broken).some((i) => i.code === 'audio-source-unbacked')).toBe(true);
+      expect(
+        validateLesson({ ...listen, audioSource: source, audioRef: undefined }).some(
+          (i) => i.code === 'audio-source-unbacked',
+        ),
+      ).toBe(true);
+      /* even a real-looking ref is forgeable — only tts-synthetic passes */
+      expect(
+        validateLesson({ ...listen, audioSource: source, audioRef: 'nep-dialogues:li01-scene' }).some(
+          (i) => i.code === 'audio-source-unbacked',
+        ),
+      ).toBe(true);
     }
-    const withRef = { ...listen, audioSource: 'recorded' as const, audioRef: 'nep-dialogues:li01-scene' };
-    expect(validateLesson(withRef).some((i) => i.code === 'audio-source-unbacked')).toBe(false);
   });
 
   it('rejects an audioRef on synthetic audio (fake asset)', () => {

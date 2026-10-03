@@ -190,7 +190,8 @@ export interface LessonSpec {
   researchRefs: string[];
   /** Audio modality claim for listening lessons (Part 8 audio rule). */
   audioSource?: 'tts-synthetic' | 'recorded' | 'source-audio';
-  /** Real asset backing recorded/source-audio claims — forbidden on tts-synthetic. */
+  /** Reserved for a future asset registry — recorded/source-audio are
+   * rejected outright today; forbidden on tts-synthetic. */
   audioRef?: string;
 }
 

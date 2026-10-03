@@ -52,7 +52,7 @@ spec({
 | missing-prerequisite-rationale | each `truePrerequisites` edge needs authored `prerequisiteRationale[id]` |
 | audio-outside-listening | `audio`/`transcript` ladder steps only on listening/pronunciation |
 | audio-source-undeclared | audio tracks must declare `audioSource` (default `tts-synthetic`) |
-| audio-source-unbacked | `recorded`/`source-audio` requires a real `audioRef` |
+| audio-source-unbacked | `recorded`/`source-audio` rejected entirely — no asset registry exists to verify refs; only `tts-synthetic` permitted |
 | audio-ref-on-synthetic | `audioRef` forbidden on `tts-synthetic` — no fake assets |
 | target-count | 3–8 targets per lesson |
 | graph-* / recycle-loop | no prerequisite cycles; recycling loops ≤4 |

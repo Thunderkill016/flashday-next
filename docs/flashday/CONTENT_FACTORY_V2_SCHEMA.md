@@ -28,7 +28,7 @@ Full types: `src/lib/content-factory/types.ts`.
 | recommendedAfter | string[] | graph | soft ordering edges |
 | recyclingFrom | string[] | graph/recycling | chunk reuse edges |
 | audioSource | `'tts-synthetic'|'recorded'|'source-audio'` | carried-contract | required on audio tracks |
-| audioRef | string? | carried-contract | real asset backing recorded/source-audio; forbidden on tts-synthetic |
+| audioRef | string? | carried-contract | reserved for a future asset registry — `recorded`/`source-audio` are rejected outright today; `audioRef` forbidden on `tts-synthetic` |
 | sourceRefs | string[] | validator/coverage | registered source ids |
 | researchRefs | string[] | validator/coverage | registered research ids |
 

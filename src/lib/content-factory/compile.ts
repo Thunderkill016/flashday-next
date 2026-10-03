@@ -111,6 +111,7 @@ export function compileChunkItem(
         transferContext: target.transferContext,
         contrastVi: target.contrastVi,
         audioSource: lesson.audioSource,
+        audioRef: lesson.audioRef,
       },
     },
     createdAt: now + index,

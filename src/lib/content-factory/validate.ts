@@ -135,10 +135,14 @@ export function validateLesson(lesson: LessonSpec, ctx: LessonValidationContext 
   } else if (lesson.audioSource) {
     at('audio-source-outside-listening', 'audioSource declared on a non-listening lesson');
   }
-  /* Audio truth — a real-asset claim must name the asset; a synthetic
-   * claim must not pretend one exists. */
-  if ((lesson.audioSource === 'recorded' || lesson.audioSource === 'source-audio') && !lesson.audioRef?.trim())
-    at('audio-source-unbacked', `audioSource "${lesson.audioSource}" declared without audioRef`);
+  /* Audio truth — no asset registry exists yet, so recorded/source-audio
+   * claims cannot be verified at all: only tts-synthetic is permitted.
+   * Re-enable real-asset claims only after a resolvable registry lands. */
+  if (lesson.audioSource === 'recorded' || lesson.audioSource === 'source-audio')
+    at(
+      'audio-source-unbacked',
+      `audioSource "${lesson.audioSource}" is unverifiable — no audio asset registry exists; only tts-synthetic is permitted`,
+    );
   if (lesson.audioSource === 'tts-synthetic' && lesson.audioRef)
     at('audio-ref-on-synthetic', 'audioRef set on tts-synthetic audio — synthetic audio has no asset');
   if (lesson.audioRef && !lesson.audioSource) at('audio-source-undeclared', 'audioRef present without audioSource');
