@@ -59,14 +59,31 @@ const testOffsetMs = () =>
  * missing speech engine confirms nothing either, and the session stays
  * undelivered (commit remains refused). The utterance's identity is
  * bound by the caller — a completion arriving after the session or task
- * moved on must not mark anything delivered. */
+ * moved on must not mark anything delivered.
+ *
+ * Chromium reports `end` on utterances interrupted by cancel() — an
+ * interrupted stimulus never finished playing, so it can never be a
+ * delivery. Only the LATEST utterance's completion counts: the slot is
+ * claimed BEFORE cancel() so the interrupted utterance's induced
+ * `onend` is already stale when it fires. */
+let latestUtterance: SpeechSynthesisUtterance | null = null;
 const speak = (text: string | null, onDelivered: () => void): void => {
   if (!text || typeof window === 'undefined' || !('speechSynthesis' in window)) return;
-  window.speechSynthesis.cancel();
   const u = new SpeechSynthesisUtterance(text);
   u.lang = 'en-US';
-  u.onend = onDelivered;
+  latestUtterance = u;
+  u.onend = () => {
+    if (latestUtterance === u) onDelivered();
+  };
+  window.speechSynthesis.cancel();
   window.speechSynthesis.speak(u);
+};
+/* Session teardown is transport teardown: invalidate the live slot
+ * BEFORE cancel() so a cancel-induced `end` cannot mint delivery on
+ * whatever screen is being torn down. */
+const cancelSpeech = (): void => {
+  latestUtterance = null;
+  if (typeof window !== 'undefined') window.speechSynthesis?.cancel();
 };
 
 function MissionPageInner() {
@@ -116,11 +133,12 @@ function MissionPageInner() {
     sync(session.init());
     /* Session teardown is also transport teardown: an utterance owned
      * by the old session must not be allowed to finish and mark the
-     * NEW session delivered. cancel() alone is not the boundary — the
-     * utterance→(session, taskId, attemptId) binding in the play
-     * handler is — but cancelling shrinks the stale-completion window
-     * and stops audio actually bleeding across a swap. */
-    return () => window.speechSynthesis?.cancel();
+     * NEW session delivered. Three independent guards hold the line —
+     * the utterance slot is invalidated before cancel() (Chromium
+     * fires `end` on interrupted utterances), the owner-session check
+     * rejects foreign completions, and confirmDelivery re-verifies the
+     * taskId/attemptId against the live selection. */
+    return () => cancelSpeech();
   }, [user?.id, missionId, sync]);
 
   const act = (fn: () => SessionScreen | Promise<SessionScreen>) => {
