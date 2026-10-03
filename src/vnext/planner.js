@@ -19,7 +19,8 @@
 import { RETENTION_DELAY_MS, projectLearnerState } from './projection.js';
 import { priorById } from './risk-priors.js';
 import { resolvePolicy } from './policy.js';
-import { verifyEventTask } from './contracts.js';
+import { isIndependentSuccess, verifyEventTask } from './contracts.js';
+import { unionSupport } from './evidence.js';
 import { contractAttributesFunctions } from './evaluators.js';
 
 /* Derive outstanding support demands from the event log (issue #61).
@@ -35,10 +36,14 @@ import { contractAttributesFunctions } from './evaluators.js';
  *               whose task actually requires that function (success or
  *               fail — one probe cycle per demand; a probe cannot
  *               resolve evidence it never tested)
- *   cancelled — a later verified success on a TARGET task that itself
- *               requires the function: demonstrated recovery is the
- *               only evidence that retires a demand, and it also
- *               re-arms the pair's cycle budget (the episode closed).
+ *   cancelled — a later verified INDEPENDENT success on a TARGET task
+ *               that itself requires the function: demonstrated
+ *               recovery is the only evidence that retires a demand,
+ *               and it also re-arms the pair's cycle budget (the
+ *               episode closed). Aided success is the demand's cause,
+ *               not its cure — the same independence bar the projection
+ *               and learner model apply (observed + unaided across the
+ *               whole attemptId + condition-valid + authority-backed).
  *               A success that never exercised the function proves
  *               nothing about it.
  *   re-issue  — bounded per unresolved episode by
@@ -91,6 +96,7 @@ export function deriveSupportLifecycle(learnerId, events, { capabilities, tasks,
   const issued = new Map();  // pair key → the demand record (for lifecycle history)
   const cycles = new Map();  // pair key → consumed count in the OPEN episode
   const seenIds = new Set(); // resynced duplicates replay idempotently
+  const supportByAttempt = new Map(); // taskId::attemptId → unioned support
   for (const e of mine) {
     if (seenIds.has(e.id)) continue;
     seenIds.add(e.id);
@@ -102,6 +108,18 @@ export function deriveSupportLifecycle(learnerId, events, { capabilities, tasks,
      * routing substrate work on unobserved claims is how support
      * laundering starts. */
     if (e.attempt?.observed !== true) continue;
+
+    /* Support belongs to the ATTEMPT, not the event: a hint revealed on
+     * any earlier event sharing the attemptId makes every later outcome
+     * on that attempt aided — the same union accumulation the learner
+     * model and correction episodes apply. */
+    const aid = e.attempt?.attemptId;
+    let effSupport = e.support;
+    if (aid) {
+      const aKey = `${e.taskId}::${aid}`;
+      effSupport = unionSupport(supportByAttempt.get(aKey) ?? null, e.support);
+      supportByAttempt.set(aKey, effSupport);
+    }
 
     if (e.eventType === 'support_attempt') {
       /* A verified probe consumes only the demands it actually TESTED:
@@ -122,12 +140,16 @@ export function deriveSupportLifecycle(learnerId, events, { capabilities, tasks,
     if (e.attempt?.outcome == null) continue;
 
     if (e.attempt.outcome === 'success') {
-      /* Demonstrated recovery is the ONLY evidence that retires a
-       * demand: a verified success on a task requiring the function
-       * cancels the pending demand for it AND resets the pair's cycle
-       * budget — the episode closed, so a substrate gap re-evidenced
-       * weeks later routes a fresh probe (the bound is per unresolved
-       * episode, never a lifetime ban). */
+      /* Demonstrated INDEPENDENT recovery is the ONLY evidence that
+       * retires a demand: a verified success on a task requiring the
+       * function cancels the pending demand for it AND resets the
+       * pair's cycle budget — the episode closed, so a substrate gap
+       * re-evidenced weeks later routes a fresh probe (the bound is
+       * per unresolved episode, never a lifetime ban). An AIDED
+       * covering success is the learner still needing the answer
+       * handed over — it re-evidences the gap, it can never close
+       * the episode that the miss opened. */
+      if (!isIndependentSuccess(e, cap, t, effSupport)) continue;
       for (const fn of t.response?.requiredFunctions ?? []) {
         const key = `${e.capabilityId}|${fn}`;
         if (pending.delete(key)) {

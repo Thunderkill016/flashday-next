@@ -329,6 +329,85 @@ describe('PC1-B support_dependency — demand-lifecycle-bound state', () => {
     expect(timeView(events).support.dependency.state).toBe('DEPENDENT');
   });
 
+  it('an aided covering success can never retire a pending demand — direct chain, no probe', () => {
+    // Reviewer chain: demanding miss → aided covering success with NO
+    // support probe in between. An aided success is the learner still
+    // needing the answer handed over — it is the opposite of recovery,
+    // so the demand must stay outstanding, routable, and DEPENDENT.
+    const events = [demandingMiss('m1', T0), aidedClockSuccess('a2', T0 + MIN)];
+    const lifecycle = (deriveSupportLifecycle as Any)(L, events, {
+      capabilities: CAPABILITIES,
+      tasks: TASKS_MEET_AT_TIME,
+      roles: ROLES_TIME,
+    });
+    expect(lifecycle.pending.map((d: Any) => d.missingFunction)).toEqual([NUMBER_FN]);
+    expect(lifecycle.resolved).toEqual([]);
+    // The learner model and the planner must not diverge: still DEPENDENT
+    // on the same unresolved function.
+    const view = timeView(events);
+    expect(view.support.dependency.state).toBe('DEPENDENT');
+    expect(view.support.dependency.demandedFunctions).toEqual([NUMBER_FN]);
+    expect(view.support.dependency.dependentFunctions).toEqual([NUMBER_FN]);
+    expect(view.support.dependent).toBe(true);
+    // …and the demand is still routable: SUPPORT_DEMAND surfaces.
+    const plan = (planNext as Any)(L, events, {
+      capabilities: CAPABILITIES,
+      tasks: TASKS_MEET_AT_TIME,
+      roles: ROLES_TIME,
+      now: T0 + 2 * MIN,
+    });
+    expect(plan.kind).toBe('support_demand');
+    expect(plan.demand?.missingFunction).toBe(NUMBER_FN);
+  });
+
+  it('aided covering success then independent covering recovery — only the independent event retires the demand', () => {
+    const events = [
+      demandingMiss('m1', T0),
+      aidedClockSuccess('a2', T0 + MIN), // aided — must not retire
+      independentCovering('w1', T0 + 2 * MIN), // observed+unaided recovery — retires
+    ];
+    const lifecycle = (deriveSupportLifecycle as Any)(L, events, {
+      capabilities: CAPABILITIES,
+      tasks: TASKS_MEET_AT_TIME,
+      roles: ROLES_TIME,
+    });
+    expect(lifecycle.pending).toEqual([]);
+    expect(lifecycle.resolved.at(-1)?.status).toBe('cancelled');
+    expect(lifecycle.resolved.at(-1)?.resolvedByEventId).toBe('w1');
+    const view = timeView(events);
+    expect(view.failures.unresolvedFunctions).toEqual([]);
+    expect(view.support.dependency.state).toBe('CLEAR');
+    expect(view.support.dependent).toBe(false);
+  });
+
+  it('a hint revealed mid-attempt (shared attemptId) makes the covering success aided — demand survives', () => {
+    // Support union anti-laundering: the hint and the success arrive on
+    // separate events sharing one attemptId. Dropping unionSupport in
+    // the lifecycle would read the bare success as independent.
+    const att = 'att.shared';
+    const hintedMissRaw = time('task.time.retrieval.hear', {
+      id: 'a2.hinted',
+      at: T0 + MIN,
+      outcome: 'fail',
+      support: { hint: true },
+    });
+    const retryRaw = time('task.time.retrieval.hear', {
+      id: 'a2.retry',
+      at: T0 + 2 * MIN,
+      outcome: 'success',
+    });
+    const hintedMiss = { ...hintedMissRaw, attempt: { ...hintedMissRaw.attempt, attemptId: att } };
+    const retry = { ...retryRaw, attempt: { ...retryRaw.attempt, attemptId: att } };
+    const events = [demandingMiss('m1', T0), hintedMiss, retry];
+    const lifecycle = (deriveSupportLifecycle as Any)(L, events, {
+      capabilities: CAPABILITIES,
+      tasks: TASKS_MEET_AT_TIME,
+      roles: ROLES_TIME,
+    });
+    expect(lifecycle.pending.map((d: Any) => d.missingFunction)).toEqual([NUMBER_FN]);
+    expect(timeView(events).support.dependency.state).toBe('DEPENDENT');
+  });
+
   it('independent covering recovery on the demanded function clears dependency', () => {
     const events = [
       aidedClockSuccess('a1', T0),

@@ -36,28 +36,19 @@
  */
 import { projectLearnerState } from './projection.js';
 import { runMissionTrace } from './mission-runner.js';
-import { answerBearing, conditionsViolated, unionSupport } from './evidence.js';
-import { effectiveAllowedSupport, verifyEventTask } from './contracts.js';
+import { unionSupport } from './evidence.js';
+import { isIndependentSuccess, verifyEventTask } from './contracts.js';
 import { resolvePolicy } from './policy.js';
 
 const ATTEMPT_TYPES = new Set([
   'recognition_attempt', 'recall_attempt', 'production_attempt',
   'interaction_turn', 'retry', 'delayed_retrieval', 'transfer_attempt', 'checkpoint'
 ]);
-const INDEPENDENT_AUTHORITIES = new Set(['deterministic', 'human']);
-
 /* The claim's notion of "unaided verified success" must be the SAME
- * evidence the engine would promote — recomputed here, not copied: the
- * caller supplies the attempt-boundary support union and the registered
- * task/capability so conditions violations (e.g. a replay the contract
- * does not permit) disqualify exactly as they do in the projection. */
+ * evidence the engine would promote — the shared independence bar in
+ * contracts.js, narrowed here to performance-attempt event types. */
 const isUnaidedVerifiedSuccess = (e, cap, task, support) =>
-  ATTEMPT_TYPES.has(e.eventType) &&
-  e.attempt?.outcome === 'success' &&
-  e.attempt?.observed === true &&
-  !answerBearing(support) &&
-  !conditionsViolated(support, effectiveAllowedSupport(cap, task)) &&
-  INDEPENDENT_AUTHORITIES.has(e.evaluation?.authority);
+  ATTEMPT_TYPES.has(e.eventType) && isIndependentSuccess(e, cap, task, support);
 
 /* Session buckets from the log itself: a gap larger than the policy's
  * spacing threshold starts a new session. Deterministic and

@@ -31,8 +31,8 @@
  *   - canonical order is (occurredAt, id) — arrival order can never
  *     change the projection; replay of the same event set is identical.
  */
-import { answerBearing, conditionsViolated, unionSupport } from './evidence.js';
-import { effectiveAllowedSupport, verifyEventTask } from './contracts.js';
+import { unionSupport } from './evidence.js';
+import { isIndependentSuccess, verifyEventTask } from './contracts.js';
 import { resolvePolicy } from './policy.js';
 import { deriveVerifiedAttemptFacts } from './verified-attempts.js';
 
@@ -71,8 +71,6 @@ const isSuccess = (e) => e.attempt?.outcome === 'success';
  *   ai_llm      — feedback/secondary signal only, never proficiency;
  *   absent      — no evaluator provenance = no credit.
  */
-const INDEPENDENT_AUTHORITIES = new Set(['deterministic', 'human']);
-
 /* Support revealed during an attempt belongs permanently to that
  * attempt — the union semantics live in evidence.js so the projection
  * and the pilot oracle apply the SAME accumulation rule without sharing
@@ -84,14 +82,11 @@ const INDEPENDENT_AUTHORITIES = new Set(['deterministic', 'human']);
 // is not trusted on its own: verifyEventTask re-derives purpose,
 // family, context, evaluator and effective support from the registry
 // task, so a forged `binding` on a raw makeEvent() cannot mint
-// independent evidence.
+// independent evidence. The evidence bar itself lives in contracts.js
+// so the projection, learner model, correction episodes and the
+// support-demand lifecycle can never drift apart.
 const isIndependent = (e, cap, support, task) =>
-  isSuccess(e) &&
-  e.attempt?.observed === true &&
-  !answerBearing(support) &&
-  !conditionsViolated(support, effectiveAllowedSupport(cap, task)) &&
-  INDEPENDENT_AUTHORITIES.has(e.evaluation?.authority) &&
-  verifyEventTask(e, task, cap);
+  isIndependentSuccess(e, cap, task, support) && verifyEventTask(e, task, cap);
 
 function emptyCapability() {
   return {

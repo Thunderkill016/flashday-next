@@ -17,7 +17,7 @@
  * mission whose teaching items leak into assessment, fails validation
  * before a single learner touches it.
  */
-import { EVALUATION_AUTHORITIES } from './evidence.js';
+import { answerBearing, conditionsViolated, EVALUATION_AUTHORITIES } from './evidence.js';
 
 export const TASK_PURPOSES = [
   'diagnostic',
@@ -187,6 +187,30 @@ export function effectiveAllowedSupport(capability, task) {
   const capAllowed = capability?.conditions?.supportAllowed ?? [];
   const taskAllowed = task?.supportPolicy?.allowed ?? capAllowed;
   return capAllowed.filter((k) => taskAllowed.includes(k));
+}
+
+/* The ONE independence bar every authority consumer shares
+ * (projection, learner model, correction episodes, support-demand
+ * lifecycle). An outcome counts as independent evidence only when it
+ * is ALL of:
+ *   success      — outcome === 'success' (never 'partial'/'fail')
+ *   observed     — an observer/instrument witnessed it, not self-report
+ *   unaided      — no answer-bearing support on the attempt (union of
+ *                  every event sharing the attemptId — a hint revealed
+ *                  mid-attempt can never be un-revealed)
+ *   condition-ok — used support stays within capability∩task policy
+ *   authority    — evaluator provenance is deterministic or human;
+ *                  absent/self/AI authority never mints independence
+ *
+ * Callers still run verifyEventTask separately — contract verification
+ * is a gate, this is the evidence bar on an already-verified event. */
+export const INDEPENDENT_AUTHORITIES = new Set(['deterministic', 'human']);
+export function isIndependentSuccess(e, capability, task, effSupport) {
+  return e.attempt?.outcome === 'success' &&
+    e.attempt?.observed === true &&
+    !answerBearing(effSupport) &&
+    !conditionsViolated(effSupport, effectiveAllowedSupport(capability, task)) &&
+    INDEPENDENT_AUTHORITIES.has(e.evaluation?.authority);
 }
 
 const isStr = (v) => typeof v === 'string' && v.length > 0;

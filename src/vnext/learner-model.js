@@ -41,7 +41,7 @@
 
 import { projectLearnerState } from './projection.js';
 import { answerBearing, conditionsViolated, unionSupport } from './evidence.js';
-import { effectiveAllowedSupport, verifyEventTask } from './contracts.js';
+import { effectiveAllowedSupport, isIndependentSuccess, verifyEventTask } from './contracts.js';
 import { contractAttributesFunctions } from './evaluators.js';
 import { resolvePolicy } from './policy.js';
 import { deriveSupportLifecycle } from './planner.js';
@@ -62,8 +62,6 @@ const ATTEMPT_TYPES = new Set([
   'checkpoint'
 ]);
 
-const INDEPENDENT_AUTHORITIES = new Set(['deterministic', 'human']);
-const isSuccess = (e) => e.attempt?.outcome === 'success';
 const isMiss = (e) => e.attempt?.outcome === 'fail' || e.attempt?.outcome === 'partial';
 
 function emptyCapView() {
@@ -305,11 +303,7 @@ export function buildLearnerModel({ learnerId, events, capabilities, tasks, poli
       v.assessment.attempted += 1;
     }
 
-    const independent = isSuccess(e) &&
-      e.attempt?.observed === true &&
-      !answerBearing(effSupport) &&
-      !conditionsViolated(effSupport, effectiveAllowedSupport(cap, task)) &&
-      INDEPENDENT_AUTHORITIES.has(e.evaluation?.authority);
+    const independent = isIndependentSuccess(e, cap, task, effSupport);
 
     // Assessment status is evidence-barred: only OBSERVED verified
     // outcomes set latestStatus, and only an independent-bar success
