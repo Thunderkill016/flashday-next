@@ -3,7 +3,10 @@ import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
 const storage = new Map<string, string>();
 const bulkAddMock = vi.fn();
 const contentsGetMock = vi.fn();
+const contentsBulkGetMock = vi.fn();
 const contentsBulkPutMock = vi.fn();
+const collectionsBulkGetMock = vi.fn();
+const collectionsBulkPutMock = vi.fn();
 const countMock = vi.fn();
 const sourceToArrayMock = vi.fn();
 const categoryCountMock = vi.fn();
@@ -27,6 +30,7 @@ vi.mock('@/lib/db', () => ({
       count: countMock,
       bulkAdd: bulkAddMock,
       get: contentsGetMock,
+      bulkGet: contentsBulkGetMock,
       bulkPut: contentsBulkPutMock,
       where: (field: string) => ({
         equals: (value: string) => {
@@ -43,6 +47,10 @@ vi.mock('@/lib/db', () => ({
     favoriteFolders: {
       count: vi.fn().mockResolvedValue(0),
       bulkAdd: vi.fn().mockResolvedValue(undefined),
+    },
+    collections: {
+      bulkGet: collectionsBulkGetMock,
+      bulkPut: collectionsBulkPutMock,
     },
   },
 }));
@@ -62,8 +70,14 @@ describe('seedDatabase starter packs', () => {
     storage.clear();
     bulkAddMock.mockReset();
     contentsGetMock.mockReset();
+    contentsBulkGetMock.mockReset();
     contentsBulkPutMock.mockReset();
+    collectionsBulkGetMock.mockReset();
+    collectionsBulkPutMock.mockReset();
     contentsGetMock.mockResolvedValue(undefined);
+    /* Empty DB: every deterministic pack key resolves to undefined. */
+    contentsBulkGetMock.mockImplementation(async (ids: string[]) => ids.map(() => undefined));
+    collectionsBulkGetMock.mockImplementation(async (ids: string[]) => ids.map(() => undefined));
     countMock.mockReset();
     sourceToArrayMock.mockReset();
     categoryCountMock.mockReset();
@@ -132,8 +146,13 @@ describe('seedDatabase starter packs', () => {
     // vitest runs with NODE_ENV=test — the dev-only VS01 gate must not fire.
     await seedDatabase();
 
+    /* contents.get is exclusive to seedVs01Dogfood; the fd01 pack seeds via
+     * bulkGet/bulkPut, so the pin narrows to "no vs01 ids written". */
     expect(contentsGetMock).not.toHaveBeenCalled();
-    expect(contentsBulkPutMock).not.toHaveBeenCalled();
+    const putIds = contentsBulkPutMock.mock.calls.flatMap(([items]) =>
+      (items as Array<{ id?: string }>).map((item) => item.id),
+    );
+    expect(putIds.filter((id) => id?.startsWith('vs01.'))).toEqual([]);
     const seededIds = bulkAddMock.mock.calls.flatMap(([items]) =>
       (items as Array<{ id?: string }>).map((item) => item.id),
     );

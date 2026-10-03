@@ -33,6 +33,19 @@ export interface ContentMetadata {
   audioUrl?: string;
   platform?: string;
   videoDuration?: number;
+  /** flashday-foundation pack contract carried with the item — authored
+   * pedagogy intent kept queryable at runtime (validator-enforced at
+   * seed; surfaces consume where a real affordance exists). */
+  fd?: {
+    packId: string;
+    lessonId: string;
+    trackId: string;
+    supportLadder?: string[];
+    reviewVariants?: string[];
+    productionPattern?: string;
+    transferContext?: string;
+    sourceRefId?: string;
+  };
 }
 
 export interface ContentItem {

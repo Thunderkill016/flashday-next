@@ -2,6 +2,7 @@ import { nanoid } from 'nanoid';
 import type { ContentItem } from '@/types/content';
 import { DEFAULT_FOLDERS } from '@/types/favorite';
 import { db } from './db';
+import { seedFdContentPack } from './fd-content/seed';
 import { builtinArticles } from './seed-data/articles';
 import { builtinCommunityScenarios } from './seed-data/community-scenarios';
 import { builtinPhrases } from './seed-data/phrases';
@@ -127,4 +128,8 @@ export async function seedDatabase() {
   if (vs01DogfoodEnabled()) {
     await seedVs01Dogfood(now);
   }
+  /* flashday-foundation-v1 is shipped product content — authored lessons,
+   * not a fixture — so it seeds unconditionally for every install. The
+   * seeder validates the pack first and fails closed on any issue. */
+  await seedFdContentPack(now);
 }
