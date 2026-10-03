@@ -307,3 +307,153 @@ Unknown rights fail closed.
 8. Learner lexical state must be separate from lexical knowledge.
 9. The same lexical layer should serve vocabulary, reading, listening, writing and speech.
 10. Commercial references inform architecture; they are not automatic ingestion sources.
+
+
+## 9. Thematic Vocabulary in Use — context-first vocabulary learning
+
+Reviewed directly from the uploaded sample PDF `TVIU_GreenPacking Sample.pdf`.
+
+The uploaded sample is **Chapter 01 — Green Packaging**, not the separately mentioned Bullying chapter.
+
+The sample states a 30-unit, 10-theme course structure in which each chapter contains:
+
+- a reading passage;
+- an enriched bilingual vocabulary table;
+- exercises;
+- recurring collocation banks, extra practice and review tests by theme.
+
+The reviewed Green Packaging lesson uses the following sequence:
+
+```
+thematic reading
+→ visually highlighted target vocabulary in context
+→ vocabulary table
+→ IPA / POS / definition / contextual example / Vietnamese meaning+usage nuance
+→ exercises
+→ collocation practice
+```
+
+The vocabulary table is richer than a glossary. It includes:
+
+- word/phrase;
+- IPA;
+- part of speech;
+- English definition;
+- independently contextualized example;
+- Vietnamese gloss;
+- Vietnamese note about register, nuance, collocation or usage.
+
+The exercise sequence observed in the sample includes:
+
+- definition matching;
+- contextual gap fill;
+- word formation;
+- multiple-choice discrimination;
+- collocation completion.
+
+### 9.1 Durable finding: context should precede lexical decomposition
+
+This source suggests a useful pedagogical ordering for many B1–C1 lexical units:
+
+```
+READ / LISTEN FOR MEANING
+        ↓
+notice target language in context
+        ↓
+inspect lexical knowledge
+        ↓
+retrieve / discriminate / transform
+        ↓
+produce
+        ↓
+re-encounter later
+```
+
+This differs from the common dictionary-first sequence:
+
+```
+word list
+→ memorize
+→ example
+```
+
+FlashDay should support both directions, but for thematic academic vocabulary the **context-first path** should be first-class.
+
+### 9.2 Reading is a carrier, not proof of learning
+
+Reading a passage that contains a word can create an encounter.
+
+It does not prove:
+
+- meaning recall;
+- collocation control;
+- production;
+- retention;
+- transfer.
+
+Therefore:
+
+```
+highlighted_in_reading != learned
+completed_reading != lexical_mastery
+```
+
+### 9.3 Highlighted lexical targets should be traceable into later tasks
+
+A useful authored unit should be able to map:
+
+```
+passage occurrence
+→ lexical concept/sense
+→ collocation/construction
+→ exercise primitive
+→ later authentic re-encounter
+```
+
+This creates continuity instead of presenting a reading and an unrelated word list.
+
+### 9.4 Word families should be integrated inside context-first units
+
+The sample explicitly exercises word formation after introducing related forms in the vocabulary layer.
+
+FlashDay should therefore be able to connect:
+
+```
+base concept
+→ derivational family
+→ in-context occurrence
+→ word-formation task
+```
+
+This should reuse the Morpheme/WordFamily graph rather than create a separate exam-prep word-formation system.
+
+### 9.5 Thematic review should recycle, not merely retest
+
+The course structure includes collocation banks, extra practice and review tests after groups of chapters.
+
+FlashDay should interpret this pattern as:
+
+```
+initial contextual encounter
+→ focused retrieval
+→ spaced thematic recycling
+→ cross-topic reuse
+```
+
+rather than as a fixed printable test schedule.
+
+### 9.6 Combine with VOA
+
+The strongest FlashDay version is:
+
+```
+authored thematic reading
+→ rich lexical unpacking
+→ practice
+→ VOA authentic re-encounter
+→ retrieval
+→ production
+→ delayed transfer
+```
+
+This preserves readability for lower-confidence learners while still moving toward authentic input.
