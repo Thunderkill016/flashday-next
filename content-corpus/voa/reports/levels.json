@@ -1,0 +1,221 @@
+{
+  "byLevel": {
+    "a0": 1,
+    "a1": 94,
+    "a2": 759,
+    "b1": 67,
+    "b2": 1
+  },
+  "sourceVsInferred": [
+    {
+      "series": "voa-lle-level1",
+      "sourceLevel": "beginning",
+      "a0a1": 36,
+      "a2b1": 16,
+      "b2": 0
+    },
+    {
+      "series": "voa-lle-level2",
+      "sourceLevel": "intermediate",
+      "a0a1": 11,
+      "a2b1": 24,
+      "b2": 1
+    },
+    {
+      "series": "voa-anna",
+      "sourceLevel": "beginning",
+      "a0a1": 0,
+      "a2b1": 15,
+      "b2": 0
+    },
+    {
+      "series": "voa-anna-vietnamese",
+      "sourceLevel": "beginning",
+      "a0a1": 0,
+      "a2b1": 5,
+      "b2": 0
+    },
+    {
+      "series": "voa-anna-multilingual",
+      "sourceLevel": "beginning",
+      "a0a1": 0,
+      "a2b1": 12,
+      "b2": 0
+    },
+    {
+      "series": "voa-lets-teach",
+      "sourceLevel": "unlabeled",
+      "a0a1": 2,
+      "a2b1": 11,
+      "b2": 0
+    },
+    {
+      "series": "voa-everyday-grammar",
+      "sourceLevel": "unlabeled",
+      "a0a1": 5,
+      "a2b1": 75,
+      "b2": 0
+    },
+    {
+      "series": "voa-everyday-grammar-tv",
+      "sourceLevel": "unlabeled",
+      "a0a1": 0,
+      "a2b1": 0,
+      "b2": 0
+    },
+    {
+      "series": "voa-english-minute",
+      "sourceLevel": "unlabeled",
+      "a0a1": 0,
+      "a2b1": 0,
+      "b2": 0
+    },
+    {
+      "series": "voa-news-words",
+      "sourceLevel": "unlabeled",
+      "a0a1": 0,
+      "a2b1": 0,
+      "b2": 0
+    },
+    {
+      "series": "voa-words-stories",
+      "sourceLevel": "unlabeled",
+      "a0a1": 3,
+      "a2b1": 77,
+      "b2": 0
+    },
+    {
+      "series": "voa-ask-teacher",
+      "sourceLevel": "unlabeled",
+      "a0a1": 20,
+      "a2b1": 40,
+      "b2": 0
+    },
+    {
+      "series": "voa-pronunciation",
+      "sourceLevel": "unlabeled",
+      "a0a1": 0,
+      "a2b1": 0,
+      "b2": 0
+    },
+    {
+      "series": "voa-english-movies",
+      "sourceLevel": "unlabeled",
+      "a0a1": 0,
+      "a2b1": 0,
+      "b2": 0
+    },
+    {
+      "series": "voa-talk2us",
+      "sourceLevel": "unlabeled",
+      "a0a1": 0,
+      "a2b1": 0,
+      "b2": 0
+    },
+    {
+      "series": "voa-learning-podcast",
+      "sourceLevel": "unlabeled",
+      "a0a1": 0,
+      "a2b1": 0,
+      "b2": 0
+    },
+    {
+      "series": "voa-as-it-is",
+      "sourceLevel": "unlabeled",
+      "a0a1": 0,
+      "a2b1": 60,
+      "b2": 0
+    },
+    {
+      "series": "voa-arts-culture",
+      "sourceLevel": "unlabeled",
+      "a0a1": 0,
+      "a2b1": 60,
+      "b2": 0
+    },
+    {
+      "series": "voa-education",
+      "sourceLevel": "unlabeled",
+      "a0a1": 12,
+      "a2b1": 46,
+      "b2": 0
+    },
+    {
+      "series": "voa-science-tech",
+      "sourceLevel": "unlabeled",
+      "a0a1": 0,
+      "a2b1": 60,
+      "b2": 0
+    },
+    {
+      "series": "voa-health",
+      "sourceLevel": "unlabeled",
+      "a0a1": 0,
+      "a2b1": 60,
+      "b2": 0
+    },
+    {
+      "series": "voa-trending",
+      "sourceLevel": "unlabeled",
+      "a0a1": 0,
+      "a2b1": 31,
+      "b2": 0
+    },
+    {
+      "series": "voa-what-it-takes",
+      "sourceLevel": "unlabeled",
+      "a0a1": 0,
+      "a2b1": 51,
+      "b2": 0
+    },
+    {
+      "series": "voa-early-literacy",
+      "sourceLevel": "unlabeled",
+      "a0a1": 1,
+      "a2b1": 7,
+      "b2": 0
+    },
+    {
+      "series": "voa-american-stories",
+      "sourceLevel": "unlabeled",
+      "a0a1": 5,
+      "a2b1": 95,
+      "b2": 0
+    },
+    {
+      "series": "voa-presidents",
+      "sourceLevel": "unlabeled",
+      "a0a1": 0,
+      "a2b1": 49,
+      "b2": 0
+    },
+    {
+      "series": "voa-national-parks",
+      "sourceLevel": "unlabeled",
+      "a0a1": 0,
+      "a2b1": 19,
+      "b2": 0
+    },
+    {
+      "series": "voa-us-history",
+      "sourceLevel": "unlabeled",
+      "a0a1": 0,
+      "a2b1": 6,
+      "b2": 0
+    },
+    {
+      "series": "voa-voa60",
+      "sourceLevel": "unlabeled",
+      "a0a1": 0,
+      "a2b1": 0,
+      "b2": 0
+    },
+    {
+      "series": "voa-news-literacy",
+      "sourceLevel": "unlabeled",
+      "a0a1": 0,
+      "a2b1": 7,
+      "b2": 0
+    }
+  ]
+}

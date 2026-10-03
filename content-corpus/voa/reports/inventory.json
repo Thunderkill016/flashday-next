@@ -1,0 +1,282 @@
+{
+  "series": [
+    {
+      "id": "voa-lle-level1",
+      "name": "Let's Learn English - Level 1",
+      "tier": "A",
+      "discovered": 60,
+      "normalized": 52,
+      "withAudio": 52,
+      "withVideo": 52
+    },
+    {
+      "id": "voa-lle-level2",
+      "name": "Let's Learn English - Level 2",
+      "tier": "A",
+      "discovered": 41,
+      "normalized": 36,
+      "withAudio": 29,
+      "withVideo": 32
+    },
+    {
+      "id": "voa-anna",
+      "name": "Let's Learn English with Anna",
+      "tier": "A",
+      "discovered": 15,
+      "normalized": 15,
+      "withAudio": 0,
+      "withVideo": 15
+    },
+    {
+      "id": "voa-anna-vietnamese",
+      "name": "Let's Learn English with Anna in Vietnamese",
+      "tier": "A",
+      "discovered": 5,
+      "normalized": 5,
+      "withAudio": 0,
+      "withVideo": 5
+    },
+    {
+      "id": "voa-anna-multilingual",
+      "name": "Let's Learn English with Anna — other languages",
+      "tier": "A",
+      "discovered": 19,
+      "normalized": 12,
+      "withAudio": 0,
+      "withVideo": 11
+    },
+    {
+      "id": "voa-lets-teach",
+      "name": "Let's Teach English",
+      "tier": "A",
+      "discovered": 13,
+      "normalized": 13,
+      "withAudio": 10,
+      "withVideo": 12
+    },
+    {
+      "id": "voa-everyday-grammar",
+      "name": "Everyday Grammar",
+      "tier": "B",
+      "discovered": 80,
+      "normalized": 80,
+      "withAudio": 80,
+      "withVideo": 16
+    },
+    {
+      "id": "voa-everyday-grammar-tv",
+      "name": "Everyday Grammar TV",
+      "tier": "B",
+      "discovered": 60,
+      "normalized": 0,
+      "withAudio": 0,
+      "withVideo": 0
+    },
+    {
+      "id": "voa-english-minute",
+      "name": "English in a Minute",
+      "tier": "B",
+      "discovered": 80,
+      "normalized": 0,
+      "withAudio": 0,
+      "withVideo": 0
+    },
+    {
+      "id": "voa-news-words",
+      "name": "News Words",
+      "tier": "B",
+      "discovered": 80,
+      "normalized": 0,
+      "withAudio": 0,
+      "withVideo": 0
+    },
+    {
+      "id": "voa-words-stories",
+      "name": "Words and Their Stories",
+      "tier": "B",
+      "discovered": 80,
+      "normalized": 80,
+      "withAudio": 80,
+      "withVideo": 1
+    },
+    {
+      "id": "voa-ask-teacher",
+      "name": "Ask a Teacher",
+      "tier": "B",
+      "discovered": 60,
+      "normalized": 60,
+      "withAudio": 60,
+      "withVideo": 0
+    },
+    {
+      "id": "voa-pronunciation",
+      "name": "How to Pronounce",
+      "tier": "B",
+      "discovered": 80,
+      "normalized": 0,
+      "withAudio": 0,
+      "withVideo": 0
+    },
+    {
+      "id": "voa-english-movies",
+      "name": "English @ the Movies",
+      "tier": "B",
+      "discovered": 60,
+      "normalized": 0,
+      "withAudio": 0,
+      "withVideo": 0
+    },
+    {
+      "id": "voa-talk2us",
+      "name": "Talk2Us",
+      "tier": "B",
+      "discovered": 60,
+      "normalized": 0,
+      "withAudio": 0,
+      "withVideo": 0
+    },
+    {
+      "id": "voa-learning-podcast",
+      "name": "VOA Learning English Podcast",
+      "tier": "C",
+      "discovered": 60,
+      "normalized": 0,
+      "withAudio": 0,
+      "withVideo": 0
+    },
+    {
+      "id": "voa-as-it-is",
+      "name": "As It Is",
+      "tier": "C",
+      "discovered": 60,
+      "normalized": 60,
+      "withAudio": 60,
+      "withVideo": 0
+    },
+    {
+      "id": "voa-arts-culture",
+      "name": "Arts & Culture",
+      "tier": "C",
+      "discovered": 60,
+      "normalized": 60,
+      "withAudio": 60,
+      "withVideo": 2
+    },
+    {
+      "id": "voa-education",
+      "name": "Education Tips",
+      "tier": "C",
+      "discovered": 58,
+      "normalized": 58,
+      "withAudio": 58,
+      "withVideo": 5
+    },
+    {
+      "id": "voa-science-tech",
+      "name": "Science & Technology",
+      "tier": "C",
+      "discovered": 60,
+      "normalized": 60,
+      "withAudio": 60,
+      "withVideo": 0
+    },
+    {
+      "id": "voa-health",
+      "name": "Health & Lifestyle",
+      "tier": "C",
+      "discovered": 60,
+      "normalized": 60,
+      "withAudio": 60,
+      "withVideo": 0
+    },
+    {
+      "id": "voa-trending",
+      "name": "What's Trending Today",
+      "tier": "C",
+      "discovered": 60,
+      "normalized": 31,
+      "withAudio": 31,
+      "withVideo": 0
+    },
+    {
+      "id": "voa-what-it-takes",
+      "name": "What It Takes",
+      "tier": "C",
+      "discovered": 51,
+      "normalized": 51,
+      "withAudio": 51,
+      "withVideo": 0
+    },
+    {
+      "id": "voa-early-literacy",
+      "name": "Early Literacy",
+      "tier": "C",
+      "discovered": 8,
+      "normalized": 8,
+      "withAudio": 8,
+      "withVideo": 8
+    },
+    {
+      "id": "voa-american-stories",
+      "name": "American Stories",
+      "tier": "D",
+      "discovered": 100,
+      "normalized": 100,
+      "withAudio": 100,
+      "withVideo": 100
+    },
+    {
+      "id": "voa-presidents",
+      "name": "America's Presidents",
+      "tier": "D",
+      "discovered": 60,
+      "normalized": 49,
+      "withAudio": 49,
+      "withVideo": 46
+    },
+    {
+      "id": "voa-national-parks",
+      "name": "America's National Parks",
+      "tier": "D",
+      "discovered": 60,
+      "normalized": 19,
+      "withAudio": 19,
+      "withVideo": 7
+    },
+    {
+      "id": "voa-us-history",
+      "name": "U.S. History",
+      "tier": "D",
+      "discovered": 6,
+      "normalized": 6,
+      "withAudio": 3,
+      "withVideo": 1
+    },
+    {
+      "id": "voa-voa60",
+      "name": "VOA60: Watch & Learn",
+      "tier": "D",
+      "discovered": 60,
+      "normalized": 0,
+      "withAudio": 0,
+      "withVideo": 0
+    },
+    {
+      "id": "voa-news-literacy",
+      "name": "News Literacy",
+      "tier": "D",
+      "discovered": 7,
+      "normalized": 7,
+      "withAudio": 0,
+      "withVideo": 7
+    }
+  ],
+  "totals": {
+    "discovered": 1563,
+    "normalized": 922,
+    "audio": 1651,
+    "audioResolvable": 600,
+    "video": 1677,
+    "transcripts": 94
+  }
+}

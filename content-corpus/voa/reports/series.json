@@ -1,0 +1,182 @@
+{
+  "voa-lle-level1": {
+    "name": "Let's Learn English - Level 1",
+    "kind": "course_lesson",
+    "resources": 52,
+    "avgConfidence": 0.83
+  },
+  "voa-lle-level2": {
+    "name": "Let's Learn English - Level 2",
+    "kind": "course_lesson",
+    "resources": 36,
+    "avgConfidence": 0.8
+  },
+  "voa-anna": {
+    "name": "Let's Learn English with Anna",
+    "kind": "course_lesson",
+    "resources": 15,
+    "avgConfidence": 0.79
+  },
+  "voa-anna-vietnamese": {
+    "name": "Let's Learn English with Anna in Vietnamese",
+    "kind": "course_lesson",
+    "resources": 5,
+    "avgConfidence": 0.73
+  },
+  "voa-anna-multilingual": {
+    "name": "Let's Learn English with Anna — other languages",
+    "kind": "course_lesson",
+    "resources": 12,
+    "avgConfidence": 0.74
+  },
+  "voa-lets-teach": {
+    "name": "Let's Teach English",
+    "kind": "teacher_resource",
+    "resources": 13,
+    "avgConfidence": 0.77
+  },
+  "voa-everyday-grammar": {
+    "name": "Everyday Grammar",
+    "kind": "grammar",
+    "resources": 80,
+    "avgConfidence": 0.74
+  },
+  "voa-everyday-grammar-tv": {
+    "name": "Everyday Grammar TV",
+    "kind": "grammar",
+    "resources": 0,
+    "avgConfidence": 0
+  },
+  "voa-english-minute": {
+    "name": "English in a Minute",
+    "kind": "expression",
+    "resources": 0,
+    "avgConfidence": 0
+  },
+  "voa-news-words": {
+    "name": "News Words",
+    "kind": "expression",
+    "resources": 0,
+    "avgConfidence": 0
+  },
+  "voa-words-stories": {
+    "name": "Words and Their Stories",
+    "kind": "expression",
+    "resources": 80,
+    "avgConfidence": 0.74
+  },
+  "voa-ask-teacher": {
+    "name": "Ask a Teacher",
+    "kind": "grammar",
+    "resources": 60,
+    "avgConfidence": 0.77
+  },
+  "voa-pronunciation": {
+    "name": "How to Pronounce",
+    "kind": "pronunciation",
+    "resources": 0,
+    "avgConfidence": 0
+  },
+  "voa-english-movies": {
+    "name": "English @ the Movies",
+    "kind": "expression",
+    "resources": 0,
+    "avgConfidence": 0
+  },
+  "voa-talk2us": {
+    "name": "Talk2Us",
+    "kind": "expression",
+    "resources": 0,
+    "avgConfidence": 0
+  },
+  "voa-learning-podcast": {
+    "name": "VOA Learning English Podcast",
+    "kind": "podcast",
+    "resources": 0,
+    "avgConfidence": 0
+  },
+  "voa-as-it-is": {
+    "name": "As It Is",
+    "kind": "article",
+    "resources": 60,
+    "avgConfidence": 0.72
+  },
+  "voa-arts-culture": {
+    "name": "Arts & Culture",
+    "kind": "article",
+    "resources": 60,
+    "avgConfidence": 0.73
+  },
+  "voa-education": {
+    "name": "Education Tips",
+    "kind": "article",
+    "resources": 58,
+    "avgConfidence": 0.77
+  },
+  "voa-science-tech": {
+    "name": "Science & Technology",
+    "kind": "article",
+    "resources": 60,
+    "avgConfidence": 0.71
+  },
+  "voa-health": {
+    "name": "Health & Lifestyle",
+    "kind": "article",
+    "resources": 60,
+    "avgConfidence": 0.72
+  },
+  "voa-trending": {
+    "name": "What's Trending Today",
+    "kind": "article",
+    "resources": 31,
+    "avgConfidence": 0.72
+  },
+  "voa-what-it-takes": {
+    "name": "What It Takes",
+    "kind": "podcast",
+    "resources": 51,
+    "avgConfidence": 0.72
+  },
+  "voa-early-literacy": {
+    "name": "Early Literacy",
+    "kind": "article",
+    "resources": 8,
+    "avgConfidence": 0.75
+  },
+  "voa-american-stories": {
+    "name": "American Stories",
+    "kind": "story",
+    "resources": 100,
+    "avgConfidence": 0.74
+  },
+  "voa-presidents": {
+    "name": "America's Presidents",
+    "kind": "article",
+    "resources": 49,
+    "avgConfidence": 0.74
+  },
+  "voa-national-parks": {
+    "name": "America's National Parks",
+    "kind": "article",
+    "resources": 19,
+    "avgConfidence": 0.73
+  },
+  "voa-us-history": {
+    "name": "U.S. History",
+    "kind": "article",
+    "resources": 6,
+    "avgConfidence": 0.7
+  },
+  "voa-voa60": {
+    "name": "VOA60: Watch & Learn",
+    "kind": "podcast",
+    "resources": 0,
+    "avgConfidence": 0
+  },
+  "voa-news-literacy": {
+    "name": "News Literacy",
+    "kind": "teacher_resource",
+    "resources": 7,
+    "avgConfidence": 0.71
+  }
+}

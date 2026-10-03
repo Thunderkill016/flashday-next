@@ -1,0 +1,797 @@
+{
+  "gaps": [
+    {
+      "gapChunk": "my wife",
+      "homeLesson": "sv13",
+      "voaResourceId": "voa:7601370",
+      "voaTitle": "'Call'",
+      "occurrence": "eaning might be to contact someone by phone. i need to call my wife . call me back later. we can also use “call” to ask someone",
+      "level": "a1",
+      "usable": true
+    },
+    {
+      "gapChunk": "brothers or sisters",
+      "homeLesson": "sv13",
+      "voaResourceId": "voa:7414766",
+      "voaTitle": "The World in Other Words in 2023",
+      "occurrence": "se the term to describe children seen as favored over their brothers or sisters because their name is used in their parents’ passwords. kit",
+      "level": "a2",
+      "usable": false
+    },
+    {
+      "gapChunk": "older brother",
+      "homeLesson": "sv13",
+      "voaResourceId": "voa:4414093",
+      "voaTitle": "What It Takes - Sally Field",
+      "occurrence": "in survival mode, doing her best to protect herself and her older brother, whom she worshipped. luckily, at 17, she got the chance to",
+      "level": "a2",
+      "usable": false
+    },
+    {
+      "gapChunk": "He lives in",
+      "homeLesson": "sv13",
+      "voaResourceId": "voa:7963018",
+      "voaTitle": "Norway Nears Goal to Sell only Electric New Cars",
+      "occurrence": "n for the environment and for the benefits of driving them. he lives in an area near oslo where the streets are full of teslas, aud",
+      "level": "a2",
+      "usable": false
+    },
+    {
+      "gapChunk": "No, thank you",
+      "homeLesson": "sv18",
+      "voaResourceId": "voa:4154981",
+      "voaTitle": "What It Takes - Sidney Poitier",
+      "occurrence": "you something? some light refreshment? 00:44:02 gillespie: no, thank you. we're all right the way we are. 00:44:03 virgil tibbs: oh,",
+      "level": "a2",
+      "usable": false
+    },
+    {
+      "gapChunk": "Help yourself",
+      "homeLesson": "sv18",
+      "voaResourceId": "voa:4220576",
+      "voaTitle": "Let's Learn English Level 2 Lesson 17: Flour Baby, Part 1",
+      "occurrence": "o does the best research will get an extra day of vacation. help yourself to a baby. anna: pete, look, my baby is organic and whole g",
+      "level": "a2",
+      "usable": true
+    },
+    {
+      "gapChunk": "Checking in",
+      "homeLesson": "ev12",
+      "voaResourceId": "voa:7165568",
+      "voaTitle": "Early Literacy: Instructional Classroom Language",
+      "occurrence": "ners need from classroom teachers” “ 10 tips for giving and checking instructions in an esl classroom ” teachingrefugees.com ______",
+      "level": "a2",
+      "usable": true
+    },
+    {
+      "gapChunk": "about twenty minutes",
+      "homeLesson": "ev14",
+      "voaResourceId": "voa:4656570",
+      "voaTitle": "'After Twenty Years,' by O.Henry",
+      "occurrence": "friend. such a meeting could not be certain. but he waited. about twenty minutes he waited, and then a tall man in a long coat came hurrying",
+      "level": "a1",
+      "usable": false
+    },
+    {
+      "gapChunk": "the main road",
+      "homeLesson": "ev14",
+      "voaResourceId": "voa:7897363",
+      "voaTitle": "Oldest Pet Burial Ground in America Is Final Resting Place for Thousands",
+      "occurrence": "ale pet cemetery, a burial place on small grassy hills near the main road. the words on boots’ tombstone read, “you taught me how to",
+      "level": "a2",
+      "usable": false
+    },
+    {
+      "gapChunk": "sorry to bother you",
+      "homeLesson": "ev15",
+      "voaResourceId": "voa:3723588",
+      "voaTitle": "Lesson 46: May I Borrow That?",
+      "occurrence": "anna! what’re you doing? anna: can i borrow your scissors ? sorry to bother you. jonathan: yes, i can lend them to you, but you must return",
+      "level": "a2",
+      "usable": true
+    },
+    {
+      "gapChunk": "I appreciate it",
+      "homeLesson": "ev15",
+      "voaResourceId": "voa:7575872",
+      "voaTitle": "Are You the Windshield or the Bug?",
+      "occurrence": "n. tomorrow is a new day!\" b: thanks for the encouragement. i appreciate it. a: don't thank me. thank my grandma. it's impossible to be",
+      "level": "a2",
+      "usable": false
+    },
+    {
+      "gapChunk": "three ways",
+      "homeLesson": "ev20",
+      "voaResourceId": "voa:2913973",
+      "voaTitle": "The U.S. Constitution",
+      "occurrence": "egislature make laws? the house and senate can make laws in three ways: if both the house of representatives and the senate pass a",
+      "level": "b1",
+      "usable": false
+    },
+    {
+      "gapChunk": "I am afraid",
+      "homeLesson": "ev22",
+      "voaResourceId": "voa:4480407",
+      "voaTitle": "'The Caliph, Cupid and the Clock,' by O. Henry",
+      "occurrence": "ser than most men. but when i hear the clock tell the hour, i am afraid. stay with me till then. this woman shall be yours. you hav",
+      "level": "a2",
+      "usable": false
+    },
+    {
+      "gapChunk": "with a patient",
+      "homeLesson": "ev22",
+      "voaResourceId": "voa:4226596",
+      "voaTitle": "What It Takes - Steve Rosenberg",
+      "occurrence": "cientifically, is we tried to immunize experimental animals with a patient’s cancer and use their lymphocytes — because the lymphocyte",
+      "level": "a2",
+      "usable": false
+    },
+    {
+      "gapChunk": "call me back",
+      "homeLesson": "ev22",
+      "voaResourceId": "voa:3457316",
+      "voaTitle": "Lesson 27: I Can't Come In",
+      "occurrence": "want to make my co-workers sick. dr. bennett: that’s right. call me back in a couple of days. anna: i will, dr. bennett. and thanks.",
+      "level": "a1",
+      "usable": true
+    },
+    {
+      "gapChunk": "Let me see",
+      "homeLesson": "ch04",
+      "voaResourceId": "voa:3323771",
+      "voaTitle": "Lesson 14: How About This?",
+      "occurrence": "clothes look great … for a man ! something is wrong. anna: let me see. anna: there. now try. genie: oh. thanks! now these clothes",
+      "level": "a1",
+      "usable": true
+    },
+    {
+      "gapChunk": "Hold on",
+      "homeLesson": "ch04",
+      "voaResourceId": "voa:7742927",
+      "voaTitle": "Sometimes Help Is Just 'A Phone Call Away'",
+      "occurrence": "ay, “ hold the phone ! are you serious?” it's like saying, \"hold on a minute!\" now, let’s go back to your arguing neighbors, ja",
+      "level": "a2",
+      "usable": false
+    },
+    {
+      "gapChunk": "it depends on",
+      "homeLesson": "ch05",
+      "voaResourceId": "voa:7676088",
+      "voaTitle": "Learn Some 'Wave' Expressions",
+      "occurrence": "one aside you are either directing them or dismissing them. it depends on the situation. now, let’s hear some of these “wave” terms u",
+      "level": "a2",
+      "usable": false
+    },
+    {
+      "gapChunk": "As far as I know",
+      "homeLesson": "ch08",
+      "voaResourceId": "voa:3993229",
+      "voaTitle": "What It Takes: Oprah Winfrey, Part 2",
+      "occurrence": "would have to say that i, for the most part, have not been, as far as i know, affected. i — as a matter of fact, it was because of the r",
+      "level": "a2",
+      "usable": false
+    },
+    {
+      "gapChunk": "in a while",
+      "homeLesson": "ch08",
+      "voaResourceId": "voa:5174083",
+      "voaTitle": "Take a Moment to 'Count Your Blessings'",
+      "occurrence": "see anyway. hey, how’s everything going? i haven’t seen you in a while. things are great! for starters, i got fired last month. oh",
+      "level": "a2",
+      "usable": false
+    },
+    {
+      "gapChunk": "Like what",
+      "homeLesson": "ch11",
+      "voaResourceId": "voa:7966513",
+      "voaTitle": "Monarch Butterfly Count Nears 30-Year Low",
+      "occurrence": "insects breed – v . to produce young animals, birds, or the like what do you think of this story? write to us in the comments sec",
+      "level": "a2",
+      "usable": false
+    },
+    {
+      "gapChunk": "For example",
+      "homeLesson": "ch11",
+      "voaResourceId": "voa:3343720",
+      "voaTitle": "Lesson 15: I Love People-Watching!",
+      "occurrence": "to see how people are different or the same. keyana: it is. for example, anna, you are tall. but ashley and i are short. anna: and",
+      "level": "a1",
+      "usable": true
+    },
+    {
+      "gapChunk": "for instance",
+      "homeLesson": "ch11",
+      "voaResourceId": "voa:5651046",
+      "voaTitle": "Images Can Help You Retain Vocabulary",
+      "occurrence": "easier to remember when they have meaning in your own life. for instance, one of her french students has an english-speaking dentist",
+      "level": "a2",
+      "usable": false
+    },
+    {
+      "gapChunk": "down the hall",
+      "homeLesson": "ch18",
+      "voaResourceId": "voa:4155002",
+      "voaTitle": "What It Takes - Carol Burnett",
+      "occurrence": "er. 00:06:39 and we moved in the same building, and she was down the hall, and nanny and i had a one-room, pull-down-bed apartment ri",
+      "level": "a2",
+      "usable": false
+    },
+    {
+      "gapChunk": "This is my friend",
+      "homeLesson": "gr01",
+      "voaResourceId": "voa:3343720",
+      "voaTitle": "Lesson 15: I Love People-Watching!",
+      "occurrence": "eyana: hi anna, how are you? anna: i’m doing great! keyana, this is my friend ashley. keyana: hi, ashley! anna: we need to return to work",
+      "level": "a1",
+      "usable": true
+    },
+    {
+      "gapChunk": "is a student",
+      "homeLesson": "gr01",
+      "voaResourceId": "voa:7899165",
+      "voaTitle": "In Uganda, Cost of Attending School Keeps Children Home",
+      "occurrence": "ng laboratory equipment. one student’s story shalom mirembe is a student who spoke to the ap. her mother takes care of four children",
+      "level": "a2",
+      "usable": false
+    },
+    {
+      "gapChunk": "Yes, I do",
+      "homeLesson": "gr02",
+      "voaResourceId": "voa:3457316",
+      "voaTitle": "Lesson 27: I Can't Come In",
+      "occurrence": "ot and i drank a lot of water. do you have a doctor ? anna: yes, i do. caty: you should call your doctor. and get lots of rest !",
+      "level": "a1",
+      "usable": true
+    },
+    {
+      "gapChunk": "twice a year",
+      "homeLesson": "gr02",
+      "voaResourceId": "voa:7888946",
+      "voaTitle": "Highly Effective HIV Drug to Be Offered at Low Cost to Poor Countries",
+      "occurrence": "for these groups because it means they just have to show up twice a year at a clinic and then they’re protected.” a collection of 15",
+      "level": "b1",
+      "usable": false
+    },
+    {
+      "gapChunk": "It was great",
+      "homeLesson": "gr04",
+      "voaResourceId": "voa:4074883",
+      "voaTitle": "Let's Learn English Level 2: Lesson 9: Pets Are Family Too!",
+      "occurrence": ": hi ashley! ashley: hey, anna! how was your weekend? anna: it was great! i went to the d.c. state fair. ashley: i would have gone,",
+      "level": "a2",
+      "usable": true
+    },
+    {
+      "gapChunk": "What are you going to do",
+      "homeLesson": "gr05",
+      "voaResourceId": "voa:7940837",
+      "voaTitle": "Sometimes We 'Spread Ourself Too Thin'",
+      "occurrence": "y’ve got too much going on. b: i think you’re right. a: so, what are you going to do? b: well, first i’ll extend the deadline. and then i’m goin",
+      "level": "a2",
+      "usable": false
+    },
+    {
+      "gapChunk": "two days a week",
+      "homeLesson": "gr05",
+      "voaResourceId": "voa:7966564",
+      "voaTitle": "Regimen",
+      "occurrence": "le shows: my exercise regimen consists of strength training two days a week and running or walking most other days. note that native sp",
+      "level": "a2",
+      "usable": true
+    },
+    {
+      "gapChunk": "take a test",
+      "homeLesson": "gr05",
+      "voaResourceId": "voa:3406732",
+      "voaTitle": "Lesson 21: Can You Come to the Party?",
+      "occurrence": "l you be busy all day? anna: i don’t know. first, i have to take a test on the computer. then i have to take a test in the car. mar",
+      "level": "a1",
+      "usable": true
+    },
+    {
+      "gapChunk": "What is happening",
+      "homeLesson": "gr06",
+      "voaResourceId": "voa:3723588",
+      "voaTitle": "Lesson 46: May I Borrow That?",
+      "occurrence": "e. marsha: we are meeting at this restaurant tonight. anna: what is happening tonight? marsha: today is my birthday. we are celebrating a",
+      "level": "a2",
+      "usable": true
+    },
+    {
+      "gapChunk": "You should",
+      "homeLesson": "gr08",
+      "voaResourceId": "voa:3431138",
+      "voaTitle": "Lesson 25: Watch Out!",
+      "occurrence": "! dan: sorry! i didn't see you. anna: you were not looking. you should be more careful . dan: i know i should be more careful. but",
+      "level": "a2",
+      "usable": true
+    },
+    {
+      "gapChunk": "On the desk",
+      "homeLesson": "gr09",
+      "voaResourceId": "voa:3628393",
+      "voaTitle": "Learn 10 Separable Phrasal Verbs",
+      "occurrence": "nes with a verb. here are two examples: please put the lamp on the desk. i think you're putting me on. in the first sentence, on is",
+      "level": "a2",
+      "usable": true
+    },
+    {
+      "gapChunk": "work well",
+      "homeLesson": "gr09",
+      "voaResourceId": "voa:3397314",
+      "voaTitle": "Lesson 22: Next Summer...",
+      "occurrence": "is is the first time we are working together. i hope we can work well together. hi, amelia! amelia: hi, anna! so, what are we goi",
+      "level": "a1",
+      "usable": true
+    },
+    {
+      "gapChunk": "In July",
+      "homeLesson": "gr10",
+      "voaResourceId": "voa:3357760",
+      "voaTitle": "Lesson 19: When Do I Start?",
+      "occurrence": "read the news. anna: next month is july . you are firing me in july. caty: no. i am not firing you in july … or in august or in",
+      "level": "a1",
+      "usable": true
+    },
+    {
+      "gapChunk": "On the fifth",
+      "homeLesson": "gr10",
+      "voaResourceId": "voa:4414089",
+      "voaTitle": "What It Takes - August Wilson, Lloyd Richards",
+      "occurrence": "ends. 00:14:28 and he was rejected by us five times. it was on the fifth try that he was selected. he even tells the story that, onc",
+      "level": "a2",
+      "usable": false
+    },
+    {
+      "gapChunk": "on the weekend",
+      "homeLesson": "gr10",
+      "voaResourceId": "voa:7930227",
+      "voaTitle": "Advice on Successfully Keeping New Year’s Promises",
+      "occurrence": "t be more helpful to say, you’re only going to have dessert on the weekends and for special occasions .” mindset change think about wh",
+      "level": "a2",
+      "usable": false
+    },
+    {
+      "gapChunk": "the top shelf",
+      "homeLesson": "gr11",
+      "voaResourceId": "voa:4302226",
+      "voaTitle": "What It Takes - Doris Kearns Goodwin",
+      "occurrence": "— as you became an intimate friend, you finally made it to the top shelf, almost like at an amusement park. so at the beginning, i w",
+      "level": "a2",
+      "usable": false
+    },
+    {
+      "gapChunk": "more flexible",
+      "homeLesson": "gr12",
+      "voaResourceId": "voa:2935173",
+      "voaTitle": "Fun with Future Tenses",
+      "occurrence": "compared to the past and present, future tenses are usually more flexible. will let’s start with will . to form the simple future, us",
+      "level": "a2",
+      "usable": true
+    },
+    {
+      "gapChunk": "behind the desk",
+      "homeLesson": "rv02",
+      "voaResourceId": "voa:4489441",
+      "voaTitle": "What It Takes - Frank McCourt",
+      "occurrence": "t you’re like. every teacher has a desk. some teachers hide behind the desk, or lean on the desk, or sit behind the desk. that’s not go",
+      "level": "a2",
+      "usable": false
+    },
+    {
+      "gapChunk": "Deal",
+      "homeLesson": "rv04",
+      "voaResourceId": "voa:3459324",
+      "voaTitle": "Studying Sentence Patterns to Improve Your Writing, Part Two",
+      "occurrence": "ace where a journey begins tricky – adj. difficult to do or deal with studying sentence patterns to improve your writing, pa",
+      "level": "a2",
+      "usable": true
+    },
+    {
+      "gapChunk": "I lost my wallet",
+      "homeLesson": "rv05",
+      "voaResourceId": "voa:3666458",
+      "voaTitle": "Lesson 43: Time for Plan B",
+      "occurrence": ". it is far away. so, i am going to ride the metro. oh, no! i lost my wallet ! it has my metro card, my credit card and my money! oh, no",
+      "level": "a1",
+      "usable": true
+    },
+    {
+      "gapChunk": "the whole time",
+      "homeLesson": "rv05",
+      "voaResourceId": "voa:7780542",
+      "voaTitle": "Brazilian Dog Excels at Footvolley",
+      "occurrence": "t takes,” said chioli, 21. “but we saw he played, performed the whole time, did really well. it’s really cool.” proposals for partners",
+      "level": "a2",
+      "usable": false
+    },
+    {
+      "gapChunk": "turn it off",
+      "homeLesson": "li03",
+      "voaResourceId": "voa:4242927",
+      "voaTitle": "Let's Learn English Level 2 Lesson 19: Movie Night",
+      "occurrence": "na: oh, sorry! i forgot to turn my phone off. (she tries to turn it off but drops it under the seat.) anna: oh no! i dropped it. wh",
+      "level": "a2",
+      "usable": true
+    },
+    {
+      "gapChunk": "check it out",
+      "homeLesson": "li03",
+      "voaResourceId": "voa:4226600",
+      "voaTitle": "What It Takes - Wynton Marsalis",
+      "occurrence": "line... just that song, you know... so i would go home and check it out, you know... i couldn't wait to hear that. and i would list",
+      "level": "a2",
+      "usable": false
+    },
+    {
+      "gapChunk": "not at all",
+      "homeLesson": "li03",
+      "voaResourceId": "voa:4139015",
+      "voaTitle": "Let's Learn English Level 2 Lesson 12: Run! Bees!",
+      "occurrence": "id that they are gonna come out and kill you? caroline: no, not at all, anna. even my children help me. tell me, why are you afrai",
+      "level": "a2",
+      "usable": true
+    },
+    {
+      "gapChunk": "thirteen",
+      "homeLesson": "li06",
+      "voaResourceId": "voa:7918704",
+      "voaTitle": "Former US President Jimmy Carter Dies at the Age of 100",
+      "occurrence": "ed the u.s. embassy in tehran, taking 66 americans hostage. thirteen were released weeks later but the hostage crisis extended t",
+      "level": "b1",
+      "usable": false
+    },
+    {
+      "gapChunk": "B or D",
+      "homeLesson": "li07",
+      "voaResourceId": "voa:3206680",
+      "voaTitle": "How Much Do You Know about Quantifiers?",
+      "occurrence": "cannot be counted​ options – n. choices assignment - n. a job or duty that is given to someone : a task someone is required to",
+      "level": "a2",
+      "usable": true
+    },
+    {
+      "gapChunk": "the fourth floor",
+      "homeLesson": "li10",
+      "voaResourceId": "voa:4017535",
+      "voaTitle": "'The Murders in the Rue Morgue,' by Edgar Allen Poe, Part Four",
+      "occurrence": "rk to provide that great brain. “dupin — the windows are on the fourth floor, far above the ground. even an open window…” dupin shook hi",
+      "level": "a2",
+      "usable": false
+    },
+    {
+      "gapChunk": "on the screen",
+      "homeLesson": "li15",
+      "voaResourceId": "voa:6976225",
+      "voaTitle": "How to Create Many Activities from One Video",
+      "occurrence": "sson the teacher stops the video and, with an image showing on the screen, asks students to do an activity: guess what happens next d",
+      "level": "a1",
+      "usable": false
+    },
+    {
+      "gapChunk": "last week",
+      "homeLesson": "li16",
+      "voaResourceId": "voa:3457316",
+      "voaTitle": "Lesson 27: I Can't Come In",
+      "occurrence": "i think i’m sick . caty: i’m sorry to hear that. i was sick last week, too. i had the flu . anna: (sneezes) what did you do? caty",
+      "level": "a1",
+      "usable": true
+    },
+    {
+      "gapChunk": "for nothing",
+      "homeLesson": "li16",
+      "voaResourceId": "voa:4364300",
+      "voaTitle": "What It Takes - Maya Angelou, Part 2",
+      "occurrence": "ften enough, \"you are nothing. you are nothing. you account for nothing. you count for nothing. you are less than a human being. i",
+      "level": "a2",
+      "usable": false
+    },
+    {
+      "gapChunk": "cats",
+      "homeLesson": "pr01",
+      "voaResourceId": "voa:3635015",
+      "voaTitle": "Lesson 41: Teamwork Works Best With a Team",
+      "occurrence": "avorite. anna: “teamwork works best with a team.” a team of cats. look at all those cats! ms. weaver: so, anna, do you under",
+      "level": "a1",
+      "usable": true
+    },
+    {
+      "gapChunk": "dogs",
+      "homeLesson": "pr01",
+      "voaResourceId": "voa:4074883",
+      "voaTitle": "Let's Learn English Level 2: Lesson 9: Pets Are Family Too!",
+      "occurrence": ". there was a pet parade . lots of people walked with their dogs. ashley: that sounds so fun. but anna, tell me, how did you",
+      "level": "a2",
+      "usable": true
+    },
+    {
+      "gapChunk": "walked",
+      "homeLesson": "pr02",
+      "voaResourceId": "voa:3439164",
+      "voaTitle": "What is Anna Matteo doing in this photo?",
+      "occurrence": ".\" anna's voice: i was at work. and i wanted a break. so, i walked and walked … and walked. then, i saw something! it was a fe",
+      "level": "a1",
+      "usable": true
+    },
+    {
+      "gapChunk": "played",
+      "homeLesson": "pr02",
+      "voaResourceId": "voa:3439164",
+      "voaTitle": "What is Anna Matteo doing in this photo?",
+      "occurrence": "at do they call it? they call it pilota! anna's voice: they played a game with their hands and a small ball. it’s a kind of ha",
+      "level": "a1",
+      "usable": true
+    },
+    {
+      "gapChunk": "wanted",
+      "homeLesson": "pr02",
+      "voaResourceId": "voa:3439164",
+      "voaTitle": "What is Anna Matteo doing in this photo?",
+      "occurrence": "like a usual work day.\" anna's voice: i was at work. and i wanted a break. so, i walked and walked … and walked. then, i saw",
+      "level": "a1",
+      "usable": true
+    },
+    {
+      "gapChunk": "breathe",
+      "homeLesson": "pr04",
+      "voaResourceId": "voa:4035571",
+      "voaTitle": "Lesson 5: Greatest Vacation of All Time",
+      "occurrence": "e were a lot of comparatives and superlatives but … i can’t breathe. just go to the website to learn the best ways to use them!",
+      "level": "a2",
+      "usable": true
+    },
+    {
+      "gapChunk": "breath",
+      "homeLesson": "pr04",
+      "voaResourceId": "voa:3763537",
+      "voaTitle": "Lesson 49: Operation Spy!",
+      "occurrence": "n a long, dark, small air duct. i’m having a little trouble breathing . ms. weaver: just keep going, agent flamingo. think of",
+      "level": "b1",
+      "usable": false
+    },
+    {
+      "gapChunk": "mother",
+      "homeLesson": "pr04",
+      "voaResourceId": "voa:3301733",
+      "voaTitle": "Lesson 12: Meet My Family",
+      "occurrence": "es. yes, you do! anna: photos really help. anna: this is my mother and this is my father . they are rodeo clowns . marsha: wha",
+      "level": "a1",
+      "usable": true
+    },
+    {
+      "gapChunk": "pray",
+      "homeLesson": "pr06",
+      "voaResourceId": "voa:3598920",
+      "voaTitle": "Lesson 39: It’s Unbelievable!",
+      "occurrence": "ve the perfect product for you -- hair be good! pete: just spray hair be good on your hair … wrap in a towel … and you are d",
+      "level": "a2",
+      "usable": true
+    },
+    {
+      "gapChunk": "berry",
+      "homeLesson": "pr07",
+      "voaResourceId": "voa:4396849",
+      "voaTitle": "Let's Learn English Level 2 Lesson 28: For the Birds",
+      "occurrence": "e the price . i wonder what flavor he's getting. anna: strawberry? he doesn't seem like a strawberry kind of guy . anna: in f",
+      "level": "a2",
+      "usable": true
+    },
+    {
+      "gapChunk": "van",
+      "homeLesson": "pr07",
+      "voaResourceId": "voa:3966541",
+      "voaTitle": "Introducing Let's Teach English",
+      "occurrence": "w words in english and they also learned about a new place, vanuatu. tra mi : okay, great start on constructivism. who want",
+      "level": "a1",
+      "usable": true
+    },
+    {
+      "gapChunk": "vest",
+      "homeLesson": "pr07",
+      "voaResourceId": "voa:7660423",
+      "voaTitle": "Reservations and Rentals",
+      "occurrence": "omething that is worn over your upper body like a jacket or vest and that is designed to save you from drowning by holding y",
+      "level": "a2",
+      "usable": true
+    },
+    {
+      "gapChunk": "bed",
+      "homeLesson": "pr09",
+      "voaResourceId": "voa:3168971",
+      "voaTitle": "Lesson 5: Where Are You?",
+      "occurrence": "n the bathroom! i wash in the bathroom. marsha: i am in the bedroom. we sleep in the bedroom. anna: i sleep in the bedroom!",
+      "level": "a1",
+      "usable": true
+    },
+    {
+      "gapChunk": "fool",
+      "homeLesson": "pr10",
+      "voaResourceId": "voa:3628393",
+      "voaTitle": "Learn 10 Separable Phrasal Verbs",
+      "occurrence": "is an adverbial particle. put on is a phrasal verb meaning \"fool\" or \"trick\" in this sentence. an important point is that a",
+      "level": "a2",
+      "usable": true
+    },
+    {
+      "gapChunk": "Luke",
+      "homeLesson": "pr10",
+      "voaResourceId": "voa:7515878",
+      "voaTitle": "Learn Indefinite Pronouns with 'Fast Car'",
+      "occurrence": "ferent sorts of music fans. it was the country music singer luke combs singing with singer and songwriter tracy chapman. tog",
+      "level": "a2",
+      "usable": true
+    },
+    {
+      "gapChunk": "pool",
+      "homeLesson": "pr10",
+      "voaResourceId": "voa:4064553",
+      "voaTitle": "Lesson 6: Will It Float?",
+      "occurrence": "elope: yes! boy: inside the white house there is a swimming pool , a movie theater and 32 bathrooms! penelope: thirty-two ba",
+      "level": "a1",
+      "usable": true
+    },
+    {
+      "gapChunk": "sip",
+      "homeLesson": "pr11",
+      "voaResourceId": "voa:3960391",
+      "voaTitle": "Lesson 1: Budget Cuts",
+      "occurrence": ". anna: that is true. but wait, look at us. we shouldn't gossip . that's how rumors start. we'll just go to the meeting and",
+      "level": "a2",
+      "usable": true
+    },
+    {
+      "gapChunk": "chair",
+      "homeLesson": "pr12",
+      "voaResourceId": "voa:3710209",
+      "voaTitle": "Lesson 45: This Land is Your Land",
+      "occurrence": "at we’ll be seeing? marsha: what? anna: the largest rocking chair in the world! marsha: no, we won’t be seeing that. anna: ma",
+      "level": "a1",
+      "usable": true
+    },
+    {
+      "gapChunk": "beGIN",
+      "homeLesson": "pr13",
+      "voaResourceId": "voa:3630341",
+      "voaTitle": "Lesson 40: The Woods Are Alive",
+      "occurrence": "udition? anna: (warms up voice) yes. director: great. let's begin on page 1. here is the story. you are lost in the woods. yo",
+      "level": "a2",
+      "usable": true
+    },
+    {
+      "gapChunk": "PICture",
+      "homeLesson": "pr13",
+      "voaResourceId": "voa:3301733",
+      "voaTitle": "Lesson 12: Meet My Family",
+      "occurrence": "t-that';s very different . marsha: who is that woman in the picture? anna: that is my aunt lavender. she is my mom's sister . s",
+      "level": "a1",
+      "usable": true
+    },
+    {
+      "gapChunk": "forGET",
+      "homeLesson": "pr13",
+      "voaResourceId": "voa:3343720",
+      "voaTitle": "Lesson 15: I Love People-Watching!",
+      "occurrence": ". weaver. anna: people-watching in d.c. is fun. it makes me forget the time! anna: until next time! ahh. quiz ​ lesson 15: i l",
+      "level": "a1",
+      "usable": true
+    },
+    {
+      "gapChunk": "asking for info",
+      "homeLesson": "pr15",
+      "voaResourceId": "voa:4058114",
+      "voaTitle": "Review of Level 2 Lessons 1 - 5",
+      "occurrence": "​comparative adjectives and superlative adjectives​ topics: asking for information; comparing different vacations and transportation le",
+      "level": "a2",
+      "usable": true
+    },
+    {
+      "gapChunk": "the last word",
+      "homeLesson": "pr15",
+      "voaResourceId": "voa:7813583",
+      "voaTitle": "How to Improve Your Spelling",
+      "occurrence": "can you hear the difference between the two letters “a” of the last word? let’s listen again. attack the first syllable made the qui",
+      "level": "a1",
+      "usable": true
+    },
+    {
+      "gapChunk": "the emotion",
+      "homeLesson": "pr16",
+      "voaResourceId": "voa:7566464",
+      "voaTitle": "Many People 'Thank Their Lucky Stars'",
+      "occurrence": "der inspiration – n. the act or power of moving the mind or the emotions gratitude – n. the state of being grateful : grateful – ad",
+      "level": "a2",
+      "usable": false
+    },
+    {
+      "gapChunk": "grab a bite",
+      "homeLesson": "rv08",
+      "voaResourceId": "voa:7497663",
+      "voaTitle": "Influence Others from a 'Bully Pulpit'",
+      "occurrence": "conversation . a: hey, what are doing this evening? what to grab a bite? b: i wish i could. but i have a board meeting for my swimm",
+      "level": "a2",
+      "usable": false
+    },
+    {
+      "gapChunk": "for clarity",
+      "homeLesson": "dv08",
+      "voaResourceId": "voa:4226621",
+      "voaTitle": "What It Takes - John Irving",
+      "occurrence": "er house rules soundtrack) 00:10:25 alice winkler: his need for clarity about where he is going makes good sense if you know where",
+      "level": "a2",
+      "usable": false
+    },
+    {
+      "gapChunk": "Watch out for",
+      "homeLesson": "dv14",
+      "voaResourceId": "voa:2989386",
+      "voaTitle": "Everyday Grammar: Comparatives and Superlatives",
+      "occurrence": "e a higher love bring me a higher love… farther and further watch out for irregular forms of comparatives. there are some common one-",
+      "level": "a2",
+      "usable": true
+    },
+    {
+      "gapChunk": "as you go",
+      "homeLesson": "dv15",
+      "voaResourceId": "voa:3208388",
+      "voaTitle": "Planning Powerful Presentations",
+      "occurrence": "fields. 3. work on transitions (linking words or phrases ) as you go from image to image. these should make the connections betw",
+      "level": "a2",
+      "usable": false
+    },
+    {
+      "gapChunk": "is stacked",
+      "homeLesson": "dv17",
+      "voaResourceId": "voa:7886988",
+      "voaTitle": "'Show Your Hand', other Card Idioms",
+      "occurrence": "and fight to gain anything at all. for example, if the deck is stacked against you, the odds are not in your favor . you might hav",
+      "level": "a1",
+      "usable": false
+    },
+    {
+      "gapChunk": "My rec",
+      "homeLesson": "dv18",
+      "voaResourceId": "voa:7786483",
+      "voaTitle": "Japan Celebrates Historic Emmy Award Wins for 'Shogun'",
+      "occurrence": "emmys; netflix ties record hbo's 'game of thrones' breaks emmy record forum close please enable javascript to view the comment",
+      "level": "a2",
+      "usable": false
+    },
+    {
+      "gapChunk": "No rush",
+      "homeLesson": "dv18",
+      "voaResourceId": "voa:4226587",
+      "voaTitle": "What It Takes - Roger Bannister",
+      "occurrence": "e. 00:03:14 alice winkler: we’ll get back to that newsreel. no rush. we know how the race ends, but i want to walk the story ba",
+      "level": "a2",
+      "usable": false
+    },
+    {
+      "gapChunk": "Root cause",
+      "homeLesson": "dv20",
+      "voaResourceId": "voa:4155015",
+      "voaTitle": "What It Takes - Ray Dalio",
+      "occurrence": "00:07:08 ray dalio: so diagnose those problems, get to the root cause, the real root cause. the real root cause is often — is typ",
+      "level": "a2",
+      "usable": false
+    },
+    {
+      "gapChunk": "What went well",
+      "homeLesson": "dv20",
+      "voaResourceId": "voa:7165568",
+      "voaTitle": "Early Literacy: Instructional Classroom Language",
+      "occurrence": "s and the students are doing the activity, make some notes. what went well? what did not go well? what could you change or add to make",
+      "level": "a2",
+      "usable": true
+    },
+    {
+      "gapChunk": "still down",
+      "homeLesson": "dv22",
+      "voaResourceId": "voa:4769313",
+      "voaTitle": "National Parks Deal with Damage After Government Shutdown",
+      "occurrence": "hrough the arts yosemite national park reopens, but tourism still down",
+      "level": "a2",
+      "usable": false
+    }
+  ],
+  "matchedGaps": 88
+}
